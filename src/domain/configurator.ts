@@ -74,9 +74,13 @@ export function airKm(a: P, b: P): number {
   const s = Math.sin(dLat / 2) ** 2 + Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(s));
 }
-/** Fattore strada/linea d'aria e velocità media ipotizzati per le strade norvegesi con fiordi e traghetti. */
-export const ROAD_FACTOR = 1.45;
-export const AVG_KMH = 60;
+/**
+ * Fattore strada/linea d'aria e velocità media ipotizzati per le strade norvegesi con fiordi e traghetti.
+ * Tarati il 27/10/2026 su un tratto calcolato con OSRM: Bergen → Ålesund, circa 236 km in linea d'aria,
+ * 419 km di strada con 2 traghetti, 8 h 37 teoriche (fattore 1,78; circa 49 km/h). Restano stime.
+ */
+export const ROAD_FACTOR = 1.7;
+export const AVG_KMH = 52;
 /** Ore di guida stimate (solo per pianificare: non è un tempo calcolato). */
 export const estDriveHours = (a: P, b: P) => (airKm(a, b) * ROAD_FACTOR) / AVG_KMH;
 
@@ -248,28 +252,31 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   };
   for (let guard = 0; guard < 10; guard++) {
     const legs = legsOf(order);
-    const idx = legs.findIndex(([a, b], i) => estDriveHours(a, b) > maxDrive * 1.15 && !isCruise(order, i));
-    if (idx < 0) break;
     const fixedNights = (order.length - transit.size) * minNights + transit.size;
-    if (fixedNights + 1 > totalNights) {
+    if (fixedNights + 1 > totalNights) break;
+    const used = new Set(order.map((o) => o.d.id));
+    // Per ogni tratto troppo lungo si cerca la base che lo spezza meglio; si inserisce la prima che funziona
+    let inserted = false;
+    for (const [idx, [a, b]] of legs.entries()) {
+      if (estDriveHours(a, b) <= maxDrive * 1.15 || isCruise(order, idx)) continue;
+      let best: Base | undefined;
+      let bestWorst = Infinity;
+      for (const c of bases) {
+        if (used.has(c.d.id)) continue;
+        const worst = Math.max(estDriveHours(a, c), estDriveHours(c, b));
+        if (worst < bestWorst && worst < estDriveHours(a, b) * 0.8) {
+          bestWorst = worst;
+          best = c;
+        }
+      }
+      if (!best) continue;
+      notes.push(`Aggiunta ${best.d.name} come tappa intermedia per spezzare un trasferimento stimato di circa ${Math.round(estDriveHours(a, b))} h.`);
+      transit.add(best.d.id);
+      order = [...order.slice(0, idx), best, ...order.slice(idx)];
+      inserted = true;
       break;
     }
-    const [a, b] = legs[idx]!;
-    const used = new Set(order.map((o) => o.d.id));
-    let best: Base | undefined;
-    let bestWorst = Infinity;
-    for (const c of bases) {
-      if (used.has(c.d.id)) continue;
-      const worst = Math.max(estDriveHours(a, c), estDriveHours(c, b));
-      if (worst < bestWorst && worst < estDriveHours(a, b) * 0.8) {
-        bestWorst = worst;
-        best = c;
-      }
-    }
-    if (!best) break;
-    notes.push(`Aggiunta ${best.d.name} come tappa intermedia per spezzare un trasferimento stimato di circa ${Math.round(estDriveHours(a, b))} h.`);
-    transit.add(best.d.id);
-    order = [...order.slice(0, idx), best, ...order.slice(idx)];
+    if (!inserted) break;
   }
 
   // Notti: il minimo a ogni base (1 alle tappe intermedie), il resto a chi ha più cose da vedere (massimo 4)
