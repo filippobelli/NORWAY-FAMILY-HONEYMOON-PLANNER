@@ -6,7 +6,7 @@ import { createEmptyTrip, normalizeTrip } from '../src/domain/defaults';
 import { addDays, computeDays, legTotals, moveItem, syncLegs, totalDays, tripWarnings } from '../src/domain/itinerary';
 import type { Stop, Trip } from '../src/domain/types';
 import { mergeRoutedForTest, stepsToSegments } from './helpers';
-import { parseOverpass, externalSearchLinks } from '../src/services/accommodation/search';
+import { parseOverpass, parseNominatim, externalSearchLinks } from '../src/services/accommodation/search';
 
 const stop = (id: string, nights: number, kind: Stop['kind'] = 'luogo'): Stop => ({
   id,
@@ -206,4 +206,15 @@ test('link di ricerca esterni con date e bambini', () => {
   const booking = links.find((l) => l.provider === 'Booking.com')!.url;
   assert.match(booking, /checkin=2027-08-03&checkout=2027-08-05/);
   assert.match(booking, /group_children=2&age=8&age=5/);
+});
+
+test('Nominatim: solo strutture turistiche con nome, entro il raggio, senza doppioni', () => {
+  const c = { lat: 59.9139, lng: 10.7522 };
+  const el = (id: number, lat: number, extra: Partial<{ name: string; category: string; type: string }> = {}) => ({
+    osm_type: 'node', osm_id: id, lat: String(lat), lon: '10.7522', name: 'X' + id, category: 'tourism', type: 'chalet', extratags: { website: 'https://x.no' }, ...extra,
+  });
+  const r = parseNominatim([[el(1, 59.92), el(2, 60.5)], [el(1, 59.92), el(3, 59.93, { name: '' }), el(4, 59.93, { category: 'amenity' }), el(5, 59.915, { type: 'camp_site' })]], c, 15);
+  assert.deepEqual(r.map((p) => p.osmId), ['node/1', 'node/5']);
+  assert.equal(r[0]?.website, 'https://x.no');
+  assert.equal(r[1]?.kind, 'Campeggio (spesso con hytter)');
 });

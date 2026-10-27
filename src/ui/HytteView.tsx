@@ -3,7 +3,7 @@ import { toEur } from '../domain/coastal';
 import { newId } from '../domain/ids';
 import { computeDays, formatDateIt } from '../domain/itinerary';
 import type { Accommodation, AccommodationStatus } from '../domain/types';
-import { externalSearchLinks, searchNearbyOsm, type NearbyPlace } from '../services/accommodation/search';
+import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
@@ -39,6 +39,7 @@ export function HytteView() {
   const [stopId, setStopId] = useState<string>(trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
   const [radius, setRadius] = useState(15);
   const [results, setResults] = useState<NearbyPlace[] | null>(null);
+  const [via, setVia] = useState<NearbySource>('Overpass');
   const [searchState, setSearchState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [searchError, setSearchError] = useState('');
   const ac = useRef<AbortController | null>(null);
@@ -57,7 +58,8 @@ export function HytteView() {
     setResults(null);
     try {
       const r = await searchNearbyOsm(stop, radius, c.signal);
-      setResults(r);
+      setResults(r.places);
+      setVia(r.via);
       setSearchState('idle');
     } catch (e) {
       if ((e as Error).name === 'AbortError') return;
@@ -136,7 +138,8 @@ export function HytteView() {
             {results && results.length > 0 && (
               <>
                 <p className="muted small">
-                  {results.length} strutture da OpenStreetMap (© contributori OSM). Distanze in linea d'aria dalla tappa. Prezzi e disponibilità non
+                  {results.length} strutture da OpenStreetMap (© contributori OSM)
+                  {via === 'Nominatim' ? ", trovate con la ricerca Nominatim perché Overpass non risponde: l'elenco può essere meno completo" : ''}. Distanze in linea d'aria dalla tappa. Prezzi e disponibilità non
                   inclusi.
                 </p>
                 <ul className="osm-results">

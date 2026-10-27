@@ -94,26 +94,39 @@ export function parseOverpass(json: { elements?: OverpassEl[] }, center: { lat: 
   return out.sort((a, b) => rank(a.kind) - rank(b.kind) || a.distanceKm - b.distanceKm).slice(0, 40);
 }
 
-// Server Overpass pubblici, provati in ordine. Il 27/10/2026 il principale rispondeva 502 e i mirror
-// andavano in timeout: il servizio è utile ma non affidabile, per questo l'errore rimanda ai link esterni.
-export const OVERPASS_ENDPOINTS = [
-  'https://overpass-api.de/api/interpreter',
-  'https://overpass.private.coffee/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
-];
+// Server Overpass. Il 27/10/2026 (prova dal PC di Filippo) overpass-api.de rispondeva 502 senza intestazioni CORS
+// e i mirror private.coffee e kumi.systems andavano in timeout anche con una richiesta minima: tenerli in catena
+// faceva aspettare 40 s prima dell'errore. Ora: Overpass con attesa breve, poi la ricerca Nominatim (stessi dati OSM).
+export const OVERPASS_ENDPOINTS = ['https://overpass-api.de/api/interpreter'];
+const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
 
-export async function searchNearbyOsm(center: { lat: number; lng: number }, radiusKm: number, signal?: AbortSignal): Promise<NearbyPlace[]> {
+export type NearbySource = 'Overpass' | 'Nominatim';
+export interface NearbyResult {
+  places: NearbyPlace[];
+  via: NearbySource;
+}
+
+async function fetchWithTimeout(url: string, init: RequestInit, ms: number, signal?: AbortSignal): Promise<Response> {
+  if (signal?.aborted) throw new DOMException('Annullato', 'AbortError');
+  const timeout = new AbortController();
+  const timer = setTimeout(() => timeout.abort(), ms);
+  const onAbort = () => timeout.abort();
+  signal?.addEventListener('abort', onAbort);
+  try {
+    return await fetch(url, { ...init, signal: timeout.signal });
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+  }
+}
+
+async function viaOverpass(center: { lat: number; lng: number }, radiusKm: number, signal?: AbortSignal): Promise<NearbyPlace[]> {
   const r = Math.round(radiusKm * 1000);
   const query = `[out:json][timeout:25];(nwr["tourism"~"^(chalet|camp_site|guest_house|hostel|apartment)$"](around:${r},${center.lat},${center.lng}););out center tags 80;`;
   let lastError = '';
   for (const endpoint of OVERPASS_ENDPOINTS) {
-    if (signal?.aborted) throw new DOMException('Annullato', 'AbortError');
-    const timeout = new AbortController();
-    const timer = setTimeout(() => timeout.abort(), 20000);
-    const onAbort = () => timeout.abort();
-    signal?.addEventListener('abort', onAbort);
     try {
-      const res = await fetch(endpoint, { method: 'POST', body: new URLSearchParams({ data: query }), signal: timeout.signal });
+      const res = await fetchWithTimeout(endpoint, { method: 'POST', body: new URLSearchParams({ data: query }) }, 12000, signal);
       if (!res.ok) {
         lastError = `errore ${res.status}`;
         continue;
@@ -122,12 +135,71 @@ export async function searchNearbyOsm(center: { lat: number; lng: number }, radi
     } catch (e) {
       if (signal?.aborted) throw e;
       lastError = (e as Error).name === 'AbortError' ? 'tempo scaduto' : 'non raggiungibile';
-    } finally {
-      clearTimeout(timer);
-      signal?.removeEventListener('abort', onAbort);
     }
   }
-  throw new Error(
-    `Ricerca su OpenStreetMap non disponibile in questo momento (${lastError}). Riprova più tardi o usa i link di ricerca esterni.`,
-  );
+  throw new Error(lastError);
+}
+
+interface NominatimEl {
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  name?: string;
+  category?: string;
+  type?: string;
+  extratags?: Record<string, string> | null;
+}
+
+/** Converte i risultati Nominatim nello stesso formato di Overpass, tenendo solo le strutture entro il raggio. */
+export function parseNominatim(lists: NominatimEl[][], center: { lat: number; lng: number }, radiusKm: number): NearbyPlace[] {
+  const els: OverpassEl[] = [];
+  const seen = new Set<string>();
+  for (const x of lists.flat()) {
+    const key = `${x.osm_type}/${x.osm_id}`;
+    if (seen.has(key) || x.category !== 'tourism' || !x.name) continue;
+    const lat = Number(x.lat);
+    const lng = Number(x.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || haversineKm(center, { lat, lng }) > radiusKm) continue;
+    seen.add(key);
+    els.push({ type: x.osm_type, id: x.osm_id, lat, lon: lng, tags: { ...(x.extratags ?? {}), name: x.name, tourism: x.type ?? 'altro' } });
+  }
+  return parseOverpass({ elements: els }, center);
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function viaNominatim(center: { lat: number; lng: number }, radiusKm: number, signal?: AbortSignal): Promise<NearbyPlace[]> {
+  const dLat = radiusKm / 111;
+  const dLng = radiusKm / (111 * Math.cos((center.lat * Math.PI) / 180));
+  const viewbox = [center.lng - dLng, center.lat + dLat, center.lng + dLng, center.lat - dLat].map((n) => n.toFixed(4)).join(',');
+  const lists: NominatimEl[][] = [];
+  // Una richiesta al secondo, come chiede la policy d'uso di Nominatim.
+  for (const [i, q] of ['chalet', 'camp site', 'guest house', 'hostel', 'apartment'].entries()) {
+    if (i > 0) await sleep(1100);
+    const url = `${NOMINATIM}?format=jsonv2&q=${encodeURIComponent(q)}&viewbox=${viewbox}&bounded=1&limit=40&extratags=1&accept-language=nb,en`;
+    const res = await fetchWithTimeout(url, {}, 12000, signal);
+    if (!res.ok) throw new Error(`errore ${res.status}`);
+    lists.push((await res.json()) as NominatimEl[]);
+  }
+  return parseNominatim(lists, center, radiusKm);
+}
+
+export async function searchNearbyOsm(center: { lat: number; lng: number }, radiusKm: number, signal?: AbortSignal): Promise<NearbyResult> {
+  let first = '';
+  try {
+    return { places: await viaOverpass(center, radiusKm, signal), via: 'Overpass' };
+  } catch (e) {
+    if (signal?.aborted) throw e;
+    first = (e as Error).message;
+  }
+  try {
+    return { places: await viaNominatim(center, radiusKm, signal), via: 'Nominatim' };
+  } catch (e) {
+    if (signal?.aborted) throw e;
+    const second = (e as Error).name === 'AbortError' ? 'tempo scaduto' : (e as Error).message || 'non raggiungibile';
+    throw new Error(
+      `Ricerca su OpenStreetMap non disponibile in questo momento (Overpass: ${first}; Nominatim: ${second}). Riprova più tardi o usa i link di ricerca esterni.`,
+    );
+  }
 }
