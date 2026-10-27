@@ -51,7 +51,7 @@ const ok = (m) => console.log('OK:', m);
   const days = await p.locator('.day').count(); days === 7 ? ok('7 giornate (2+3+1 notti +1)') : fail('giornate ' + days);
   await p.screenshot({ path: OUT + '/2-giornate.png', fullPage: true });
 
-  await p.click('a[href="#/costiera"]');
+  await p.click('a[href="#/crociere"]');
   await p.click('text=+ Nuova opzione Hurtigruten');
   await p.selectOption('section.form-panel select >> nth=2', 'Måløy');
   await p.fill('section.form-panel input[type=number] >> nth=0', '9');

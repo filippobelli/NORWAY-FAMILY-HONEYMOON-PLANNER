@@ -95,7 +95,7 @@ export function ItineraryView() {
         ...cur,
         legs: cur.legs.map((l) =>
           pending.includes(l) && !isRoutableLeg(l, cur.stops)
-            ? { ...l, routingError: 'Tratto con notte a bordo: collega la navigazione costiera (sezione Costiera → Collega a un tratto).' }
+            ? { ...l, routingError: 'Tratto con notte a bordo: collega la navigazione costiera (sezione Crociere → Collega a un tratto).' }
             : l,
         ),
       }));
@@ -424,7 +424,7 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
           {t.mixedModes && <span className="note-warn small">Strada e treno/nave/aereo nello stesso tratto: tienili solo se sono in sequenza.</span>}
           {t.possibleDuplicateFerry && <span className="note-warn small">Traghetto calcolato e traghetto manuale insieme: probabile doppio conteggio.</span>}
           {!routable && t.hasUncalculated && (
-            <span className="muted small">Tratto in nave: collegalo a un'opzione nella sezione Costiera oppure aggiungi un tratto "Navigazione costiera".</span>
+            <span className="muted small">Tratto in nave: collegalo a un'opzione nella sezione Crociere oppure aggiungi un tratto "Navigazione costiera".</span>
           )}
           {leg.routingError && (
             <span className="error small" role="alert">

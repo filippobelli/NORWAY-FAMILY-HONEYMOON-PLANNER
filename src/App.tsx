@@ -17,7 +17,7 @@ const TABS = [
   { id: 'itinerario', label: 'Itinerario', icon: '🗺️' },
   { id: 'giornate', label: 'Giornate', icon: '📅' },
   { id: 'catalogo', label: 'Catalogo', icon: '📚' },
-  { id: 'costiera', label: 'Costiera', icon: '🚢' },
+  { id: 'crociere', label: 'Crociere', icon: '🚢' },
   { id: 'hytte', label: 'Hytte', icon: '🛖' },
   { id: 'budget', label: 'Budget', icon: '💶' },
   { id: 'scenari', label: 'Scenari', icon: '⚖️' },
@@ -26,7 +26,8 @@ const TABS = [
 type TabId = (typeof TABS)[number]['id'];
 
 function readHash(): TabId {
-  const h = window.location.hash.replace(/^#\/?/, '');
+  let h = window.location.hash.replace(/^#\/?/, '');
+  if (h === 'costiera') h = 'crociere'; // vecchio nome della sezione: i link salvati continuano a funzionare
   return (TABS.find((t) => t.id === h)?.id ?? 'itinerario') as TabId;
 }
 
@@ -105,7 +106,7 @@ function Shell() {
         {tab === 'itinerario' && <ItineraryView />}
         {tab === 'giornate' && <DaysView />}
         {tab === 'catalogo' && <CatalogView />}
-        {tab === 'costiera' && <CoastalView />}
+        {tab === 'crociere' && <CoastalView />}
         {tab === 'hytte' && <HytteView />}
         {tab === 'budget' && <BudgetView />}
         {tab === 'scenari' && <ScenariosView />}

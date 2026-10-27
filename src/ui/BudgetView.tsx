@@ -5,7 +5,7 @@ import type { BudgetCategory, BudgetItem, DataStatus, Money } from '../domain/ty
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
-const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Hytte', costiera: 'Da Costiera', trasporti: 'Da Itinerario', giornate: 'Da Giornate' } as const;
+const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Hytte', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate' } as const;
 
 export function BudgetView() {
   const { trip, update } = useTrip();

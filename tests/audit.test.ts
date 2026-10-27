@@ -302,3 +302,19 @@ test('testo Wikipedia: taglio su frase intera', async () => {
   assert.ok(t.length <= 302);
   assert.ok(t.endsWith('. …') || t.endsWith('.'));
 });
+
+test('Anteprima link: solo indirizzi pubblici e immagine dichiarata dalla pagina', async () => {
+  const { parseSafeUrl, findPreviewImage } = await import('../api/link-image');
+  assert.equal(parseSafeUrl('https://ut.no/hytte/101022071/babord')?.hostname, 'ut.no');
+  for (const bad of ['ftp://x.no/a', 'http://localhost:3000', 'http://127.0.0.1/', 'http://192.168.1.10/', 'http://10.0.0.1', 'http://169.254.169.254/latest', 'http://[::1]/', 'https://u:p@x.no', 'non un url', null]) {
+    assert.equal(parseSafeUrl(bad), null, String(bad));
+  }
+  const base = new URL('https://example.no/hytte/1');
+  assert.equal(
+    findPreviewImage('<head><meta name="twitter:image" content="https://cdn.no/t.jpg"><meta property="og:image" content="/img/a.jpg?x=1&amp;y=2"></head>', base),
+    'https://example.no/img/a.jpg?x=1&y=2',
+  );
+  assert.equal(findPreviewImage('<head><meta content="https://cdn.no/t.jpg" name="twitter:image"></head>', base), 'https://cdn.no/t.jpg');
+  assert.equal(findPreviewImage('<head><title>x</title></head>', base), null);
+  assert.equal(findPreviewImage('<meta property="og:image" content="javascript:alert(1)">', base), null);
+});
