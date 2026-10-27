@@ -844,6 +844,9 @@ details summary {
   display: grid;
   gap: 16px;
 }
+.configurator .panel > .row {
+  margin-top: 16px;
+}
 .field .field-label {
   font-size: 0.8rem;
   font-weight: 600;
