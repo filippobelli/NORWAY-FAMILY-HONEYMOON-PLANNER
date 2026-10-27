@@ -42,12 +42,21 @@ Differenze motivate rispetto allo stack di riferimento:
 - Prova reale: 1 account con email confermata, 1 viaggio salvato con proprietario corretto.
 - Advisor di sicurezza Supabase: nessun problema. Prestazioni: solo "indice non ancora usato" (normale su tabella vuota).
 
+## Salvataggio automatico (27/10/2026)
+
+- Ogni modifica: salvata subito sul dispositivo e nel cloud dopo ~2,5 s, con aggiornamento condizionato (`updated_at` atteso) che impedisce di sovrascrivere modifiche fatte altrove.
+- All'apertura, al ritorno in primo piano e al ritorno della rete: scarica le modifiche degli altri dispositivi se qui non ci sono modifiche pendenti; altrimenti mostra la scelta "Tieni questa versione / Usa la versione del cloud".
+- Offline: le modifiche restano segnate come da inviare (anche dopo chiusura) e partono alla prima occasione; nuovo tentativo ogni 30 s.
+- Dispositivo nuovo con viaggio vuoto: apre automaticamente il viaggio più recente del cloud.
+- Verificato con test nel browser su server simulato (13 controlli: primo invio, salvataggio automatico, download da altro dispositivo, conflitto senza sovrascrittura, scelta della versione, offline e invio dopo ricarica).
+- Mappa: sfondo passato a CARTO Voyager perché i tile OpenStreetMap rispondevano 403 aprendo il file con doppio clic.
+
 ## Limiti noti
 
 1. Catalogo e coordinate non verificati: non usarli come dati definitivi.
 2. I tempi OSRM sono teorici (senza soste, lavori, code ai traghetti).
 3. Le notti a bordo hanno una posizione indicativa sulla mappa.
-4. Il cloud salva il viaggio come documento JSON unico; nessun salvataggio automatico nel cloud (solo manuale, con controllo conflitti).
+4. Il cloud salva il viaggio come documento JSON unico (tabelle normalizzate previste in M6).
 5. Ricerca hytte senza prezzi né disponibilità: vanno verificati sul sito del fornitore.
 6. Le date sono provvisorie (1 agosto 2027) finché non vengono decise.
 

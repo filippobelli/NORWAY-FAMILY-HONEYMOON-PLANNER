@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DESTINATIONS } from '../data/destinations';
 import { coastalRoute } from '../domain/coastal';
 import type { Trip } from '../domain/types';
-import { loadLeaflet, TILE_ATTRIBUTION, TILE_URL, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
+import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
 import { MODE_COLOR, MODE_LABEL } from './common';
 
 interface Props {
@@ -30,7 +30,7 @@ export function MapView({ trip, onAddDestination, height = 460 }: Props) {
       .then((L) => {
         if (cancelled || !el.current) return;
         const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true }).setView([65, 13], 4);
-        L.tileLayer(TILE_URL, { maxZoom: 18, attribution: TILE_ATTRIBUTION }).addTo(map);
+        L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
         const layer = L.layerGroup().addTo(map);
         mapRef.current = { L, map, layer };
         setState('pronta');

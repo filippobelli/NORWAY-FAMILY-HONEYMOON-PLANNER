@@ -21,6 +21,19 @@ interface OsrmResponse {
   routes?: { distance: number; duration: number; legs: { steps: OsrmStep[] }[] }[];
 }
 
+/** Riduce i punti del tracciato (per tenere leggero il salvataggio) mantenendo primo e ultimo; 5 decimali ≈ 1 m. */
+export function simplifyLine(pts: [number, number][], max: number): [number, number][] {
+  const r = (n: number) => Math.round(n * 1e5) / 1e5;
+  if (pts.length <= max) return pts.map(([a, b]) => [r(a), r(b)]);
+  const step = (pts.length - 1) / (max - 1);
+  const out: [number, number][] = [];
+  for (let i = 0; i < max; i++) {
+    const p = pts[Math.round(i * step)]!;
+    out.push([r(p[0]), r(p[1])]);
+  }
+  return out;
+}
+
 /** Raggruppa gli step OSRM consecutivi per modalità (driving / ferry) in segmenti del planner. */
 export function stepsToSegments(steps: OsrmStep[], checkedAt: string, providerLabel: string): Segment[] {
   const groups: { mode: 'strada' | 'traghetto'; steps: OsrmStep[] }[] = [];
@@ -34,8 +47,9 @@ export function stepsToSegments(steps: OsrmStep[], checkedAt: string, providerLa
     .map((g): Segment => {
       const distance = g.steps.reduce((a, s) => a + s.distance, 0);
       const duration = g.steps.reduce((a, s) => a + s.duration, 0);
-      const geometry: [number, number][] = [];
-      for (const s of g.steps) for (const [lng, lat] of s.geometry?.coordinates ?? []) geometry.push([lat, lng]);
+      const full: [number, number][] = [];
+      for (const s of g.steps) for (const [lng, lat] of s.geometry?.coordinates ?? []) full.push([lat, lng]);
+      const geometry = simplifyLine(full, 400);
       const ferryName = g.steps.find((s) => s.name)?.name;
       const isFerry = g.mode === 'traghetto';
       return {

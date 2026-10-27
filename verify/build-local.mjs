@@ -24,8 +24,8 @@ const js = r.outputFiles.find((f) => f.path.endsWith('.js')).text;
 const css = r.outputFiles.find((f) => f.path.endsWith('.css'))?.text ?? '';
 let html = readFileSync(resolve(root, 'index.html'), 'utf8');
 html = html.replace('<script type="module" src="/src/main.tsx"></script>', '')
-  .replace('</head>', `<style>${css}</style></head>`)
-  .replace('</body>', `<script>${js.replace(/<\/script/g, '<\\/script')}</script></body>`);
+  .replace('</head>', () => `<style>${css}</style></head>`)
+  .replace('</body>', () => `<script>${js.replace(/<\/script/g, '<\\/script')}</script></body>`);
 mkdirSync(resolve(root, 'dist-local'), { recursive: true });
 writeFileSync(resolve(root, 'dist-local/index.html'), html);
 console.log('dist-local/index.html', (html.length / 1024).toFixed(0), 'KB');

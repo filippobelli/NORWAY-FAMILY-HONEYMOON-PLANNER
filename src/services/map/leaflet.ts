@@ -69,5 +69,12 @@ export function loadLeaflet(timeoutMs = 15000): Promise<LeafletApi> {
   return loading;
 }
 
-export const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-export const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">contributori OpenStreetMap</a>';
+// Sfondo CARTO Voyager (dati OpenStreetMap). I tile di tile.openstreetmap.org rispondono 403
+// quando la pagina non invia un Referer (es. file aperto con doppio clic), per policy OSM.
+export const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+export const TILE_OPTIONS = {
+  subdomains: 'abcd',
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">contributori OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+};

@@ -122,8 +122,28 @@ code {
   border-radius: 999px;
   background: rgb(255 255 255 / 12%);
 }
+.save-state {
+  color: #fff;
+  text-decoration: none;
+}
+.save-errore,
+.save-offline,
+.save-conflitto,
+.save-non_connesso {
+  background: #9a5b00;
+}
 .save-errore {
   background: var(--danger);
+}
+.save-sincronizzato {
+  background: rgb(31 122 77 / 70%);
+}
+.conflict {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tabs {

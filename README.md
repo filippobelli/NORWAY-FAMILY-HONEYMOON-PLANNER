@@ -12,7 +12,7 @@ Contesto e regole del progetto: [CLAUDE.md](CLAUDE.md). Stato di avanzamento e l
 - **Navigazione costiera**: fatti verificati su Hurtigruten e Havila (27/10/2026), 34 porti della rotta, confronto di opzioni con prezzo, stato, cabina, pasti, note per la famiglia; collegamento ai tratti e al budget.
 - **Hytte**: ricerca strutture vicine su OpenStreetMap, link precompilati a Google Maps / Booking / Airbnb con date e bambini, scheda completa della sistemazione, stato (individuata → prenotata), alternative per tappa.
 - **Budget**: voci manuali + voci derivate da hytte, costiera, traghetti, carburante e attività; totale, media giornaliera, suddivisione per categoria e per stato (confermato, stimato, da verificare, prenotato, pagato); conversione NOK→EUR.
-- **Salvataggio**: automatico nel browser; backup JSON; cloud Supabase opzionale con login e controllo dei conflitti.
+- **Salvataggio**: automatico sul dispositivo e nel cloud Supabase (dopo l'accesso), con gestione dei conflitti tra dispositivi e invio delle modifiche fatte offline; backup JSON.
 
 L'app non effettua prenotazioni o acquisti e non inventa prezzi, orari o disponibilità.
 
@@ -41,9 +41,10 @@ Già configurato: progetto `norway-planner` (Francoforte, piano Free), tabella `
 Le registrazioni sono chiuse: possono accedere solo gli indirizzi presenti in `private.allowed_emails`.
 
 1. Avvia l'app con `npm run dev`.
-2. Apri la sezione **Salvataggio**, inserisci email e password e clicca **Accedi**.
-3. Clicca **Salva nel cloud**: compare la data di salvataggio confermata dal server.
-4. Su un altro dispositivo: **Accedi** → **Viaggi salvati nel cloud** → **Carica**.
+2. Apri la sezione **Salvataggio**, inserisci email e password e clicca **Accedi** (una volta per dispositivo).
+3. Da quel momento il salvataggio è automatico: ogni modifica arriva nel cloud dopo circa 3 secondi. L'intestazione mostra "Salvato nel cloud · ora".
+4. Su un altro dispositivo basta accedere: il viaggio si apre da solo e si aggiorna quando torni nell'app.
+5. Se lo stesso viaggio viene modificato su due dispositivi prima della sincronizzazione, compare un avviso e scegli quale versione tenere: nessuna sovrascrittura silenziosa.
 
 Per autorizzare un'altra persona:
 
@@ -58,7 +59,7 @@ Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Edi
 | Servizio | Uso | Note |
 |---|---|---|
 | routing.openstreetmap.de (OSRM, FOSSGIS) | Distanze e tempi stradali, traghetti | Max 1 richiesta/s, nessun uso massivo, attribuzione obbligatoria |
-| tile.openstreetmap.org | Sfondo mappa | Attribuzione OSM |
+| basemaps.cartocdn.com (CARTO Voyager) | Sfondo mappa | Attribuzione OSM e CARTO; funziona anche aprendo il file con doppio clic |
 | unpkg.com (Leaflet 1.9.4) | Libreria mappa | Caricata al primo uso |
 | overpass-api.de + 2 mirror | Hytte e campeggi vicini | Servizio pubblico spesso sovraccarico |
 | Supabase (progetto `norway-planner`) | Login e salvataggio cloud | Email di conferma obbligatoria alla registrazione |

@@ -1,39 +1,10 @@
 import { useRef, useState } from 'react';
 import { createEmptyTrip } from '../domain/defaults';
 import { exportTripFile, readTripFile } from '../services/storage/local';
-import {
-  CloudError,
-  getCloudConfig,
-  getCloudTripMeta,
-  isConfigFromEnv,
-  listCloudTrips,
-  loadCloudTrip,
-  loadSession,
-  saveCloudConfig,
-  saveCloudTrip,
-  signIn,
-  signOut,
-  type CloudSession,
-  type CloudTripRow,
-} from '../services/storage/supabase';
+import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, signOut, type CloudTripRow } from '../services/storage/supabase';
+import { useCloudSync } from '../state/cloudSync';
 import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, NumberInput } from './common';
-
-const syncKey = (id: string) => `nfhp.cloud.lastSync.${id}`;
-const getLastSync = (id: string) => {
-  try {
-    return localStorage.getItem(syncKey(id)) ?? undefined;
-  } catch {
-    return undefined;
-  }
-};
-const setLastSync = (id: string, v: string) => {
-  try {
-    localStorage.setItem(syncKey(id), v);
-  } catch {
-    /* ignorato */
-  }
-};
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
@@ -159,16 +130,17 @@ export function SettingsView() {
 }
 
 function CloudPanel() {
-  const { trip, replace, toast } = useTrip();
-  const [cfg, setCfg] = useState(getCloudConfig);
-  const [session, setSession] = useState<CloudSession | undefined>(loadSession);
+  const { trip, toast } = useTrip();
+  const cloud = useCloudSync();
+  const cfg = cloud.config;
+  const session = cloud.session;
   const [url, setUrl] = useState(cfg?.url ?? '');
   const [key, setKey] = useState(cfg?.anonKey ?? '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [rows, setRows] = useState<CloudTripRow[] | null>(null);
-  const [lastSync, setLastSyncState] = useState(() => getLastSync(trip.id));
+  const [confirmLoad, setConfirmLoad] = useState<string | null>(null);
 
   const run = async (fn: () => Promise<void>) => {
     setBusy(true);
@@ -177,28 +149,11 @@ function CloudPanel() {
     } catch (e) {
       const msg = e instanceof CloudError ? e.message : `Errore: ${(e as Error).message}`;
       toast(msg, 'errore');
-      if (e instanceof CloudError && e.status === 401) setSession(loadSession());
+      if (e instanceof CloudError && e.status === 401) cloud.setSession(undefined);
     } finally {
       setBusy(false);
     }
   };
-
-  const doSave = () =>
-    run(async () => {
-      if (!cfg) return;
-      const remote = await getCloudTripMeta(cfg, trip.id);
-      const known = getLastSync(trip.id);
-      if (remote && (!known || remote.updated_at > known)) {
-        const ok = window.confirm(
-          `Nel cloud c'è una versione di questo viaggio modificata il ${fmtDateTime(remote.updated_at)}, più recente dell'ultima sincronizzazione da questo dispositivo.\n\nOK = sovrascrivi il cloud con la versione locale\nAnnulla = non salvare (potrai caricare quella del cloud)`,
-        );
-        if (!ok) return;
-      }
-      const at = await saveCloudTrip(cfg, trip);
-      setLastSync(trip.id, at);
-      setLastSyncState(at);
-      toast(`Salvato nel cloud (${fmtDateTime(at)})`);
-    });
 
   if (!cfg) {
     return (
@@ -208,11 +163,11 @@ function CloudPanel() {
         </h2>
         <p>
           Stai usando la <strong>modalità locale</strong>: i dati sono salvati solo in questo browser. Per ritrovarli da altri dispositivi collega un
-          progetto Supabase (gratuito) seguendo il README, poi inserisci qui URL e anon key — oppure impostale nel file <code>.env.local</code>.
+          progetto Supabase seguendo il README, poi inserisci qui URL e chiave pubblica — oppure impostale nel file <code>.env</code>.
         </p>
         <div className="grid-2">
           <Field label="URL progetto Supabase">{(id) => <input id={id} type="url" placeholder="https://xxxx.supabase.co" value={url} onChange={(e) => setUrl(e.target.value)} />}</Field>
-          <Field label="Anon key (pubblica)" hint="Mai la service_role key">
+          <Field label="Chiave pubblica (publishable o anon)" hint="Mai la secret/service_role key">
             {(id) => <input id={id} value={key} onChange={(e) => setKey(e.target.value)} autoComplete="off" />}
           </Field>
         </div>
@@ -221,7 +176,7 @@ function CloudPanel() {
           disabled={!/^https:\/\/.+/.test(url) || key.length < 20}
           onClick={() => {
             saveCloudConfig({ url, anonKey: key });
-            setCfg(getCloudConfig());
+            cloud.reloadConfig();
           }}
         >
           Collega
@@ -233,7 +188,7 @@ function CloudPanel() {
   return (
     <section className="panel">
       <h2>
-        Salvataggio cloud <Badge tone="info">Supabase</Badge>
+        Salvataggio cloud <CloudBadge />
       </h2>
       <p className="muted small">
         Progetto: {cfg.url} {isConfigFromEnv() ? '(da .env)' : ''}
@@ -242,7 +197,7 @@ function CloudPanel() {
             className="link-btn"
             onClick={() => {
               saveCloudConfig(undefined);
-              setCfg(undefined);
+              cloud.reloadConfig();
             }}
           >
             scollega
@@ -256,8 +211,9 @@ function CloudPanel() {
             e.preventDefault();
             void run(async () => {
               const s = await signIn(cfg, email, password);
-              setSession(s);
-              toast('Accesso effettuato');
+              cloud.setSession(s);
+              setPassword('');
+              toast('Accesso effettuato: da ora ogni modifica viene salvata anche nel cloud');
             });
           }}
         >
@@ -269,8 +225,9 @@ function CloudPanel() {
             <button className="btn btn-primary" type="submit" disabled={busy || !email || password.length < 6}>
               Accedi
             </button>
-
+            <span className="muted small">Accesso riservato agli account autorizzati.</span>
           </div>
+          {cloud.error && <p className="error small">{cloud.error}</p>}
         </form>
       ) : (
         <>
@@ -281,17 +238,21 @@ function CloudPanel() {
               onClick={() =>
                 run(async () => {
                   await signOut(cfg, session);
-                  setSession(undefined);
+                  cloud.setSession(undefined);
                 })
               }
             >
               esci
             </button>
           </p>
-          <p className="muted small">Ultima sincronizzazione di questo viaggio da qui: {lastSync ? fmtDateTime(lastSync) : 'mai'}</p>
+          <p className="muted small">
+            Salvataggio automatico: ogni modifica arriva nel cloud dopo pochi secondi. Ultima sincronizzazione:{' '}
+            {cloud.lastSyncAt ? fmtDateTime(cloud.lastSyncAt) : 'mai'}.
+          </p>
+          {cloud.error && <p className="error small">{cloud.error}</p>}
           <div className="row wrap">
-            <button className="btn btn-primary" disabled={busy} onClick={doSave}>
-              {busy ? 'Attendi…' : 'Salva nel cloud'}
+            <button className="btn" disabled={busy || cloud.status === 'in_corso'} onClick={cloud.syncNow}>
+              Sincronizza ora
             </button>
             <button className="btn" disabled={busy} onClick={() => run(async () => setRows(await listCloudTrips(cfg)))}>
               Viaggi salvati nel cloud
@@ -304,24 +265,33 @@ function CloudPanel() {
                 <li key={r.id}>
                   <div>
                     <strong>{r.title}</strong> <span className="muted small">modificato {fmtDateTime(r.updated_at)}</span>{' '}
-                    {r.id === trip.id && <Badge tone="info">questo</Badge>}
+                    {r.id === trip.id && <Badge tone="info">aperto</Badge>}
                   </div>
-                  <button
-                    className="btn btn-small"
-                    disabled={busy}
-                    onClick={() =>
-                      run(async () => {
-                        if (!window.confirm(`Caricare "${r.title}" dal cloud? Il viaggio aperto in questo browser verrà sostituito.`)) return;
-                        const { trip: t, updatedAt } = await loadCloudTrip(cfg, r.id);
-                        replace(t);
-                        setLastSync(t.id, updatedAt);
-                        setLastSyncState(updatedAt);
-                        toast('Viaggio caricato dal cloud');
-                      })
-                    }
-                  >
-                    Carica
-                  </button>
+                  {r.id !== trip.id &&
+                    (confirmLoad === r.id ? (
+                      <span className="row tight">
+                        <button
+                          className="btn btn-small btn-primary"
+                          disabled={busy}
+                          onClick={() =>
+                            run(async () => {
+                              await cloud.loadTrip(r.id);
+                              setConfirmLoad(null);
+                              toast('Viaggio aperto dal cloud');
+                            })
+                          }
+                        >
+                          Conferma apertura
+                        </button>
+                        <button className="btn btn-small" onClick={() => setConfirmLoad(null)}>
+                          Annulla
+                        </button>
+                      </span>
+                    ) : (
+                      <button className="btn btn-small" disabled={busy} onClick={() => setConfirmLoad(r.id)}>
+                        Apri
+                      </button>
+                    ))}
                 </li>
               ))}
             </ul>
@@ -330,4 +300,19 @@ function CloudPanel() {
       )}
     </section>
   );
+}
+
+export function CloudBadge() {
+  const { status } = useCloudSync();
+  const map = {
+    non_configurato: ['warn', 'non configurato'],
+    non_connesso: ['warn', 'accesso richiesto'],
+    sincronizzato: ['ok', 'sincronizzato'],
+    in_attesa: ['info', 'in salvataggio'],
+    in_corso: ['info', 'in salvataggio'],
+    offline: ['warn', 'non raggiungibile'],
+    conflitto: ['warn', 'da risolvere'],
+  } as const;
+  const [tone, label] = map[status];
+  return <Badge tone={tone}>{label}</Badge>;
 }

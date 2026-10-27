@@ -232,3 +232,35 @@ export async function saveCloudTrip(cfg: CloudConfig, trip: Trip): Promise<strin
   if (!updatedAt) throw new CloudError('Il server non ha confermato il salvataggio');
   return updatedAt;
 }
+
+export type ConditionalSaveResult = { kind: 'salvato'; updatedAt: string } | { kind: 'conflitto' };
+
+/**
+ * Salvataggio con controllo di concorrenza ottimistico (nessuna sovrascrittura silenziosa):
+ * - viaggio mai sincronizzato da qui (knownUpdatedAt assente): INSERT; se esiste già → conflitto;
+ * - altrimenti UPDATE solo se nel cloud c'è ancora la versione nota; se è cambiata → conflitto.
+ */
+export async function saveCloudTripIfUnchanged(
+  cfg: CloudConfig,
+  trip: Trip,
+  knownUpdatedAt: string | undefined,
+  opts: { keepalive?: boolean } = {},
+): Promise<ConditionalSaveResult> {
+  const s = await validSession(cfg);
+  const body = JSON.stringify({ id: trip.id, title: trip.title, schema_version: trip.schemaVersion, data: trip });
+  const keepalive = Boolean(opts.keepalive) && body.length < 60_000;
+  const headers = { Prefer: 'return=representation' };
+  const res = knownUpdatedAt
+    ? await call(
+        cfg,
+        `/rest/v1/trips?id=eq.${encodeURIComponent(trip.id)}&updated_at=eq.${encodeURIComponent(knownUpdatedAt)}&select=updated_at`,
+        { method: 'PATCH', token: s.accessToken, headers, body, keepalive },
+      )
+    : await call(cfg, '/rest/v1/trips?select=updated_at', { method: 'POST', token: s.accessToken, headers, body, keepalive });
+  if (res.status === 409) return { kind: 'conflitto' };
+  if (!res.ok) throw await restError(res);
+  const rows = (await res.json()) as { updated_at?: string }[];
+  const updatedAt = rows[0]?.updated_at;
+  if (!updatedAt) return { kind: 'conflitto' };
+  return { kind: 'salvato', updatedAt };
+}

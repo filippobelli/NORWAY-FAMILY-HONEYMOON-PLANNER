@@ -149,15 +149,15 @@ export function tripWarnings(trip: Trip): TripWarning[] {
     out.push({ level: 'attenzione', text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}.` });
   }
   const uncalculated = trip.legs.filter((l) => legTotals(l).hasUncalculated).length;
-  if (uncalculated > 0) out.push({ level: 'attenzione', text: `${uncalculated} collegamenti non ancora calcolati.` });
+  if (uncalculated > 0) out.push({ level: 'attenzione', text: uncalculated === 1 ? '1 collegamento non ancora calcolato.' : `${uncalculated} collegamenti non ancora calcolati.` });
 
   const ferriesNoTime = trip.legs.flatMap((l) => l.segments).filter((s) => s.mode === 'traghetto' && !s.departureTime).length;
   if (ferriesNoTime > 0) {
-    out.push({ level: 'info', text: `${ferriesNoTime} traghetti senza orario verificato: controlla gli orari dell'operatore.` });
+    out.push({ level: 'info', text: `${ferriesNoTime === 1 ? '1 traghetto' : `${ferriesNoTime} traghetti`} senza orario verificato: controlla gli orari dell'operatore.` });
   }
 
   const noBed = trip.stops.filter((s) => s.kind === 'luogo' && s.nights > 0 && !s.accommodationId).length;
-  if (noBed > 0) out.push({ level: 'info', text: `${noBed} tappe con pernottamento senza alloggio associato.` });
+  if (noBed > 0) out.push({ level: 'info', text: noBed === 1 ? '1 tappa con pernottamento senza alloggio associato.' : `${noBed} tappe con pernottamento senza alloggio associato.` });
 
   let run = 0;
   let maxRun = 0;

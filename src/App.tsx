@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
-import { getCloudConfig } from './services/storage/supabase';
+import { CloudSyncProvider, useCloudSync, type CloudStatus } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
+import { fmtDateTime } from './ui/common';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
 import { CoastalView } from './ui/CoastalView';
@@ -30,7 +31,9 @@ function readHash(): TabId {
 export default function App() {
   return (
     <TripProvider>
-      <Shell />
+      <CloudSyncProvider>
+        <Shell />
+      </CloudSyncProvider>
     </TripProvider>
   );
 }
@@ -45,7 +48,7 @@ function Shell() {
   }, []);
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
-  const cloud = Boolean(getCloudConfig());
+  const cloud = useCloudSync();
 
   return (
     <div className="app">
@@ -62,11 +65,9 @@ function Shell() {
             </p>
           </div>
         </div>
-        <div className={`save-state save-${localState}`} role="status">
-          {localState === 'salvato' && (cloud ? 'Salvato in locale · cloud manuale' : 'Modalità locale · salvato in questo browser')}
-          {localState === 'in_attesa' && 'Salvataggio…'}
-          {localState === 'errore' && 'Salvataggio locale NON riuscito'}
-        </div>
+        <a href="#/viaggio" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
+          {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+        </a>
       </header>
       <nav className="tabs" aria-label="Sezioni">
         {TABS.map((t) => (
@@ -75,6 +76,22 @@ function Shell() {
           </a>
         ))}
       </nav>
+      {cloud.status === 'conflitto' && (
+        <div className="note-warn banner conflict" role="alert">
+          <span>
+            Questo viaggio è stato modificato sia qui sia su un altro dispositivo
+            {cloud.conflictRemoteAt ? ` (cloud: ${fmtDateTime(cloud.conflictRemoteAt)})` : ''}. Il salvataggio automatico è in pausa finché non scegli:
+          </span>
+          <span className="row wrap">
+            <button className="btn btn-small btn-primary" onClick={cloud.keepLocal}>
+              Tieni questa versione
+            </button>
+            <button className="btn btn-small" onClick={cloud.useRemote}>
+              Usa la versione del cloud
+            </button>
+          </span>
+        </div>
+      )}
       {loadError && (
         <div className="note-warn banner" role="alert">
           {loadError}
@@ -98,4 +115,23 @@ function Shell() {
       </div>
     </div>
   );
+}
+
+function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus, lastSyncAt?: string): string {
+  if (local === 'errore') return 'Salvataggio su questo dispositivo NON riuscito';
+  switch (cloud) {
+    case 'non_configurato':
+      return 'Modalità locale · salvato su questo dispositivo';
+    case 'non_connesso':
+      return 'Salvato solo qui · accedi per il cloud';
+    case 'in_attesa':
+    case 'in_corso':
+      return 'Salvataggio nel cloud…';
+    case 'sincronizzato':
+      return lastSyncAt ? `Salvato nel cloud · ${new Date(lastSyncAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}` : 'Salvato nel cloud';
+    case 'offline':
+      return 'Cloud non raggiungibile · salvato qui, riprovo';
+    case 'conflitto':
+      return 'Sincronizzazione in pausa';
+  }
 }

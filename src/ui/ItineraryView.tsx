@@ -99,7 +99,7 @@ export function ItineraryView() {
           <div>
             <h2>Tappe</h2>
             <p className="muted">
-              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} tappe`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
+              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
             </p>
           </div>
           <div className="row">
@@ -150,7 +150,7 @@ export function ItineraryView() {
       <section className="panel map-panel">
         <MapView trip={trip} onAddDestination={(id) => addStop(stopFromDestination(id))} />
         <p className="muted small">
-          Percorsi: OSRM (routing.openstreetmap.de), © contributori OpenStreetMap. Coordinate del catalogo approssimative. Le linee
+          Mappa © OpenStreetMap e CARTO. Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
           tratteggiate sottili indicano collegamenti senza tracciato e non rappresentano distanze.
         </p>
       </section>
