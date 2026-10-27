@@ -16,8 +16,8 @@ import { addScenarioWithPlan } from '../domain/scenarios';
 import type { Region } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
+import { RegionPicker } from './RegionMap';
 
-const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 const PACE_LABEL: Record<Pace, string> = { tranquillo: 'Tranquillo', equilibrato: 'Equilibrato', intenso: 'Intenso' };
 const PACE_HINT: Record<Pace, string> = {
   tranquillo: 'Almeno 3 notti per tappa',
@@ -184,19 +184,13 @@ export function ConfiguratorView() {
         </fieldset>
 
         <fieldset className="chips-field">
-          <legend>Regioni da esplorare (quelle degli aeroporti sono sempre comprese)</legend>
-          <div className="chips">
-            {REGIONS.map((r) => (
-              <label key={r} className={`chip ${input.regions.includes(r) ? 'on' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={input.regions.includes(r)}
-                  onChange={(e) => set({ regions: e.target.checked ? [...input.regions, r] : input.regions.filter((x) => x !== r) })}
-                />
-                {r}
-              </label>
-            ))}
-          </div>
+          <legend>Regioni da esplorare</legend>
+          <RegionPicker
+            selected={input.regions}
+            forced={[...new Set([findDestination(input.arrivalAirportId)?.region, findDestination(input.departureAirportId)?.region].filter((r): r is Region => Boolean(r)))]}
+            airportIds={[...new Set([input.arrivalAirportId, input.departureAirportId])]}
+            onToggle={(r) => set({ regions: input.regions.includes(r) ? input.regions.filter((x) => x !== r) : [...input.regions, r] })}
+          />
         </fieldset>
 
         <fieldset className="chips-field">

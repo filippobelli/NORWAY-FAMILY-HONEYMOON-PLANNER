@@ -16,6 +16,10 @@ export interface LLayer {
   bindPopup(content: string | HTMLElement): LLayer;
   on(event: string, fn: () => void): LLayer;
 }
+export interface LPath extends LLayer {
+  setStyle(style: Record<string, unknown>): LPath;
+  bringToFront(): LPath;
+}
 export interface LLayerGroup {
   addTo(map: LMap): LLayerGroup;
   clearLayers(): void;
@@ -37,6 +41,7 @@ export interface LeafletApi {
   marker(ll: [number, number], opts: Record<string, unknown>): LLayer;
   divIcon(opts: Record<string, unknown>): unknown;
   polyline(lls: [number, number][], opts: Record<string, unknown>): LLayer;
+  polygon(lls: [number, number][][], opts: Record<string, unknown>): LPath;
   latLngBounds(lls: [number, number][]): LBounds;
 }
 

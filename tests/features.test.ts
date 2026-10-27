@@ -128,3 +128,27 @@ test('Configuratore: mezzi a scelta libera', () => {
   assert.equal(scenarioKindFor(['auto', 'nave']), 'auto_traghetti_costiera');
   assert.equal(scenarioKindFor(['treno', 'bus']), 'misto_treni');
 });
+
+test('Regioni: ogni destinazione con posizione verificata cade nelle contee della sua regione', async () => {
+  const { COUNTIES, REGION_COUNTIES } = await import('../src/data/regionShapes');
+  const { DESTINATIONS } = await import('../src/data/destinations');
+  const inside = (lat: number, lng: number, ring: [number, number][]) => {
+    let c = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [yi, xi] = ring[i]!;
+      const [yj, xj] = ring[j]!;
+      if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  };
+  const wrong: string[] = [];
+  for (const d of DESTINATIONS.filter((x) => x.coordsStatus === 'verificate')) {
+    const nrs = REGION_COUNTIES[d.region];
+    const ok = COUNTIES.filter((c) => nrs.includes(c.nr)).some((c) => c.rings.some((r) => inside(d.lat, d.lng, r)));
+    if (!ok) {
+      const real = COUNTIES.find((c) => c.rings.some((r) => inside(d.lat, d.lng, r)))?.name ?? 'fuori dai confini semplificati';
+      wrong.push(`${d.name} (${d.region} → ${real})`);
+    }
+  }
+  assert.deepEqual(wrong, []);
+});
