@@ -284,3 +284,21 @@ test('catalogo: identificativi unici, coordinate in Norvegia, fonti per le coord
   }
   assert.ok(DESTINATIONS.filter((x) => x.coordsStatus === 'verificate').length >= 60);
 });
+
+test('foto e testi: ogni collegamento Wikidata corrisponde a una destinazione del catalogo', async () => {
+  const { WIKI } = await import('../src/data/wiki');
+  const ids = new Set(DESTINATIONS.map((d) => d.id));
+  for (const [k, v] of Object.entries(WIKI)) {
+    assert.ok(ids.has(k), `chiave sconosciuta: ${k}`);
+    assert.match(v.qid, /^Q\d+$/);
+  }
+  assert.ok(Object.values(WIKI).filter((v) => v.image).length >= 65, 'almeno 65 destinazioni con foto');
+});
+
+test('testo Wikipedia: taglio su frase intera', async () => {
+  const { trimToSentences } = await import('../src/services/wiki');
+  const long = 'Prima frase lunga abbastanza. '.repeat(60);
+  const t = trimToSentences(long, 300);
+  assert.ok(t.length <= 302);
+  assert.ok(t.endsWith('. …') || t.endsWith('.'));
+});

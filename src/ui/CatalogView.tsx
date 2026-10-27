@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS } from '../data/destinations';
-import type { Category, Region } from '../domain/types';
+import { WIKI } from '../data/wiki';
+import type { Category, Destination, Region } from '../domain/types';
+import { commonsImageUrl, fetchImageCredit, fetchWikiIntro, type ImageCredit, type WikiIntro } from '../services/wiki';
 import { useTrip } from '../state/store';
 import { Badge } from './common';
 import { stopFromDestination } from './ItineraryView';
@@ -15,6 +17,7 @@ export function CatalogView() {
   const [region, setRegion] = useState<Region | ''>('');
   const [kids, setKids] = useState(false);
   const [onlyFav, setOnlyFav] = useState(false);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const list = useMemo(() => {
     const qq = q.trim().toLowerCase();
@@ -61,81 +64,215 @@ export function CatalogView() {
         </label>
       </div>
       <p className="muted small">{list.length} risultati</p>
-      <div className="cards">
-        {list.map((d) => {
-          const fav = trip.favorites.includes(d.id);
-          return (
-            <article key={d.id} className="card">
-              <header>
-                <div>
-                  <h3>{d.name}</h3>
-                  {d.localName && <span className="muted small">{d.localName}</span>}
-                </div>
-                <button
-                  className={`icon-btn fav ${fav ? 'on' : ''}`}
-                  aria-pressed={fav}
-                  aria-label={fav ? 'Togli dai preferiti' : 'Aggiungi ai preferiti'}
-                  onClick={() =>
-                    update((t) => ({ ...t, favorites: fav ? t.favorites.filter((x) => x !== d.id) : [...t.favorites, d.id] }))
-                  }
-                >
-                  {fav ? '★' : '☆'}
-                </button>
-              </header>
-              <div className="tags">
-                <Badge>{CATEGORY_LABEL[d.category]}</Badge>
-                <Badge>{d.region}</Badge>
-                <Badge tone={d.kidScore === 3 ? 'ok' : d.kidScore === 1 ? 'warn' : 'neutral'}>{KID_LABEL[d.kidScore]}</Badge>
-              </div>
-              <p>{d.description}</p>
-              <dl className="facts">
-                <dt>Come arrivare</dt>
-                <dd>{d.access}</dd>
-                <dt>Stagione</dt>
-                <dd>{d.season}</dd>
-                {d.visitHours && (
-                  <>
-                    <dt>Durata indicativa</dt>
-                    <dd>
-                      {d.visitHours[0] === d.visitHours[1] ? d.visitHours[0] : `${d.visitHours[0]}–${d.visitHours[1]}`} ore
-                    </dd>
-                  </>
-                )}
-                <dt>Difficoltà</dt>
-                <dd>{d.difficulty}</dd>
-              </dl>
-              {d.augustNote && <p className="note-warn small">⚠️ {d.augustNote}</p>}
-              <footer>
-                <span className="tags">
-                  <Badge tone={d.coordsStatus === 'verificate' ? 'ok' : 'warn'}>
-                    {d.coordsStatus === 'verificate' ? 'Posizione verificata' : 'Posizione approssimativa'}
-                  </Badge>
-                  <Badge tone="warn">Scheda da verificare</Badge>
-                  {d.sources[0]?.url && (
-                    <a className="small" href={d.sources[0].url} target="_blank" rel="noreferrer">
-                      OSM ↗
-                    </a>
-                  )}
-                </span>
-                <button
-                  className="btn btn-small btn-primary"
-                  disabled={d.id === 'aurora'}
-                  title={d.id === 'aurora' ? 'Non realistica ad agosto' : undefined}
-                  onClick={() => {
-                    const s = stopFromDestination(d.id);
-                    if (s) {
-                      update((t) => ({ ...t, stops: [...t.stops, s] }));
-                      toast(`${d.name} aggiunta all'itinerario`);
-                    }
-                  }}
-                >
-                  {inTrip.has(d.id) ? 'Aggiungi di nuovo' : 'Aggiungi all\'itinerario'}
-                </button>
-              </footer>
-            </article>
-          );
-        })}
+      <div className="cards catalog-cards">
+        {list.map((d) => (
+          <DestinationCard
+            key={d.id}
+            d={d}
+            open={openId === d.id}
+            onToggle={() => setOpenId((cur) => (cur === d.id ? null : d.id))}
+            fav={trip.favorites.includes(d.id)}
+            inTrip={inTrip.has(d.id)}
+            onFav={() =>
+              update((t) => ({ ...t, favorites: t.favorites.includes(d.id) ? t.favorites.filter((x) => x !== d.id) : [...t.favorites, d.id] }))
+            }
+            onAdd={() => {
+              const st = stopFromDestination(d.id);
+              if (st) {
+                update((t) => ({ ...t, stops: [...t.stops, st] }));
+                toast(`${d.name} aggiunta all'itinerario`);
+              }
+            }}
+          />
+        ))}
       </div>
     </div>
+  );
+}
+
+const CATEGORY_ICON: Record<Category, string> = {
+  citta: '🏘️',
+  fiordi: '🌊',
+  natura: '🏔️',
+  strade: '🛣️',
+  isole: '🏝️',
+  treni: '🚆',
+  fauna: '🐋',
+  musei: '🏛️',
+  parchi: '🎡',
+  stagionali: '✨',
+  aeroporti: '✈️',
+};
+
+function DestinationCard({
+  d,
+  open,
+  onToggle,
+  fav,
+  inTrip,
+  onFav,
+  onAdd,
+}: {
+  d: Destination;
+  open: boolean;
+  onToggle: () => void;
+  fav: boolean;
+  inTrip: boolean;
+  onFav: () => void;
+  onAdd: () => void;
+}) {
+  const wiki = WIKI[d.id];
+  const [imgOk, setImgOk] = useState(true);
+  const [intro, setIntro] = useState<WikiIntro | null | undefined>(undefined);
+  const [credit, setCredit] = useState<ImageCredit | undefined>(undefined);
+  const [loadError, setLoadError] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+  const panelId = `dest-${d.id}`;
+
+  // Testo e crediti si scaricano solo quando la scheda viene aperta
+  useEffect(() => {
+    if (!open || !wiki) return;
+    const ac = new AbortController();
+    setLoadError(false);
+    fetchWikiIntro(wiki, ac.signal)
+      .then((r) => setIntro(r ?? null))
+      .catch((e: unknown) => {
+        if ((e as Error).name !== 'AbortError') setLoadError(true);
+      });
+    if (wiki.image) {
+      fetchImageCredit(wiki.image, ac.signal)
+        .then(setCredit)
+        .catch(() => undefined);
+    }
+    return () => ac.abort();
+  }, [open, wiki]);
+
+  useEffect(() => {
+    if (open) ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [open]);
+
+  const photo =
+    wiki?.image && imgOk ? (
+      <img src={commonsImageUrl(wiki.image, open ? 960 : 480)} alt={`Foto: ${d.name}`} loading="lazy" decoding="async" onError={() => setImgOk(false)} />
+    ) : (
+      <div className={`photo-placeholder cat-${d.category}`} aria-hidden>
+        <span>{CATEGORY_ICON[d.category]}</span>
+      </div>
+    );
+
+  return (
+    <article ref={ref} className={`card dest ${open ? 'dest-open' : ''}`}>
+      <button type="button" className="dest-head" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
+        <span className="dest-photo">{photo}</span>
+        <span className="dest-title">
+          <span className="dest-name">{d.name}</span>
+          <span className="muted small">
+            {CATEGORY_LABEL[d.category]} · {d.region}
+          </span>
+        </span>
+        <span className="dest-chevron" aria-hidden>
+          {open ? '−' : '+'}
+        </span>
+      </button>
+      <button
+        type="button"
+        className={`icon-btn fav dest-fav ${fav ? 'on' : ''}`}
+        aria-pressed={fav}
+        aria-label={fav ? `Togli ${d.name} dai preferiti` : `Aggiungi ${d.name} ai preferiti`}
+        onClick={onFav}
+      >
+        {fav ? '★' : '☆'}
+      </button>
+      {wiki?.image && imgOk && !open && <span className="photo-credit-mini">Foto Wikimedia Commons</span>}
+
+      {open && (
+        <div id={panelId} className="dest-body">
+          {wiki?.image && imgOk && (
+            <p className="photo-credit">
+              Foto:{' '}
+              {credit ? (
+                <>
+                  {credit.author} ·{' '}
+                  {credit.licenseUrl ? (
+                    <a href={credit.licenseUrl} target="_blank" rel="noreferrer">
+                      {credit.license}
+                    </a>
+                  ) : (
+                    credit.license
+                  )}{' '}
+                  ·{' '}
+                </>
+              ) : null}
+              <a href={credit?.pageUrl ?? `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wiki.image)}`} target="_blank" rel="noreferrer">
+                Wikimedia Commons ↗
+              </a>
+            </p>
+          )}
+          <div className="tags">
+            <Badge tone={d.kidScore === 3 ? 'ok' : d.kidScore === 1 ? 'warn' : 'neutral'}>{KID_LABEL[d.kidScore]}</Badge>
+            {d.localName && <Badge>{d.localName}</Badge>}
+          </div>
+          <p>{d.description}</p>
+          {d.augustNote && <p className="note-warn small">⚠️ {d.augustNote}</p>}
+
+          <section className="wiki-text" aria-live="polite">
+            {!wiki && <p className="muted small">Nessuna voce enciclopedica collegata a questa scheda.</p>}
+            {wiki && intro === undefined && !loadError && <p className="muted small">Caricamento della descrizione da Wikipedia…</p>}
+            {loadError && <p className="error small">Wikipedia non raggiungibile in questo momento.</p>}
+            {intro === null && <p className="muted small">Nessuna voce Wikipedia disponibile.</p>}
+            {intro && (
+              <>
+                {intro.text.split('\n').map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+                <p className="muted small">
+                  Testo da{' '}
+                  <a href={intro.url} target="_blank" rel="noreferrer">
+                    Wikipedia{intro.lang === 'en' ? ' in inglese' : ''}: “{intro.title}” ↗
+                  </a>{' '}
+                  · licenza CC BY-SA 4.0
+                </p>
+              </>
+            )}
+          </section>
+
+          <dl className="facts">
+            <dt>Come arrivare</dt>
+            <dd>{d.access}</dd>
+            <dt>Stagione</dt>
+            <dd>{d.season}</dd>
+            {d.visitHours && (
+              <>
+                <dt>Durata indicativa</dt>
+                <dd>{d.visitHours[0] === d.visitHours[1] ? d.visitHours[0] : `${d.visitHours[0]}–${d.visitHours[1]}`} ore</dd>
+              </>
+            )}
+            <dt>Difficoltà</dt>
+            <dd>{d.difficulty}</dd>
+          </dl>
+          <footer>
+            <span className="tags">
+              <Badge tone={d.coordsStatus === 'verificate' ? 'ok' : 'warn'}>
+                {d.coordsStatus === 'verificate' ? 'Posizione verificata' : 'Posizione approssimativa'}
+              </Badge>
+              <Badge tone="warn">Dati pratici da verificare</Badge>
+              {d.sources[0]?.url && (
+                <a className="small" href={d.sources[0].url} target="_blank" rel="noreferrer">
+                  OSM ↗
+                </a>
+              )}
+            </span>
+            <button
+              className="btn btn-small btn-primary"
+              disabled={d.id === 'aurora'}
+              title={d.id === 'aurora' ? 'Non realistica ad agosto' : undefined}
+              onClick={onAdd}
+            >
+              {inTrip ? 'Aggiungi di nuovo' : "Aggiungi all'itinerario"}
+            </button>
+          </footer>
+        </div>
+      )}
+    </article>
   );
 }
