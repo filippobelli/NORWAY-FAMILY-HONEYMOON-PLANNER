@@ -15,7 +15,7 @@ Differenze motivate rispetto allo stack di riferimento:
 
 | Obiettivo (CLAUDE.md §2) | Stato | Note |
 |---|---|---|
-| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie; 67 coordinate verificate su OpenStreetMap con link. Schede a fisarmonica: 71 con foto Wikimedia Commons (autore e licenza letti al momento) e introduzione Wikipedia (CC BY-SA) caricata all'apertura; 6 senza foto (raumabanen, haukland, bodo-moskenes, aurora, midnight-sun e una con file non disponibile → segnaposto). Durate, stagionalità e link ufficiali da verificare; mancano ~23 schede |
+| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie; 67 coordinate verificate su OpenStreetMap con link. Schede a fisarmonica: 71 con foto Wikimedia Commons (autore e licenza letti al momento) e introduzione Wikipedia (CC BY-SA) caricata all'apertura; 6 senza foto (raumabanen, haukland, bodo-moskenes, aurora, midnight-sun, più una voce Wikidata senza immagine → segnaposto con icona). Durate, stagionalità e link ufficiali da verificare; mancano ~23 schede |
 | 2. Mappa interattiva | Fatto | Da verificare a occhio sul PC (nel test automatico la CDN era bloccata) |
 | 3. Selezione e riordino tappe | Fatto | Riordino con frecce (niente drag & drop) |
 | 4. Itinerario giorno per giorno | Fatto | Giornate legate alle tappe (non al numero del giorno), carico giornaliero, proposte di alleggerimento con Annulla |
