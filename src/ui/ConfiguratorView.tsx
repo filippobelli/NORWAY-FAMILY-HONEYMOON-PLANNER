@@ -1,8 +1,18 @@
 import { useMemo, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS, findDestination } from '../data/destinations';
-import { configureItinerary, PACE_MIN_NIGHTS, type ConfiguratorInput, type ConfiguratorResult, type Pace } from '../domain/configurator';
+import {
+  configureItinerary,
+  PACE_MIN_NIGHTS,
+  scenarioKindFor,
+  TRAVEL_MODE_LABEL,
+  TRAVEL_MODES,
+  type ConfiguratorInput,
+  type ConfiguratorResult,
+  type Pace,
+  type TravelMode,
+} from '../domain/configurator';
 import { formatDateIt, totalDays } from '../domain/itinerary';
-import { addScenarioWithPlan, SCENARIO_KIND_LABEL } from '../domain/scenarios';
+import { addScenarioWithPlan } from '../domain/scenarios';
 import type { Region } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
@@ -14,11 +24,15 @@ const PACE_HINT: Record<Pace, string> = {
   equilibrato: 'Almeno 2 notti per tappa',
   intenso: 'Anche 1 notte per tappa',
 };
-const KIND_HINT = { auto_hytte: 'Strade e traghetti dei fiordi', auto_traghetti_costiera: 'Tratti lunghi in Hurtigruten/Havila', misto_treni: 'Treni dove conviene, auto altrove' } as const;
-const KIND_SHORT = { auto_hytte: 'Auto e hytte', auto_traghetti_costiera: 'Auto e nave costiera', misto_treni: 'Misto con treni' } as const;
+const MODE_HINT: Record<TravelMode, string> = {
+  auto: 'Tra le tappe; i traghetti dei fiordi sono compresi nei percorsi',
+  nave: 'Per i tratti lunghi lungo la costa, con notti a bordo',
+  treno: 'Dove c\'è una linea tra due tappe (Bergensbanen, Dovrebanen…)',
+  bus: 'Per i tratti senza auto né treno',
+  volo: 'Per i tratti molto lunghi tra due aeroporti',
+};
 /** "Aeroporto Bergen Flesland" → "Bergen Flesland (BGO)" */
 const airportLabel = (id: string, name: string) => `${name.replace(/^Aeroporto (di )?/, '')} (${id.toUpperCase()})`;
-const KINDS = ['auto_hytte', 'auto_traghetti_costiera', 'misto_treni'] as const;
 const STORE_KEY = 'nfhp.configurator.v1';
 export const AUTO_ROUTE_KEY = 'nfhp.autoRoute';
 
@@ -40,7 +54,7 @@ export function ConfiguratorView() {
     startDate: trip.startDate,
     arrivalAirportId: saved.arrivalAirportId ?? 'bgo',
     departureAirportId: saved.departureAirportId ?? 'bgo',
-    kind: saved.kind ?? 'auto_hytte',
+    modes: saved.modes?.length ? saved.modes : ['auto'],
     pace: saved.pace ?? 'equilibrato',
     maxDriveHours: saved.maxDriveHours ?? Math.round(trip.settings.maxTravelMinPerDay / 60),
     regions: saved.regions ?? ['Fiordi occidentali'],
@@ -74,9 +88,9 @@ export function ConfiguratorView() {
 
   const create = () => {
     if (!result) return;
-    const scName = name.trim() || `Proposta ${SCENARIO_KIND_LABEL[input.kind].toLowerCase()} · ${input.days} giorni`;
+    const scName = name.trim() || defaultName;
     const memo = [...result.notes, ...result.warnings.map((w) => `Da guardare: ${w}`)].join('\n');
-    update((t) => addScenarioWithPlan(t, scName, input.kind, result.plan, memo));
+    update((t) => addScenarioWithPlan(t, scName, scenarioKindFor(input.modes), result.plan, memo));
     try {
       sessionStorage.setItem(AUTO_ROUTE_KEY, '1');
     } catch {
@@ -84,6 +98,13 @@ export function ConfiguratorView() {
     }
     toast(`Scenario "${scName}" creato e attivo: l'itinerario precedente è salvato in Scenari`);
     window.location.hash = '#/itinerario';
+  };
+
+  const modesText = input.modes.map((m) => TRAVEL_MODE_LABEL[m].split(' (')[0]!.toLowerCase()).join(', ');
+  const defaultName = `Proposta ${modesText} · ${input.days} giorni`;
+  const toggleMode = (m: TravelMode, on: boolean) => {
+    const next = on ? [...input.modes, m] : input.modes.filter((x) => x !== m);
+    if (next.length) set({ modes: TRAVEL_MODES.filter((x) => next.includes(x)) });
   };
 
   const options = DESTINATIONS.filter((d) => d.category !== 'aeroporti' && !input.mustSee.includes(d.id)).sort((a, b) => a.name.localeCompare(b.name, 'it'));
@@ -126,17 +147,6 @@ export function ConfiguratorView() {
               </select>
             )}
           </Field>
-          <Field label="Tipo di viaggio" hint={KIND_HINT[input.kind]}>
-            {(id) => (
-              <select id={id} value={input.kind} onChange={(e) => set({ kind: e.target.value as ConfiguratorInput['kind'] })}>
-                {KINDS.map((k) => (
-                  <option key={k} value={k}>
-                    {KIND_SHORT[k]}
-                  </option>
-                ))}
-              </select>
-            )}
-          </Field>
           <Field label="Ritmo" hint={PACE_HINT[input.pace]}>
             {(id) => (
               <select id={id} value={input.pace} onChange={(e) => set({ pace: e.target.value as Pace })}>
@@ -148,7 +158,7 @@ export function ConfiguratorView() {
               </select>
             )}
           </Field>
-          <Field label="Guida al giorno (ore)" hint="Massimo, con soste e traghetti">
+          <Field label={input.modes.includes('auto') ? 'Guida al giorno (ore)' : 'Viaggio al giorno (ore)'} hint="Massimo, con soste e traghetti">
             {(id) => <NumberInput id={id} value={input.maxDriveHours} min={1} step={0.5} onChange={(v) => v && set({ maxDriveHours: v })} />}
           </Field>
           <div className="field">
@@ -159,6 +169,19 @@ export function ConfiguratorView() {
             <small className="hint">Esclude quelle poco adatte ai piccoli</small>
           </div>
         </div>
+
+        <fieldset className="chips-field">
+          <legend>Mezzi di trasporto (scegline uno o più, in qualsiasi combinazione)</legend>
+          <div className="chips">
+            {TRAVEL_MODES.map((m) => (
+              <label key={m} className={`chip ${input.modes.includes(m) ? 'on' : ''}`} title={MODE_HINT[m]}>
+                <input type="checkbox" checked={input.modes.includes(m)} onChange={(e) => toggleMode(m, e.target.checked)} />
+                {TRAVEL_MODE_LABEL[m]}
+              </label>
+            ))}
+          </div>
+          <p className="muted small">{input.modes.map((m) => `${TRAVEL_MODE_LABEL[m].split(' (')[0]}: ${MODE_HINT[m].toLowerCase()}`).join(' · ')}.</p>
+        </fieldset>
 
         <fieldset className="chips-field">
           <legend>Regioni da esplorare (quelle degli aeroporti sono sempre comprese)</legend>
@@ -226,7 +249,7 @@ export function ConfiguratorView() {
             <div>
               <h2>Proposta · {totalDays(stops)} giorni</h2>
               <p className="muted small">
-                Dal {formatDateIt(input.startDate)} · {SCENARIO_KIND_LABEL[input.kind]} · {result.bases.length} località in cui dormire
+                Dal {formatDateIt(input.startDate)} · {modesText} · {result.bases.length} località in cui dormire
               </p>
             </div>
           </header>
@@ -234,12 +257,27 @@ export function ConfiguratorView() {
             {stops.map((s) => {
               const acts = Object.entries(result.plan.days)
                 .filter(([k]) => k.startsWith(`${s.id}#`))
-                .flatMap(([, d]) => d.activities.map((a) => a.title));
+                .flatMap(([, d]) => d.activities);
               return (
                 <li key={s.id} className={s.kind === 'a_bordo' ? 'aboard' : ''}>
                   <strong>{s.name}</strong>{' '}
                   <span className="muted small">{s.nights === 0 ? (s === stops[0] ? 'arrivo' : 'ripartenza') : `${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}`}</span>
-                  {acts.length > 0 && <div className="small">{acts.join(' · ')}</div>}
+                  {acts.length > 0 && (
+                    <div className="small proposal-acts">
+                      {acts.map((a, i) => (
+                        <span key={a.id}>
+                          {i > 0 && ' · '}
+                          {a.destinationId && findDestination(a.destinationId)?.officialUrl ? (
+                            <a href={findDestination(a.destinationId)!.officialUrl} target="_blank" rel="noreferrer">
+                              {a.title} ↗
+                            </a>
+                          ) : (
+                            a.title
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -260,7 +298,7 @@ export function ConfiguratorView() {
           </ul>
           <div className="row wrap">
             <Field label="Nome dello scenario">
-              {(id) => <input id={id} value={name} placeholder={`Proposta ${SCENARIO_KIND_LABEL[input.kind].toLowerCase()} · ${input.days} giorni`} onChange={(e) => setName(e.target.value)} />}
+              {(id) => <input id={id} value={name} placeholder={defaultName} onChange={(e) => setName(e.target.value)} />}
             </Field>
             <button className="btn btn-primary" onClick={create}>
               Crea come nuovo scenario e calcola i tratti

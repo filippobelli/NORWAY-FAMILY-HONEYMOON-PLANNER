@@ -39,12 +39,69 @@ export const PACE_MIN_NIGHTS: Record<Pace, number> = { tranquillo: 3, equilibrat
 /** Ore di visita al giorno previste per ritmo (giornata piena / giornata con trasferimento) */
 const PACE_VISIT_MIN: Record<Pace, [number, number]> = { tranquillo: [240, 90], equilibrato: [330, 120], intenso: [420, 180] };
 
+export type TravelMode = 'auto' | 'nave' | 'treno' | 'bus' | 'volo';
+export const TRAVEL_MODES: TravelMode[] = ['auto', 'nave', 'treno', 'bus', 'volo'];
+export const TRAVEL_MODE_LABEL: Record<TravelMode, string> = {
+  auto: 'Auto (con i traghetti locali)',
+  nave: 'Nave costiera Hurtigruten/Havila',
+  treno: 'Treno',
+  bus: 'Autobus',
+  volo: 'Volo interno',
+};
+
+/**
+ * Linee ferroviarie tra le località base del catalogo (rete Vy/SJ Nord/Go-Ahead).
+ * Servono solo a proporre il treno: durata, orari e prezzi restano da verificare su vy.no.
+ */
+const RAIL: Record<string, { label: string; note: string }> = {
+  'bergen|oslo': { label: 'Treno Oslo–Bergen (Bergensbanen)', note: 'Durata e orari da verificare su vy.no' },
+  'flam|oslo': { label: 'Treno Oslo–Myrdal–Flåm (Bergensbanen + Flåmsbana)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' },
+  'bergen|flam': { label: 'Treno Bergen–Myrdal–Flåm (Bergensbanen + Flåmsbana)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' },
+  'lillehammer|oslo': { label: 'Treno Oslo–Lillehammer (Dovrebanen)', note: 'Durata e orari da verificare su vy.no' },
+  'lillehammer|trondheim': { label: 'Treno Lillehammer–Trondheim (Dovrebanen)', note: 'Durata e orari da verificare su vy.no' },
+  'oslo|trondheim': { label: 'Treno Oslo–Trondheim (Dovrebanen)', note: 'Durata e orari da verificare su vy.no' },
+  'roros|trondheim': { label: 'Treno Trondheim–Røros (Rørosbanen)', note: 'Durata e orari da verificare' },
+  'oslo|roros': { label: 'Treno Oslo–Røros (Rørosbanen via Hamar)', note: 'Durata, orari e cambi da verificare' },
+  'oslo|stavanger': { label: 'Treno Oslo–Stavanger (Sørlandsbanen)', note: 'Durata e orari da verificare' },
+};
+export function railFor(a?: string, b?: string): { label: string; note: string } | undefined {
+  if (!a || !b) return undefined;
+  return RAIL[[a, b].sort().join('|')];
+}
+
+// Entro questa distanza dall'aeroporto (linea d'aria) il volo ha senso; il resto è un trasferimento da verificare
+const AIRPORT_RADIUS_KM = 110;
+function nearestAirport(p: P): Destination | undefined {
+  let best: Destination | undefined;
+  let bestKm = Infinity;
+  for (const d of DESTINATIONS) {
+    if (d.category !== 'aeroporti') continue;
+    const km = airKm(p, d);
+    if (km < bestKm) {
+      bestKm = km;
+      best = d;
+    }
+  }
+  return bestKm <= AIRPORT_RADIUS_KM ? best : undefined;
+}
+
+/** Tipo di scenario (per il confronto) che corrisponde ai mezzi scelti. */
+export function scenarioKindFor(modes: TravelMode[]): ScenarioKind {
+  const m = new Set(modes);
+  if (m.has('nave')) return 'auto_traghetti_costiera';
+  if ((m.has('treno') || m.has('bus')) && !m.has('auto')) return 'misto_treni';
+  if (m.has('treno')) return 'misto_treni';
+  if (m.size === 1 && m.has('auto')) return 'auto_hytte';
+  return 'altro';
+}
+
 export interface ConfiguratorInput {
   days: number;
   startDate: string;
   arrivalAirportId: string;
   departureAirportId: string;
-  kind: Exclude<ScenarioKind, 'altro'>;
+  /** Mezzi che si vogliono usare, in qualsiasi combinazione */
+  modes: TravelMode[];
   pace: Pace;
   /** Massimo di guida al giorno, in ore (stima) */
   maxDriveHours: number;
@@ -242,20 +299,39 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   let order = orderBases(arr, dep, chosen, maxDrive);
 
   // Tratti troppo lunghi: si inserisce una base intermedia (togliendo una notte a chi ne ha di più)
-  const legsOf = (o: Base[]): [P, P][] => {
-    const pts: P[] = [arr, ...o, dep];
-    return pts.slice(1).map((p, i) => [pts[i]!, p]);
-  };
-  const coastal = input.kind === 'auto_traghetti_costiera';
+  const modes = new Set<TravelMode>(input.modes.length ? input.modes : ['auto']);
   const sailable = (a: P, b: P) => {
     const pa = nearestPort(a);
     const pb = nearestPort(b);
     return pa && pb && pa.km < 40 && pb.km < 40 && pa.name !== pb.name;
   };
   const transit = new Set<string>();
-  const isCruise = (o: Base[], i: number) => {
+  type Node = P & { id: string };
+  const nodesOf = (o: Base[]): Node[] => [arr, ...o.map((b) => ({ lat: b.lat, lng: b.lng, id: b.d.id })), dep];
+  const legsOf = (o: Base[]): [Node, Node][] => {
+    const pts = nodesOf(o);
+    return pts.slice(1).map((p, i) => [pts[i]!, p]);
+  };
+  /** Mezzo previsto per il tratto i-esimo: nave, treno o volo dove convengono e sono stati scelti, altrimenti strada/bus */
+  const legMode = (o: Base[], i: number): 'nave' | 'treno' | 'volo' | 'strada' | 'bus' => {
     const [a, b] = legsOf(o)[i]!;
-    return coastal && i > 0 && i < o.length && estDriveHours(a, b) > maxDrive * 1.5 && Boolean(sailable(a, b));
+    const h = estDriveHours(a, b);
+    const inner = i > 0 && i < o.length;
+    if (modes.has('nave') && inner && h > maxDrive * 1.5 && sailable(a, b)) return 'nave';
+    if (modes.has('treno') && railFor(a.id, b.id)) return 'treno';
+    if (modes.has('volo') && inner && h > maxDrive * 2) {
+      const fa = nearestAirport(a);
+      const fb = nearestAirport(b);
+      if (fa && fb && fa.id !== fb.id) return 'volo';
+    }
+    if (modes.has('auto')) return 'strada';
+    return 'bus';
+  };
+  const isCruise = (o: Base[], i: number) => legMode(o, i) === 'nave';
+  const isLongGround = (o: Base[], i: number) => {
+    const m = legMode(o, i);
+    const [a, b] = legsOf(o)[i]!;
+    return (m === 'strada' || m === 'bus') && estDriveHours(a, b) > maxDrive * 1.15;
   };
   for (let guard = 0; guard < 10; guard++) {
     const legs = legsOf(order);
@@ -265,7 +341,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
     // Per ogni tratto troppo lungo si cerca la base che lo spezza meglio; si inserisce la prima che funziona
     let inserted = false;
     for (const [idx, [a, b]] of legs.entries()) {
-      if (estDriveHours(a, b) <= maxDrive * 1.15 || isCruise(order, idx)) continue;
+      if (!isLongGround(order, idx)) continue;
       let best: Base | undefined;
       let bestWorst = Infinity;
       for (const c of bases) {
@@ -362,21 +438,41 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
       };
       return { ...leg, segments: [seg] };
     }
-    if (input.kind === 'misto_treni') {
-      const ids = [a.destinationId, b.destinationId].sort().join('-');
-      const train =
-        ids === 'bergen-oslo'
-          ? { label: 'Treno Oslo–Bergen (Bergensbanen)', note: 'Durata e orari da verificare su vy.no' }
-          : ids === 'flam-oslo'
-            ? { label: 'Treno Oslo–Myrdal–Flåm (Bergensbanen + Flåmsbana)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' }
-            : ids === 'bergen-flam'
-              ? { label: 'Treno Flåm–Myrdal–Bergen (Flåmsbana + Bergensbanen)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' }
-              : undefined;
-      if (train) {
-        const seg: Segment = { id: newId(), mode: 'treno', label: train.label, costStatus: 'da_verificare', status: 'da_verificare', note: train.note };
-        notes.push(`${train.label}: durata e orari da verificare.`);
+    const train = modes.has('treno') ? railFor(a.destinationId, b.destinationId) : undefined;
+    if (train) {
+      const seg: Segment = { id: newId(), mode: 'treno', label: train.label, costStatus: 'da_verificare', status: 'da_verificare', note: train.note };
+      notes.push(`${train.label}: durata e orari da verificare.`);
+      return { ...leg, segments: [seg] };
+    }
+    const isAirportLeg = a === stops[0] || b === stops[stops.length - 1];
+    const h = estDriveHours(a, b);
+    if (modes.has('volo') && !isAirportLeg && h > maxDrive * 2) {
+      const fa = nearestAirport(a);
+      const fb = nearestAirport(b);
+      if (fa && fb && fa.id !== fb.id) {
+        const seg: Segment = {
+          id: newId(),
+          mode: 'aereo',
+          label: `Volo interno ${fa.name.replace(/^Aeroporto (di )?/, '')} → ${fb.name.replace(/^Aeroporto (di )?/, '')}`,
+          costStatus: 'da_verificare',
+          status: 'da_verificare',
+          note: `Da verificare: voli e orari; trasferimenti ${a.name} → aeroporto e aeroporto → ${b.name}${modes.has('auto') ? '; riconsegna e nuovo noleggio dell\'auto' : ''}.`,
+        };
+        notes.push(`${a.name} → ${b.name} con un volo interno (${fa.name} → ${fb.name}), da verificare.`);
         return { ...leg, segments: [seg] };
       }
+    }
+    if (!modes.has('auto')) {
+      const seg: Segment = {
+        id: newId(),
+        mode: 'bus',
+        label: isAirportLeg ? `Trasferimento ${a.name} → ${b.name} (treno, bus o navetta)` : `Autobus o mezzi pubblici ${a.name} → ${b.name}`,
+        costStatus: 'da_verificare',
+        status: 'da_verificare',
+        note: 'Collegamento, durata e orari da verificare (es. entur.no).',
+      };
+      if (!modes.has('bus') && !isAirportLeg) warnings.push(`${a.name} → ${b.name}: nessuno dei mezzi scelti copre questo tratto; ho messo un collegamento con mezzi pubblici da verificare.`);
+      return { ...leg, segments: [seg] };
     }
     return leg;
   });
@@ -408,15 +504,16 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   }
 
   // Controlli finali sui tratti stimati
+  const missingHelp = (['nave', 'volo'] as const).filter((m) => !modes.has(m)).map((m) => (m === 'nave' ? 'la nave costiera' : 'un volo interno'));
   for (const leg of legs) {
-    if (leg.segments.some((s) => s.mode === 'costiera' || s.mode === 'treno')) continue;
+    if (leg.segments.some((s) => s.mode === 'costiera' || s.mode === 'treno' || s.mode === 'aereo')) continue;
     const a = stops.find((s) => s.id === leg.fromStopId)!;
     const b = stops.find((s) => s.id === leg.toStopId)!;
     const h = estDriveHours(a, b);
     if (h > maxDrive * 1.15) {
       warnings.push(
-        `${a.name} → ${b.name}: circa ${Math.round(h)} h di guida stimate, oltre il massimo scelto.${
-          input.kind === 'auto_hytte' ? ' Valuta lo scenario con navigazione costiera o un volo interno.' : ''
+        `${a.name} → ${b.name}: circa ${Math.round(h)} h di ${modes.has('auto') ? 'guida' : 'viaggio'} stimate, oltre il massimo scelto.${
+          missingHelp.length ? ` Valuta di aggiungere ${missingHelp.join(' o ')}.` : ''
         }`,
       );
     }

@@ -98,3 +98,8 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Mappa dell'itinerario** più alta (quasi tutto lo schermo), adatta alla forma della Norvegia.
 - **Foto delle hytte** tolte su richiesta.
 
+## 27/10/2026 — siti ufficiali e mezzi a scelta libera
+
+- **Siti ufficiali** (`src/data/officialSites.ts`): 24 attrazioni (tutti i musei e gli acquari, i parchi, Flåmsbana e Raumabanen, le strade turistiche nazionali, Trolltunga, Vøringsfossen, Lofoten). Fonte: Wikidata P856 e, dove mancava, il sito del gestore (Vy, Norway's Best, Museum Nord) o dell'ente (Nasjonale turistveger, Visit Norway). Ogni link aperto il 27/10/2026 con risposta 200 e titolo coerente. Esclusi i siti dei comuni. Il link compare nella scheda del catalogo, nelle attività delle Giornate e nella proposta del configuratore. Senza link ufficiale verificato: Langedrag ha il sito, ma non ancora Preikestolen, Dalsnibba, ghiacciai, Saltstraumen, safari delle balene, Capo Nord, Bergensbanen.
+- **Configuratore, mezzi a scelta libera**: auto (con i traghetti locali), nave costiera, treno, autobus, volo interno, in qualsiasi combinazione. Treno solo dove c'è una linea tra due località base (Bergensbanen, Flåmsbana, Dovrebanen, Rørosbanen, Sørlandsbanen); volo per i tratti oltre il doppio del massimo di guida tra due aeroporti del catalogo entro ~110 km; senza auto i tratti restano «mezzi pubblici da verificare». Tutti i segmenti non stradali sono «da verificare».
+

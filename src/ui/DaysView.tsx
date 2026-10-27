@@ -6,6 +6,7 @@ import { assumptions, computeDays, formatDateIt, formatDuration, legTotals, orph
 import type { Activity, DayPlan } from '../domain/types';
 import { haversineKm } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
+import { OfficialLink } from './OfficialLink';
 import { Badge, Empty, Field, fmtMoney, MODE_ICON, MoneyInput, NumberInput, StatusSelect } from './common';
 
 const emptyDay = (): DayPlan => ({ activities: [], notes: '', planB: '' });
@@ -257,6 +258,7 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
               >
                 ✕
               </button>
+              {dest?.officialUrl && <OfficialLink id={dest.id} />}
               {dest?.augustNote && <span className="note-warn small">⚠️ {dest.augustNote}</span>}
             </li>
           );

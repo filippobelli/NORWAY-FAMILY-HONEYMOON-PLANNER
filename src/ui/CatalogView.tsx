@@ -6,6 +6,7 @@ import { commonsImageUrl, fetchImageCredit, fetchWikiIntro, type ImageCredit, ty
 import { useTrip } from '../state/store';
 import { Badge } from './common';
 import { stopFromDestination } from './ItineraryView';
+import { OfficialLink } from './OfficialLink';
 
 const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
@@ -213,6 +214,11 @@ function DestinationCard({
             {d.localName && <Badge>{d.localName}</Badge>}
           </div>
           <p>{d.description}</p>
+          {d.officialUrl && (
+            <p>
+              <OfficialLink id={d.id} />
+            </p>
+          )}
           {d.augustNote && <p className="note-warn small">⚠️ {d.augustNote}</p>}
 
           <section className="wiki-text" aria-live="polite">

@@ -1,5 +1,6 @@
 import type { Category, Destination, Region } from '../domain/types';
 import { COORDS_CHECKED_AT, VERIFIED_COORDS } from './coordVerification';
+import { OFFICIAL_SITES } from './officialSites';
 
 // CATALOGO.
 // Coordinate: verificate su OpenStreetMap il 27/10/2026 dove indicato (vedi coordVerification.ts),
@@ -150,6 +151,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   aeroporti: 'Aeroporti',
 };
 
+
 export const DESTINATIONS: Destination[] = SEEDS.map(
   ([id, name, category, region, lat, lng, kidScore, difficulty, visitHours, description, access, season, augustNote, localName]) => {
     const v = VERIFIED_COORDS[id];
@@ -169,6 +171,7 @@ export const DESTINATIONS: Destination[] = SEEDS.map(
       access,
       season: season ?? 'Visitabile in agosto (da verificare)',
       augustNote,
+      officialUrl: OFFICIAL_SITES[id]?.url,
       sources: v
         ? [{ label: `Coordinate: OpenStreetMap (${v.match})`, url: `https://www.openstreetmap.org/${v.osm}`, checkedAt: COORDS_CHECKED_AT }]
         : [],

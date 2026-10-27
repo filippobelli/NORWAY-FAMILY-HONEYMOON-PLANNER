@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { capStatus, computeBudget, formatPeriod, fuelCostPerKm } from '../src/domain/budget';
-import { configureItinerary, orderBases, type ConfiguratorInput } from '../src/domain/configurator';
+import { configureItinerary, orderBases, railFor, scenarioKindFor, type ConfiguratorInput } from '../src/domain/configurator';
 import { createEmptyTrip } from '../src/domain/defaults';
 import { computeDays, totalDays } from '../src/domain/itinerary';
 import { addScenarioWithPlan } from '../src/domain/scenarios';
@@ -12,7 +12,7 @@ const base: ConfiguratorInput = {
   startDate: '2027-08-01',
   arrivalAirportId: 'bgo',
   departureAirportId: 'bgo',
-  kind: 'auto_hytte',
+  modes: ['auto'],
   pace: 'equilibrato',
   maxDriveHours: 4,
   regions: ['Fiordi occidentali'],
@@ -49,7 +49,7 @@ test('Configuratore: ritmo tranquillo = almeno 3 notti per tappa, niente attivit
 });
 
 test('Configuratore: con navigazione costiera i tratti lunghi lungo la costa diventano notti a bordo', () => {
-  const r = configureItinerary({ ...base, days: 20, arrivalAirportId: 'osl', departureAirportId: 'tos', kind: 'auto_traghetti_costiera', regions: ['Fiordi occidentali', 'Nordland e Lofoten'], mustSee: ['reine'] });
+  const r = configureItinerary({ ...base, days: 20, arrivalAirportId: 'osl', departureAirportId: 'tos', modes: ['auto', 'nave'], regions: ['Fiordi occidentali', 'Nordland e Lofoten'], mustSee: ['reine'] });
   assert.equal(totalDays(r.plan.stops), 20);
   assert.ok(r.plan.stops.some((s) => s.kind === 'a_bordo'));
   assert.ok(r.plan.legs.some((l) => l.segments.some((s) => s.mode === 'costiera' && s.status === 'da_verificare')));
@@ -111,4 +111,20 @@ test('Fonti: parsing Norges Bank e SSB', () => {
   const f = parseSsbFuel({ value: [21.1, 22.2, null], dimension: { Tid: { category: { index: { '2026M07': 0, '2026M08': 1, '2026M09': 2 } } } } });
   assert.equal(f?.nokPerLitre, 22.2);
   assert.equal(f?.period, '2026M08');
+});
+
+test('Configuratore: mezzi a scelta libera', () => {
+  // Solo treno e bus, senza auto: Oslo–Bergen in treno, nessun tratto stradale da calcolare
+  const r = configureItinerary({ ...base, arrivalAirportId: 'osl', departureAirportId: 'bgo', modes: ['treno', 'bus'], regions: ['Oslo e Østlandet', 'Fiordi occidentali'], mustSee: ['flamsbana'] });
+  const segs = r.plan.legs.flatMap((l) => l.segments);
+  assert.ok(segs.every((s) => s.mode !== 'non_calcolato'), 'senza auto non restano tratti stradali');
+  assert.ok(segs.some((s) => s.mode === 'treno'));
+  assert.ok(segs.every((s) => s.status === 'da_verificare'));
+  // Auto + volo: il tratto lunghissimo verso le Lofoten diventa un volo interno
+  const v = configureItinerary({ ...base, days: 18, arrivalAirportId: 'bgo', departureAirportId: 'eve', pace: 'intenso', maxDriveHours: 5, modes: ['auto', 'volo'], regions: ['Fiordi occidentali', 'Trøndelag', 'Nordland e Lofoten'], mustSee: [] });
+  assert.ok(v.plan.legs.some((l) => l.segments.some((s) => s.mode === 'aereo')));
+  assert.equal(railFor('oslo', 'bergen')?.label, railFor('bergen', 'oslo')?.label);
+  assert.equal(scenarioKindFor(['auto']), 'auto_hytte');
+  assert.equal(scenarioKindFor(['auto', 'nave']), 'auto_traghetti_costiera');
+  assert.equal(scenarioKindFor(['treno', 'bus']), 'misto_treni');
 });
