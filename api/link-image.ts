@@ -39,14 +39,17 @@ export function parseSafeUrl(raw: string | null): URL | null {
 /** Trova l'immagine di anteprima dichiarata dalla pagina. */
 export function findPreviewImage(html: string, base: URL): string | null {
   const metas = html.match(/<meta\b[^>]*>/gi) ?? [];
-  const wanted = ['og:image:secure_url', 'og:image', 'og:image:url', 'twitter:image', 'twitter:image:src'];
+  const wanted = ['og:image:secure_url', 'og:image', 'og:image:url', 'twitter:image', 'twitter:image:src', 'image', 'thumbnail'];
   const found: Record<string, string> = {};
   for (const tag of metas) {
-    const key = tag.match(/\b(?:property|name)\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
+    const key = tag.match(/\b(?:property|name|itemprop)\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
     const content = tag.match(/\bcontent\s*=\s*["']([^"']+)["']/i)?.[1];
     if (key && content && wanted.includes(key) && !found[key]) found[key] = content;
   }
-  for (const k of wanted) {
+  // <link rel="image_src" href="..."> (vecchio standard, ancora usato da alcuni siti)
+  const linkSrc = (html.match(/<link\b[^>]*rel\s*=\s*["']image_src["'][^>]*>/i)?.[0] ?? '').match(/\bhref\s*=\s*["']([^"']+)["']/i)?.[1];
+  if (linkSrc) found.image_src = linkSrc;
+  for (const k of [...wanted, 'image_src']) {
     const v = found[k];
     if (!v) continue;
     try {
@@ -96,7 +99,12 @@ export async function GET(request: Request): Promise<Response> {
       res = await fetch(url, {
         redirect: 'manual',
         signal: ac.signal,
-        headers: { 'user-agent': 'Mozilla/5.0 (compatible; Norvegia2027-LinkPreview/1.0)', accept: 'text/html' },
+        // Molti siti (visitnorway.com, Booking) rifiutano gli agenti "sconosciuti": ci si presenta come un browser
+        headers: {
+          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
+          accept: 'text/html,application/xhtml+xml',
+          'accept-language': 'nb,en;q=0.8,it;q=0.6',
+        },
       });
       const loc = res.headers.get('location');
       if (res.status >= 300 && res.status < 400 && loc) {
