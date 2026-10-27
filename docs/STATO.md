@@ -68,6 +68,13 @@ Differenze motivate rispetto allo stack di riferimento:
 - Eventuale chiave di un provider di routing con limiti più alti, se OSRM pubblico non basta.
 - Repository GitHub per versionare il codice.
 
+## Pubblicazione (27/10/2026)
+
+- Vercel, team "CaramiaHub", progetto `norvegia-2027` collegato al repository: ogni push su `main` pubblica in automatico.
+- Prima build reale riuscita: `tsc` con i tipi React ufficiali senza errori, `vite build` 368 KB JS (117 KB gzip).
+- Prova sul sito pubblicato dal PC di Filippo: mappa OpenStreetMap caricata, calcolo reale Bergen→Ålesund 419 km con 2 traghetti, Ålesund→Geiranger 105 km con 1 traghetto.
+- Protezione Vercel attiva su tutti gli indirizzi *.vercel.app: serve il login Vercel per aprire l'app.
+
 ## Confronto scenari
 
 Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni; confronto di durata, costi, km, trasferimenti, notti, cambi di alloggio e dati da verificare.

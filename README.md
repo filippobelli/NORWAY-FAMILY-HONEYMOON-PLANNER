@@ -1,5 +1,7 @@
 # Norway Family Honeymoon Planner
 
+**Online:** https://norvegia-2027.vercel.app (Vercel, progetto `norvegia-2027`; si aggiorna da solo a ogni push su `main`; accesso protetto dal login Vercel).
+
 Pianificatore del viaggio di famiglia in Norvegia (agosto 2027, 2 adulti + 2 bambini di 8 e 5 anni).
 Contesto e regole del progetto: [CLAUDE.md](CLAUDE.md). Stato di avanzamento e limiti: [docs/STATO.md](docs/STATO.md).
 
