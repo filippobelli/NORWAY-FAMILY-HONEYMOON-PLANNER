@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "types": ["node"], "typeRoots": ["/opt/npm-tools/node_modules/@types"], "jsx": "preserve" },
+  "include": ["../src", "../tests", "./react-shim.d.ts"]
+}
