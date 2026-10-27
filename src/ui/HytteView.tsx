@@ -6,8 +6,6 @@ import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
-import { WIKI } from '../data/wiki';
-import { commonsImageUrl } from '../services/wiki';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
@@ -147,8 +145,7 @@ export function HytteView() {
                 <ul className="osm-results">
                   {results.map((p) => (
                     <li key={p.osmId}>
-                      {p.website && <LinkThumb url={p.website} />}
-                      <div className="osm-result-text">
+                      <div>
                         <strong>{p.name}</strong> <span className="muted small">{p.kind} · {p.distanceKm} km</span>
                         {p.website && (
                           <a className="small" href={p.website} target="_blank" rel="noreferrer">
@@ -205,8 +202,7 @@ export function HytteView() {
               const st = trip.stops.find((s) => s.id === a.stopId);
               const total = st && a.pricePerNight ? toEur(a.pricePerNight, trip.settings) * st.nights + toEur(a.cleaningFee, trip.settings) + toEur(a.linenFee, trip.settings) : undefined;
               return (
-                <article key={a.id} className="card hytte-card">
-                  <HyttePhoto url={a.url} name={a.name} zoneDestinationId={st?.destinationId} zoneName={st?.name} />
+                <article key={a.id} className="card">
                   <header>
                     <div>
                       <h3>{a.name}</h3>
@@ -386,56 +382,3 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
   );
 }
 
-/** Indirizzo della funzione che restituisce l'immagine di anteprima dichiarata da una pagina web. */
-export function linkImageUrl(url: string): string {
-  return `/api/link-image?url=${encodeURIComponent(url)}`;
-}
-
-function LinkThumb({ url }: { url: string }) {
-  const [ok, setOk] = useState(true);
-  if (!ok) return null;
-  return <img className="osm-thumb" src={linkImageUrl(url)} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setOk(false)} />;
-}
-
-/**
- * Foto della sistemazione: prima l'immagine di anteprima del suo sito (og:image, come nelle anteprime dei link),
- * altrimenti la foto Wikimedia della località della tappa, dichiarata come foto della zona.
- */
-function HyttePhoto({ url, name, zoneDestinationId, zoneName }: { url?: string; name: string; zoneDestinationId?: string; zoneName?: string }) {
-  const [siteOk, setSiteOk] = useState(true);
-  const [zoneOk, setZoneOk] = useState(true);
-  const zoneFile = zoneDestinationId ? WIKI[zoneDestinationId]?.image : undefined;
-  let host = '';
-  try {
-    host = url ? new URL(url).hostname.replace(/^www\./, '') : '';
-  } catch {
-    host = '';
-  }
-  if (url && host && siteOk) {
-    return (
-      <figure className="hytte-photo">
-        <img src={linkImageUrl(url)} alt={`Foto: ${name}`} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setSiteOk(false)} />
-        <figcaption>
-          Foto da{' '}
-          <a href={url} target="_blank" rel="noreferrer">
-            {host} ↗
-          </a>
-        </figcaption>
-      </figure>
-    );
-  }
-  if (zoneFile && zoneOk) {
-    return (
-      <figure className="hytte-photo zone">
-        <img src={commonsImageUrl(zoneFile, 500)} alt={`Foto della zona: ${zoneName ?? ''}`} loading="lazy" decoding="async" onError={() => setZoneOk(false)} />
-        <figcaption>
-          Foto della zona ({zoneName}), non della struttura ·{' '}
-          <a href={`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(zoneFile.replace(/ /g, '_'))}`} target="_blank" rel="noreferrer">
-            Wikimedia Commons ↗
-          </a>
-        </figcaption>
-      </figure>
-    );
-  }
-  return null;
-}

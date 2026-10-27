@@ -637,6 +637,17 @@ details summary {
   overflow: hidden;
   background: var(--surface-2);
 }
+/* La Norvegia è lunga e stretta: mappa alta (quasi tutto lo schermo) */
+.map-tall {
+  height: max(520px, calc(100vh - 220px));
+  height: max(520px, calc(100dvh - 220px));
+}
+@media (min-width: 1100px) {
+  .map-tall {
+    height: max(720px, calc(100vh - 150px));
+    height: max(720px, calc(100dvh - 150px));
+  }
+}
 .map-overlay {
   position: absolute;
   inset: 0;
@@ -766,6 +777,72 @@ details summary {
   font-size: 0.8rem;
   cursor: pointer;
   color: var(--ink);
+}
+
+/* Configuratore */
+.configurator {
+  display: grid;
+  gap: 16px;
+}
+.field .field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.chips-field {
+  border: 0;
+  padding: 0;
+  margin: 14px 0 0;
+  min-width: 0;
+}
+.chips-field legend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  padding: 0;
+}
+.chip input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.chip:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.chip-x {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 2px;
+}
+.chips select {
+  width: auto;
+  max-width: 100%;
+}
+.proposal {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  display: grid;
+  gap: 6px;
+}
+.proposal li.aboard {
+  color: var(--ink-2);
+  font-style: italic;
 }
 
 /* Catalogo e schede */
@@ -929,6 +1006,26 @@ details summary {
 .kpi-warn {
   border-color: var(--warn);
 }
+.kpi-bad {
+  border-color: var(--danger);
+}
+.kpi-bad small {
+  color: var(--danger);
+  font-weight: 600;
+}
+.cap-cell input {
+  width: 96px;
+  text-align: right;
+}
+.row-over td:first-child,
+.row-over td:nth-child(2) {
+  color: var(--danger);
+  font-weight: 600;
+}
+.bar.bar-over {
+  background: var(--danger);
+  opacity: 1;
+}
 .add-line {
   display: grid;
   grid-template-columns: 220px minmax(180px, 1fr) 200px 170px auto;
@@ -963,41 +1060,6 @@ details summary {
   gap: 8px;
   padding: 6px 8px;
   border-bottom: 1px solid var(--line);
-}
-
-.osm-results .osm-result-text {
-  flex: 1;
-  min-width: 0;
-}
-.osm-thumb {
-  width: 64px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 6px;
-  flex: none;
-  background: var(--line);
-}
-
-/* Foto delle sistemazioni */
-.hytte-photo {
-  margin: -14px -14px 10px;
-  position: relative;
-}
-.hytte-photo img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
-  background: var(--line);
-}
-.hytte-photo figcaption {
-  font-size: 12px;
-  color: var(--muted);
-  padding: 4px 14px 0;
-}
-.hytte-photo.zone figcaption {
-  font-style: italic;
 }
 
 /* Toast */

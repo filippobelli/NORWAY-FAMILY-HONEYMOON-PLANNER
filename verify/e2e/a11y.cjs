@@ -8,7 +8,7 @@ const srv = http.createServer((q, r) => { r.setHeader('Content-Type', 'text/html
   await p.goto('http://localhost:4177/#/itinerario'); await p.waitForSelector('text=Tappe');
   for (const q of ['Bergen', 'Flåm']) { await p.fill('input[aria-label="Cerca località"]', q); await p.click('.suggestions button >> nth=0'); }
   let problems = 0;
-  for (const tab of ['itinerario', 'giornate', 'catalogo', 'crociere', 'hytte', 'budget', 'scenari', 'viaggio']) {
+  for (const tab of ['itinerario', 'configuratore', 'giornate', 'catalogo', 'crociere', 'hytte', 'budget', 'scenari', 'viaggio']) {
     await p.click(`a[href="#/${tab}"]`); await p.waitForTimeout(250);
     await p.evaluate(() => document.querySelectorAll('details').forEach((d) => (d.open = true)));
     const issues = await p.evaluate(() => {

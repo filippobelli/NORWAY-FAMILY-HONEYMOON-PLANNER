@@ -15,7 +15,7 @@ function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
 }
 
-export function MapView({ trip, onAddDestination, height = 460 }: Props) {
+export function MapView({ trip, onAddDestination, height }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const mapRef = useRef<{ L: LeafletApi; map: LMap; layer: LLayerGroup } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
@@ -29,7 +29,7 @@ export function MapView({ trip, onAddDestination, height = 460 }: Props) {
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
-        const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true }).setView([65, 13], 4);
+        const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true }).setView([65, 15], 4);
         L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
         const layer = L.layerGroup().addTo(map);
         mapRef.current = { L, map, layer };
@@ -156,7 +156,7 @@ export function MapView({ trip, onAddDestination, height = 460 }: Props) {
   return (
     <div className="map-wrap">
       <div className="map-box">
-        <div ref={el} className="map" style={{ height }} role="region" aria-label="Mappa del viaggio" />
+        <div ref={el} className={height ? 'map' : 'map map-tall'} style={height ? { height } : undefined} role="region" aria-label="Mappa del viaggio" />
         {state === 'caricamento' && <div className="map-overlay">Caricamento mappa…</div>}
         {state === 'errore' && (
           <div className="map-overlay map-error" role="alert">

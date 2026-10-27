@@ -87,10 +87,4 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 4. **Persistenza (M6)**: tabelle normalizzate, salvataggio cloud automatico, accesso condiviso per entrambi i genitori.
 5. **Verifica finale (M7)**: test su smartphone reali, deploy (es. Vercel) solo dopo autorizzazione.
 
-## Foto delle sistemazioni (27/10/2026)
-
-- Funzione Vercel `api/link-image.ts`: legge lato server la pagina del sito della struttura e reindirizza all'immagine che il sito dichiara per le anteprime dei link (og:image, twitter:image). Non copia né salva immagini; la foto resta sul sito di origine, citato con un link. Indirizzi privati e protocolli diversi da http(s) rifiutati; loghi esclusi quando il nome del file lo dice.
-- Provata: ut.no (hytte DNT), topcamp.no, grimencamping.no → foto; lynhytta.no, rokleiva.no → nessuna immagine dichiarata; Booking e Airbnb mostrano una pagina anti-bot → nessuna foto; visitnorway.com rifiuta la richiesta.
-- Se il sito non dà una foto: si mostra la foto Wikimedia della località della tappa, scritta come "Foto della zona, non della struttura".
-- Miniature anche nei risultati della ricerca vicino a una tappa, per le strutture con sito.
-- Sezione "Costiera" rinominata "Crociere" (il vecchio indirizzo #/costiera continua a funzionare).
+- Sezione "Costiera" rinominata "Crociere" (il vecchio indirizzo #/costiera continua a funzionare). Le foto delle hytte (anteprima dal sito) sono state provate e poi tolte su richiesta: davano soprattutto loghi o nulla.

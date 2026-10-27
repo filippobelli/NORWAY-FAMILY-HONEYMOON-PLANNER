@@ -1,6 +1,6 @@
 import { toEur } from './coastal';
 import { computeDays, legTotals, totalDays } from './itinerary';
-import type { BudgetCategory, DataStatus, Trip } from './types';
+import type { BudgetCategory, DataStatus, TripSettings, Trip } from './types';
 
 export const BUDGET_CATEGORIES: { id: BudgetCategory; label: string }[] = [
   { id: 'voli', label: "Voli da e per l'Italia" },
@@ -31,8 +31,48 @@ export interface BudgetLine {
   eur: number;
   status: DataStatus;
   /** Da dove arriva la riga: manuale o calcolata da un'altra sezione */
-  origin: 'manuale' | 'hytte' | 'costiera' | 'trasporti' | 'giornate';
+  origin: 'manuale' | 'hytte' | 'costiera' | 'trasporti' | 'giornate' | 'stime';
   itemId?: string;
+}
+
+export interface FuelCost {
+  eurPerKm: number;
+  /** Come è stato ottenuto, per mostrarlo accanto alla cifra */
+  basis: string;
+}
+
+const FUEL_UNIT = { benzina: 'l', diesel: 'l', elettrica: 'kWh' } as const;
+
+/** Costo per km: da consumo × prezzo dell'auto se disponibili, altrimenti il valore inserito a mano. */
+export function fuelCostPerKm(s: TripSettings): FuelCost | undefined {
+  const c = s.car;
+  if (c && c.consumption > 0 && c.priceNok && c.priceNok > 0 && s.nokPerEur > 0) {
+    const u = FUEL_UNIT[c.fuel];
+    const price = c.priceNok.toLocaleString('it-IT', { maximumFractionDigits: 2 });
+    const src = c.priceAuto && c.pricePeriod ? `media nazionale ${formatPeriod(c.pricePeriod)}` : 'prezzo inserito';
+    return { eurPerKm: ((c.consumption / 100) * c.priceNok) / s.nokPerEur, basis: `${c.consumption} ${u}/100 km × ${price} NOK/${u} (${src})` };
+  }
+  if (s.fuelEurPerKm !== undefined) return { eurPerKm: s.fuelEurPerKm, basis: 'costo per km inserito a mano' };
+  return undefined;
+}
+
+const MONTHS = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+/** "2026M09" → "set 2026" */
+export function formatPeriod(p: string): string {
+  const m = p.match(/^(\d{4})M(\d{2})$/);
+  return m ? `${MONTHS[Number(m[2]) - 1] ?? m[2]} ${m[1]}` : p;
+}
+
+export interface CapStatus {
+  cap: number;
+  spent: number;
+  left: number;
+  over: boolean;
+}
+
+export function capStatus(cap: number | undefined, spent: number): CapStatus | undefined {
+  if (!cap || cap <= 0) return undefined;
+  return { cap, spent, left: cap - spent, over: spent > cap };
 }
 
 export interface BudgetSummary {
@@ -127,17 +167,18 @@ export function computeBudget(trip: Trip): BudgetSummary {
   }
 
   if (roadKm > 0) {
-    if (s.fuelEurPerKm !== undefined) {
+    const fuel = fuelCostPerKm(s);
+    if (fuel) {
       lines.push({
         key: 'fuel',
         category: 'carburante_pedaggi',
-        label: `Carburante stimato su ${Math.round(roadKm)} km stradali calcolati`,
-        eur: roadKm * s.fuelEurPerKm,
+        label: `Carburante su ${Math.round(roadKm)} km stradali calcolati: ${fuel.basis}`,
+        eur: roadKm * fuel.eurPerKm,
         status: 'stimato',
         origin: 'trasporti',
       });
     } else {
-      missing.push('Costo carburante per km non impostato');
+      missing.push('Costo del carburante non impostato (consumo e prezzo dell\'auto)');
     }
   }
 
@@ -161,6 +202,66 @@ export function computeBudget(trip: Trip): BudgetSummary {
     }
   }
 
+  // Stime da parametri dell'utente, solo dove mancano dati reali (niente doppi conteggi)
+  const e = s.estimates ?? {};
+  const days = totalDays(trip.stops);
+  const has = (c: BudgetCategory) => lines.some((l) => l.category === c && l.origin !== 'stime');
+  if (e.lodgingPerNight && e.lodgingPerNight > 0) {
+    for (const stop of trip.stops) {
+      if (stop.kind !== 'luogo' || stop.nights === 0) continue;
+      const a = stop.accommodationId ? trip.accommodations.find((x) => x.id === stop.accommodationId) : undefined;
+      if (a?.pricePerNight) continue;
+      lines.push({
+        key: `e-lodging-${stop.id}`,
+        category: 'alloggi',
+        label: `Stima alloggio a ${stop.name}: ${stop.nights} ${stop.nights === 1 ? 'notte' : 'notti'} × ${formatEur(e.lodgingPerNight)}`,
+        eur: stop.nights * e.lodgingPerNight,
+        status: 'stimato',
+        origin: 'stime',
+      });
+    }
+  }
+  if (days > 0 && e.foodPerDay && e.foodPerDay > 0 && !has('pasti')) {
+    lines.push({ key: 'e-food', category: 'pasti', label: `Stima pasti e spesa: ${days} giorni × ${formatEur(e.foodPerDay)}`, eur: days * e.foodPerDay, status: 'stimato', origin: 'stime' });
+  }
+  if (days > 0 && e.carRentalPerDay && e.carRentalPerDay > 0 && !has('noleggio_auto')) {
+    lines.push({
+      key: 'e-car',
+      category: 'noleggio_auto',
+      label: `Stima noleggio auto: ${days} giorni × ${formatEur(e.carRentalPerDay)}`,
+      eur: days * e.carRentalPerDay,
+      status: 'stimato',
+      origin: 'stime',
+    });
+  }
+  if (days > 0 && e.activitiesPerDay && e.activitiesPerDay > 0) {
+    const pricedDays = new Set(Object.entries(trip.days).filter(([, d]) => d.activities.some((x) => x.cost)).map(([k]) => k));
+    const free = computeDays(trip).filter((d) => !d.isDepartureDay && !pricedDays.has(d.key)).length;
+    if (free > 0) {
+      lines.push({
+        key: 'e-act',
+        category: 'attrazioni',
+        label: `Stima attività: ${free} giorni senza attività con prezzo × ${formatEur(e.activitiesPerDay)}`,
+        eur: free * e.activitiesPerDay,
+        status: 'stimato',
+        origin: 'stime',
+      });
+    }
+  }
+  if (e.contingencyPct && e.contingencyPct > 0 && !has('extra_imprevisti')) {
+    const base = lines.reduce((sum, l) => sum + l.eur, 0);
+    if (base > 0) {
+      lines.push({
+        key: 'e-extra',
+        category: 'extra_imprevisti',
+        label: `Fondo imprevisti: ${e.contingencyPct}% del resto del budget`,
+        eur: (base * e.contingencyPct) / 100,
+        status: 'stimato',
+        origin: 'stime',
+      });
+    }
+  }
+
   const byCategory = Object.fromEntries(BUDGET_CATEGORIES.map((c) => [c.id, 0])) as Record<BudgetCategory, number>;
   const byStatus: Record<DataStatus, number> = { confermato: 0, stimato: 0, da_verificare: 0, prenotato: 0, pagato: 0 };
   let total = 0;
@@ -172,7 +273,6 @@ export function computeBudget(trip: Trip): BudgetSummary {
   for (const c of BUDGET_CATEGORIES) {
     if (byCategory[c.id] === 0) missing.push(`Nessuna voce per "${c.label}"`);
   }
-  const days = totalDays(trip.stops);
   return { lines, byCategory, byStatus, total, perDay: days > 0 ? total / days : undefined, days, missing };
 }
 

@@ -20,8 +20,11 @@ export function createEmptyTrip(): Trip {
     budgetItems: [],
     favorites: [],
     settings: {
-      nokPerEur: 11.8,
-      nokRateNote: 'Cambio indicativo di fine ottobre 2026 (circa 11,8 NOK per 1 EUR). Da aggiornare prima dei pagamenti.',
+      nokPerEur: 10.3885,
+      nokRateNote: 'Norges Bank, cambio del 27/10/2026. Si aggiorna in automatico all\'apertura dell\'app.',
+      nokRateDate: '2026-10-27',
+      nokRateAuto: true,
+      car: { fuel: 'benzina', consumption: 7, priceAuto: true },
       maxTravelMinPerDay: 240,
       fuelEurPerKm: undefined,
       showCatalogOnMap: true,

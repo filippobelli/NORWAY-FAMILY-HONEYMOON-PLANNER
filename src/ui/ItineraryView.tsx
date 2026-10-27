@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { newId } from '../domain/ids';
@@ -19,6 +19,7 @@ import type { Leg, Segment, Stop, TransportMode, Trip } from '../domain/types';
 import { getRoutingProvider, RoutingError } from '../services/routing';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtDateTime, MODE_ICON, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 import { MapView } from './MapView';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
@@ -120,6 +121,19 @@ export function ItineraryView() {
     setBusy(null);
     toast(`Calcolati ${ok} tratti${ko ? `, ${ko} non riusciti` : ''}${skipped ? `, ${skipped} in nave da collegare` : ''}`, ko ? 'errore' : 'ok');
   };
+
+  // Dopo il configuratore: calcolo automatico dei tratti del nuovo scenario (una sola volta)
+  useEffect(() => {
+    let pending = false;
+    try {
+      pending = sessionStorage.getItem(AUTO_ROUTE_KEY) === '1';
+      if (pending) sessionStorage.removeItem(AUTO_ROUTE_KEY);
+    } catch {
+      pending = false;
+    }
+    if (pending) void calcAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="itinerary">

@@ -75,8 +75,8 @@ const ok = (m) => console.log('OK:', m);
 
   await p.click('a[href="#/budget"]');
   const tot = await p.textContent('.kpi strong >> nth=0');
-  // hytte: 1800 NOK × 3 notti / 11.8 = 457.6 ; costiera 640 → 1098
-  /1\.?098/.test(tot) ? ok('budget totale ' + tot) : fail('budget ' + tot);
+  // hytte: 1800 NOK × 3 notti / 10.3885 (cambio iniziale) = 519.8 ; costiera 640 → 1160
+  /1\.?160/.test(tot) ? ok('budget totale ' + tot) : fail('budget ' + tot);
   await p.screenshot({ path: OUT + '/5-budget.png', fullPage: true });
 
   await p.reload(); await p.waitForSelector('.kpi'); await p.waitForTimeout(300);

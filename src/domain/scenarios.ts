@@ -85,6 +85,13 @@ export function addScenario(trip: Trip, name: string, kind: ScenarioKind, from: 
   return { ...t, scenarios: [...t.scenarios!, sc] };
 }
 
+/** Aggiunge uno scenario con un piano già pronto (es. dal configuratore) e lo rende attivo. Il piano attuale resta salvato. */
+export function addScenarioWithPlan(trip: Trip, name: string, kind: ScenarioKind, plan: PlanSnapshot, notes = ''): Trip {
+  const t = ensureScenarios(trip);
+  const sc: Scenario = { id: newId(), name: name.trim() || SCENARIO_KIND_LABEL[kind], kind, notes, updatedAt: new Date().toISOString(), plan };
+  return switchScenario({ ...t, scenarios: [...t.scenarios!, sc] }, sc.id);
+}
+
 export function updateScenarioMeta(trip: Trip, id: string, patch: Partial<Pick<Scenario, 'name' | 'kind' | 'notes'>>): Trip {
   const t = ensureScenarios(trip);
   return { ...t, scenarios: t.scenarios!.map((s) => (s.id === id ? { ...s, ...patch } : s)) };

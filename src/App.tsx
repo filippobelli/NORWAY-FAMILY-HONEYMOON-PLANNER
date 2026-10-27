@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
+import { useAutoRates } from './state/autoRates';
 import { CloudSyncProvider, useCloudSync, type CloudStatus } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
 import { fmtDateTime } from './ui/common';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
+import { ConfiguratorView } from './ui/ConfiguratorView';
 import { CoastalView } from './ui/CoastalView';
 import { DaysView } from './ui/DaysView';
 import { HytteView } from './ui/HytteView';
@@ -15,6 +17,7 @@ import { SettingsView } from './ui/SettingsView';
 
 const TABS = [
   { id: 'itinerario', label: 'Itinerario', icon: '🗺️' },
+  { id: 'configuratore', label: 'Configuratore', icon: '🧭' },
   { id: 'giornate', label: 'Giornate', icon: '📅' },
   { id: 'catalogo', label: 'Catalogo', icon: '📚' },
   { id: 'crociere', label: 'Crociere', icon: '🚢' },
@@ -52,6 +55,7 @@ function Shell() {
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
+  useAutoRates(cloud.status);
   const activeScenario = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
 
   return (
@@ -104,6 +108,7 @@ function Shell() {
       )}
       <main className="content">
         {tab === 'itinerario' && <ItineraryView />}
+        {tab === 'configuratore' && <ConfiguratorView />}
         {tab === 'giornate' && <DaysView />}
         {tab === 'catalogo' && <CatalogView />}
         {tab === 'crociere' && <CoastalView />}

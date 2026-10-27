@@ -222,8 +222,19 @@ export interface TripSettings {
   nokRateNote: string;
   /** Soglia oltre la quale una giornata di trasferimento è segnalata come pesante */
   maxTravelMinPerDay: number;
-  /** Costo carburante stimato per km (EUR); undefined = non stimato */
+  /** Aggiorna il cambio in automatico all'apertura dell'app (assente = sì) */
+  nokRateAuto?: boolean;
+  /** Data del cambio applicato (YYYY-MM-DD) */
+  nokRateDate?: string;
+  /** Costo carburante per km (EUR) inserito a mano; usato solo se l'auto non ha consumo e prezzo */
   fuelEurPerKm?: number;
+  car?: CarSettings;
+  /** Tetto di spesa complessivo, in EUR */
+  budgetCap?: number;
+  /** Tetti per categoria, in EUR */
+  budgetCapByCategory?: Partial<Record<BudgetCategory, number>>;
+  /** Parametri per stimare le categorie senza voci (sono ipotesi dell'utente, non prezzi) */
+  estimates?: BudgetEstimates;
   showCatalogOnMap: boolean;
   // Ipotesi di pianificazione (non dati verificati): servono solo alle stime realistiche
   /** Ogni quanti minuti di guida si fa una sosta */
@@ -238,6 +249,34 @@ export interface TripSettings {
   mealBreaksMin?: number;
   /** Margine per imprevisti, in percentuale */
   marginPct?: number;
+}
+
+export type FuelType = 'benzina' | 'diesel' | 'elettrica';
+
+export interface CarSettings {
+  fuel: FuelType;
+  /** Litri (o kWh per l'elettrica) ogni 100 km */
+  consumption: number;
+  /** Prezzo in NOK per litro (o per kWh) */
+  priceNok?: number;
+  /** Prezzo aggiornato in automatico dalla media nazionale (solo benzina e diesel) */
+  priceAuto: boolean;
+  /** Periodo del prezzo, es. "2026M09" */
+  pricePeriod?: string;
+  priceSource?: string;
+}
+
+export interface BudgetEstimates {
+  /** EUR a notte per le tappe senza un alloggio con prezzo */
+  lodgingPerNight?: number;
+  /** EUR al giorno per la famiglia (spesa e pasti) */
+  foodPerDay?: number;
+  /** EUR al giorno per attività, nei giorni senza attività con prezzo */
+  activitiesPerDay?: number;
+  /** EUR al giorno di noleggio auto */
+  carRentalPerDay?: number;
+  /** Percentuale per imprevisti sul totale */
+  contingencyPct?: number;
 }
 
 // ---------- Scenari ----------
