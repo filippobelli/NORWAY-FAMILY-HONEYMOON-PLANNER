@@ -40,3 +40,34 @@ create policy "trips_update_own" on public.trips for update to authenticated
 
 drop policy if exists "trips_delete_own" on public.trips;
 create policy "trips_delete_own" on public.trips for delete to authenticated using (owner_id = (select auth.uid()));
+
+-- Registrazioni limitate agli indirizzi autorizzati (applicata il 27/10/2026).
+-- Per autorizzare un nuovo indirizzo: insert into private.allowed_emails (email) values ('nome@esempio.it');
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+
+create table if not exists private.allowed_emails (
+  email text primary key,
+  added_at timestamptz not null default now()
+);
+
+insert into private.allowed_emails (email)
+select lower(email) from auth.users where email is not null
+on conflict do nothing;
+
+create or replace function private.block_unlisted_signup()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  if new.email is null or not exists (
+    select 1 from private.allowed_emails a where a.email = lower(new.email)
+  ) then
+    raise exception 'Registrazione non consentita';
+  end if;
+  return new;
+end $$;
+
+revoke all on function private.block_unlisted_signup() from public, anon, authenticated;
+
+drop trigger if exists block_unlisted_signup on auth.users;
+create trigger block_unlisted_signup before insert on auth.users
+for each row execute function private.block_unlisted_signup();

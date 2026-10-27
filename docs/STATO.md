@@ -38,6 +38,7 @@ Differenze motivate rispetto allo stack di riferimento:
 - Progetto Supabase `norway-planner` (ref `zsbfcriekrguiugbqdhi`, eu-central-1, piano Free) creato con autorizzazione di Filippo.
 - Migrazione `create_trips` applicata: tabella `trips`, trigger `updated_at`, 4 policy RLS per proprietario.
 - Verifiche dal PC di Filippo: lettura anonima → lista vuota; scrittura anonima → rifiutata dalla RLS (401); endpoint di login attivo; registrazione aperta con conferma email obbligatoria.
+- Registrazioni chiuse: un trigger su `auth.users` accetta solo le email in `private.allowed_emails` (oggi solo l'account di Filippo). Verificato: registrazione di un indirizzo estraneo rifiutata. Pulsante "Registrati" rimosso dall'app.
 - Prova reale: 1 account con email confermata, 1 viaggio salvato con proprietario corretto.
 - Advisor di sicurezza Supabase: nessun problema. Prestazioni: solo "indice non ancora usato" (normale su tabella vuota).
 

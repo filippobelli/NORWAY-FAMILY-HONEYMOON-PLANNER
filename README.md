@@ -38,13 +38,18 @@ Altri comandi:
 
 Già configurato: progetto `norway-planner` (Francoforte, piano Free), tabella `trips` con RLS, valori pubblici in `.env`.
 
+Le registrazioni sono chiuse: possono accedere solo gli indirizzi presenti in `private.allowed_emails`.
+
 1. Avvia l'app con `npm run dev`.
-2. Apri la sezione **Salvataggio**.
-3. Inserisci email e password (almeno 6 caratteri) e clicca **Registrati**.
-4. Apri l'email di Supabase e clicca il link di conferma (può aprirsi una pagina di errore su localhost: è normale, la conferma è comunque registrata).
-5. Torna nell'app e clicca **Accedi**.
-6. Clicca **Salva nel cloud**: compare la data di salvataggio confermata dal server.
-7. Su un altro dispositivo: **Accedi** → **Viaggi salvati nel cloud** → **Carica**.
+2. Apri la sezione **Salvataggio**, inserisci email e password e clicca **Accedi**.
+3. Clicca **Salva nel cloud**: compare la data di salvataggio confermata dal server.
+4. Su un altro dispositivo: **Accedi** → **Viaggi salvati nel cloud** → **Carica**.
+
+Per autorizzare un'altra persona:
+
+1. In Supabase apri **SQL Editor** → **New query**.
+2. Esegui `insert into private.allowed_emails (email) values ('indirizzo@esempio.it');` con l'indirizzo in minuscolo.
+3. In **Authentication** → **Users** clicca **Add user** → **Send invitation** con lo stesso indirizzo.
 
 Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Editor e sostituisci i valori in `.env`. Mai inserire la secret/service_role key.
 

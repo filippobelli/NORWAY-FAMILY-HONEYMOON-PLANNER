@@ -13,7 +13,6 @@ import {
   saveCloudTrip,
   signIn,
   signOut,
-  signUp,
   type CloudSession,
   type CloudTripRow,
 } from '../services/storage/supabase';
@@ -270,23 +269,7 @@ function CloudPanel() {
             <button className="btn btn-primary" type="submit" disabled={busy || !email || password.length < 6}>
               Accedi
             </button>
-            <button
-              className="btn"
-              type="button"
-              disabled={busy || !email || password.length < 6}
-              onClick={() =>
-                run(async () => {
-                  const r = await signUp(cfg, email, password);
-                  if (r === 'conferma_email') toast('Registrazione inviata: conferma il link ricevuto via email, poi accedi.');
-                  else {
-                    setSession(r);
-                    toast('Account creato');
-                  }
-                })
-              }
-            >
-              Registrati
-            </button>
+
           </div>
         </form>
       ) : (
