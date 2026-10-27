@@ -84,14 +84,21 @@ export const AVG_KMH = 52;
 /** Ore di guida stimate (solo per pianificare: non è un tempo calcolato). */
 export const estDriveHours = (a: P, b: P) => (airKm(a, b) * ROAD_FACTOR) / AVG_KMH;
 
-function routeCost(points: P[]): number {
+/** Costo di un percorso: km stimati, più una penalità forte per ogni ora oltre il massimo di guida giornaliero. */
+function routeCost(points: P[], maxDrive = Infinity): number {
   let c = 0;
-  for (let i = 1; i < points.length; i++) c += airKm(points[i - 1]!, points[i]!);
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1]!;
+    const b = points[i]!;
+    c += airKm(a, b);
+    const over = estDriveHours(a, b) - maxDrive;
+    if (over > 0) c += over * AVG_KMH * 4;
+  }
   return c;
 }
 
 /** Ordina le basi tra partenza e arrivo fissi: vicino più vicino + miglioramento 2-opt. */
-export function orderBases<T extends P>(start: P, end: P, bases: T[]): T[] {
+export function orderBases<T extends P>(start: P, end: P, bases: T[], maxDrive = Infinity): T[] {
   const left = [...bases];
   const out: T[] = [];
   let cur: P = start;
@@ -116,7 +123,7 @@ export function orderBases<T extends P>(start: P, end: P, bases: T[]): T[] {
     for (let i = 0; i < out.length - 1; i++) {
       for (let j = i + 1; j < out.length; j++) {
         const cand = [...out.slice(0, i), ...out.slice(i, j + 1).reverse(), ...out.slice(j + 1)];
-        if (routeCost([start, ...cand, end]) + 1e-6 < routeCost([start, ...out, end])) {
+        if (routeCost([start, ...cand, end], maxDrive) + 1e-6 < routeCost([start, ...out, end], maxDrive)) {
           out.splice(0, out.length, ...cand);
           improved = true;
         }
@@ -232,7 +239,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   }
   if (chosen.length === 0) chosen = [bases.sort((a, b) => airKm(a, arr) - airKm(b, arr))[0]!];
 
-  let order = orderBases(arr, dep, chosen);
+  let order = orderBases(arr, dep, chosen, maxDrive);
 
   // Tratti troppo lunghi: si inserisce una base intermedia (togliendo una notte a chi ne ha di più)
   const legsOf = (o: Base[]): [P, P][] => {
@@ -272,7 +279,10 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
       if (!best) continue;
       notes.push(`Aggiunta ${best.d.name} come tappa intermedia per spezzare un trasferimento stimato di circa ${Math.round(estDriveHours(a, b))} h.`);
       transit.add(best.d.id);
-      order = [...order.slice(0, idx), best, ...order.slice(idx)];
+      // Si rimette in ordine tutto il giro: con la tappa nuova può convenire una sequenza diversa
+      const spliced = [...order.slice(0, idx), best, ...order.slice(idx)];
+      const reordered = orderBases(arr, dep, spliced, maxDrive);
+      order = routeCost([arr, ...reordered, dep], maxDrive) < routeCost([arr, ...spliced, dep], maxDrive) ? reordered : spliced;
       inserted = true;
       break;
     }

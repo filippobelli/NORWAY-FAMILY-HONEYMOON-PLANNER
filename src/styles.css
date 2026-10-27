@@ -299,6 +299,10 @@ a:focus-visible {
 }
 .check input {
   width: auto;
+  flex: none;
+}
+.field .check {
+  white-space: normal;
 }
 .check select {
   width: auto;
