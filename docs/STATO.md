@@ -22,7 +22,7 @@ Differenze motivate rispetto allo stack di riferimento:
 | 7. Ricerca hytte | Parziale | OSM + link esterni. Nessuna API con prezzi/disponibilità |
 | 8. Confronto Hurtigruten/Havila | Fatto (base) | Fatti e regole verificati; prezzi 2027 da inserire a mano |
 | 9. Budget famiglia | Fatto | Stati per ogni voce, nessun doppio conteggio |
-| 10. Salvataggio online | Configurato | Progetto Supabase creato, schema e RLS attivi; manca la prova con un account reale |
+| 10. Salvataggio online | Fatto e verificato | 27/10/2026: account confermato, viaggio salvato nel cloud e associato al proprietario |
 
 ## Verifiche eseguite
 
@@ -38,6 +38,7 @@ Differenze motivate rispetto allo stack di riferimento:
 - Progetto Supabase `norway-planner` (ref `zsbfcriekrguiugbqdhi`, eu-central-1, piano Free) creato con autorizzazione di Filippo.
 - Migrazione `create_trips` applicata: tabella `trips`, trigger `updated_at`, 4 policy RLS per proprietario.
 - Verifiche dal PC di Filippo: lettura anonima → lista vuota; scrittura anonima → rifiutata dalla RLS (401); endpoint di login attivo; registrazione aperta con conferma email obbligatoria.
+- Prova reale: 1 account con email confermata, 1 viaggio salvato con proprietario corretto.
 - Advisor di sicurezza Supabase: nessun problema. Prestazioni: solo "indice non ancora usato" (normale su tabella vuota).
 
 ## Limiti noti
@@ -51,7 +52,6 @@ Differenze motivate rispetto allo stack di riferimento:
 
 ## Configurazioni ancora necessarie
 
-- Registrare il primo account nell'app e confermare l'email (vedi README).
 - Impostare in Supabase (Authentication → URL Configuration) l'indirizzo definitivo dell'app quando sarà pubblicata, così il link di conferma email non punta a localhost.
 - Eventuale chiave di un provider di routing con limiti più alti, se OSRM pubblico non basta.
 - Repository GitHub per versionare il codice.
