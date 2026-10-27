@@ -1,5 +1,5 @@
 import { toEur } from './coastal';
-import { legTotals, totalDays } from './itinerary';
+import { computeDays, legTotals, totalDays } from './itinerary';
 import type { BudgetCategory, DataStatus, Trip } from './types';
 
 export const BUDGET_CATEGORIES: { id: BudgetCategory; label: string }[] = [
@@ -83,6 +83,12 @@ export function computeBudget(trip: Trip): BudgetSummary {
     });
   }
 
+  // Navigazione costiera: coerenza tra opzioni incluse nel budget e tratti dell'itinerario
+  const linked = new Set(trip.legs.flatMap((l) => l.segments.map((sg) => sg.coastalOptionId)).filter(Boolean));
+  for (const o of trip.coastalOptions) {
+    if (linked.has(o.id) && !o.selected) missing.push(`${o.operator} ${o.fromPort} → ${o.toPort} è nell'itinerario ma esclusa dal budget`);
+  }
+
   // Navigazione costiera selezionata
   for (const o of trip.coastalOptions.filter((x) => x.selected)) {
     if (!o.price) {
@@ -135,8 +141,13 @@ export function computeBudget(trip: Trip): BudgetSummary {
     }
   }
 
-  // Attività con costo nelle giornate
+  // Attività con costo nelle giornate esistenti (le giornate rimaste senza tappa non sono contate)
+  const liveKeys = new Set(computeDays(trip).map((d) => d.key));
   for (const [dayKey, day] of Object.entries(trip.days)) {
+    if (!liveKeys.has(dayKey)) {
+      if (day.activities.some((a) => a.cost)) missing.push('Attività con costo in giornate non più presenti nell\'itinerario (non conteggiate)');
+      continue;
+    }
     for (const act of day.activities) {
       if (!act.cost) continue;
       lines.push({

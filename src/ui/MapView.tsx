@@ -68,7 +68,7 @@ export function MapView({ trip, onAddDestination, height = 460 }: Props) {
         });
         const box = document.createElement('div');
         box.className = 'map-popup';
-        box.innerHTML = `<strong>${esc(d.name)}</strong><br><small>${esc(d.region)} · coordinate approssimative</small>`;
+        box.innerHTML = `<strong>${esc(d.name)}</strong><br><small>${esc(d.region)} · posizione ${d.coordsStatus === 'verificate' ? 'verificata su OSM' : 'approssimativa'}</small>`;
         if (addRef.current) {
           const btn = document.createElement('button');
           btn.type = 'button';

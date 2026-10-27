@@ -8,7 +8,8 @@ Contesto e regole del progetto: [CLAUDE.md](CLAUDE.md). Stato di avanzamento e l
 - **Itinerario**: tappe dal catalogo, luoghi personalizzati o notti a bordo; notti per tappa; riordino; avvisi su durata (15–20 giorni), giornate pesanti, cambi di alloggio troppo frequenti, tratti non calcolati.
 - **Collegamenti reali**: calcolo stradale con OSRM (dati OpenStreetMap). I traghetti sul percorso vengono riconosciuti e separati dalla strada; attese, orari e costi restano da inserire. Tratti manuali per traghetto, treno, bus, aereo e nave costiera.
 - **Mappa** (Leaflet + OpenStreetMap): tappe numerate, tratti colorati per mezzo, catalogo cliccabile. I collegamenti non calcolati sono linee tratteggiate sottili, mai presentate come distanze.
-- **Giornate**: calendario generato dalle notti, trasferimenti del giorno, attività, note, piano B per il maltempo, suggerimenti nei dintorni.
+- **Giornate**: calendario generato dalle notti, trasferimenti teorici e realistici, carico di ogni giornata per la famiglia, proposte per alleggerire (mai applicate da sole), attività, note, piano B, suggerimenti nei dintorni.
+- **Scenari**: itinerari alternativi (auto e hytte, auto con traghetti e navigazione, misto con treni) confrontati su durata, costi, km, trasferimenti, cambi di alloggio e dati da verificare.
 - **Navigazione costiera**: fatti verificati su Hurtigruten e Havila (27/10/2026), 34 porti della rotta, confronto di opzioni con prezzo, stato, cabina, pasti, note per la famiglia; collegamento ai tratti e al budget.
 - **Hytte**: ricerca strutture vicine su OpenStreetMap, link precompilati a Google Maps / Booking / Airbnb con date e bambini, scheda completa della sistemazione, stato (individuata → prenotata), alternative per tappa.
 - **Budget**: voci manuali + voci derivate da hytte, costiera, traghetti, carburante e attività; totale, media giornaliera, suddivisione per categoria e per stato (confermato, stimato, da verificare, prenotato, pagato); conversione NOK→EUR.
@@ -33,6 +34,8 @@ Altri comandi:
 | `npm test` | Test della logica (giornate, tratti, budget, rotta costiera, routing) |
 | `npm run lint` | ESLint |
 | `npm run build` | Controllo tipi + build di produzione in `dist/` |
+| `node verify/build-local.mjs` | Anteprima in un solo file HTML (`dist-local/index.html`) |
+| `node verify/e2e/e2e.cjs` · `sync.cjs` · `planning.cjs` · `a11y.cjs` | Test nel browser sull'anteprima (richiedono `npm i -D playwright` e `npx playwright install chromium`) |
 
 ## Salvataggio cloud (Supabase)
 

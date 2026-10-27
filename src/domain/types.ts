@@ -35,6 +35,7 @@ export type Category =
 
 export type Region =
   | 'Oslo e Østlandet'
+  | 'Innlandet e montagne'
   | 'Fiordi occidentali'
   | 'Sørlandet e Rogaland'
   | 'Trøndelag'
@@ -224,6 +225,44 @@ export interface TripSettings {
   /** Costo carburante stimato per km (EUR); undefined = non stimato */
   fuelEurPerKm?: number;
   showCatalogOnMap: boolean;
+  // Ipotesi di pianificazione (non dati verificati): servono solo alle stime realistiche
+  /** Ogni quanti minuti di guida si fa una sosta */
+  breakEveryMin?: number;
+  /** Durata di ogni sosta */
+  breakMin?: number;
+  /** Attesa/imbarco ipotizzati per i traghetti senza attesa inserita */
+  defaultFerryWaitMin?: number;
+  /** Tempo attivo disponibile in una giornata con i bambini */
+  activeDayMin?: number;
+  /** Pause pasto complessive al giorno */
+  mealBreaksMin?: number;
+  /** Margine per imprevisti, in percentuale */
+  marginPct?: number;
+}
+
+// ---------- Scenari ----------
+
+export type ScenarioKind = 'auto_hytte' | 'auto_traghetti_costiera' | 'misto_treni' | 'altro';
+
+/** Parte del viaggio che cambia da uno scenario all'altro. Hytte, opzioni costiere e catalogo sono condivisi. */
+export interface PlanSnapshot {
+  startDate: string;
+  stops: Stop[];
+  legs: Leg[];
+  days: Record<string, DayPlan>;
+  budgetItems: BudgetItem[];
+  /** Opzioni costiere incluse nel budget in questo scenario */
+  coastalSelected: ID[];
+}
+
+export interface Scenario {
+  id: ID;
+  name: string;
+  kind: ScenarioKind;
+  notes: string;
+  updatedAt: string;
+  /** Piano salvato; assente per lo scenario attivo, che vive nei campi principali del viaggio */
+  plan?: PlanSnapshot;
 }
 
 export interface Trip {
@@ -240,6 +279,8 @@ export interface Trip {
   accommodations: Accommodation[];
   budgetItems: BudgetItem[];
   favorites: ID[];
+  scenarios?: Scenario[];
+  activeScenarioId?: ID;
   settings: TripSettings;
   updatedAt: string;
 }

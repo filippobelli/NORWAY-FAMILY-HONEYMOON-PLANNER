@@ -1,47 +1,182 @@
 import { useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
-import { haversineKm } from '../services/accommodation/search';
+import { applySuggestion, computeDayLoads, describeLoad, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
-import { computeDays, formatDateIt, formatDuration, legTotals } from '../domain/itinerary';
+import { assumptions, computeDays, formatDateIt, formatDuration, legTotals, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
+import { haversineKm } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtMoney, MODE_ICON, MoneyInput, NumberInput, StatusSelect } from './common';
 
 const emptyDay = (): DayPlan => ({ activities: [], notes: '', planB: '' });
 
+const LEVEL_LABEL: Record<DayLoad['level'], { label: string; tone: 'ok' | 'info' | 'warn' | 'neutral' }> = {
+  leggera: { label: 'Leggera', tone: 'ok' },
+  equilibrata: { label: 'Equilibrata', tone: 'info' },
+  piena: { label: 'Piena', tone: 'warn' },
+  eccessiva: { label: 'Troppo carica', tone: 'warn' },
+};
+
 export function DaysView() {
-  const { trip } = useTrip();
+  const { trip, update, replace, toast } = useTrip();
   const days = useMemo(() => computeDays(trip), [trip]);
+  const loads = useMemo(() => computeDayLoads(trip, days), [trip, days]);
+  const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
+  const orphans = useMemo(() => orphanDayKeys(trip), [trip]);
+  const a = assumptions(trip.settings);
+
   if (days.length === 0) return <Empty title="Nessuna giornata">Aggiungi le tappe nella sezione Itinerario: le giornate si generano dalle notti.</Empty>;
+
+  const apply = (sg: Suggestion) => {
+    if (!sg.action) return;
+    const action = sg.action;
+    const before = trip;
+    update((t) => applySuggestion(t, action));
+    toast('Proposta applicata', 'ok', { label: 'Annulla', run: () => replace(before) });
+  };
+
+  const counts = loads.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.level]: (acc[l.level] ?? 0) + 1 }), {});
+
   return (
     <div className="days">
       {trip.dateTentative && (
-        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in Viaggio e salvataggio.</p>
+        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in Salvataggio → Viaggio.</p>
       )}
+      <section className="panel">
+        <h2>Ritmo del viaggio</h2>
+        <p className="muted small">
+          Carico = trasferimenti realistici + visite + pause pasto ({formatDuration(a.mealBreaksMin)}) + margine imprevisti ({a.marginPct}%), su{' '}
+          {formatDuration(a.activeDayMin)} di tempo attivo al giorno. Sono ipotesi modificabili in Salvataggio → Viaggio.
+        </p>
+        <div className="load-strip" role="list" aria-label="Carico giornaliero">
+          {loads.map((l) => (
+            <a key={l.key} role="listitem" href={`#/giornate`} onClick={(e) => { e.preventDefault(); document.getElementById(`day-${l.key}`)?.scrollIntoView({ behavior: 'smooth' }); }} className={`load-cell load-${l.level} ${l.incomplete ? 'load-incomplete' : ''}`} title={`Giorno ${l.index + 1}: ${LEVEL_LABEL[l.level].label}${l.incomplete ? ' (incompleto: tratti non calcolati)' : ''} — ${describeLoad(l)}`}>
+              {l.index + 1}
+            </a>
+          ))}
+        </div>
+        <p className="small">
+          {(['leggera', 'equilibrata', 'piena', 'eccessiva'] as const)
+            .filter((k) => counts[k])
+            .map((k) => `${counts[k]} ${LEVEL_LABEL[k].label.toLowerCase()}`)
+            .join(' · ')}
+          {loads.some((l) => l.incomplete) && ` · ${loads.filter((l) => l.incomplete).length} con tratti non calcolati (bordo tratteggiato)`}
+        </p>
+        {suggestions.length > 0 && (
+          <>
+            <h3>Proposte per alleggerire</h3>
+            <p className="muted small">Nessuna proposta viene applicata da sola: scegli tu.</p>
+            <ul className="suggestion-list">
+              {suggestions.map((sg) => (
+                <li key={sg.id}>
+                  <span>
+                    <strong>Giorno {(days.find((d) => d.key === sg.dayKey)?.index ?? 0) + 1}:</strong> {sg.text}
+                  </span>
+                  {sg.action && (
+                    <button className="btn btn-small" onClick={() => apply(sg)}>
+                      Applica
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+
+      {orphans.length > 0 && (
+        <section className="panel">
+          <h2>Attività di giornate non più presenti</h2>
+          <p className="muted small">Appartenevano a tappe rimosse o a notti tolte. Non sono conteggiate nel budget; spostale o eliminale.</p>
+          {orphans.map((k) => (
+            <OrphanDay key={k} dayKey={k} days={days} />
+          ))}
+        </section>
+      )}
+
       {days.map((d) => (
-        <DayCard key={d.index} dayIndex={d.index} />
+        <DayCard key={d.key} day={d} load={loads[d.index]!} />
       ))}
     </div>
   );
 }
 
-function DayCard({ dayIndex }: { dayIndex: number }) {
+function OrphanDay({ dayKey, days }: { dayKey: string; days: DayInfo[] }) {
   const { trip, update } = useTrip();
-  const day = computeDays(trip)[dayIndex];
-  const plan = trip.days[String(dayIndex)] ?? emptyDay();
+  const plan = trip.days[dayKey];
+  const [target, setTarget] = useState(days[0]?.key ?? '');
+  if (!plan) return null;
+  return (
+    <div className="segment">
+      <p className="small">{plan.activities.map((a) => a.title || 'attività').join(', ') || plan.notes || plan.planB}</p>
+      <div className="row wrap">
+        <select value={target} onChange={(e) => setTarget(e.target.value)} aria-label="Giornata di destinazione">
+          {days.map((d) => (
+            <option key={d.key} value={d.key}>
+              Giorno {d.index + 1} · {d.sleepStop?.name ?? 'partenza'}
+            </option>
+          ))}
+        </select>
+        <button
+          className="btn btn-small"
+          onClick={() =>
+            update((t) => {
+              const to = t.days[target] ?? emptyDay();
+              const rest = { ...t.days };
+              delete rest[dayKey];
+              return {
+                ...t,
+                days: {
+                  ...rest,
+                  [target]: {
+                    activities: [...to.activities, ...plan.activities],
+                    notes: [to.notes, plan.notes].filter(Boolean).join('\n'),
+                    planB: [to.planB, plan.planB].filter(Boolean).join('\n'),
+                  },
+                },
+              };
+            })
+          }
+        >
+          Sposta qui
+        </button>
+        <button
+          className="btn btn-small danger"
+          onClick={() => {
+            if (window.confirm('Eliminare definitivamente queste attività e note?')) {
+              update((t) => {
+                const rest = { ...t.days };
+                delete rest[dayKey];
+                return { ...t, days: rest };
+              });
+            }
+          }}
+        >
+          Elimina
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
+  const { trip, update } = useTrip();
+  const plan = trip.days[day.key] ?? emptyDay();
   const [title, setTitle] = useState('');
-  if (!day) return null;
-  const setPlan = (fn: (p: DayPlan) => DayPlan) => update((t) => ({ ...t, days: { ...t.days, [String(dayIndex)]: fn(t.days[String(dayIndex)] ?? emptyDay()) } }));
+  const setPlan = (fn: (p: DayPlan) => DayPlan) => update((t) => ({ ...t, days: { ...t.days, [day.key]: fn(t.days[day.key] ?? emptyDay()) } }));
   const here = day.sleepStop ?? day.wakeStop;
   const nearby = here
     ? DESTINATIONS.filter((x) => x.category !== 'aeroporti' && haversineKm(x, here) < 60 && x.id !== here.destinationId).slice(0, 6)
     : [];
   const addActivity = (a: Partial<Activity>) =>
     setPlan((p) => ({ ...p, activities: [...p.activities, { id: newId(), title: a.title ?? '', costStatus: 'da_verificare', ...a }] }));
+  const setAct = (id: string, patch: Partial<Activity>) =>
+    setPlan((p) => ({ ...p, activities: p.activities.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
 
   const from = day.legs[0] ? trip.stops.find((s) => s.id === day.legs[0]!.fromStopId) : undefined;
+  const lv = LEVEL_LABEL[load.level];
   return (
-    <article className={`day ${day.warnings.length ? 'day-warn' : ''}`}>
+    <article id={`day-${day.key}`} className={`day day-${load.level}`}>
       <header className="day-head">
         <div>
           <span className="day-num">Giorno {day.index + 1}</span> <span className="muted">{formatDateIt(day.date)}</span>
@@ -61,20 +196,32 @@ function DayCard({ dayIndex }: { dayIndex: number }) {
         </div>
       </header>
 
+      <div className="load-bar" aria-label={`Carico: ${lv.label}, ${describeLoad(load)}`}>
+        <span className={`load-fill load-${load.level}`} style={{ width: `${Math.min(100, Math.round(load.ratio * 100))}%` }} />
+      </div>
+      <p className="small">
+        <Badge tone={lv.tone}>{lv.label}</Badge> {describeLoad(load)} · trasferimenti {formatDuration(load.transferMin)} · visite {formatDuration(load.visitsMin)}
+        {load.estimatedVisits > 0 && <span className="muted"> ({load.estimatedVisits} durate stimate dal catalogo)</span>}
+        {load.unknownVisits > 0 && <span className="muted"> · {load.unknownVisits} attività senza durata</span>}
+        {load.incomplete && <strong className="error"> · stima incompleta: ci sono tratti non calcolati</strong>}
+      </p>
+      {(day.isArrivalDay || day.isDepartureDay) && <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo.</p>}
+
       {day.legs.length > 0 && (
         <ul className="day-legs">
           {day.legs.map((l) => {
-            const t = legTotals(l);
+            const t = legTotals(l, trip.settings);
             return (
               <li key={l.id}>
                 {l.segments.map((s) => MODE_ICON[s.mode]).join(' ')} {t.roadKm > 0 && `${Math.round(t.roadKm)} km · `}
-                {t.travelMin > 0 ? formatDuration(t.travelMin + t.waitMin) : 'tempo non calcolato'}
+                {t.travelMin > 0 ? `teorici ${formatDuration(t.travelMin + t.waitMin)} · realistici ~${formatDuration(t.realisticMin)}` : 'tempo non calcolato'}
                 {l.segments
                   .filter((s) => s.mode === 'traghetto' || s.mode === 'costiera')
                   .map((s) => (
                     <span key={s.id} className="muted">
                       {' '}
-                      · {s.label} {s.departureTime ? `ore ${s.departureTime}` : '(orario da verificare)'}
+                      · {s.label} {s.departureTime ? `ore ${s.departureTime}` : ''}
+                      {['confermato', 'prenotato', 'pagato'].includes(s.status) ? '' : ' (orario da verificare)'}
                     </span>
                   ))}
               </li>
@@ -90,41 +237,38 @@ function DayCard({ dayIndex }: { dayIndex: number }) {
       {day.sleepStop?.kind === 'luogo' && !day.sleepStop.accommodationId && <p className="muted small">Alloggio non ancora scelto.</p>}
 
       <ul className="activities">
-        {plan.activities.map((a) => (
-          <li key={a.id} className="activity">
-            <input
-              aria-label="Attività"
-              value={a.title}
-              onChange={(e) => setPlan((p) => ({ ...p, activities: p.activities.map((x) => (x.id === a.id ? { ...x, title: e.target.value } : x)) }))}
-            />
-            <NumberInput
-              value={a.durationMin}
-              placeholder="min"
-              onChange={(v) => setPlan((p) => ({ ...p, activities: p.activities.map((x) => (x.id === a.id ? { ...x, durationMin: v } : x)) }))}
-            />
-            <MoneyInput
-              value={a.cost}
-              onChange={(m) => setPlan((p) => ({ ...p, activities: p.activities.map((x) => (x.id === a.id ? { ...x, cost: m } : x)) }))}
-            />
-            <StatusSelect
-              value={a.costStatus}
-              onChange={(v) => setPlan((p) => ({ ...p, activities: p.activities.map((x) => (x.id === a.id ? { ...x, costStatus: v } : x)) }))}
-            />
-            <button
-              className="icon-btn danger"
-              aria-label={`Rimuovi ${a.title || 'attività'}`}
-              onClick={() => setPlan((p) => ({ ...p, activities: p.activities.filter((x) => x.id !== a.id) }))}
-            >
-              ✕
-            </button>
-            {a.destinationId && findDestination(a.destinationId)?.augustNote && (
-              <span className="note-warn small">⚠️ {findDestination(a.destinationId)?.augustNote}</span>
-            )}
-          </li>
-        ))}
+        {plan.activities.map((a) => {
+          const dest = findDestination(a.destinationId);
+          return (
+            <li key={a.id} className="activity">
+              <input aria-label="Attività" value={a.title} onChange={(e) => setAct(a.id, { title: e.target.value })} />
+              <NumberInput
+                ariaLabel="Durata in minuti"
+                value={a.durationMin}
+                placeholder={dest?.visitHours ? `~${dest.visitHours[0] * 60}` : 'min'}
+                onChange={(v) => setAct(a.id, { durationMin: v })}
+              />
+              <MoneyInput ariaLabel="Costo dell'attività" value={a.cost} onChange={(m) => setAct(a.id, { cost: m })} />
+              <StatusSelect ariaLabel="Stato del costo" value={a.costStatus} onChange={(v) => setAct(a.id, { costStatus: v })} />
+              <button
+                className="icon-btn danger"
+                aria-label={`Rimuovi ${a.title || 'attività'}`}
+                onClick={() => setPlan((p) => ({ ...p, activities: p.activities.filter((x) => x.id !== a.id) }))}
+              >
+                ✕
+              </button>
+              {dest?.augustNote && <span className="note-warn small">⚠️ {dest.augustNote}</span>}
+            </li>
+          );
+        })}
       </ul>
       <div className="row">
-        <input placeholder="Nuova attività (es. battello sul fiordo, parco giochi, riposo)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input
+          aria-label="Nuova attività"
+          placeholder="Nuova attività (es. battello sul fiordo, parco giochi, riposo)"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
         <button
           className="btn btn-small"
           disabled={!title.trim()}

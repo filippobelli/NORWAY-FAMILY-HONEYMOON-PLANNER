@@ -1,9 +1,11 @@
 import { useMemo, useRef, useState } from 'react';
+import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { newId } from '../domain/ids';
 import {
   computeDays,
   formatDuration,
+  isRoutableLeg,
   legTotals,
   moveItem,
   totalDays,
@@ -22,7 +24,9 @@ import { MapView } from './MapView';
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
   if (!d) return undefined;
-  return { id: newId(), kind: 'luogo', destinationId: d.id, name: d.name, lat: d.lat, lng: d.lng, nights: 1, notes: '', weatherPlanB: '' };
+  // Gli aeroporti sono punti di arrivo/partenza: di norma non ci si dorme
+  const nights = d.category === 'aeroporti' ? 0 : 1;
+  return { id: newId(), kind: 'luogo', destinationId: d.id, name: d.name, lat: d.lat, lng: d.lng, nights, notes: '', weatherPlanB: '' };
 }
 
 export function ItineraryView() {
@@ -55,6 +59,19 @@ export function ItineraryView() {
   };
 
   const calcOne = async (leg: Leg) => {
+    if (!isRoutableLeg(leg, trip.stops)) {
+      toast('Questo tratto arriva o parte da una notte a bordo: collega l\'opzione di navigazione costiera invece del percorso stradale.', 'errore');
+      return;
+    }
+    const manual = leg.segments.filter((sg) => ['treno', 'bus', 'aereo', 'costiera'].includes(sg.mode));
+    if (
+      manual.length > 0 &&
+      !window.confirm(
+        `Il tratto contiene già ${manual.map((m) => MODE_LABEL[m.mode].toLowerCase()).join(', ')}. Il percorso stradale verrà AGGIUNTO in sequenza: continua solo se si guida anche. Procedere?`,
+      )
+    ) {
+      return;
+    }
     abort.current?.abort();
     const ac = new AbortController();
     abort.current = ac;
@@ -70,8 +87,20 @@ export function ItineraryView() {
   };
 
   const calcAll = async () => {
-    const todo = trip.legs.filter((l) => legTotals(l).hasUncalculated);
-    if (todo.length === 0) return toast('Tutti i tratti sono già calcolati');
+    const pending = trip.legs.filter((l) => legTotals(l).hasUncalculated);
+    const todo = pending.filter((l) => isRoutableLeg(l, trip.stops));
+    const skipped = pending.length - todo.length;
+    if (skipped > 0) {
+      update((cur) => ({
+        ...cur,
+        legs: cur.legs.map((l) =>
+          pending.includes(l) && !isRoutableLeg(l, cur.stops)
+            ? { ...l, routingError: 'Tratto con notte a bordo: collega la navigazione costiera (sezione Costiera → Collega a un tratto).' }
+            : l,
+        ),
+      }));
+    }
+    if (todo.length === 0) return toast(skipped ? 'Restano solo tratti in nave da collegare alla navigazione costiera' : 'Tutti i tratti sono già calcolati');
     abort.current?.abort();
     const ac = new AbortController();
     abort.current = ac;
@@ -89,7 +118,7 @@ export function ItineraryView() {
       }
     }
     setBusy(null);
-    toast(`Calcolati ${ok} tratti${ko ? `, ${ko} non riusciti` : ''}`, ko ? 'errore' : 'ok');
+    toast(`Calcolati ${ok} tratti${ko ? `, ${ko} non riusciti` : ''}${skipped ? `, ${skipped} in nave da collegare` : ''}`, ko ? 'errore' : 'ok');
   };
 
   return (
@@ -287,6 +316,28 @@ function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number;
         </div>
       </div>
       {stop.nights === 0 && <p className="muted small">Sosta di passaggio: nessun pernottamento.</p>}
+      {stop.kind === 'a_bordo' && (
+        <div className="row wrap small">
+          <label htmlFor={`port-${stop.id}`} className="muted">
+            Porto di imbarco (posizione sulla mappa):
+          </label>
+          <select
+            id={`port-${stop.id}`}
+            value={COASTAL_PORTS_NORTHBOUND.find((p) => p.lat === stop.lat && p.lng === stop.lng)?.name ?? ''}
+            onChange={(e) => {
+              const p = COASTAL_PORTS_NORTHBOUND.find((x) => x.name === e.target.value);
+              if (p) setStop({ lat: p.lat, lng: p.lng, name: `Notte a bordo da ${p.name}` });
+            }}
+          >
+            <option value="">— scegli —</option>
+            {COASTAL_PORTS_NORTHBOUND.map((p) => (
+              <option key={p.name} value={p.name}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       {dest?.augustNote && <p className="note-warn small">⚠️ {dest.augustNote}</p>}
       <details>
         <summary>
@@ -332,7 +383,8 @@ function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number;
 
 function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () => void }) {
   const { trip, update } = useTrip();
-  const t = legTotals(leg);
+  const t = legTotals(leg, trip.settings);
+  const routable = isRoutableLeg(leg, trip.stops);
   const setLeg = (fn: (l: Leg) => Leg) => update((tr) => ({ ...tr, legs: tr.legs.map((l) => (l.id === leg.id ? fn(l) : l)) }));
   const [addMode, setAddMode] = useState<TransportMode | ''>('');
 
@@ -355,11 +407,24 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
                 .map((s) => MODE_ICON[s.mode])
                 .join(' ')}{' '}
               {t.roadKm > 0 && <strong>{Math.round(t.roadKm)} km su strada</strong>}
-              {t.travelMin > 0 && <> · {formatDuration(t.travelMin)}</>}
-              {t.waitMin > 0 && <> + {formatDuration(t.waitMin)} attese</>}
+              {t.travelMin > 0 && <> · teorici {formatDuration(t.travelMin + t.waitMin)}</>}
+              {t.realisticMin > t.travelMin + t.waitMin && (
+                <span title="Stima con soste durante la guida e attese ai traghetti non inserite (ipotesi modificabili in Salvataggio)">
+                  {' '}
+                  · <strong>realistici ~{formatDuration(t.realisticMin)}</strong>
+                </span>
+              )}
               {t.ferryCount > 0 && <> · {t.ferryCount} traghett{t.ferryCount === 1 ? 'o' : 'i'}</>}
               {t.partial && <Badge tone="warn">parziale</Badge>}
             </span>
+          )}
+          {t.estimatedWaitMin > 0 && (
+            <span className="muted small">Attesa ai traghetti ipotizzata ({formatDuration(t.estimatedWaitMin)}): inserisci quella reale con l'orario.</span>
+          )}
+          {t.mixedModes && <span className="note-warn small">Strada e treno/nave/aereo nello stesso tratto: tienili solo se sono in sequenza.</span>}
+          {t.possibleDuplicateFerry && <span className="note-warn small">Traghetto calcolato e traghetto manuale insieme: probabile doppio conteggio.</span>}
+          {!routable && t.hasUncalculated && (
+            <span className="muted small">Tratto in nave: collegalo a un'opzione nella sezione Costiera oppure aggiungi un tratto "Navigazione costiera".</span>
           )}
           {leg.routingError && (
             <span className="error small" role="alert">
@@ -367,9 +432,11 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
             </span>
           )}
         </div>
-        <button className="btn btn-small" onClick={onCalc} disabled={busy}>
-          {busy ? 'Calcolo…' : leg.calculatedAt ? 'Ricalcola strada' : 'Calcola strada'}
-        </button>
+        {routable && (
+          <button className="btn btn-small" onClick={onCalc} disabled={busy}>
+            {busy ? 'Calcolo…' : leg.calculatedAt ? 'Ricalcola strada' : 'Calcola strada'}
+          </button>
+        )}
       </div>
       <details className="leg-details">
         <summary>Dettaglio tratti{leg.calculatedAt ? ` · calcolato ${fmtDateTime(leg.calculatedAt)}` : ''}</summary>

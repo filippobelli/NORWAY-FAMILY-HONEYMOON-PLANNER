@@ -1,5 +1,7 @@
 # Stato del progetto — 27 ottobre 2026
 
+Ultimo audit: [AUDIT-2026-10-27.md](AUDIT-2026-10-27.md) (22 problemi, 18 risolti).
+
 ## Punto di partenza
 
 Non esisteva un repository: il progetto è stato creato da zero con lo stack indicato in CLAUDE.md (React, TypeScript rigoroso, Vite, Leaflet, Supabase con RLS).
@@ -13,11 +15,11 @@ Differenze motivate rispetto allo stack di riferimento:
 
 | Obiettivo (CLAUDE.md §2) | Stato | Note |
 |---|---|---|
-| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie (10 sulle Lofoten e Vesterålen), tutte "da verificare" con coordinate approssimative. Mancano fonti, link ufficiali, immagini e ~30 schede |
+| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie; 67 coordinate verificate su OpenStreetMap con link. Descrizioni, durate, stagionalità, link ufficiali e immagini da verificare; mancano ~23 schede |
 | 2. Mappa interattiva | Fatto | Da verificare a occhio sul PC (nel test automatico la CDN era bloccata) |
 | 3. Selezione e riordino tappe | Fatto | Riordino con frecce (niente drag & drop) |
-| 4. Itinerario giorno per giorno | Fatto | Giornate generate dalle notti, attività, note, piano B |
-| 5. Distanze e tempi stradali | Fatto | OSRM verificato dal vivo il 27/10/2026 (Bergen→Flåm 167 km, 2 h 51) |
+| 4. Itinerario giorno per giorno | Fatto | Giornate legate alle tappe (non al numero del giorno), carico giornaliero, proposte di alleggerimento con Annulla |
+| 5. Distanze e tempi stradali | Fatto | Tempi teorici e realistici separati.  OSRM verificato dal vivo il 27/10/2026 (Bergen→Flåm 167 km, 2 h 51) |
 | 6. Traghetti, treni, nave | Fatto (base) | Traghetti rilevati da OSRM (verificato: Linge–Eidsdal su Ålesund→Geiranger); orari e costi manuali |
 | 7. Ricerca hytte | Parziale | OSM + link esterni. Nessuna API con prezzi/disponibilità |
 | 8. Confronto Hurtigruten/Havila | Fatto (base) | Fatti e regole verificati; prezzi 2027 da inserire a mano |
@@ -65,6 +67,10 @@ Differenze motivate rispetto allo stack di riferimento:
 - Impostare in Supabase (Authentication → URL Configuration) l'indirizzo definitivo dell'app quando sarà pubblicata, così il link di conferma email non punta a localhost.
 - Eventuale chiave di un provider di routing con limiti più alti, se OSRM pubblico non basta.
 - Repository GitHub per versionare il codice.
+
+## Confronto scenari
+
+Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni; confronto di durata, costi, km, trasferimenti, notti, cambi di alloggio e dati da verificare.
 
 ## Prossime milestone
 

@@ -81,6 +81,37 @@ export function SettingsView() {
         </div>
       </section>
 
+      <section className="panel">
+        <h2>Ipotesi per le stime realistiche</h2>
+        <p className="muted small">
+          Non sono dati verificati: sono regole di prudenza per una famiglia con bambini. Servono a passare dai tempi teorici a quelli realistici e a
+          valutare il carico delle giornate.
+        </p>
+        <div className="grid-4">
+          {(
+            [
+              ['breakEveryMin', 'Sosta ogni (minuti di guida)', 30],
+              ['breakMin', 'Durata di ogni sosta (min)', 0],
+              ['defaultFerryWaitMin', 'Attesa al traghetto se non inserita (min)', 0],
+              ['activeDayMin', 'Tempo attivo al giorno (min)', 120],
+              ['mealBreaksMin', 'Pause pasto al giorno (min)', 0],
+              ['marginPct', 'Margine imprevisti (%)', 0],
+            ] as const
+          ).map(([key, label, min]) => (
+            <Field key={key} label={label}>
+              {(id) => (
+                <NumberInput
+                  id={id}
+                  value={trip.settings[key]}
+                  min={min}
+                  onChange={(v) => v !== undefined && v >= min && update((t) => ({ ...t, settings: { ...t.settings, [key]: v } }))}
+                />
+              )}
+            </Field>
+          ))}
+        </div>
+      </section>
+
       <CloudPanel />
 
       <section className="panel">

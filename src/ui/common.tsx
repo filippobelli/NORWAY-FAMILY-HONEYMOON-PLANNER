@@ -51,9 +51,9 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
   );
 }
 
-export function StatusSelect({ id, value, onChange }: { id?: string; value: DataStatus; onChange: (s: DataStatus) => void }) {
+export function StatusSelect({ id, value, onChange, ariaLabel }: { id?: string; value: DataStatus; onChange: (s: DataStatus) => void; ariaLabel?: string }) {
   return (
-    <select id={id} value={value} onChange={(e) => onChange(e.target.value as DataStatus)}>
+    <select id={id} aria-label={id ? undefined : (ariaLabel ?? 'Stato del dato')} value={value} onChange={(e) => onChange(e.target.value as DataStatus)}>
       {(Object.keys(STATUS_LABEL) as DataStatus[]).map((s) => (
         <option key={s} value={s}>
           {STATUS_LABEL[s]}
@@ -76,6 +76,7 @@ export function NumberInput({
   min,
   step,
   placeholder,
+  ariaLabel,
 }: {
   id?: string;
   value: number | undefined;
@@ -83,10 +84,12 @@ export function NumberInput({
   min?: number;
   step?: number;
   placeholder?: string;
+  ariaLabel?: string;
 }) {
   return (
     <input
       id={id}
+      aria-label={id ? undefined : ariaLabel}
       type="number"
       inputMode="decimal"
       value={value ?? ''}
@@ -98,12 +101,13 @@ export function NumberInput({
   );
 }
 
-export function MoneyInput({ id, value, onChange }: { id?: string; value: Money | undefined; onChange: (m: Money | undefined) => void }) {
+export function MoneyInput({ id, value, onChange, ariaLabel }: { id?: string; value: Money | undefined; onChange: (m: Money | undefined) => void; ariaLabel?: string }) {
   const currency: Currency = value?.currency ?? 'EUR';
   return (
     <div className="money">
       <input
         id={id}
+        aria-label={id ? undefined : (ariaLabel ?? 'Importo')}
         type="number"
         inputMode="decimal"
         min={0}

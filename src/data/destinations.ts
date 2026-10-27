@@ -1,9 +1,11 @@
 import type { Category, Destination, Region } from '../domain/types';
+import { COORDS_CHECKED_AT, VERIFIED_COORDS } from './coordVerification';
 
-// CATALOGO INIZIALE (Milestone 1).
-// Tutte le schede sono marcate "da_verificare" e le coordinate "approssimative":
-// derivano da conoscenza generale e NON sono ancora state confrontate con fonti ufficiali.
-// Prezzi e orari volutamente assenti. La verifica scheda per scheda è il lavoro della Milestone 2.
+// CATALOGO.
+// Coordinate: verificate su OpenStreetMap il 27/10/2026 dove indicato (vedi coordVerification.ts),
+// altrimenti "approssimative". Descrizioni, durate, idoneità per bambini e stagionalità restano
+// "da_verificare" (conoscenza generale, non ancora confrontate con fonti ufficiali).
+// Prezzi e orari volutamente assenti.
 
 type Seed = [
   id: string,
@@ -123,6 +125,17 @@ const SEEDS: Seed[] = [
   ['eve', 'Aeroporto Harstad/Narvik Evenes', 'aeroporti', 'Nordland e Lofoten', 68.491, 16.678, 3, 'facile', undefined, 'Aeroporto per Lofoten e Vesterålen.', 'Auto a noleggio.'],
 ];
 
+// Correzioni di regione emerse dall'audit (27/10/2026): Myrdal è nel Vestland; Lillehammer, Lom, Jotunheimen,
+// Dovrefjell e Hunderfossen sono nell'Innlandet / altopiani interni.
+const REGION_FIX: Partial<Record<string, Region>> = {
+  bergensbanen: 'Fiordi occidentali',
+  lillehammer: 'Innlandet e montagne',
+  jotunheimen: 'Innlandet e montagne',
+  dovrefjell: 'Innlandet e montagne',
+  fjellsenter: 'Innlandet e montagne',
+  hunderfossen: 'Innlandet e montagne',
+};
+
 export const CATEGORY_LABEL: Record<Category, string> = {
   citta: 'Città e villaggi',
   fiordi: 'Fiordi e navigazione',
@@ -138,25 +151,30 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 };
 
 export const DESTINATIONS: Destination[] = SEEDS.map(
-  ([id, name, category, region, lat, lng, kidScore, difficulty, visitHours, description, access, season, augustNote, localName]) => ({
-    id,
-    name,
-    localName,
-    category,
-    region,
-    lat,
-    lng,
-    coordsStatus: 'approssimative',
-    kidScore,
-    difficulty,
-    visitHours,
-    description,
-    access,
-    season: season ?? 'Visitabile in agosto (da verificare)',
-    augustNote,
-    sources: [],
-    reliability: 'da_verificare',
-  }),
+  ([id, name, category, region, lat, lng, kidScore, difficulty, visitHours, description, access, season, augustNote, localName]) => {
+    const v = VERIFIED_COORDS[id];
+    return {
+      id,
+      name,
+      localName,
+      category,
+      region: REGION_FIX[id] ?? region,
+      lat: v ? v.lat : lat,
+      lng: v ? v.lng : lng,
+      coordsStatus: v ? 'verificate' : 'approssimative',
+      kidScore,
+      difficulty,
+      visitHours,
+      description,
+      access,
+      season: season ?? 'Visitabile in agosto (da verificare)',
+      augustNote,
+      sources: v
+        ? [{ label: `Coordinate: OpenStreetMap (${v.match})`, url: `https://www.openstreetmap.org/${v.osm}`, checkedAt: COORDS_CHECKED_AT }]
+        : [],
+      reliability: 'da_verificare',
+    };
+  },
 );
 
 export function findDestination(id: string | undefined): Destination | undefined {

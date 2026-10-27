@@ -5,6 +5,9 @@
 const LEAFLET_VERSION = '1.9.4';
 const CSS_URL = `https://unpkg.com/leaflet@${LEAFLET_VERSION}/dist/leaflet.css`;
 const JS_URL = `https://unpkg.com/leaflet@${LEAFLET_VERSION}/dist/leaflet.js`;
+// Impronte SHA-384 calcolate il 27/10/2026 sui file serviti da unpkg: se il file cambiasse, il browser lo rifiuterebbe.
+const CSS_SRI = 'sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H';
+const JS_SRI = 'sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH';
 
 export interface LLayer {
   addTo(target: LMap | LLayerGroup): LLayer;
@@ -47,9 +50,13 @@ export function loadLeaflet(timeoutMs = 15000): Promise<LeafletApi> {
     const css = document.createElement('link');
     css.rel = 'stylesheet';
     css.href = CSS_URL;
+    css.integrity = CSS_SRI;
+    css.crossOrigin = 'anonymous';
     document.head.appendChild(css);
     const script = document.createElement('script');
     script.src = JS_URL;
+    script.integrity = JS_SRI;
+    script.crossOrigin = 'anonymous';
     script.async = true;
     const timer = window.setTimeout(() => reject(new Error('Timeout nel caricamento della mappa')), timeoutMs);
     script.onload = () => {

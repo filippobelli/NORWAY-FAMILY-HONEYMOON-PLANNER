@@ -81,7 +81,7 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
 
   const tripRef = useRef(trip);
   tripRef.current = trip;
-  const initialTrip = useRef(trip);
+  const lastSeenTrip = useRef(trip);
   const applyingRemote = useRef(false);
   const busy = useRef(false);
   const pending = useRef(false);
@@ -210,7 +210,10 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
 
   // Ogni modifica locale: segna "da sincronizzare" e programma il salvataggio nel cloud
   useEffect(() => {
-    if (trip === initialTrip.current) return;
+    // Reagisce solo a modifiche reali del viaggio, non al cambio di sessione o configurazione
+    const changed = trip !== lastSeenTrip.current;
+    lastSeenTrip.current = trip;
+    if (!changed) return;
     if (applyingRemote.current) {
       applyingRemote.current = false;
       return;

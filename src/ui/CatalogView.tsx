@@ -5,7 +5,7 @@ import { useTrip } from '../state/store';
 import { Badge } from './common';
 import { stopFromDestination } from './ItineraryView';
 
-const REGIONS: Region[] = ['Oslo e Østlandet', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
+const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
 
 export function CatalogView() {
@@ -33,8 +33,9 @@ export function CatalogView() {
   return (
     <div className="catalog">
       <div className="note-info">
-        Catalogo iniziale di {DESTINATIONS.length} destinazioni. Schede e coordinate sono <strong>da verificare</strong> (non ancora confrontate con
-        fonti ufficiali); prezzi e orari non sono inseriti di proposito. Il completamento a ~100 schede verificate è la prossima milestone.
+        {DESTINATIONS.length} destinazioni. Coordinate verificate su OpenStreetMap per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length}{' '}
+        schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>
+        sulle fonti ufficiali; prezzi e orari non sono inseriti di proposito.
       </div>
       <div className="filters">
         <input type="search" placeholder="Cerca…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Cerca nel catalogo" />
@@ -105,7 +106,17 @@ export function CatalogView() {
               </dl>
               {d.augustNote && <p className="note-warn small">⚠️ {d.augustNote}</p>}
               <footer>
-                <Badge tone="warn">Dati da verificare</Badge>
+                <span className="tags">
+                  <Badge tone={d.coordsStatus === 'verificate' ? 'ok' : 'warn'}>
+                    {d.coordsStatus === 'verificate' ? 'Posizione verificata' : 'Posizione approssimativa'}
+                  </Badge>
+                  <Badge tone="warn">Scheda da verificare</Badge>
+                  {d.sources[0]?.url && (
+                    <a className="small" href={d.sources[0].url} target="_blank" rel="noreferrer">
+                      OSM ↗
+                    </a>
+                  )}
+                </span>
                 <button
                   className="btn btn-small btn-primary"
                   disabled={d.id === 'aurora'}

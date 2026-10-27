@@ -986,6 +986,23 @@ details summary {
   max-width: 420px;
   font-size: 0.9rem;
 }
+.toast {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  pointer-events: auto;
+}
+.toast-action {
+  background: none;
+  border: 1px solid rgb(255 255 255 / 60%);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
 .toast-errore {
   background: var(--danger);
 }
@@ -1000,4 +1017,99 @@ details summary {
   .topbar {
     padding: 10px 14px;
   }
+}
+
+/* Ritmo del viaggio */
+:root {
+  --load-leggera: #2e9e6b;
+  --load-equilibrata: #3b82c4;
+  --load-piena: #d08a12;
+  --load-eccessiva: #c2412d;
+}
+.load-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+}
+.load-cell {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+.load-leggera {
+  background: var(--load-leggera);
+}
+.load-equilibrata {
+  background: var(--load-equilibrata);
+}
+.load-piena {
+  background: var(--load-piena);
+}
+.load-eccessiva {
+  background: var(--load-eccessiva);
+  background-image: repeating-linear-gradient(45deg, transparent 0 6px, rgb(255 255 255 / 18%) 6px 12px);
+}
+.load-incomplete {
+  outline: 2px dashed var(--ink);
+  outline-offset: 2px;
+}
+.load-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+  margin: 8px 0 4px;
+}
+.load-fill {
+  display: block;
+  height: 100%;
+}
+.day-eccessiva {
+  border-left: 4px solid var(--load-eccessiva);
+}
+.day-piena {
+  border-left: 4px solid var(--load-piena);
+}
+.suggestion-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 6px;
+}
+.suggestion-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  font-size: 0.9rem;
+}
+
+/* Scenari */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.scenario-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.metric-table td:first-child {
+  color: var(--ink-2);
+}
+.best {
+  font-weight: 700;
+  color: var(--ok);
 }

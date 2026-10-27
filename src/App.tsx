@@ -10,6 +10,7 @@ import { CoastalView } from './ui/CoastalView';
 import { DaysView } from './ui/DaysView';
 import { HytteView } from './ui/HytteView';
 import { ItineraryView } from './ui/ItineraryView';
+import { ScenariosView } from './ui/ScenariosView';
 import { SettingsView } from './ui/SettingsView';
 
 const TABS = [
@@ -19,6 +20,7 @@ const TABS = [
   { id: 'costiera', label: 'Costiera', icon: '🚢' },
   { id: 'hytte', label: 'Hytte', icon: '🛖' },
   { id: 'budget', label: 'Budget', icon: '💶' },
+  { id: 'scenari', label: 'Scenari', icon: '⚖️' },
   { id: 'viaggio', label: 'Salvataggio', icon: '☁️' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
@@ -39,7 +41,7 @@ export default function App() {
 }
 
 function Shell() {
-  const { trip, localState, loadError, toasts } = useTrip();
+  const { trip, localState, loadError, toasts, dismissToast } = useTrip();
   const [tab, setTab] = useState<TabId>(readHash);
   useEffect(() => {
     const on = () => setTab(readHash());
@@ -49,6 +51,7 @@ function Shell() {
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
+  const activeScenario = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
 
   return (
     <div className="app">
@@ -60,6 +63,7 @@ function Shell() {
           <div>
             <h1>{trip.title || 'Norvegia 2027'}</h1>
             <p>
+              {activeScenario && `${activeScenario} · `}
               {days ? `${days} giorni` : 'Itinerario da costruire'} · {trip.participants.adults} adulti, {trip.participants.childrenAges.length} bambini
               {total > 0 && ` · ${formatEur(total)}`}
             </p>
@@ -104,12 +108,24 @@ function Shell() {
         {tab === 'costiera' && <CoastalView />}
         {tab === 'hytte' && <HytteView />}
         {tab === 'budget' && <BudgetView />}
+        {tab === 'scenari' && <ScenariosView />}
         {tab === 'viaggio' && <SettingsView />}
       </main>
       <div className="toasts" aria-live="polite">
         {toasts.map((t) => (
           <div key={t.id} className={`toast toast-${t.kind}`}>
-            {t.msg}
+            <span>{t.msg}</span>
+            {t.action && (
+              <button
+                className="toast-action"
+                onClick={() => {
+                  t.action?.run();
+                  dismissToast(t.id);
+                }}
+              >
+                {t.action.label}
+              </button>
+            )}
           </div>
         ))}
       </div>
