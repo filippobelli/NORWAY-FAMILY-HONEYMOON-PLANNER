@@ -8,11 +8,16 @@ import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
 
 const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
-const PACE_LABEL: Record<Pace, string> = {
-  tranquillo: 'Tranquillo (almeno 3 notti per tappa)',
-  equilibrato: 'Equilibrato (almeno 2 notti per tappa)',
-  intenso: 'Intenso (anche 1 notte per tappa)',
+const PACE_LABEL: Record<Pace, string> = { tranquillo: 'Tranquillo', equilibrato: 'Equilibrato', intenso: 'Intenso' };
+const PACE_HINT: Record<Pace, string> = {
+  tranquillo: 'Almeno 3 notti per tappa',
+  equilibrato: 'Almeno 2 notti per tappa',
+  intenso: 'Anche 1 notte per tappa',
 };
+const KIND_HINT = { auto_hytte: 'Strade e traghetti dei fiordi', auto_traghetti_costiera: 'Tratti lunghi in Hurtigruten/Havila', misto_treni: 'Treni dove conviene, auto altrove' } as const;
+const KIND_SHORT = { auto_hytte: 'Auto e hytte', auto_traghetti_costiera: 'Auto e nave costiera', misto_treni: 'Misto con treni' } as const;
+/** "Aeroporto Bergen Flesland" → "Bergen Flesland (BGO)" */
+const airportLabel = (id: string, name: string) => `${name.replace(/^Aeroporto (di )?/, '')} (${id.toUpperCase()})`;
 const KINDS = ['auto_hytte', 'auto_traghetti_costiera', 'misto_treni'] as const;
 const STORE_KEY = 'nfhp.configurator.v1';
 export const AUTO_ROUTE_KEY = 'nfhp.autoRoute';
@@ -94,8 +99,8 @@ export function ConfiguratorView() {
 
       <section className="panel">
         <h2>Impostazioni</h2>
-        <div className="grid-4">
-          <Field label="Giorni di viaggio" hint="Obiettivo: 15–20">
+        <div className="grid-4 cols-4">
+          <Field label="Giorni" hint="Obiettivo: 15–20">
             {(id) => <NumberInput id={id} value={input.days} min={5} onChange={(v) => v && set({ days: Math.min(30, Math.max(5, Math.round(v))) })} />}
           </Field>
           <Field label="Primo giorno">{(id) => <input id={id} type="date" value={input.startDate} onChange={(e) => e.target.value && set({ startDate: e.target.value })} />}</Field>
@@ -104,7 +109,7 @@ export function ConfiguratorView() {
               <select id={id} value={input.arrivalAirportId} onChange={(e) => set({ arrivalAirportId: e.target.value })}>
                 {AIRPORTS.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name}
+                    {airportLabel(a.id, a.name)}
                   </option>
                 ))}
               </select>
@@ -115,24 +120,24 @@ export function ConfiguratorView() {
               <select id={id} value={input.departureAirportId} onChange={(e) => set({ departureAirportId: e.target.value })}>
                 {AIRPORTS.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name}
+                    {airportLabel(a.id, a.name)}
                   </option>
                 ))}
               </select>
             )}
           </Field>
-          <Field label="Tipo di viaggio">
+          <Field label="Tipo di viaggio" hint={KIND_HINT[input.kind]}>
             {(id) => (
               <select id={id} value={input.kind} onChange={(e) => set({ kind: e.target.value as ConfiguratorInput['kind'] })}>
                 {KINDS.map((k) => (
                   <option key={k} value={k}>
-                    {SCENARIO_KIND_LABEL[k]}
+                    {KIND_SHORT[k]}
                   </option>
                 ))}
               </select>
             )}
           </Field>
-          <Field label="Ritmo">
+          <Field label="Ritmo" hint={PACE_HINT[input.pace]}>
             {(id) => (
               <select id={id} value={input.pace} onChange={(e) => set({ pace: e.target.value as Pace })}>
                 {(Object.keys(PACE_MIN_NIGHTS) as Pace[]).map((p) => (
@@ -143,14 +148,15 @@ export function ConfiguratorView() {
               </select>
             )}
           </Field>
-          <Field label="Guida massima al giorno (ore)" hint="Stima con soste e traghetti">
+          <Field label="Guida al giorno (ore)" hint="Massimo, con soste e traghetti">
             {(id) => <NumberInput id={id} value={input.maxDriveHours} min={1} step={0.5} onChange={(v) => v && set({ maxDriveHours: v })} />}
           </Field>
           <div className="field">
             <span className="field-label">Bambini</span>
-            <label className="check">
-              <input type="checkbox" checked={input.kidFriendly} onChange={(e) => set({ kidFriendly: e.target.checked })} /> Escludi le attività poco adatte ai piccoli
+            <label className="check field-control">
+              <input type="checkbox" checked={input.kidFriendly} onChange={(e) => set({ kidFriendly: e.target.checked })} /> Solo attività adatte
             </label>
+            <small className="hint">Esclude quelle poco adatte ai piccoli</small>
           </div>
         </div>
 

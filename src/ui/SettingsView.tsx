@@ -252,13 +252,18 @@ function CloudPanel() {
           <Field label="Password">
             {(id) => <input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />}
           </Field>
-          <div className="row">
-            <button className="btn btn-primary" type="submit" disabled={busy || !email || password.length < 6}>
-              Accedi
-            </button>
-            <span className="muted small">Accesso riservato agli account autorizzati.</span>
+          <div className="field">
+            <span className="field-label" aria-hidden>
+              &nbsp;
+            </span>
+            <div className="field-control">
+              <button className="btn btn-primary" type="submit" disabled={busy || !email || password.length < 6}>
+                Accedi
+              </button>
+            </div>
+            <small className="hint">Accesso riservato agli account autorizzati.</small>
           </div>
-          {cloud.error && <p className="error small">{cloud.error}</p>}
+          {cloud.error && <p className="error small form-wide">{cloud.error}</p>}
         </form>
       ) : (
         <>

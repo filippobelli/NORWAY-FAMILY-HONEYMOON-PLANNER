@@ -182,13 +182,16 @@ export function BudgetView() {
               )}
             </Field>
             <div className="field">
-              <span className="field-label">Aggiornamento</span>
-              <label className="check">
-                <input type="checkbox" checked={st.nokRateAuto !== false} onChange={(e) => setS({ nokRateAuto: e.target.checked })} /> Cambio automatico all'apertura
-              </label>
-              <button className="btn btn-small" disabled={refreshing} onClick={refresh}>
-                {refreshing ? 'Aggiornamento…' : 'Aggiorna ora'}
-              </button>
+              <span className="field-label">Aggiornamento del cambio</span>
+              <div className="field-control">
+                <label className="check">
+                  <input type="checkbox" checked={st.nokRateAuto !== false} onChange={(e) => setS({ nokRateAuto: e.target.checked })} /> Automatico
+                </label>
+                <button className="btn btn-small" disabled={refreshing} onClick={refresh}>
+                  {refreshing ? 'Aggiornamento…' : 'Aggiorna ora'}
+                </button>
+              </div>
+              <small className="hint">All'apertura dell'app, al massimo ogni 6 ore</small>
             </div>
             <Field label="Alimentazione dell'auto">
               {(id) => (
@@ -240,11 +243,12 @@ export function BudgetView() {
             </Field>
             {car.fuel !== 'elettrica' && (
               <div className="field">
-                <span className="field-label">Prezzo</span>
-                <label className="check">
+                <span className="field-label">Aggiornamento del prezzo</span>
+                <label className="check field-control">
                   <input type="checkbox" checked={car.priceAuto} onChange={(e) => (e.target.checked ? void refresh() : setCar({ priceAuto: false }))} /> Media nazionale
                   automatica
                 </label>
+                <small className="hint">Statistics Norway, dato mensile</small>
               </div>
             )}
           </div>

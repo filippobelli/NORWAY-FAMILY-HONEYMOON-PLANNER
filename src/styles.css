@@ -244,16 +244,68 @@ code {
 }
 .grid-3 {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  align-items: end;
 }
 .grid-4 {
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  align-items: end;
+}
+/* Moduli: ogni campo occupa tre righe della griglia (etichetta, controllo, nota) condivise con i campi
+   della stessa fila, così etichette, caselle e note restano allineate anche se una nota o un'etichetta
+   va a capo. Senza subgrid (browser vecchi) i campi restano semplicemente allineati in alto. */
+.grid-2,
+.grid-3,
+.grid-4 {
+  align-items: start;
+}
+@supports (grid-template-rows: subgrid) {
+  .grid-2 > .field,
+  .grid-3 > .field,
+  .grid-4 > .field {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 4px;
+    align-content: start;
+  }
+  .grid-2 > .field > label:first-child,
+  .grid-3 > .field > label:first-child,
+  .grid-4 > .field > label:first-child,
+  .field > .field-label {
+    align-self: end;
+  }
+  .field > .hint {
+    align-self: start;
+  }
+}
+/* Griglia a colonne fisse: 4 sul computer, 2 su tablet, 1 su smartphone */
+.grid-4.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .grid-4.cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .grid-4.cols-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.form-wide {
+  grid-column: 1 / -1;
+}
+/* Controllo che non è una casella di testo (spunta, pulsante): stessa altezza delle caselle */
+.field-control {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 input,
 select,
 textarea {
+  box-sizing: border-box;
   font: inherit;
   font-size: 16px; /* evita lo zoom automatico su iOS */
   color: var(--ink);
@@ -266,6 +318,10 @@ textarea {
 }
 textarea {
   resize: vertical;
+}
+input:not([type='checkbox']):not([type='radio']),
+select {
+  height: 42px;
 }
 input:focus-visible,
 select:focus-visible,
@@ -1017,8 +1073,13 @@ details summary {
   color: var(--danger);
   font-weight: 600;
 }
-.cap-cell input {
+.table td {
+  vertical-align: middle;
+}
+.cap-cell input:not([type='checkbox']) {
   width: 96px;
+  height: 34px;
+  padding: 4px 8px;
   text-align: right;
 }
 .row-over td:first-child,

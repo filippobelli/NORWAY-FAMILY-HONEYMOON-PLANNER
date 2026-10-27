@@ -84,16 +84,23 @@ export function ScenariosView() {
               </select>
             )}
           </Field>
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              update((cur) => addScenario(cur, name, kind, from));
-              setName('');
-              toast('Scenario creato: aprilo per modificarlo');
-            }}
-          >
-            Crea scenario
-          </button>
+          <div className="field">
+            <span className="field-label" aria-hidden>
+              &nbsp;
+            </span>
+            <div className="field-control">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  update((cur) => addScenario(cur, name, kind, from));
+                  setName('');
+                  toast('Scenario creato: aprilo per modificarlo');
+                }}
+              >
+                Crea scenario
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
