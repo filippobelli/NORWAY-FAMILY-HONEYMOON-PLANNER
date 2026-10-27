@@ -32,7 +32,7 @@ Differenze motivate rispetto allo stack di riferimento:
 - **Test**: 14/14 superati (giornate e date, riuso dei tratti al riordino, separazione km strada/traghetto, avvisi, rotta costiera e direzioni, budget con NOK e alternative escluse, costiera non contata due volte, parsing OSRM con traghetti, ricalcolo che conserva i dati manuali, import non valido, parsing Overpass, link di ricerca).
 - **Build**: bundle di produzione generato con esbuild (305 KB, file unico). La build con Vite non è stata eseguita.
 - **Test nel browser** (Chromium headless, 20 controlli superati): aggiunta e riordino tappe, calcolo tratti, giornate, costiera, hytte, budget (1.098 € atteso e ottenuto), persistenza dopo ricarica, nessuno scroll orizzontale a 390 px, errore del routing mostrato, mappa non disponibile gestita, nessun errore JavaScript.
-- **Servizi reali** (dal PC di Filippo, 27/10/2026): OSRM risponde con CORS e riconosce i traghetti; CDN di Leaflet raggiungibile; Overpass in errore 502 e mirror in timeout → aggiunto passaggio automatico ai mirror e messaggio che rimanda ai link esterni.
+- **Servizi reali** (dal PC di Filippo, 27/10/2026): OSRM risponde con CORS e riconosce i traghetti; CDN di Leaflet raggiungibile; Overpass in errore 502 e mirror in timeout → se Overpass non risponde entro 12 s la ricerca hytte passa a Nominatim (stessi dati OSM, elenco forse meno completo, indicato nella pagina); provata su Bergen: 16 strutture in 7 s.
 - **ESLint**: configurato ma non eseguito (pacchetti non installabili qui).
 
 ## Database (27/10/2026)
