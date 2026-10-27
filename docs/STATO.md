@@ -88,3 +88,13 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 5. **Verifica finale (M7)**: test su smartphone reali, deploy (es. Vercel) solo dopo autorizzazione.
 
 - Sezione "Costiera" rinominata "Crociere" (il vecchio indirizzo #/costiera continua a funzionare). Le foto delle hytte (anteprima dal sito) sono state provate e poi tolte su richiesta: davano soprattutto loghi o nulla.
+
+## 27/10/2026 sera — configuratore, budget, cambio e carburante
+
+- **Configuratore** (nuova sezione): giorni, primo giorno, aeroporti di arrivo e ripartenza, tipo di viaggio (auto e hytte / con navigazione costiera / misto con treni), ritmo (3, 2 o 1 notte minima per tappa), ore massime di guida, regioni, destinazioni da includere (preferiti), esclusione delle attività poco adatte ai piccoli. Propone basi per dormire (17 località del catalogo), visite in giornata entro ~75 km, notti distribuite, tappe intermedie per i tratti lunghi, notti a bordo per i tratti costieri lunghi (scenario con nave) e treni Oslo–Bergen/Flåm (scenario misto). Crea sempre uno **scenario nuovo** e lo rende attivo (quello precedente resta in Scenari), poi calcola i tratti con OSRM. Distanze usate per l'ordine: stime (linea d'aria × 1,7, 52 km/h, tarate su Bergen–Ålesund: 419 km e 8 h 37 calcolati). Nessun prezzo o orario inventato; navi e treni restano «da verificare». Provato dal vivo: 18 giorni da Bergen, 7 tratti calcolati in circa 7 s.
+- **Budget**: tetto complessivo e per categoria (barra rossa e importo superato); stime da parametri dell'utente (alloggio a notte, pasti al giorno, attività al giorno, noleggio al giorno, % imprevisti) che compaiono come «Stimato» solo dove mancano dati reali.
+- **Cambio EUR/NOK**: aggiornato in automatico all'apertura (al massimo ogni 6 ore) da Norges Bank, riserva BCE via Frankfurter; si può fissare a mano. Valore del 27/10/2026: 10,3885 (il vecchio valore iniziale 11,8 era una stima errata).
+- **Carburante**: tipo (benzina, diesel, elettrica), consumo e prezzo. Per benzina e diesel il prezzo è la media nazionale mensile di Statistics Norway (tabella 09654), aggiornata in automatico; per l'elettrica il prezzo per kWh si inserisce a mano. Ultimo dato al 27/10/2026: settembre 2026, benzina 26,18 NOK/l, diesel 27,52 NOK/l (agosto: 19,42 e 21,48: aumento forte, dato ufficiale SSB).
+- **Mappa dell'itinerario** più alta (quasi tutto lo schermo), adatta alla forma della Norvegia.
+- **Foto delle hytte** tolte su richiesta.
+
