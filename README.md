@@ -59,7 +59,8 @@ Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Edi
 | Servizio | Uso | Note |
 |---|---|---|
 | routing.openstreetmap.de (OSRM, FOSSGIS) | Distanze e tempi stradali, traghetti | Max 1 richiesta/s, nessun uso massivo, attribuzione obbligatoria |
-| basemaps.cartocdn.com (CARTO Voyager) | Sfondo mappa | Attribuzione OSM e CARTO; funziona anche aprendo il file con doppio clic |
+| tile.openstreetmap.org | Sfondo mappa (app servita via http/https) | Attribuzione OSM |
+| server.arcgisonline.com (Esri World Topo) | Sfondo mappa quando si apre il file HTML con doppio clic | OSM e CARTO bloccano le richieste senza Referer |
 | unpkg.com (Leaflet 1.9.4) | Libreria mappa | Caricata al primo uso |
 | overpass-api.de + 2 mirror | Hytte e campeggi vicini | Servizio pubblico spesso sovraccarico |
 | Supabase (progetto `norway-planner`) | Login e salvataggio cloud | Email di conferma obbligatoria alla registrazione |

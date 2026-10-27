@@ -150,7 +150,7 @@ export function ItineraryView() {
       <section className="panel map-panel">
         <MapView trip={trip} onAddDestination={(id) => addStop(stopFromDestination(id))} />
         <p className="muted small">
-          Mappa © OpenStreetMap e CARTO. Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
+          Mappa © contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
           tratteggiate sottili indicano collegamenti senza tracciato e non rappresentano distanze.
         </p>
       </section>

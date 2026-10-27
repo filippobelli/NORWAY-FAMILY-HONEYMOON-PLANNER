@@ -69,12 +69,16 @@ export function loadLeaflet(timeoutMs = 15000): Promise<LeafletApi> {
   return loading;
 }
 
-// Sfondo CARTO Voyager (dati OpenStreetMap). I tile di tile.openstreetmap.org rispondono 403
-// quando la pagina non invia un Referer (es. file aperto con doppio clic), per policy OSM.
-export const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-export const TILE_OPTIONS = {
-  subdomains: 'abcd',
-  maxZoom: 19,
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">contributori OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-};
+// Sfondo mappa (verificato il 27/10/2026 dal PC di Filippo):
+// - pagina servita via http(s): tile OpenStreetMap standard (il browser invia il Referer richiesto dalla policy OSM);
+// - file aperto con doppio clic (file://): niente Referer → OSM risponde con un'immagine di blocco e CARTO ora chiede
+//   una chiave; si usa Esri World Topo Map, che risponde correttamente anche senza Referer.
+const isFile = typeof window !== 'undefined' && window.location.protocol === 'file:';
+
+export const TILE_URL = isFile
+  ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+  : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+export const TILE_OPTIONS = isFile
+  ? { maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; fonti: Esri, HERE, Garmin, &copy; contributori OpenStreetMap' }
+  : { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">contributori OpenStreetMap</a>' };
