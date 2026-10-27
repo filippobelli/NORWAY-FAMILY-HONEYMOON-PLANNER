@@ -15,7 +15,7 @@ Differenze motivate rispetto allo stack di riferimento:
 
 | Obiettivo (CLAUDE.md §2) | Stato | Note |
 |---|---|---|
-| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie; 67 coordinate verificate su OpenStreetMap con link. Descrizioni, durate, stagionalità, link ufficiali e immagini da verificare; mancano ~23 schede |
+| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie; 67 coordinate verificate su OpenStreetMap con link. Schede a fisarmonica: 71 con foto Wikimedia Commons (autore e licenza letti al momento) e introduzione Wikipedia (CC BY-SA) caricata all'apertura; 6 senza foto (raumabanen, haukland, bodo-moskenes, aurora, midnight-sun e una con file non disponibile → segnaposto). Durate, stagionalità e link ufficiali da verificare; mancano ~23 schede |
 | 2. Mappa interattiva | Fatto | Da verificare a occhio sul PC (nel test automatico la CDN era bloccata) |
 | 3. Selezione e riordino tappe | Fatto | Riordino con frecce (niente drag & drop) |
 | 4. Itinerario giorno per giorno | Fatto | Giornate legate alle tappe (non al numero del giorno), carico giornaliero, proposte di alleggerimento con Annulla |
@@ -81,7 +81,7 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 
 ## Prossime milestone
 
-1. **Catalogo (M2)**: portare a ~100 schede, verificare coordinate e periodi su fonti ufficiali (visitnorway.com, siti delle attrazioni), aggiungere link, immagini con licenza, data di verifica.
+1. **Catalogo (M2)**: portare a ~100 schede, verificare coordinate e periodi su fonti ufficiali (visitnorway.com, siti delle attrazioni), aggiungere link ufficiali e data di verifica (foto e testi liberi già presenti).
 2. **Itinerario (M3–M4)**: drag & drop, notti a bordo agganciate ai porti, orari traghetti principali (es. Bodø–Moskenes, Hellesylt–Geiranger), controllo stagionalità delle strade di montagna.
 3. **Costiera e hytte (M5)**: piano di navigazione 2027 appena pubblicato (Havila prenotabile ~6 mesi prima), auto a bordo, preventivi reali.
 4. **Persistenza (M6)**: tabelle normalizzate, salvataggio cloud automatico, accesso condiviso per entrambi i genitori.
