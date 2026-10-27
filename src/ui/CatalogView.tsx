@@ -153,7 +153,7 @@ function DestinationCard({
 
   const photo =
     wiki?.image && imgOk ? (
-      <img src={commonsImageUrl(wiki.image, open ? 960 : 480)} alt={`Foto: ${d.name}`} loading="lazy" decoding="async" onError={() => setImgOk(false)} />
+      <img src={commonsImageUrl(wiki.image, open ? 960 : 500)} alt={`Foto: ${d.name}`} loading="lazy" decoding="async" onError={() => setImgOk(false)} />
     ) : (
       <div className={`photo-placeholder cat-${d.category}`} aria-hidden>
         <span>{CATEGORY_ICON[d.category]}</span>

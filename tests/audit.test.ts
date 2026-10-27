@@ -318,3 +318,13 @@ test('Anteprima link: solo indirizzi pubblici e immagine dichiarata dalla pagina
   assert.equal(findPreviewImage('<head><title>x</title></head>', base), null);
   assert.equal(findPreviewImage('<meta property="og:image" content="javascript:alert(1)">', base), null);
 });
+
+test('Anteprima link: i loghi non valgono come foto', async () => {
+  const { findPreviewImage } = await import('../api/link-image');
+  const base = new URL('https://camping.no/');
+  assert.equal(findPreviewImage('<meta property="og:image" content="/wp-content/uploads/Logo-camping.png">', base), null);
+  assert.equal(
+    findPreviewImage('<meta property="og:image" content="/logo.png"><meta name="twitter:image" content="/foto/hytte1.jpg">', base),
+    'https://camping.no/foto/hytte1.jpg',
+  );
+});

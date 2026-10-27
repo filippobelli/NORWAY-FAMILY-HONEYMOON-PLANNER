@@ -3,7 +3,9 @@ import type { WikiRef } from '../data/wiki';
 // Foto da Wikimedia Commons e testi da Wikipedia, letti al momento con le API pubbliche (CORS abilitato).
 // Nulla viene copiato nel codice: si mostrano sempre autore, licenza e link alla fonte.
 
-export function commonsImageUrl(file: string, width = 640): string {
+// Larghezze standard di Wikimedia (250, 330, 500, 960, 1280…): le miniature sono già pronte; con larghezze
+// diverse il server le genera al momento e per le foto grandi può impiegare oltre 30 secondi (visto il 27/10/2026).
+export function commonsImageUrl(file: string, width = 500): string {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=${width}`;
 }
 

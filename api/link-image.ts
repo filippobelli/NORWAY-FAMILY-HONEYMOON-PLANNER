@@ -54,6 +54,8 @@ export function findPreviewImage(html: string, base: URL): string | null {
     if (!v) continue;
     try {
       const u = new URL(v.replace(/&amp;/g, '&'), base);
+      // Molti siti piccoli dichiarano il loro logo come immagine di anteprima: non è una foto della struttura
+      if (/logo|favicon|icon|placeholder/i.test(u.pathname)) continue;
       if (u.protocol === 'https:' || u.protocol === 'http:') return u.toString();
     } catch {
       /* valore non valido: si prova il successivo */

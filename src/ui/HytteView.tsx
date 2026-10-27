@@ -427,7 +427,7 @@ function HyttePhoto({ url, name, zoneDestinationId, zoneName }: { url?: string; 
   if (zoneFile && zoneOk) {
     return (
       <figure className="hytte-photo zone">
-        <img src={commonsImageUrl(zoneFile, 640)} alt={`Foto della zona: ${zoneName ?? ''}`} loading="lazy" decoding="async" onError={() => setZoneOk(false)} />
+        <img src={commonsImageUrl(zoneFile, 500)} alt={`Foto della zona: ${zoneName ?? ''}`} loading="lazy" decoding="async" onError={() => setZoneOk(false)} />
         <figcaption>
           Foto della zona ({zoneName}), non della struttura ·{' '}
           <a href={`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(zoneFile.replace(/ /g, '_'))}`} target="_blank" rel="noreferrer">
