@@ -54,7 +54,7 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
-        const map = L.map(el.current, { scrollWheelZoom: false, zoomControl: true }).setView([65, 15], 4);
+        const map = L.map(el.current, { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25 }).setView([65, 15], 4);
         L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
         const shapes = new Map<Region, LPath[]>();
         for (const r of REGIONS) {
@@ -71,7 +71,13 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
           shapes.set(r, list);
         }
         const marks = L.layerGroup().addTo(map);
-        map.fitBounds(L.latLngBounds([[57.9, 4.6], [71.2, 31]]), { padding: [10, 10] });
+        // La mappa nasce dentro un pannello appena disegnato: si ricalcola la misura prima di inquadrare la Norvegia
+        const fit = () => {
+          map.invalidateSize();
+          map.fitBounds(L.latLngBounds([[57.95, 4.5], [71.2, 31.1]]), { padding: [4, 4] });
+        };
+        fit();
+        window.setTimeout(fit, 150);
         ref.current = { L, map, marks, shapes };
         setState('pronta');
       })

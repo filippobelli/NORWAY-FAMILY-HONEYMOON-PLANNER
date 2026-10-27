@@ -926,7 +926,13 @@ details summary {
   }
 }
 .region-map {
-  height: 560px;
+  height: 720px;
+}
+@media (min-width: 900px) {
+  .region-picker .map-box {
+    position: sticky;
+    top: 60px;
+  }
 }
 @media (max-width: 600px) {
   .region-map {
@@ -972,16 +978,17 @@ details summary {
   border-radius: 3px;
   flex: none;
 }
-.region-label {
-  background: rgba(255, 255, 255, 0.85);
+.leaflet-tooltip.region-label {
+  background: transparent;
   border: 0;
   box-shadow: none;
-  padding: 0 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #1f2937;
+  padding: 0 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #111827;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
 }
-.region-label::before {
+.leaflet-tooltip.region-label::before {
   display: none;
 }
 .airport-pin {
