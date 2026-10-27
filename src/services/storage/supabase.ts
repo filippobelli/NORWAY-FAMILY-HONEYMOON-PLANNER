@@ -97,8 +97,10 @@ interface AuthResponse {
 
 async function call(cfg: CloudConfig, path: string, init: RequestInit & { token?: string } = {}): Promise<Response> {
   const headers = new Headers(init.headers);
+  // apikey: chiave pubblica (publishable "sb_publishable_..." o legacy anon).
+  // Authorization solo con il token dell'utente: le chiavi publishable non sono JWT.
   headers.set('apikey', cfg.anonKey);
-  headers.set('Authorization', `Bearer ${init.token ?? cfg.anonKey}`);
+  if (init.token) headers.set('Authorization', `Bearer ${init.token}`);
   if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   try {
     return await fetch(`${cfg.url}${path}`, { ...init, headers });

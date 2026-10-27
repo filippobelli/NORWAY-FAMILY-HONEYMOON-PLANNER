@@ -34,19 +34,19 @@ Altri comandi:
 | `npm run lint` | ESLint |
 | `npm run build` | Controllo tipi + build di produzione in `dist/` |
 
-## Attivare il salvataggio cloud (Supabase)
+## Salvataggio cloud (Supabase)
 
-Facoltativo: senza questi passaggi l'app lavora in modalità locale e lo dichiara nell'intestazione.
+Già configurato: progetto `norway-planner` (Francoforte, piano Free), tabella `trips` con RLS, valori pubblici in `.env`.
 
-1. Crea un account e un nuovo progetto su https://supabase.com (piano gratuito).
-2. Nel progetto apri **SQL Editor**, incolla il contenuto di `supabase/schema.sql` ed esegui.
-3. Apri **Project Settings → API** e copia **Project URL** e **anon public key**.
-4. Copia `.env.example` in `.env.local` e incolla i due valori (oppure inseriscili nella sezione Salvataggio dell'app).
-5. Riavvia `npm run dev`.
-6. Nella sezione **Salvataggio** clicca **Registrati**, poi conferma l'email se Supabase la richiede, poi **Accedi**.
-7. Clicca **Salva nel cloud**. Il salvataggio è confermato solo quando il server restituisce la data di aggiornamento.
+1. Avvia l'app con `npm run dev`.
+2. Apri la sezione **Salvataggio**.
+3. Inserisci email e password (almeno 6 caratteri) e clicca **Registrati**.
+4. Apri l'email di Supabase e clicca il link di conferma (può aprirsi una pagina di errore su localhost: è normale, la conferma è comunque registrata).
+5. Torna nell'app e clicca **Accedi**.
+6. Clicca **Salva nel cloud**: compare la data di salvataggio confermata dal server.
+7. Su un altro dispositivo: **Accedi** → **Viaggi salvati nel cloud** → **Carica**.
 
-Non usare mai la `service_role` key nel frontend.
+Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Editor e sostituisci i valori in `.env`. Mai inserire la secret/service_role key.
 
 ## Servizi esterni
 
@@ -56,7 +56,7 @@ Non usare mai la `service_role` key nel frontend.
 | tile.openstreetmap.org | Sfondo mappa | Attribuzione OSM |
 | unpkg.com (Leaflet 1.9.4) | Libreria mappa | Caricata al primo uso |
 | overpass-api.de + 2 mirror | Hytte e campeggi vicini | Servizio pubblico spesso sovraccarico |
-| Supabase | Login e salvataggio cloud | Facoltativo |
+| Supabase (progetto `norway-planner`) | Login e salvataggio cloud | Email di conferma obbligatoria alla registrazione |
 
 Ogni servizio è isolato in `src/services/` e si può sostituire senza toccare le schermate.
 

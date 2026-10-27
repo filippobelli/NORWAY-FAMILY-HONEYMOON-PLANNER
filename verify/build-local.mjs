@@ -5,11 +5,19 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+// Variabili VITE_* pubbliche lette da .env, come farebbe Vite
+const env = {};
+try {
+  for (const line of readFileSync(resolve(root, '.env'), 'utf8').split('\n')) {
+    const m = line.match(/^(VITE_[A-Z_]+)=(.*)$/);
+    if (m) env[m[1]] = m[2].trim();
+  }
+} catch { /* nessun .env */ }
 const r = await build({
   entryPoints: [resolve(root, 'src/main.tsx')],
   bundle: true, minify: true, format: 'iife', write: false, outdir: 'out',
   jsx: 'automatic', target: 'es2020', nodePaths: ['/opt/npm-tools/node_modules'],
-  define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env': '{}' },
+  define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env': JSON.stringify(env) },
   loader: { '.css': 'css' }, logLevel: 'warning',
 });
 const js = r.outputFiles.find((f) => f.path.endsWith('.js')).text;

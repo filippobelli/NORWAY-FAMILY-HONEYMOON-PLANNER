@@ -1,6 +1,5 @@
 node_modules
 dist
 dist-local
-.env
 .env.local
 *.log

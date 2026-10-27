@@ -16,7 +16,7 @@ create table if not exists public.trips (
 create index if not exists trips_owner_idx on public.trips (owner_id, updated_at desc);
 
 create or replace function public.trips_touch_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql set search_path = '' as $$
 begin
   new.updated_at := now();
   return new;
@@ -29,14 +29,14 @@ for each row execute function public.trips_touch_updated_at();
 alter table public.trips enable row level security;
 
 drop policy if exists "trips_select_own" on public.trips;
-create policy "trips_select_own" on public.trips for select to authenticated using (owner_id = auth.uid());
+create policy "trips_select_own" on public.trips for select to authenticated using (owner_id = (select auth.uid()));
 
 drop policy if exists "trips_insert_own" on public.trips;
-create policy "trips_insert_own" on public.trips for insert to authenticated with check (owner_id = auth.uid());
+create policy "trips_insert_own" on public.trips for insert to authenticated with check (owner_id = (select auth.uid()));
 
 drop policy if exists "trips_update_own" on public.trips;
 create policy "trips_update_own" on public.trips for update to authenticated
-  using (owner_id = auth.uid()) with check (owner_id = auth.uid());
+  using (owner_id = (select auth.uid())) with check (owner_id = (select auth.uid()));
 
 drop policy if exists "trips_delete_own" on public.trips;
-create policy "trips_delete_own" on public.trips for delete to authenticated using (owner_id = auth.uid());
+create policy "trips_delete_own" on public.trips for delete to authenticated using (owner_id = (select auth.uid()));

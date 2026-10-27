@@ -22,7 +22,7 @@ Differenze motivate rispetto allo stack di riferimento:
 | 7. Ricerca hytte | Parziale | OSM + link esterni. Nessuna API con prezzi/disponibilità |
 | 8. Confronto Hurtigruten/Havila | Fatto (base) | Fatti e regole verificati; prezzi 2027 da inserire a mano |
 | 9. Budget famiglia | Fatto | Stati per ogni voce, nessun doppio conteggio |
-| 10. Salvataggio online | Implementato, non verificato | Serve un progetto Supabase configurato |
+| 10. Salvataggio online | Configurato | Progetto Supabase creato, schema e RLS attivi; manca la prova con un account reale |
 
 ## Verifiche eseguite
 
@@ -32,6 +32,13 @@ Differenze motivate rispetto allo stack di riferimento:
 - **Test nel browser** (Chromium headless, 20 controlli superati): aggiunta e riordino tappe, calcolo tratti, giornate, costiera, hytte, budget (1.098 € atteso e ottenuto), persistenza dopo ricarica, nessuno scroll orizzontale a 390 px, errore del routing mostrato, mappa non disponibile gestita, nessun errore JavaScript.
 - **Servizi reali** (dal PC di Filippo, 27/10/2026): OSRM risponde con CORS e riconosce i traghetti; CDN di Leaflet raggiungibile; Overpass in errore 502 e mirror in timeout → aggiunto passaggio automatico ai mirror e messaggio che rimanda ai link esterni.
 - **ESLint**: configurato ma non eseguito (pacchetti non installabili qui).
+
+## Database (27/10/2026)
+
+- Progetto Supabase `norway-planner` (ref `zsbfcriekrguiugbqdhi`, eu-central-1, piano Free) creato con autorizzazione di Filippo.
+- Migrazione `create_trips` applicata: tabella `trips`, trigger `updated_at`, 4 policy RLS per proprietario.
+- Verifiche dal PC di Filippo: lettura anonima → lista vuota; scrittura anonima → rifiutata dalla RLS (401); endpoint di login attivo; registrazione aperta con conferma email obbligatoria.
+- Advisor di sicurezza Supabase: nessun problema. Prestazioni: solo "indice non ancora usato" (normale su tabella vuota).
 
 ## Limiti noti
 
@@ -44,7 +51,8 @@ Differenze motivate rispetto allo stack di riferimento:
 
 ## Configurazioni ancora necessarie
 
-- Progetto Supabase + `supabase/schema.sql` + `.env.local` (vedi README).
+- Registrare il primo account nell'app e confermare l'email (vedi README).
+- Impostare in Supabase (Authentication → URL Configuration) l'indirizzo definitivo dell'app quando sarà pubblicata, così il link di conferma email non punta a localhost.
 - Eventuale chiave di un provider di routing con limiti più alti, se OSRM pubblico non basta.
 - Repository GitHub per versionare il codice.
 
