@@ -13,7 +13,7 @@ Differenze motivate rispetto allo stack di riferimento:
 
 | Obiettivo (CLAUDE.md §2) | Stato | Note |
 |---|---|---|
-| 1. Catalogo destinazioni | Parziale | 72 schede in 11 categorie, tutte "da verificare" con coordinate approssimative. Mancano fonti, link ufficiali, immagini e ~30 schede |
+| 1. Catalogo destinazioni | Parziale | 77 schede in 11 categorie (10 sulle Lofoten e Vesterålen), tutte "da verificare" con coordinate approssimative. Mancano fonti, link ufficiali, immagini e ~30 schede |
 | 2. Mappa interattiva | Fatto | Da verificare a occhio sul PC (nel test automatico la CDN era bloccata) |
 | 3. Selezione e riordino tappe | Fatto | Riordino con frecce (niente drag & drop) |
 | 4. Itinerario giorno per giorno | Fatto | Giornate generate dalle notti, attività, note, piano B |
