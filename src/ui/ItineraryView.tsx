@@ -5,9 +5,13 @@ import { newId } from '../domain/ids';
 import {
   addDays,
   computeDays,
+  formatDateIt,
   formatDuration,
   isRoutableLeg,
+  legSummary,
   legTotals,
+  type DayInfo,
+  type LegState,
   moveItem,
   totalDays,
   tripWarnings,
@@ -197,7 +201,15 @@ export function ItineraryView() {
                     selected={selected === s.id}
                     onShowOnMap={() => selectStop(s.id, 'lista')}
                   />
-                  {leg && i < trip.stops.length - 1 && <LegCard leg={leg} busy={busy === leg.id} onCalc={() => calcOne(leg)} />}
+                  {leg && i < trip.stops.length - 1 && (
+                    <LegCard
+                      leg={leg}
+                      fromNum={i + 1}
+                      day={days.find((d) => d.legs.some((l) => l.id === leg.id))}
+                      busy={busy === leg.id}
+                      onCalc={() => calcOne(leg)}
+                    />
+                  )}
                 </li>
               );
             })}
@@ -327,7 +339,10 @@ function StopCard({
           {index + 1}
         </button>
         <div className="stop-title">
-          <strong>{stop.name}</strong>
+          <strong>
+            {stop.name}
+            {selected && <span className="sel-tag">◉ sulla mappa</span>}
+          </strong>
           <span className="muted small">
             {dest ? dest.region : stop.kind === 'a_bordo' ? 'Pernottamento in nave' : 'Luogo personalizzato'}
           </span>
@@ -449,9 +464,20 @@ function StopCard({
   );
 }
 
-function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () => void }) {
+const LEG_STATE: Record<LegState, string> = {
+  da_calcolare: '❔ Da calcolare',
+  calcolato: '✓ Calcolato (OSRM)',
+  manuale: '✎ Inserito a mano',
+  misto: '✓ Calcolato + ✎ a mano',
+};
+const FIRM_STATUS = ['confermato', 'prenotato', 'pagato'];
+
+function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: number; day?: DayInfo; busy: boolean; onCalc: () => void }) {
   const { trip, update } = useTrip();
   const t = legTotals(leg, trip.settings);
+  const sum = legSummary(leg, trip.settings);
+  const fromStop = trip.stops.find((s) => s.id === leg.fromStopId);
+  const toStop = trip.stops.find((s) => s.id === leg.toStopId);
   const routable = isRoutableLeg(leg, trip.stops);
   const setLeg = (fn: (l: Leg) => Leg) => update((tr) => ({ ...tr, legs: tr.legs.map((l) => (l.id === leg.id ? fn(l) : l)) }));
   const [addMode, setAddMode] = useState<TransportMode | ''>('');
@@ -462,30 +488,61 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
   };
 
   const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
-  const state = t.hasUncalculated ? 'uncalc' : real.some((s) => !isAutoSegment(s)) ? 'manual' : 'calc';
   return (
-    <div className={`leg leg-${state}`} aria-busy={busy}>
+    <div className={`leg leg-${sum.state}`} aria-busy={busy}>
       <div className="leg-head">
         <span className="leg-line" aria-hidden />
         <div className="leg-summary">
-          {t.hasUncalculated && leg.segments.length === 1 ? (
-            <span className="muted">❔ Collegamento non calcolato</span>
+          <div className="leg-route">
+            <span className="leg-ends">
+              <span className="leg-num">{fromNum}</span> {fromStop?.name ?? '—'} → <span className="leg-num">{fromNum + 1}</span> {toStop?.name ?? '—'}
+            </span>
+            {day && (
+              <span className="muted small">
+                giorno {day.index + 1} · {formatDateIt(day.date)}
+              </span>
+            )}
+            <span className={`leg-state state-${sum.state}`}>{LEG_STATE[sum.state]}</span>
+          </div>
+          {real.length === 0 ? (
+            <span className="muted">❔ Collegamento non calcolato: distanza e durata non disponibili</span>
           ) : (
-            <span>
-              {leg.segments
-                .filter((s) => s.mode !== 'non_calcolato')
-                .map((s) => MODE_ICON[s.mode])
-                .join(' ')}{' '}
-              {t.roadKm > 0 && <strong>{Math.round(t.roadKm)} km su strada</strong>}
-              {t.travelMin > 0 && <> · teorici {formatDuration(t.travelMin + t.waitMin)}</>}
-              {t.realisticMin > t.travelMin + t.waitMin && (
-                <span title="Stima con soste durante la guida e attese ai traghetti non inserite (ipotesi modificabili in Salvataggio)">
-                  {' '}
-                  · <strong>realistici ~{formatDuration(t.realisticMin)}</strong>
-                </span>
+            <span className="leg-totals">
+              {sum.roadKm > 0 && (
+                <>
+                  <strong>{Math.round(sum.roadKm)} km su strada</strong> · guida {formatDuration(sum.driveMin)}
+                </>
               )}
-              {t.ferryCount > 0 && <> · {t.ferryCount} traghett{t.ferryCount === 1 ? 'o' : 'i'}</>}
-              {t.partial && <Badge tone="warn">parziale</Badge>}
+              {t.ferryCount > 0 && (
+                <>
+                  {sum.roadKm > 0 && ' · '}
+                  {t.ferryCount} traghett{t.ferryCount === 1 ? 'o' : 'i'}
+                </>
+              )}
+              {sum.otherMin > 0 && (
+                <>
+                  {' · '}
+                  {real.every((s) => s.mode === 'strada' || s.mode === 'traghetto') ? 'traversate' : 'traversate e altri mezzi'} {formatDuration(sum.otherMin)}
+                </>
+              )}
+              {sum.totalMin !== undefined ? (
+                <>
+                  {' · '}totale teorico {formatDuration(sum.totalMin)}
+                  {sum.realisticMin !== undefined && sum.realisticMin > sum.totalMin && (
+                    <span title="Con soste durante la guida e attese ai traghetti non inserite: ipotesi modificabili in Salvataggio → Viaggio">
+                      {' · '}
+                      <strong>realistici ~{formatDuration(sum.realisticMin)}</strong>
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  {' '}
+                  <Badge tone="warn">
+                    totale non calcolabile: {sum.missingDuration} {sum.missingDuration === 1 ? 'segmento' : 'segmenti'} senza durata
+                  </Badge>
+                </>
+              )}
             </span>
           )}
           {real.length > 0 && (
@@ -493,11 +550,11 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
               {real.map((s) => (
                 <li key={s.id} className={`seg-chip seg-${s.mode}`}>
                   <span aria-hidden>{MODE_ICON[s.mode]}</span> {s.mode === 'strada' ? MODE_LABEL.strada : s.label}
-                  {s.distanceKm !== undefined && ` · ${Math.round(s.distanceKm)} km`}
-                  {s.durationMin !== undefined ? ` · ${formatDuration(s.durationMin)}` : ' · durata da inserire'}
+                  {s.distanceKm !== undefined ? ` · ${Math.round(s.distanceKm)} km` : s.mode === 'strada' ? ' · distanza da inserire' : ''}
+                  {s.durationMin !== undefined ? ` · ${formatDuration(s.durationMin)}` : <em> · durata da inserire</em>}
                   {s.waitMin !== undefined && ` + attesa ${formatDuration(s.waitMin)}`}
-                  {(s.mode === 'traghetto' || s.mode === 'costiera') && (
-                    <em>{['confermato', 'prenotato', 'pagato'].includes(s.status) ? (s.departureTime ? ` · ore ${s.departureTime}` : ' · confermato') : ' · orario da verificare'}</em>
+                  {s.mode !== 'strada' && (
+                    <em>{FIRM_STATUS.includes(s.status) ? (s.departureTime ? ` · ore ${s.departureTime}` : ' · confermato') : ' · orario da verificare'}</em>
                   )}
                   <span className="seg-src">{isAutoSegment(s) ? 'calcolato' : 'inserito a mano'}</span>
                 </li>

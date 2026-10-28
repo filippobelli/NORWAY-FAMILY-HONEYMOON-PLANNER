@@ -131,6 +131,50 @@ export function legTotals(leg: Leg, settings?: Partial<TripSettings>): LegTotals
   };
 }
 
+export type LegState = 'da_calcolare' | 'calcolato' | 'manuale' | 'misto';
+
+export interface LegSummary {
+  /** Da dove arrivano i dati del tratto */
+  state: LegState;
+  roadKm: number;
+  /** Guida teorica (solo segmenti stradali) */
+  driveMin: number;
+  /** Durate dei segmenti non stradali (traghetti, nave, treno, bus, aereo) */
+  otherMin: number;
+  /** Attese inserite dall'utente */
+  enteredWaitMin: number;
+  /** Totale teorico: assente se anche un solo segmento non ha la durata (non si somma un dato mancante) */
+  totalMin?: number;
+  /** Totale realistico con soste e attese ipotizzate: assente come sopra */
+  realisticMin?: number;
+  /** Segmenti senza durata */
+  missingDuration: number;
+  /** Segmenti non stradali con orario o operatività ancora da verificare */
+  toVerify: number;
+}
+
+/** Riepilogo di un tratto che tiene separati guida, traversate e attese; non somma dati mancanti. */
+export function legSummary(leg: Leg, settings?: Partial<TripSettings>): LegSummary {
+  const t = legTotals(leg, settings);
+  const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
+  const auto = real.filter(isAutoSeg).length;
+  const state: LegState = real.length === 0 ? 'da_calcolare' : auto === real.length ? 'calcolato' : auto === 0 ? 'manuale' : 'misto';
+  const missingDuration = real.filter((s) => s.durationMin === undefined).length;
+  const complete = real.length > 0 && !t.hasUncalculated && missingDuration === 0;
+  const toVerify = real.filter((s) => s.mode !== 'strada' && !['confermato', 'prenotato', 'pagato'].includes(s.status)).length;
+  return {
+    state,
+    roadKm: t.roadKm,
+    driveMin: t.driveMin,
+    otherMin: t.travelMin - t.driveMin,
+    enteredWaitMin: t.waitMin,
+    totalMin: complete ? t.travelMin + t.waitMin : undefined,
+    realisticMin: complete ? t.realisticMin : undefined,
+    missingDuration,
+    toVerify,
+  };
+}
+
 /** Il calcolo stradale non ha senso se uno dei due estremi è una notte a bordo. */
 export function isRoutableLeg(leg: Leg, stops: Stop[]): boolean {
   const a = stops.find((s) => s.id === leg.fromStopId);

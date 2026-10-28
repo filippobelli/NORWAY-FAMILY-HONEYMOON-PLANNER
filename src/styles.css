@@ -1368,6 +1368,151 @@ details summary {
   font-weight: 700;
   color: var(--ok);
 }
+.best-mark {
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.scenario-desc {
+  margin: 0 0 8px;
+}
+/* Dati chiave dello scenario: stessa disposizione in ogni scheda, così si confrontano a colpo d'occhio */
+.sc-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin: 8px 0;
+}
+.sc-facts dt {
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+.sc-facts dd {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.sc-block {
+  margin-top: 8px;
+}
+.sc-block h4 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+.sc-block .mini {
+  margin-top: 2px;
+}
+.warn-text {
+  color: var(--warn);
+  font-weight: 600;
+}
+.compare-mobile-note {
+  display: none;
+}
+.ov-step-n {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.ov-step-dep {
+  color: var(--ink-2);
+  font-style: italic;
+}
+.ov-total-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--warn);
+}
+/* Totale parziale: bordo tratteggiato e testo esplicito, non solo colore */
+.kpi-partial {
+  border-style: dashed;
+  border-color: var(--warn);
+}
+.budget-rate {
+  margin: -6px 0 12px;
+}
+
+/* Confronto alloggi per tappa: righe a griglia che diventano schede su smartphone (nessuna tabella larga) */
+.lodging-stops {
+  display: grid;
+  gap: 12px;
+}
+.lodging-stop {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.lodging-stop > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.lodging-stop h3 {
+  margin: 0;
+}
+.lodging-options {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.lodging-options > li {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.1fr) minmax(200px, 1.3fr) minmax(200px, 1.4fr);
+  gap: 4px 14px;
+  align-items: start;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--line);
+}
+.lodging-options > li.is-chosen {
+  border-left-color: var(--ok);
+}
+.lo-name,
+.lo-price,
+.lo-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.lo-price {
+  display: block;
+}
+.lo-diff {
+  display: block;
+  font-weight: 600;
+}
+.lo-missing,
+.lo-actions {
+  grid-column: 1 / -1;
+}
+.lo-missing {
+  color: var(--warn);
+}
+.lo-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+@media (max-width: 760px) {
+  .lodging-options > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .scenario-compare .table-wrap {
+    display: none;
+  }
+  .compare-mobile-note {
+    display: block;
+  }
+}
 
 /* Catalogo a schede espandibili */
 .catalog-cards {
@@ -1656,21 +1801,38 @@ details summary {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+/* Periodo ipotizzato: etichetta tratteggiata; confermato: etichetta piena con ✓ (non solo colore) */
+.ov-period-kind {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.is-tentative .ov-period-kind {
+  border: 1px dashed #ffd98a;
+  color: #ffe2a6;
+}
+.is-confirmed .ov-period-kind {
+  background: #d8f3e3;
+  color: #0f5132;
+}
+.ov-period-note {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.88;
 }
 .ov-sub {
   margin: 4px 0 0;
   opacity: 0.88;
   font-size: 0.88rem;
-}
-.ov-tag {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #fff4dc;
-  color: #6b4000;
-  vertical-align: middle;
 }
 .ov-facts {
   display: flex;
@@ -1780,19 +1942,57 @@ details summary {
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
+/* Due colonne indipendenti: a sinistra cosa fare (azioni, alloggi, giornate), a destra costi e trasferimenti.
+   Ogni colonna impila i suoi pannelli, così un pannello corto non lascia buchi nella griglia. */
+.ov-col {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-width: 0;
+}
 @media (min-width: 900px) {
   .ov-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
     align-items: start;
   }
 }
-@media (min-width: 1280px) {
-  .ov-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .ov-actions {
-    grid-row: span 2;
-  }
+.ov-subhead {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  margin: 14px 0 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+/* Prossimo passo: una sola azione in evidenza, sempre in testa */
+.ov-next {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--info);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.ov-next.prio-alta {
+  border-left-color: var(--danger);
+}
+.ov-next.prio-media {
+  border-left-color: var(--warn);
+}
+.ov-next h2 {
+  margin: 0;
+}
+.ov-next p {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.ov-next.prio-alta .ov-prio {
+  color: var(--danger);
 }
 .ov-list {
   list-style: none;
@@ -1937,15 +2137,70 @@ button.stop-num:hover {
   transform: scale(1.15);
 }
 /* Il filo tra le tappe dice lo stato del tratto: pieno = calcolato, tratteggiato = da calcolare */
-.leg-calc {
+.leg-calcolato,
+.leg-misto {
   border-left-style: solid;
   border-left-color: #93b4d9;
 }
-.leg-manual {
+.leg-manuale {
   border-left-style: solid;
 }
-.leg-uncalc {
+.leg-da_calcolare {
   border-left-color: var(--warn);
+}
+.leg-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  margin-bottom: 2px;
+}
+.leg-ends {
+  font-weight: 600;
+}
+.leg-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 10px;
+  background: var(--fjord);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+/* Origine del dato del tratto: icona + testo, non solo colore */
+.leg-state {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.state-da_calcolare {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: transparent;
+}
+.state-calcolato,
+.state-misto {
+  background: var(--info-bg);
+  color: var(--info);
+  border-color: transparent;
+}
+.leg-totals {
+  font-variant-numeric: tabular-nums;
+}
+.sel-tag {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
 }
 .seg-chips {
   list-style: none;
@@ -2011,6 +2266,48 @@ button.stop-num:hover {
 }
 .load-why li.strong {
   font-weight: 600;
+}
+.load-why-soft {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.load-hint {
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.load-why > .muted {
+  margin: 6px 0 0;
+}
+.load-proposals {
+  list-style: none;
+  padding: 0 !important;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 6px;
+}
+.load-proposals li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+/* Focus visibile anche dentro la barra delle sezioni (che taglia l'outline esterno) */
+.tabs a:focus-visible {
+  outline-offset: -3px;
+}
+/* Area di tocco di almeno 44 px attorno al numero della tappa, senza ingrandirlo */
+button.stop-num {
+  position: relative;
+}
+button.stop-num::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+button.stop-num:focus-visible {
+  outline: 3px solid var(--info);
+  outline-offset: 2px;
 }
 /* Ancore di scorrimento sotto la barra delle sezioni */
 .map-panel,

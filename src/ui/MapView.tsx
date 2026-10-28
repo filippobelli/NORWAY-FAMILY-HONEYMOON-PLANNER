@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { DESTINATIONS } from '../data/destinations';
 import { coastalRoute } from '../domain/coastal';
-import type { Trip } from '../domain/types';
+import type { TransportMode, Trip } from '../domain/types';
 import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
+import { isAutoSegment } from '../domain/routeMerge';
 import { MODE_COLOR, MODE_LABEL } from './common';
 
 interface Props {
@@ -12,6 +13,12 @@ interface Props {
   /** Tappa evidenziata: la mappa la centra */
   selectedStopId?: string;
   onSelectStop?: (stopId: string) => void;
+}
+
+/** Legenda: i mezzi principali sempre, bus e aereo solo se presenti nel viaggio. */
+function legendModes(trip: Trip): TransportMode[] {
+  const used = new Set(trip.legs.flatMap((l) => l.segments.map((s) => s.mode)));
+  return (['strada', 'traghetto', 'costiera', 'treno', 'bus', 'aereo', 'non_calcolato'] as const).filter((m) => (m !== 'bus' && m !== 'aereo') || used.has(m));
 }
 
 function esc(s: string): string {
@@ -91,16 +98,21 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       const a = byId.get(leg.fromStopId);
       const b = byId.get(leg.toStopId);
       if (!a || !b) continue;
+      // Tratto collegato alla tappa selezionata: più spesso, così si vede dove entra ed esce
+      const touched = Boolean(selectedStopId) && (leg.fromStopId === selectedStopId || leg.toStopId === selectedStopId);
+      const ends = `${a.i + 1}. ${esc(a.s.name)} → ${b.i + 1}. ${esc(b.s.name)}`;
       let drewGeometry = false;
       for (const seg of leg.segments) {
         if (seg.geometry && seg.geometry.length > 1) {
           L.polyline(seg.geometry, {
             color: MODE_COLOR[seg.mode],
-            weight: 4,
+            weight: touched ? 6 : 4,
             opacity: 0.85,
             dashArray: seg.mode === 'traghetto' ? '8 6' : undefined,
           })
-            .bindTooltip(`${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''}`)
+            .bindTooltip(
+              `${ends}<br>${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''} · ${isAutoSegment(seg) ? 'calcolato (OSRM)' : 'tracciato inserito a mano'}`,
+            )
             .addTo(layer);
           drewGeometry = true;
         } else if (seg.mode === 'costiera' && seg.coastalOptionId) {
@@ -111,7 +123,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
               r.ports.map((p) => [p.lat, p.lng] as [number, number]),
               { color: MODE_COLOR.costiera, weight: 4, dashArray: '2 8', opacity: 0.9 },
             )
-              .bindTooltip(`${esc(seg.label)} (tracciato indicativo tra i porti)`)
+              .bindTooltip(`${ends}<br>${esc(seg.label)} (tracciato indicativo tra i porti)`)
               .addTo(layer);
             drewGeometry = true;
           }
@@ -124,12 +136,12 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
             [a.s.lat, a.s.lng],
             [b.s.lat, b.s.lng],
           ],
-          { color: MODE_COLOR[mode], weight: 2, dashArray: '1 7', opacity: 0.9 },
+          { color: MODE_COLOR[mode], weight: touched ? 3 : 2, dashArray: '1 7', opacity: 0.9 },
         )
           .bindTooltip(
             mode === 'non_calcolato'
-              ? 'Collegamento non calcolato: linea indicativa, NON è una distanza stradale'
-              : `${MODE_LABEL[mode]}: tracciato non disponibile (linea indicativa)`,
+              ? `${ends}<br>Collegamento non calcolato: linea indicativa, NON è una distanza stradale`
+              : `${ends}<br>${MODE_LABEL[mode]}: tracciato non disponibile (linea indicativa)`,
           )
           .addTo(layer);
       }
@@ -182,7 +194,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
         )}
       </div>
       <div className="legend" aria-label="Legenda">
-        {(['strada', 'traghetto', 'costiera', 'treno', 'non_calcolato'] as const).map((m) => (
+        {legendModes(trip).map((m) => (
           <span key={m}>
             <i style={{ background: MODE_COLOR[m] }} /> {MODE_LABEL[m]}
           </span>

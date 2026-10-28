@@ -96,7 +96,7 @@ test('Carico: i fattori spiegano trasferimento oltre soglia, cambio alloggio e t
   assert.ok(f.some((x) => x.text.startsWith('Cambio di alloggio: da Bergen a Ålesund')));
 
   const f0 = loadFactors(base, computeDays(base)[1]!, computeDayLoads(base)[1]!);
-  assert.ok(f0.some((x) => x.strong && x.text.startsWith('Tratti non calcolati')));
+  assert.ok(f0.some((x) => x.strong && x.text.startsWith('Tratti senza durata o non calcolati') && x.hint !== undefined));
   // Giornata senza trasferimenti: nessun fattore inventato
   assert.deepEqual(loadFactors(t, days[2]!, loads[2]!), []);
 });

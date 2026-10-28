@@ -276,6 +276,56 @@ export function computeBudget(trip: Trip): BudgetSummary {
   return { lines, byCategory, byStatus, total, perDay: days > 0 ? total / days : undefined, days, missing };
 }
 
+const ORIGIN_TEXT: Record<BudgetLine['origin'], string> = {
+  manuale: 'voce manuale',
+  hytte: 'alloggi scelti',
+  costiera: 'navigazione costiera',
+  trasporti: 'tratti dell\'itinerario',
+  giornate: 'attività delle giornate',
+  stime: 'stime da parametri',
+};
+
+export interface BudgetOverlap {
+  category: BudgetCategory;
+  text: string;
+}
+
+/**
+ * Possibili doppi conteggi: una categoria con voci manuali e anche voci derivate da altre sezioni.
+ * Il modello non permette di sapere se si sovrappongono (es. un pacchetto che include il traghetto),
+ * quindi si segnala soltanto: nessun importo viene tolto o corretto.
+ */
+export function budgetOverlaps(b: BudgetSummary): BudgetOverlap[] {
+  const out: BudgetOverlap[] = [];
+  for (const c of BUDGET_CATEGORIES) {
+    const lines = b.lines.filter((l) => l.category === c.id);
+    const manual = lines.filter((l) => l.origin === 'manuale');
+    const derived = [...new Set(lines.filter((l) => l.origin !== 'manuale' && l.origin !== 'stime').map((l) => l.origin))];
+    if (manual.length > 0 && derived.length > 0) {
+      out.push({
+        category: c.id,
+        text: `${c.label}: ${manual.length === 1 ? '1 voce manuale' : `${manual.length} voci manuali`} e importi da ${derived.map((o) => ORIGIN_TEXT[o]).join(', ')}. Controlla che la voce manuale non includa già quei costi.`,
+      });
+    }
+  }
+  return out;
+}
+
+export interface BudgetCompleteness {
+  /** true se la somma delle voci note non rappresenta l'intero viaggio */
+  partial: boolean;
+  /** Costi che esistono ma non hanno un importo */
+  missingAmounts: string[];
+  /** Categorie senza voci né stime */
+  emptyCategories: string[];
+}
+
+export function budgetCompleteness(b: BudgetSummary): BudgetCompleteness {
+  const missingAmounts = b.missing.filter((m) => !m.startsWith('Nessuna voce'));
+  const emptyCategories = BUDGET_CATEGORIES.filter((c) => b.byCategory[c.id] === 0).map((c) => c.label);
+  return { partial: b.total === 0 || missingAmounts.length > 0 || emptyCategories.length > 0, missingAmounts, emptyCategories };
+}
+
 export function formatEur(v: number): string {
   return v.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 }

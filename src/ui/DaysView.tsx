@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { applySuggestion, computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
-import { assumptions, computeDays, formatDateIt, formatDuration, legTotals, orphanDayKeys, type DayInfo } from '../domain/itinerary';
+import { assumptions, computeDays, formatDateIt, formatDuration, legSummary, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
 import { haversineKm } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
@@ -96,7 +96,7 @@ export function DaysView() {
       )}
 
       {days.map((d) => (
-        <DayCard key={d.key} day={d} load={loads[d.index]!} />
+        <DayCard key={d.key} day={d} load={loads[d.index]!} suggestions={suggestions.filter((sg) => sg.dayKey === d.key)} onApply={apply} />
       ))}
     </div>
   );
@@ -160,7 +160,7 @@ function OrphanDay({ dayKey, days }: { dayKey: string; days: DayInfo[] }) {
   );
 }
 
-function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
+function DayCard({ day, load, suggestions, onApply }: { day: DayInfo; load: DayLoad; suggestions: Suggestion[]; onApply: (sg: Suggestion) => void }) {
   const { trip, update } = useTrip();
   const plan = trip.days[day.key] ?? emptyDay();
   const [title, setTitle] = useState('');
@@ -178,6 +178,8 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
   const lv = LEVEL_LABEL[load.level];
   const factors = loadFactors(trip, day, load);
   const heavy = load.level === 'piena' || load.level === 'eccessiva';
+  // Il riquadro compare se la giornata è piena o se un fattore da solo la rende faticosa (es. tratto non calcolato)
+  const attention = factors.length > 0 && (heavy || factors.some((f) => f.strong));
   const acc = day.sleepStop?.accommodationId ? trip.accommodations.find((x) => x.id === day.sleepStop!.accommodationId) : undefined;
   return (
     <article id={`day-${day.key}`} className={`day day-${load.level}`}>
@@ -209,30 +211,52 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
         {load.unknownVisits > 0 && <span className="muted"> · {load.unknownVisits} attività senza durata</span>}
         {load.incomplete && <strong className="error"> · stima incompleta: ci sono tratti non calcolati</strong>}
       </p>
-      {heavy && factors.length > 0 && (
-        <div className="load-why">
-          <strong className="small">Perché è {load.level === 'eccessiva' ? 'troppo carica' : 'piena'}:</strong>
+      {attention && (
+        <div className={`load-why ${heavy ? '' : 'load-why-soft'}`}>
+          <strong className="small">{heavy ? `Perché è ${load.level === 'eccessiva' ? 'troppo carica' : 'piena'}` : 'Perché richiede attenzione'}:</strong>
           <ul>
             {factors.map((f) => (
               <li key={f.text} className={f.strong ? 'strong' : ''}>
                 {f.text}
+                {f.hint && <span className="load-hint"> → {f.hint}</span>}
               </li>
             ))}
           </ul>
+          {suggestions.length > 0 && (
+            <ul className="load-proposals">
+              {suggestions.map((sg) => (
+                <li key={sg.id}>
+                  <span>
+                    <strong>Proposta:</strong> {sg.text}
+                  </span>
+                  {sg.action && (
+                    <button className="btn btn-small" onClick={() => onApply(sg)}>
+                      Applica
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {suggestions.some((sg) => sg.action) && <p className="muted small">Nulla viene modificato finché non scegli «Applica»; ogni proposta si può annullare.</p>}
         </div>
       )}
-      {(day.isArrivalDay || day.isDepartureDay) && <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo.</p>}
+      {!attention && (day.isArrivalDay || day.isDepartureDay) && <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo.</p>}
 
       {day.legs.length > 0 && (
         <ul className="day-legs">
           {day.legs.map((l) => {
-            const t = legTotals(l, trip.settings);
+            const t = legSummary(l, trip.settings);
             return (
               <li key={l.id}>
-                {l.segments.map((s) => MODE_ICON[s.mode]).join(' ')} {t.roadKm > 0 && `${Math.round(t.roadKm)} km · `}
-                {t.travelMin > 0 ? `teorici ${formatDuration(t.travelMin + t.waitMin)} · realistici ~${formatDuration(t.realisticMin)}` : 'tempo non calcolato'}
+                {l.segments.map((s) => MODE_ICON[s.mode]).join(' ')} {t.roadKm > 0 && `${Math.round(t.roadKm)} km su strada · guida ${formatDuration(t.driveMin)} · `}
+                {t.totalMin !== undefined
+                  ? `totale teorico ${formatDuration(t.totalMin)} · realistici ~${formatDuration(t.realisticMin ?? t.totalMin)}`
+                  : t.state === 'da_calcolare'
+                    ? 'da calcolare'
+                    : 'totale non calcolabile (durate mancanti)'}
                 {l.segments
-                  .filter((s) => s.mode === 'traghetto' || s.mode === 'costiera')
+                  .filter((s) => s.mode !== 'strada' && s.mode !== 'non_calcolato')
                   .map((s) => (
                     <span key={s.id} className="muted">
                       {' '}
@@ -245,7 +269,7 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
           })}
         </ul>
       )}
-      {day.warnings.map((w) => (
+      {!attention && day.warnings.map((w) => (
         <p key={w} className="note-warn small">
           ⚠️ {w}
         </p>

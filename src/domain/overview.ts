@@ -1,20 +1,35 @@
 import { computeBudget } from './budget';
 import { computeDayLoads } from './dayLoad';
-import { addDays, computeDays, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
+import { addDays, computeDays, formatDateIt, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
 import type { AccommodationStatus, Trip } from './types';
 
 // Panoramica del viaggio: tutto è derivato dal documento Trip, nessun valore dimostrativo.
 
 export type StepState = 'fatto' | 'in_corso' | 'da_fare';
 
+export type StepId = 'date' | 'tappe' | 'collegamenti' | 'alloggi' | 'budget' | 'verifiche' | 'prenotazioni';
+
 export interface PlanningStep {
-  id: 'tappe' | 'collegamenti' | 'alloggi' | 'prenotazioni' | 'budget' | 'date';
+  id: StepId;
   label: string;
   state: StepState;
   detail: string;
   /** Sezione dell'app dove si completa il passaggio */
   href: string;
+  /** Passaggi da cui dipende ancora da completare: è un'indicazione, non blocca nulla */
+  waitsFor: string[];
 }
+
+/** Dipendenze tra le decisioni: indicative, l'utente può procedere in qualsiasi ordine. */
+const DEPENDS_ON: Record<StepId, StepId[]> = {
+  date: [],
+  tappe: [],
+  collegamenti: ['tappe'],
+  alloggi: ['tappe'],
+  budget: ['collegamenti', 'alloggi'],
+  verifiche: ['collegamenti', 'alloggi'],
+  prenotazioni: ['date', 'verifiche'],
+};
 
 export interface NextAction {
   id: string;
@@ -103,7 +118,7 @@ export function tripOverview(trip: Trip): TripOverview {
     const t = legTotals(leg, trip.settings);
     if (t.hasUncalculated) (isRoutableLeg(leg, trip.stops) ? uncalculatedLegs : shipLegsMissing).push(ref);
     for (const s of leg.segments) {
-      if ((s.mode === 'traghetto' || s.mode === 'costiera') && !FIRM.includes(s.status)) {
+      if (s.mode !== 'strada' && s.mode !== 'non_calcolato' && !FIRM.includes(s.status)) {
         unverifiedCrossings.push({ ...ref, label: s.label, departureTime: s.departureTime });
       }
     }
@@ -138,7 +153,18 @@ export function tripOverview(trip: Trip): TripOverview {
   const firm = budget.byStatus.confermato + budget.byStatus.prenotato + budget.byStatus.pagato;
   const inTarget = n >= TRIP_MIN_DAYS && n <= TRIP_MAX_DAYS;
 
-  const steps: PlanningStep[] = [
+  // Alloggi scelti di cui non si è ancora verificata la disponibilità (stato «individuata»)
+  const lodgingUnchecked = lodging.filter((l) => l.accommodation && l.status === 'individuata').length;
+  const toCheck = unverifiedCrossings.length + lodgingUnchecked;
+
+  const raw: Omit<PlanningStep, 'waitsFor'>[] = [
+    {
+      id: 'date',
+      label: 'Periodo del viaggio',
+      state: trip.dateTentative ? 'da_fare' : 'fatto',
+      detail: trip.dateTentative ? 'Date provvisorie' : 'Date decise',
+      href: '#/viaggio',
+    },
     {
       id: 'tappe',
       label: 'Tappe e notti',
@@ -148,7 +174,7 @@ export function tripOverview(trip: Trip): TripOverview {
     },
     {
       id: 'collegamenti',
-      label: 'Collegamenti calcolati',
+      label: 'Trasporti calcolati',
       state: trip.legs.length === 0 ? 'da_fare' : uncalculatedLegs.length + shipLegsMissing.length === 0 ? 'fatto' : 'in_corso',
       detail:
         trip.legs.length === 0
@@ -164,34 +190,46 @@ export function tripOverview(trip: Trip): TripOverview {
       href: '#/hytte',
     },
     {
-      id: 'prenotazioni',
-      label: 'Alloggi prenotati',
-      state: lodging.length === 0 ? 'da_fare' : lodgingBooked === lodging.length ? 'fatto' : lodgingBooked > 0 ? 'in_corso' : 'da_fare',
-      detail: lodging.length === 0 ? '—' : `${lodgingBooked} di ${lodging.length} tappe`,
-      href: '#/hytte',
-    },
-    {
       id: 'budget',
-      label: 'Budget quantificato',
+      label: 'Costi principali',
       state: budget.lines.length === 0 ? 'da_fare' : missingPrices.length === 0 && emptyCategories === 0 ? 'fatto' : 'in_corso',
       detail:
         budget.lines.length === 0
           ? 'Nessuna voce'
           : missingPrices.length > 0
-            ? `${missingPrices.length} ${missingPrices.length === 1 ? 'costo mancante' : 'costi mancanti'}`
+            ? `${missingPrices.length} ${missingPrices.length === 1 ? 'importo mancante' : 'importi mancanti'}`
             : emptyCategories > 0
               ? `${emptyCategories} categorie senza voci`
               : 'Tutte le categorie hanno voci',
       href: '#/budget',
     },
     {
-      id: 'date',
-      label: 'Date del viaggio',
-      state: trip.dateTentative ? 'da_fare' : 'fatto',
-      detail: trip.dateTentative ? 'Provvisorie' : 'Decise',
-      href: '#/viaggio',
+      id: 'verifiche',
+      label: 'Orari e disponibilità',
+      state: n === 0 ? 'da_fare' : toCheck === 0 && lodgingAssigned === lodging.length ? 'fatto' : 'in_corso',
+      detail:
+        n === 0
+          ? '—'
+          : toCheck > 0
+            ? `${toCheck} ${toCheck === 1 ? 'verifica aperta' : 'verifiche aperte'}`
+            : lodgingAssigned < lodging.length
+              ? `${lodging.length - lodgingAssigned} ${lodging.length - lodgingAssigned === 1 ? 'alloggio' : 'alloggi'} ancora da scegliere e verificare`
+              : 'Nessuna verifica aperta',
+      href: unverifiedCrossings.length > 0 ? '#/itinerario' : '#/hytte',
+    },
+    {
+      id: 'prenotazioni',
+      label: 'Alloggi prenotati',
+      state: lodging.length === 0 ? 'da_fare' : lodgingBooked === lodging.length ? 'fatto' : lodgingBooked > 0 ? 'in_corso' : 'da_fare',
+      detail: lodging.length === 0 ? '—' : `${lodgingBooked} di ${lodging.length} tappe`,
+      href: '#/hytte',
     },
   ];
+  const stateOf = new Map(raw.map((r) => [r.id, r]));
+  const steps: PlanningStep[] = raw.map((r) => ({
+    ...r,
+    waitsFor: r.state === 'fatto' ? [] : DEPENDS_ON[r.id].filter((d) => stateOf.get(d)?.state !== 'fatto').map((d) => stateOf.get(d)!.label),
+  }));
 
   const actions: NextAction[] = [];
   const plural = (k: number, one: string, many: string) => (k === 1 ? one : many);
@@ -244,11 +282,30 @@ export function tripOverview(trip: Trip): TripOverview {
       cta: 'Cerca hytte',
     });
   }
+  const bookedWithTentative = lodging.filter((l) => l.status === 'prenotata').length;
+  if (trip.dateTentative && bookedWithTentative > 0) {
+    actions.push({
+      id: 'booked-tentative',
+      priority: 'alta',
+      text: `${bookedWithTentative} ${plural(bookedWithTentative, 'alloggio risulta prenotato', 'alloggi risultano prenotati')} ma le date del viaggio sono ancora provvisorie: controlla che coincidano.`,
+      href: '#/viaggio',
+      cta: 'Controlla le date',
+    });
+  }
+  if (lodgingUnchecked > 0) {
+    actions.push({
+      id: 'availability',
+      priority: 'media',
+      text: `Verifica la disponibilità di ${lodgingUnchecked} ${plural(lodgingUnchecked, 'alloggio scelto', 'alloggi scelti')} sul sito del fornitore: scelto non vuol dire prenotato.`,
+      href: '#/hytte',
+      cta: 'Apri gli alloggi',
+    });
+  }
   if (unverifiedCrossings.length > 0) {
     actions.push({
       id: 'crossings',
       priority: 'media',
-      text: `Verifica orari e stato di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto o nave', 'traghetti o navi')} sul sito dell'operatore.`,
+      text: `Verifica orari e stato di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto, nave o mezzo pubblico', 'traghetti, navi o mezzi pubblici')} sul sito dell'operatore.`,
       href: '#/itinerario',
       cta: 'Apri i tratti',
     });
@@ -273,8 +330,12 @@ export function tripOverview(trip: Trip): TripOverview {
     });
   }
   if (trip.dateTentative) {
-    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ${trip.startDate}): fissale quando i voli sono decisi.`, href: '#/viaggio', cta: 'Imposta le date' });
+    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/viaggio', cta: 'Imposta le date' });
   }
+
+  // Prima le priorità alte; a parità di priorità resta l'ordine logico delle decisioni (sort stabile)
+  const rank = { alta: 0, media: 1, bassa: 2 } as const;
+  actions.sort((a, b) => rank[a.priority] - rank[b.priority]);
 
   return {
     period: n > 0 ? { start: trip.startDate, end: addDays(trip.startDate, n - 1), tentative: trip.dateTentative } : undefined,
