@@ -1144,6 +1144,10 @@ details summary {
   padding: 14px;
   display: grid;
   gap: 2px;
+  /* Etichetta, valore e nota su righe condivise: i valori restano allineati anche se un'etichetta va a capo */
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  align-content: start;
 }
 .kpi span {
   color: var(--ink-2);
