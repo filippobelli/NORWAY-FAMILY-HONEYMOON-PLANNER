@@ -31,6 +31,20 @@ export function BudgetView() {
   const setS = (p: Partial<TripSettings>) => update((t) => ({ ...t, settings: { ...t.settings, ...p } }));
   const setCar = (p: Partial<CarSettings>) => update((t) => ({ ...t, settings: { ...t.settings, car: { ...(t.settings.car ?? DEFAULT_CAR), ...p } } }));
   const setEst = (p: Partial<BudgetEstimates>) => update((t) => ({ ...t, settings: { ...t.settings, estimates: { ...(t.settings.estimates ?? {}), ...p } } }));
+  // Stima a mano per categoria: una voce manuale «stimato» con id fisso, modificabile anche nell'elenco delle voci
+  const catEstimateId = (c: BudgetCategory) => `stima-${c}`;
+  const setCatEstimate = (c: BudgetCategory, v: number | undefined) =>
+    update((t) => {
+      const id = catEstimateId(c);
+      const rest = t.budgetItems.filter((x) => x.id !== id);
+      if (!v || v <= 0) return { ...t, budgetItems: rest };
+      const prev = t.budgetItems.find((x) => x.id === id);
+      const label = `Stima ${BUDGET_CATEGORIES.find((x) => x.id === c)?.label ?? c}`;
+      const item: BudgetItem = prev
+        ? { ...prev, amount: { amount: v, currency: 'EUR' } }
+        : { id, category: c, label, amount: { amount: v, currency: 'EUR' }, status: 'stimato', notes: '' };
+      return { ...t, budgetItems: prev ? t.budgetItems.map((x) => (x.id === id ? item : x)) : [...t.budgetItems, item] };
+    });
   const setCatCap = (c: BudgetCategory, v: number | undefined) =>
     update((t) => ({ ...t, settings: { ...t.settings, budgetCapByCategory: { ...(t.settings.budgetCapByCategory ?? {}), [c]: v && v > 0 ? v : undefined } } }));
 
@@ -140,7 +154,12 @@ export function BudgetView() {
                 <tr>
                   <th>Categoria</th>
                   <th className="num">Previsto</th>
-                  <th className="num">Tetto</th>
+                  <th className="num" title="Importo previsto per la categoria: entra nel totale come «Stimato»">
+                    Stima
+                  </th>
+                  <th className="num" title="Limite massimo di spesa per la categoria: non entra nel totale">
+                    Tetto max
+                  </th>
                   <th />
                 </tr>
               </thead>
@@ -174,6 +193,15 @@ export function BudgetView() {
                       </td>
                       <td className="num cap-cell">
                         <NumberInput
+                          value={trip.budgetItems.find((x) => x.id === catEstimateId(c.id))?.amount.amount}
+                          min={0}
+                          placeholder="€"
+                          ariaLabel={`Stima per ${c.label} in euro`}
+                          onChange={(v) => setCatEstimate(c.id, v)}
+                        />
+                      </td>
+                      <td className="num cap-cell">
+                        <NumberInput
                           value={st.budgetCapByCategory?.[c.id]}
                           min={0}
                           placeholder="—"
@@ -192,8 +220,9 @@ export function BudgetView() {
           </div>
           <p className="muted small">
             Sotto ogni importo, i subtotali per stato («certo» = confermato, prenotato o pagato): sommati danno il totale della categoria. «non quantificata»:
-            nessuna voce né stima (non vuol dire gratis). «senza importo»: costi noti ma non ancora prezzati, esclusi dal totale e senza stato. Con un tetto la barra
-            mostra quanto è già impegnato di quel tetto; senza, la quota sul totale.
+            nessuna voce né stima (non vuol dire gratis). «senza importo»: costi noti ma non ancora prezzati, esclusi dal totale e senza stato. «Stima»: scrivi
+            quanto pensi di spendere per la categoria; entra nel totale come «Stimato» e compare tra le voci. «Tetto max»: il limite che non vuoi superare, non
+            entra nel totale; con un tetto la barra mostra quanto è già impegnato di quel tetto, senza la quota sul totale.
           </p>
         </section>
         <section className="panel">
