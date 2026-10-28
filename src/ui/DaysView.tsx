@@ -181,6 +181,8 @@ function DayCard({ day, load, suggestions, onApply }: { day: DayInfo; load: DayL
   // Il riquadro compare se la giornata è piena o se un fattore da solo la rende faticosa (es. tratto non calcolato)
   const attention = factors.length > 0 && (heavy || factors.some((f) => f.strong));
   const acc = day.sleepStop?.accommodationId ? trip.accommodations.find((x) => x.id === day.sleepStop!.accommodationId) : undefined;
+  // Voli inseriti nella sezione Voli con la data di questa giornata (inclusi nel budget o alternative)
+  const dayFlights = (trip.flights ?? []).filter((f) => f.date === day.date);
   return (
     <article id={`day-${day.key}`} className={`day day-${load.level}`}>
       <header className="day-head">
@@ -241,7 +243,21 @@ function DayCard({ day, load, suggestions, onApply }: { day: DayInfo; load: DayL
           {suggestions.some((sg) => sg.action) && <p className="muted small">Nulla viene modificato finché non scegli «Applica»; ogni proposta si può annullare.</p>}
         </div>
       )}
-      {!attention && (day.isArrivalDay || day.isDepartureDay) && <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo.</p>}
+      {dayFlights.length > 0 && (
+        <ul className="day-flights small">
+          {dayFlights.map((f) => (
+            <li key={f.id}>
+              ✈️ {f.fromAirport} → {f.toAirport}
+              {f.departureTime ? ` · ${f.departureTime}${f.arrivalTime ? `–${f.arrivalTime}` : ''}` : ' · orario da inserire'}
+              {f.airline ? ` · ${f.airline}${f.flightNumber ? ` ${f.flightNumber}` : ''}` : ''}
+              {f.selected ? '' : ' (alternativa)'}
+            </li>
+          ))}
+        </ul>
+      )}
+      {!attention && dayFlights.length === 0 && (day.isArrivalDay || day.isDepartureDay) && (
+        <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo. Inseriscilo nella sezione Voli.</p>
+      )}
 
       {day.legs.length > 0 && (
         <ul className="day-legs">

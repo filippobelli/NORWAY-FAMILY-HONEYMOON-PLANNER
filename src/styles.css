@@ -1496,6 +1496,74 @@ details summary {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* Voli */
+.fl-home {
+  margin-bottom: 6px;
+}
+.fl-home input {
+  width: 160px;
+  flex: none;
+}
+.fl-ends {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  margin: 10px 0;
+}
+.fl-end {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 0;
+  min-width: 0;
+}
+.fl-end legend {
+  font-weight: 600;
+  padding: 0 4px;
+}
+.fl-end p {
+  margin: 0 0 4px;
+}
+.fl-opt {
+  white-space: normal;
+  align-items: flex-start;
+  margin: 4px 0;
+}
+.fl-routes,
+.fl-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.fl-routes > li,
+.fl-list > li {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: grid;
+  gap: 6px;
+}
+.fl-list > li.is-chosen {
+  border-left-color: var(--ok);
+}
+.fl-row,
+.flight-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.fl-sub {
+  margin: 16px 0 4px;
+}
+.day-flights {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+}
 .sc-open-note {
   flex-basis: 100%;
   margin: 4px 0 0;

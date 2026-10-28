@@ -70,8 +70,8 @@ export function railFor(a?: string, b?: string): { label: string; note: string }
 }
 
 // Entro questa distanza dall'aeroporto (linea d'aria) il volo ha senso; il resto è un trasferimento da verificare
-const AIRPORT_RADIUS_KM = 110;
-function nearestAirport(p: P): Destination | undefined {
+export const AIRPORT_RADIUS_KM = 110;
+export function nearestAirport(p: P): Destination | undefined {
   let best: Destination | undefined;
   let bestKm = Infinity;
   for (const d of DESTINATIONS) {
@@ -106,6 +106,11 @@ export interface ConfiguratorInput {
   /** Massimo di guida al giorno, in ore (stima) */
   maxDriveHours: number;
   regions: Region[];
+  /**
+   * Regioni degli aeroporti che l'utente ha tolto: si arriva o si riparte da lì, ma la regione non viene esplorata.
+   * Assente = regioni degli aeroporti comprese (comportamento precedente).
+   */
+  excludedAirportRegions?: Region[];
   /** Destinazioni da includere per forza (di solito i preferiti) */
   mustSee: string[];
   /** Escludere le attività segnate come poco adatte ai bambini piccoli */
@@ -274,8 +279,9 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   }
   if (unreachable.length) warnings.push(`Troppo lontane da qualsiasi base per una gita in giornata: ${unreachable.join(', ')}.`);
 
-  // Le regioni degli aeroporti sono sempre comprese: lì si arriva e da lì si riparte
-  const regions = new Set<Region>([...input.regions, arr.region, dep.region]);
+  // Le regioni degli aeroporti sono comprese (lì si arriva e da lì si riparte), salvo che l'utente le abbia tolte
+  const excluded = new Set(input.excludedAirportRegions ?? []);
+  const regions = new Set<Region>([...input.regions, ...[arr.region, dep.region].filter((r) => !excluded.has(r))]);
   const directKm = airKm(arr, dep);
   for (const b of bases) {
     const visitScore = b.visits.reduce((s, v) => s + v.kidScore + (mustSet.has(v.id) ? 6 : 0), 0);

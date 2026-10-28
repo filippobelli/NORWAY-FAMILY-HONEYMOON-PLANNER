@@ -6,7 +6,7 @@ import { formatRateDate, refreshRatesNow } from '../state/autoRates';
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
-const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
+const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', voli: 'Da Voli', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 const FUEL_LABEL: Record<FuelType, string> = { benzina: 'Benzina', diesel: 'Diesel', elettrica: 'Elettrica' };
 const DEFAULT_CAR: CarSettings = { fuel: 'benzina', consumption: 7, priceAuto: true };
 
