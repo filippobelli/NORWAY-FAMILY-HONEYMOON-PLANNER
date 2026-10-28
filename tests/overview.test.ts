@@ -38,7 +38,7 @@ test('Panoramica: periodo, notti, tratti non calcolati e alloggi derivati dal vi
   assert.equal(o.lodging.length, 2);
   assert.ok(o.lodging.every((l) => !l.accommodation));
   assert.equal(o.steps.find((s) => s.id === 'date')?.state, 'fatto');
-  assert.equal(o.steps.find((s) => s.id === 'collegamenti')?.detail, '0 di 2 tratti');
+  assert.equal(o.steps.find((s) => s.id === 'collegamenti')?.detail, '0 di 2 tratti completi');
   const ids = o.actions.map((a) => a.id);
   assert.ok(ids.includes('length') && ids.includes('legs') && ids.includes('beds'));
   assert.ok(!ids.includes('dates'));

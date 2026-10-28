@@ -30,7 +30,7 @@ type Row = {
   missing?: string;
 };
 
-const partialMark = (m: ScenarioMetrics) => (m.uncalculatedLegs > 0 ? ' (parziale)' : '');
+const partialMark = (m: ScenarioMetrics) => (m.incompleteLegs > 0 ? ' (parziale)' : '');
 
 const ROWS: Row[] = [
   { label: 'Giorni', get: (m) => m.days, fmt: (v) => String(v), better: 'none', basis: 'nessuno' },
@@ -186,7 +186,7 @@ export function ScenariosView() {
                   <div>
                     <dt>Nave, traghetti, treni</dt>
                     <dd>
-                      {m.ferries} traghetti · {m.coastalSegments} costiera · {m.publicTransportSegments} treno/bus
+                      {m.ferries} {m.ferries === 1 ? 'traghetto' : 'traghetti'} · {m.coastalSegments} costiera · {m.publicTransportSegments} treno/bus
                     </dd>
                   </div>
                   <div>

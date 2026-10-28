@@ -24,7 +24,7 @@ export interface LodgingOption {
   stayEur?: number;
   currency?: Currency;
   priceStatus: DataStatus;
-  /** true = posti sufficienti, false = insufficienti, undefined = capienza non inserita */
+  /** Posti indicati ≥ persone (true), < persone (false), non inseriti (undefined). Non conferma i letti per i bambini. */
   fitsFamily?: boolean;
   /** Distanza in linea d'aria dalla tappa (non è una distanza stradale) */
   airKmFromStop?: number;
@@ -80,6 +80,7 @@ export function lodgingComparison(trip: Trip): StopLodging[] {
         if (!acc.pricePerNight) missing.push('prezzo per notte');
         else if (acc.priceStatus === 'da_verificare') missing.push('prezzo da verificare');
         if (acc.capacity === undefined) missing.push('posti letto');
+        else if (!acc.beds?.trim()) missing.push('configurazione dei letti');
         if (acc.status === 'individuata') missing.push('disponibilità per le date');
         if (acc.lat === undefined || acc.lng === undefined) missing.push('posizione');
         if (!acc.url && !acc.source?.url) missing.push('link alla fonte');

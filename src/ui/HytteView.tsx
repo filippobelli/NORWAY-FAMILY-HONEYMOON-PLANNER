@@ -318,6 +318,7 @@ const DECISION: Record<LodgingDecision, string> = {
 };
 
 function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onChoose: (stopId: string, accId: string) => void; onSearch: (stopId: string) => void }) {
+  const { trip } = useTrip();
   const toSearch = rows.filter((r) => r.toSearch).length;
   const booked = rows.filter((r) => r.options.some((o) => o.chosen && o.decision === 'prenotata')).length;
   return (
@@ -388,7 +389,11 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
                       </div>
                       <div className="lo-facts small">
                         <span>
-                          {o.fitsFamily === undefined ? 'Posti non indicati' : o.fitsFamily ? `✓ ${o.acc.capacity} posti` : `✗ ${o.acc.capacity} posti: insufficienti`}
+                          {o.fitsFamily === undefined
+                            ? 'Posti non indicati'
+                            : o.fitsFamily
+                              ? `${o.acc.capacity} posti indicati per ${trip.participants.adults + trip.participants.childrenAges.length} persone${o.acc.beds ? ` · ${o.acc.beds}` : ' · letti da verificare'}`
+                              : `✗ ${o.acc.capacity} posti: insufficienti`}
                         </span>
                         <span>{o.airKmFromStop !== undefined ? `~${o.airKmFromStop.toLocaleString('it-IT')} km in linea d'aria` : 'Posizione non indicata'}</span>
                         <span className="muted">

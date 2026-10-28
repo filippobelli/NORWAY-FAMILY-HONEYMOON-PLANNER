@@ -300,7 +300,8 @@ export function budgetOverlaps(b: BudgetSummary): BudgetOverlap[] {
   for (const c of BUDGET_CATEGORIES) {
     const lines = b.lines.filter((l) => l.category === c.id);
     const manual = lines.filter((l) => l.origin === 'manuale');
-    const derived = [...new Set(lines.filter((l) => l.origin !== 'manuale' && l.origin !== 'stime').map((l) => l.origin))];
+    // Le stime di alloggi e attività si aggiungono anche quando esistono voci manuali: vanno controllate come le voci derivate
+    const derived = [...new Set(lines.filter((l) => l.origin !== 'manuale').map((l) => l.origin))];
     if (manual.length > 0 && derived.length > 0) {
       out.push({
         category: c.id,

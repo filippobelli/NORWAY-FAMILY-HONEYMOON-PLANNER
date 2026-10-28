@@ -73,7 +73,7 @@ export interface LegTotals {
   mixedModes: boolean;
   /** Traghetto calcolato e traghetto inserito a mano nello stesso tratto: possibile doppio conteggio */
   possibleDuplicateFerry: boolean;
-  /** Traghetti o navi senza dati confermati (orario/stato) */
+  /** Traghetti, navi, treni, bus o aerei senza dati confermati (orario/stato) */
   unverifiedCrossings: number;
 }
 
@@ -105,7 +105,7 @@ export function legTotals(leg: Leg, settings?: Partial<TripSettings>): LegTotals
       ferryCount += 1;
       if (s.waitMin === undefined) estimatedWaitMin += a.defaultFerryWaitMin;
     }
-    if ((s.mode === 'traghetto' || s.mode === 'costiera') && !['confermato', 'prenotato', 'pagato'].includes(s.status)) {
+    if (s.mode !== 'strada' && !['confermato', 'prenotato', 'pagato'].includes(s.status)) {
       unverifiedCrossings += 1;
     }
   }
@@ -340,7 +340,7 @@ export function tripWarnings(trip: Trip): TripWarning[] {
   if (unverified > 0) {
     out.push({
       level: 'info',
-      text: `${unverified === 1 ? '1 traghetto o nave' : `${unverified} traghetti o navi`} con orari non confermati: verifica sul sito dell'operatore e segna lo stato come "Confermato".`,
+      text: `${unverified === 1 ? '1 traghetto, nave o mezzo pubblico' : `${unverified} traghetti, navi o mezzi pubblici`} con orari non confermati: verifica sul sito dell'operatore e segna lo stato come "Confermato".`,
     });
   }
 

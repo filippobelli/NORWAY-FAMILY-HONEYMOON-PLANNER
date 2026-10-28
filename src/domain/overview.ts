@@ -111,12 +111,15 @@ export function tripOverview(trip: Trip): TripOverview {
   const nameOf = (id: string) => trip.stops.find((s) => s.id === id)?.name ?? '—';
 
   const uncalculatedLegs: LegRef[] = [];
+  // Tratti con un mezzo inserito ma almeno un segmento senza durata: non sono «calcolati» del tutto
+  let legsMissingDuration = 0;
   const shipLegsMissing: LegRef[] = [];
   const unverifiedCrossings: CrossingRef[] = [];
   for (const leg of trip.legs) {
     const ref = { legId: leg.id, from: nameOf(leg.fromStopId), to: nameOf(leg.toStopId) };
     const t = legTotals(leg, trip.settings);
     if (t.hasUncalculated) (isRoutableLeg(leg, trip.stops) ? uncalculatedLegs : shipLegsMissing).push(ref);
+    else if (t.partial) legsMissingDuration += 1;
     for (const s of leg.segments) {
       if (s.mode !== 'strada' && s.mode !== 'non_calcolato' && !FIRM.includes(s.status)) {
         unverifiedCrossings.push({ ...ref, label: s.label, departureTime: s.departureTime });
@@ -175,11 +178,13 @@ export function tripOverview(trip: Trip): TripOverview {
     {
       id: 'collegamenti',
       label: 'Trasporti calcolati',
-      state: trip.legs.length === 0 ? 'da_fare' : uncalculatedLegs.length + shipLegsMissing.length === 0 ? 'fatto' : 'in_corso',
+      state: trip.legs.length === 0 ? 'da_fare' : uncalculatedLegs.length + shipLegsMissing.length + legsMissingDuration === 0 ? 'fatto' : 'in_corso',
       detail:
         trip.legs.length === 0
           ? 'Nessun tratto'
-          : `${trip.legs.length - uncalculatedLegs.length - shipLegsMissing.length} di ${trip.legs.length} tratti`,
+          : `${trip.legs.length - uncalculatedLegs.length - shipLegsMissing.length - legsMissingDuration} di ${trip.legs.length} tratti completi${
+              legsMissingDuration > 0 ? ` · ${legsMissingDuration} senza durata` : ''
+            }`,
       href: '#/itinerario',
     },
     {

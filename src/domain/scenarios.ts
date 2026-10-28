@@ -126,6 +126,8 @@ export interface ScenarioMetrics {
   toVerify: string[];
   /** Tratti senza percorso né mezzo inserito */
   uncalculatedLegs: number;
+  /** Tratti non calcolati o con almeno un segmento senza durata: km e tempi sono parziali */
+  incompleteLegs: number;
   /** Segmenti con durata mancante o orario non confermato */
   unverifiedSegments: number;
   /** Costi noti come esistenti ma senza importo (es. traghetto senza prezzo): esclusi dal totale */
@@ -158,6 +160,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
   let coastal = 0;
   let pt = 0;
   let uncalculated = 0;
+  let incomplete = 0;
   let unverified = 0;
   for (const leg of view.legs) {
     const t = legTotals(leg, view.settings);
@@ -166,6 +169,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
     real += t.realisticMin;
     ferries += t.ferryCount;
     if (t.hasUncalculated) uncalculated++;
+    if (t.partial) incomplete++;
     unverified += t.unverifiedCrossings;
     coastal += leg.segments.filter((s) => s.mode === 'costiera').length;
     pt += leg.segments.filter((s) => s.mode === 'treno' || s.mode === 'bus').length;
@@ -173,7 +177,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
   const toVerify: string[] = [];
   if (view.stops.length === 0) toVerify.push('Itinerario vuoto');
   if (uncalculated) toVerify.push(`${uncalculated} collegamenti non calcolati`);
-  if (unverified) toVerify.push(`${unverified} traghetti/navi con orari non confermati`);
+  if (unverified) toVerify.push(`${unverified} traghetti, navi o mezzi pubblici con orari non confermati`);
   const noBed = view.stops.filter((s) => s.kind === 'luogo' && s.nights > 0 && !s.accommodationId).length;
   if (noBed) toVerify.push(`${noBed} tappe senza alloggio`);
   const missingPrices = budget.missing.filter((m) => !m.startsWith('Nessuna voce')).length;
@@ -199,10 +203,12 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
   const needs: string[] = [];
   if (n === 0) needs.push('Aggiungere tappe e notti');
   if (uncalculated) needs.push(`Calcolare ${uncalculated} ${uncalculated === 1 ? 'tratto' : 'tratti'} (distanze e tempi)`);
+  const missingDur = incomplete - uncalculated;
+  if (missingDur > 0) needs.push(`Inserire la durata mancante in ${missingDur} ${missingDur === 1 ? 'tratto' : 'tratti'}`);
   if (missingCosts.length) needs.push(`Inserire ${missingCosts.length} ${missingCosts.length === 1 ? 'prezzo mancante' : 'prezzi mancanti'}`);
   if (emptyCats) needs.push(`Aggiungere voci o stime per ${emptyCats} ${emptyCats === 1 ? 'categoria' : 'categorie'} di spesa`);
   const level: ScenarioCompleteness['level'] =
-    n === 0 ? 'vuoto' : uncalculated > 0 || budget.total === 0 ? 'insufficiente' : needs.length > 0 ? 'parziale' : 'completo';
+    n === 0 ? 'vuoto' : incomplete > 0 || budget.total === 0 ? 'insufficiente' : needs.length > 0 ? 'parziale' : 'completo';
 
   // Osservazioni per la famiglia: fatti misurati, non giudizi
   const familyNotes: string[] = [];
@@ -221,6 +227,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
 
   return {
     uncalculatedLegs: uncalculated,
+    incompleteLegs: incomplete,
     unverifiedSegments,
     missingCosts,
     emptyCostCategories: emptyCats,
@@ -263,7 +270,7 @@ export function comparability(basis: CompareBasis, all: ScenarioMetrics[]): { ok
   if (ms.length < 2) return { ok: false, reason: 'servono almeno due scenari con itinerario' };
   if (basis === 'nessuno') return { ok: true };
   if (basis === 'tratti') {
-    return ms.every((m) => m.uncalculatedLegs === 0) ? { ok: true } : { ok: false, reason: 'tratti non calcolati in almeno uno scenario' };
+    return ms.every((m) => m.incompleteLegs === 0) ? { ok: true } : { ok: false, reason: 'tratti non calcolati o senza durata in almeno uno scenario' };
   }
   if (ms.some((m) => m.costPartial)) return { ok: false, reason: 'costi incompleti in almeno uno scenario' };
   if (basis === 'costi_stessa_durata' && ms.some((m) => m.days !== ms[0]!.days)) return { ok: false, reason: 'durate diverse: confronta il costo al giorno' };

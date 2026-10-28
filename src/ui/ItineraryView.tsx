@@ -537,7 +537,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
                 </>
               ) : (
                 <>
-                  {' '}
+                  {' · '}
                   <Badge tone="warn">
                     totale non calcolabile: {sum.missingDuration} {sum.missingDuration === 1 ? 'segmento' : 'segmenti'} senza durata
                   </Badge>
