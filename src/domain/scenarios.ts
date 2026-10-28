@@ -124,6 +124,10 @@ export interface ScenarioMetrics {
   heavyDays: number;
   /** Informazioni ancora da verificare o mancanti */
   toVerify: string[];
+  /** Trasferimenti: tratti tra tappe consecutive */
+  transferLegs: number;
+  /** Giornate con almeno un trasferimento */
+  transferDays: number;
   /** Tratti senza percorso né mezzo inserito */
   uncalculatedLegs: number;
   /** Tratti non calcolati o con almeno un segmento senza durata: km e tempi sono parziali */
@@ -226,6 +230,8 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
   }
 
   return {
+    transferLegs: view.legs.length,
+    transferDays: days.filter((d) => d.legs.length > 0).length,
     uncalculatedLegs: uncalculated,
     incompleteLegs: incomplete,
     unverifiedSegments,

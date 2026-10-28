@@ -36,6 +36,8 @@ const ROWS: Row[] = [
   { label: 'Giorni', get: (m) => m.days, fmt: (v) => String(v), better: 'none', basis: 'nessuno' },
   { label: 'Notti', get: (m) => m.nights, fmt: (v) => String(v), better: 'none', basis: 'nessuno' },
   { label: 'Cambi di alloggio', get: (m) => m.accommodationChanges, fmt: (v) => String(v), better: 'min', basis: 'nessuno' },
+  { label: 'Trasferimenti (tratti)', get: (m) => m.transferLegs, fmt: (v) => String(v), better: 'none', basis: 'nessuno' },
+  { label: 'Giornate con trasferimento', get: (m) => m.transferDays, fmt: (v) => String(v), better: 'none', basis: 'nessuno' },
   { label: 'Km su strada (calcolati)', get: (m) => m.roadKm, fmt: (v, m) => `${v.toLocaleString('it-IT')} km${partialMark(m)}`, better: 'min', basis: 'tratti' },
   { label: 'Trasferimenti teorici', get: (m) => m.transferTheoreticalMin, fmt: (v, m) => formatDuration(v) + partialMark(m), better: 'min', basis: 'tratti' },
   { label: 'Trasferimenti realistici (stima)', get: (m) => m.transferRealisticMin, fmt: (v, m) => formatDuration(v) + partialMark(m), better: 'min', basis: 'tratti' },
@@ -167,8 +169,10 @@ export function ScenariosView() {
                     </dd>
                   </div>
                   <div>
-                    <dt>Cambi di alloggio</dt>
-                    <dd>{m.accommodationChanges}</dd>
+                    <dt>Cambi di alloggio · trasferimenti</dt>
+                    <dd>
+                      {m.accommodationChanges} · {m.transferLegs} {m.transferLegs === 1 ? 'tratto' : 'tratti'} in {m.transferDays} {m.transferDays === 1 ? 'giorno' : 'giorni'}
+                    </dd>
                   </div>
                   <div>
                     <dt>Strada</dt>
@@ -271,6 +275,14 @@ export function ScenariosView() {
                   >
                     Apri per modificare
                   </button>
+                )}
+                {!active && (
+                  <p className="muted small sc-open-note">
+                    «Apri per modificare» salva prima lo scenario attivo con tutte le sue modifiche (nessuno scenario viene eliminato). Poi Itinerario, Giornate e
+                    Budget mostrano questo scenario: cambiano data di partenza, tappe (con l'alloggio scelto per ciascuna), tratti, giornate, voci di budget e navi
+                    incluse. Restano condivisi l'elenco degli alloggi, le opzioni costiere, le impostazioni e le stime del budget. Per tornare indietro riapri lo
+                    scenario precedente.
+                  </p>
                 )}
                 {!active &&
                   (confirmDelete === s.id ? (

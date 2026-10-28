@@ -88,9 +88,16 @@ export function OverviewView() {
             </h2>
             <p>{top.text}</p>
           </div>
-          <a className="btn btn-primary" href={top.href}>
-            {top.cta}
-          </a>
+          <span className="row wrap">
+            <a className="btn btn-primary" href={top.href}>
+              {top.cta}
+            </a>
+            {top.secondary && (
+              <a className="btn" href={top.secondary.href}>
+                {top.secondary.cta}
+              </a>
+            )}
+          </span>
         </section>
       )}
 
@@ -140,9 +147,16 @@ export function OverviewView() {
                       <span className="ov-prio">{PRIORITY_TEXT[a.priority]}</span>
                       <p>{a.text}</p>
                     </div>
-                    <a className="btn btn-small" href={a.href}>
-                      {a.cta}
-                    </a>
+                    <span className="ov-action-links">
+                      <a className="btn btn-small" href={a.href}>
+                        {a.cta}
+                      </a>
+                      {a.secondary && (
+                        <a className="btn btn-small" href={a.secondary.href}>
+                          {a.secondary.cta}
+                        </a>
+                      )}
+                    </span>
                   </li>
                 )}
               />
