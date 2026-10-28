@@ -44,6 +44,22 @@ export interface StopLodging {
   toSearch: boolean;
 }
 
+/**
+ * Indirizzo esterno utilizzabile come link: solo http/https. Un indirizzo senza schema (es. «www.hytte.no») o con
+ * un altro schema non viene corretto né indovinato: si restituisce undefined e la UI lo segnala come non valido.
+ * Il dato salvato non viene modificato. Un link valido non dice nulla sulla disponibilità dell'alloggio.
+ */
+export function externalHref(raw: string | undefined): string | undefined {
+  const v = raw?.trim();
+  if (!v) return undefined;
+  try {
+    const u = new URL(v);
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function airKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
   const R = 6371;
   const dLat = ((b.lat - a.lat) * Math.PI) / 180;

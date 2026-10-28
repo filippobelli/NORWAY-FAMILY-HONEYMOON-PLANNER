@@ -80,9 +80,20 @@ export interface BudgetSummary {
   byCategory: Record<BudgetCategory, number>;
   byStatus: Record<DataStatus, number>;
   total: number;
+  /** Media giornaliera: solo se ci sono giorni e almeno un importo (un totale di 0 € per costi sconosciuti non è una media) */
   perDay?: number;
   days: number;
   missing: string[];
+  /** Costi che esistono ma non hanno un importo, per categoria (esclusi dal totale) */
+  missingByCategory: Partial<Record<BudgetCategory, number>>;
+  /** Tappe con notti senza alloggio scelto (decisione di pianificazione, distinta dal costo) */
+  unchosenLodging: { stopId: string; name: string; nights: number }[];
+  /**
+   * Come è coperto nel budget il costo di quelle tappe:
+   * stima = stima per notte dell'utente; voci_manuali = esistono voci manuali di alloggio che potrebbero coprirlo
+   * (non si può sapere quali tappe coprono); nessuna = costo sconosciuto, conteggiato tra i costi senza importo.
+   */
+  unchosenLodgingCoverage: 'stima' | 'voci_manuali' | 'nessuna';
 }
 
 /** Calcola il budget: voci manuali + voci derivate dalle altre sezioni (senza doppi conteggi). */
@@ -90,6 +101,11 @@ export function computeBudget(trip: Trip): BudgetSummary {
   const s = trip.settings;
   const lines: BudgetLine[] = [];
   const missing: string[] = [];
+  const missingByCategory: Partial<Record<BudgetCategory, number>> = {};
+  const missingIn = (c: BudgetCategory, text: string) => {
+    missing.push(text);
+    missingByCategory[c] = (missingByCategory[c] ?? 0) + 1;
+  };
 
   for (const it of trip.budgetItems) {
     lines.push({
@@ -109,7 +125,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
     const a = trip.accommodations.find((x) => x.id === stop.accommodationId);
     if (!a) continue;
     if (!a.pricePerNight) {
-      missing.push(`Prezzo mancante per "${a.name}"`);
+      missingIn('alloggi', `Prezzo mancante per "${a.name}"`);
       continue;
     }
     const eur = toEur(a.pricePerNight, s) * stop.nights + toEur(a.cleaningFee, s) + toEur(a.linenFee, s);
@@ -123,16 +139,28 @@ export function computeBudget(trip: Trip): BudgetSummary {
     });
   }
 
+  // Tappe con notti senza alloggio scelto: il costo esiste ma è sconosciuto. Non si segnala se c'è una stima per notte
+  // (la aggiunge più sotto) o se l'utente ha già inserito voci manuali per gli alloggi (potrebbero coprirle).
+  const lodgingEstimate = (s.estimates?.lodgingPerNight ?? 0) > 0;
+  const manualLodging = trip.budgetItems.some((it) => it.category === 'alloggi');
+  const unchosenLodging = trip.stops
+    .filter((stop) => stop.kind === 'luogo' && stop.nights > 0 && !(stop.accommodationId && trip.accommodations.some((x) => x.id === stop.accommodationId)))
+    .map((stop) => ({ stopId: stop.id, name: stop.name, nights: stop.nights }));
+  const unchosenLodgingCoverage = lodgingEstimate ? 'stima' : manualLodging ? 'voci_manuali' : 'nessuna';
+  if (unchosenLodgingCoverage === 'nessuna') {
+    for (const u of unchosenLodging) missingIn('alloggi', `Alloggio non ancora scelto a ${u.name} (${u.nights} ${u.nights === 1 ? 'notte' : 'notti'})`);
+  }
+
   // Navigazione costiera: coerenza tra opzioni incluse nel budget e tratti dell'itinerario
   const linked = new Set(trip.legs.flatMap((l) => l.segments.map((sg) => sg.coastalOptionId)).filter(Boolean));
   for (const o of trip.coastalOptions) {
-    if (linked.has(o.id) && !o.selected) missing.push(`${o.operator} ${o.fromPort} → ${o.toPort} è nell'itinerario ma esclusa dal budget`);
+    if (linked.has(o.id) && !o.selected) missingIn('costiera', `${o.operator} ${o.fromPort} → ${o.toPort} è nell'itinerario ma esclusa dal budget`);
   }
 
   // Navigazione costiera selezionata
   for (const o of trip.coastalOptions.filter((x) => x.selected)) {
     if (!o.price) {
-      missing.push(`Prezzo mancante per ${o.operator} ${o.fromPort} → ${o.toPort}`);
+      missingIn('costiera', `Prezzo mancante per ${o.operator} ${o.fromPort} → ${o.toPort}`);
       continue;
     }
     lines.push({
@@ -151,7 +179,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
     roadKm += legTotals(leg).roadKm;
     for (const seg of leg.segments) {
       if (seg.coastalOptionId) continue;
-      if (seg.mode === 'traghetto' && !seg.cost) missing.push(`Costo traghetto mancante: ${seg.label}`);
+      if (seg.mode === 'traghetto' && !seg.cost) missingIn('traghetti', `Costo traghetto mancante: ${seg.label}`);
       if (!seg.cost) continue;
       const category: BudgetCategory =
         seg.mode === 'traghetto' ? 'traghetti' : seg.mode === 'treno' || seg.mode === 'bus' ? 'treni_bus' : seg.mode === 'aereo' ? 'voli' : 'carburante_pedaggi';
@@ -178,7 +206,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
         origin: 'trasporti',
       });
     } else {
-      missing.push('Costo del carburante non impostato (consumo e prezzo dell\'auto)');
+      missingIn('carburante_pedaggi', 'Costo del carburante non impostato (consumo e prezzo dell\'auto)');
     }
   }
 
@@ -186,7 +214,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
   const liveKeys = new Set(computeDays(trip).map((d) => d.key));
   for (const [dayKey, day] of Object.entries(trip.days)) {
     if (!liveKeys.has(dayKey)) {
-      if (day.activities.some((a) => a.cost)) missing.push('Attività con costo in giornate non più presenti nell\'itinerario (non conteggiate)');
+      if (day.activities.some((a) => a.cost)) missingIn('attrazioni', 'Attività con costo in giornate non più presenti nell\'itinerario (non conteggiate)');
       continue;
     }
     for (const act of day.activities) {
@@ -271,9 +299,20 @@ export function computeBudget(trip: Trip): BudgetSummary {
     total += l.eur;
   }
   for (const c of BUDGET_CATEGORIES) {
-    if (byCategory[c.id] === 0) missing.push(`Nessuna voce per "${c.label}"`);
+    if (!lines.some((l) => l.category === c.id)) missing.push(`Nessuna voce per "${c.label}"`);
   }
-  return { lines, byCategory, byStatus, total, perDay: days > 0 ? total / days : undefined, days, missing };
+  return {
+    lines,
+    byCategory,
+    byStatus,
+    total,
+    perDay: days > 0 && lines.length > 0 ? total / days : undefined,
+    days,
+    missing,
+    missingByCategory,
+    unchosenLodging,
+    unchosenLodgingCoverage,
+  };
 }
 
 const ORIGIN_TEXT: Record<BudgetLine['origin'], string> = {
@@ -284,6 +323,46 @@ const ORIGIN_TEXT: Record<BudgetLine['origin'], string> = {
   giornate: 'attività delle giornate',
   stime: 'stime da parametri',
 };
+
+export interface CategoryBreakdown {
+  category: BudgetCategory;
+  /** Uguale a byCategory: somma delle righe della categoria */
+  total: number;
+  /** Confermato da fonte, prenotato o pagato */
+  firm: number;
+  estimated: number;
+  toVerify: number;
+  /** Numero di righe per gruppo: un gruppo con righe ma importo 0 € è un dato valido, non un vuoto */
+  counts: { firm: number; estimated: number; toVerify: number };
+  /** Costi noti senza importo: non hanno stato né importo, restano fuori dai subtotali */
+  withoutAmount: number;
+}
+
+/**
+ * Suddivide ogni categoria per stato partendo dalle stesse righe di computeBudget:
+ * nessun importo viene ricalcolato o sommato due volte, quindi firm + estimated + toVerify = total.
+ */
+export function categoryBreakdown(b: BudgetSummary): CategoryBreakdown[] {
+  return BUDGET_CATEGORIES.map((c) => {
+    const out: CategoryBreakdown = {
+      category: c.id,
+      total: 0,
+      firm: 0,
+      estimated: 0,
+      toVerify: 0,
+      counts: { firm: 0, estimated: 0, toVerify: 0 },
+      withoutAmount: b.missingByCategory[c.id] ?? 0,
+    };
+    for (const l of b.lines) {
+      if (l.category !== c.id) continue;
+      out.total += l.eur;
+      const group = l.status === 'stimato' ? 'estimated' : l.status === 'da_verificare' ? 'toVerify' : 'firm';
+      out[group] += l.eur;
+      out.counts[group] += 1;
+    }
+    return out;
+  });
+}
 
 export interface BudgetOverlap {
   category: BudgetCategory;
@@ -323,7 +402,7 @@ export interface BudgetCompleteness {
 
 export function budgetCompleteness(b: BudgetSummary): BudgetCompleteness {
   const missingAmounts = b.missing.filter((m) => !m.startsWith('Nessuna voce'));
-  const emptyCategories = BUDGET_CATEGORIES.filter((c) => b.byCategory[c.id] === 0).map((c) => c.label);
+  const emptyCategories = BUDGET_CATEGORIES.filter((c) => !b.lines.some((l) => l.category === c.id)).map((c) => c.label);
   return { partial: b.total === 0 || missingAmounts.length > 0 || emptyCategories.length > 0, missingAmounts, emptyCategories };
 }
 

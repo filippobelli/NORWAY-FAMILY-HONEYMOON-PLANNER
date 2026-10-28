@@ -139,3 +139,19 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - Corretto: le stime «alloggio a notte» e «attività al giorno» si sommano anche a voci manuali della stessa categoria (comportamento preesistente): ora l'avviso sui doppi conteggi le include. Nessun importo modificato.
 - Errore Leaflet `_leaflet_pos`: non riprodotto (selezione + uscita dopo 0–600 ms, ingresso/uscita durante l'inquadratura iniziale, giri rapidi su tutte le sezioni a 390 e 1360 px). Nessuna modifica alla mappa.
 - Verifiche: 69/69 test, typecheck e build ok; lint con i soli 2 errori di `ConfiguratorView.tsx`, già presenti in `019d433`. E2E non eseguibili qui (Playwright assente, `build-local.mjs` usa un percorso Linux).
+
+## 28/10/2026 — fase 4: budget, alloggi, scenari (branch `feature/fase-4-budget-alloggi-scenari`, non pubblicato)
+
+- **Budget**: una voce da 0 € (es. attività gratuita) è un dato valido e la categoria non risulta più «senza voci»; la media giornaliera non compare come «0 €» quando non c'è alcun importo; nella tabella per categoria «non quantificata» (nessuna voce né stima), natura degli importi (certo, stimato, da verificare, misto) e «+ N senza importo» per i costi noti ma non prezzati (`missingByCategory` in `computeBudget`). Le tappe con notti senza alloggio scelto sono un costo sconosciuto della categoria alloggi, salvo stima per notte o voci manuali di alloggio. Riferimento del cambio: data e fonte salvate, oppure «data del cambio non indicata» / «fonte non indicata».
+- **Alloggi**: servizi (cucina, bagno, parcheggio) e politica di cancellazione nel confronto per tappa e nelle schede, con «non noto» anche per record senza quei campi.
+- **Scenari**: trasferimenti (tratti e giornate con spostamento) con le stesse regole per tutti, senza «migliore»; «Apri per modificare» spiega cosa cambia (data, tappe con alloggio scelto, tratti, giornate, voci di budget, navi incluse) e cosa resta condiviso.
+- Verifiche: 73/73 test (i 4 nuovi falliscono sul codice precedente), typecheck e build ok, lint con i 2 errori preesistenti di `ConfiguratorView.tsx`; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi; aprire le sezioni non modifica il viaggio salvato.
+
+### Fase 4 — lacune residue (stesso branch, non pubblicato)
+
+- **Panoramica**: una sola azione per le tappe senza alloggio, che distingue la scelta (pulsante «Cerca hytte») dal costo («Costo da quantificare», pulsante verso il budget). Se c'è una stima per notte lo dice; se ci sono voci manuali di alloggio chiede di controllare che le coprano. L'azione «costi senza prezzo» conta solo gli altri costi, senza ripetere quelle tappe. Il budget espone `unchosenLodging` e `unchosenLodgingCoverage` (stima, voci_manuali, nessuna).
+- **Budget per stato**: `categoryBreakdown` suddivide ogni categoria in certo, stimato e da verificare partendo dalle stesse righe del totale (somma dei subtotali = totale di categoria, somma delle categorie = totale complessivo). Un gruppo compare se ha almeno una voce, anche da 0 €; i costi senza importo restano a parte e senza stato.
+- **Link degli alloggi**: aperti solo se `http`/`https` (`externalHref`); indirizzi senza schema o con altri schemi (es. `javascript:`) compaiono come «link non valido» con il testo salvato, che non viene modificato.
+- **Backup**: test automatico di `exportTripFile` con dati sintetici (JSON valido, nome file, reimportazione senza perdite).
+- **Sincronizzazione**: verifica statica: `src/state`, `src/services/storage`, `types.ts`, `defaults.ts` e `supabase/` non sono stati modificati in nessuna fase. Nessun test contro il cloud.
+- Verifiche: 83/83 test, typecheck e build ok, lint con i 2 errori preesistenti; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi.

@@ -1432,6 +1432,31 @@ details summary {
 .budget-rate {
   margin: -6px 0 12px;
 }
+/* Tabella per categoria: natura dell'importo e costi senza importo scritti a parole */
+.cat-kind,
+.cat-missing {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.cat-kind {
+  color: var(--ink-2);
+}
+.cat-missing {
+  color: var(--warn);
+}
+/* Azione con due destinazioni (es. alloggio e budget): pulsanti separati e che vanno a capo su smartphone */
+.ov-action-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: none;
+}
+.sc-open-note {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+}
 
 /* Confronto alloggi per tappa: righe a griglia che diventano schede su smartphone (nessuna tabella larga) */
 .lodging-stops {

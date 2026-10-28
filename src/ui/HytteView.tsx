@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { toEur } from '../domain/coastal';
 import { newId } from '../domain/ids';
 import { computeDays, formatDateIt } from '../domain/itinerary';
@@ -6,7 +6,7 @@ import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
-import { lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
+import { externalHref, lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
@@ -168,10 +168,12 @@ export function HytteView() {
                       <div>
                         <strong>{p.name}</strong> <span className="muted small">{p.kind} · {p.distanceKm} km</span>
                         {p.website && (
-                          <a className="small" href={p.website} target="_blank" rel="noreferrer">
+                          <>
                             {' '}
-                            sito ↗
-                          </a>
+                            <ExtLink url={p.website} className="small">
+                              sito ↗
+                            </ExtLink>
+                          </>
                         )}
                       </div>
                       <button
@@ -252,9 +254,9 @@ export function HytteView() {
                     <dd>
                       {a.capacity ?? '—'} · {a.beds || '—'}
                     </dd>
-                    <dt>Bagno · cucina · parcheggio</dt>
+                    <dt>Servizi</dt>
                     <dd>
-                      {a.bathroom.replace('_', ' ')} · {a.kitchen.replace('_', ' ')} · {a.parking.replace('_', ' ')}
+                      {servicesText(a)}
                     </dd>
                     {a.cancellation && (
                       <>
@@ -266,22 +268,20 @@ export function HytteView() {
                   {a.source && (
                     <p className="muted small">
                       Fonte:{' '}
-                      {a.source.url ? (
-                        <a href={a.source.url} target="_blank" rel="noreferrer">
-                          {a.source.label}
-                        </a>
-                      ) : (
-                        a.source.label
+                      {externalHref(a.source.url) ? <ExtLink url={a.source.url}>{a.source.label}</ExtLink> : a.source.label}
+                      {a.source.url && !externalHref(a.source.url) && (
+                        <>
+                          {' '}
+                          <ExtLink url={a.source.url}>{a.source.label}</ExtLink>
+                        </>
                       )}{' '}
                       · {fmtDateTime(a.source.checkedAt)}
                     </p>
                   )}
                   <footer>
-                    {a.url && (
-                      <a className="btn btn-small" href={a.url} target="_blank" rel="noreferrer">
-                        Sito ↗
-                      </a>
-                    )}
+                    <ExtLink url={a.url} className="btn btn-small">
+                      Sito ↗
+                    </ExtLink>
                     <button className="btn btn-small" onClick={() => setDraft(a)}>
                       Modifica
                     </button>
@@ -308,6 +308,32 @@ export function HytteView() {
       </section>
     </div>
   );
+}
+
+/** Link esterno: aperto solo se http/https; altrimenti lo si dichiara non valido mostrando il testo salvato. */
+function ExtLink({ url, className, children }: { url: string | undefined; className?: string; children: ReactNode }) {
+  if (!url?.trim()) return null;
+  const href = externalHref(url);
+  if (!href) {
+    return (
+      <span className="small warn-text" title={url}>
+        link non valido: {url.length > 40 ? `${url.slice(0, 40)}…` : url}
+      </span>
+    );
+  }
+  return (
+    <a className={className} href={href} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  );
+}
+
+const YES_NO = { si: 'sì', no: 'no', non_noto: 'non noto' } as const;
+const BATH = { privato: 'privato', condiviso: 'condiviso', non_noto: 'non noto' } as const;
+
+/** Servizi così come sono stati inseriti: «non noto» resta tale (anche per dati vecchi senza il campo). */
+function servicesText(a: Accommodation): string {
+  return `Cucina ${YES_NO[a.kitchen] ?? 'non noto'} · Bagno ${BATH[a.bathroom] ?? 'non noto'} · Parcheggio ${YES_NO[a.parking] ?? 'non noto'}`;
 }
 
 const DECISION: Record<LodgingDecision, string> = {
@@ -396,18 +422,18 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
                               : `✗ ${o.acc.capacity} posti: insufficienti`}
                         </span>
                         <span>{o.airKmFromStop !== undefined ? `~${o.airKmFromStop.toLocaleString('it-IT')} km in linea d'aria` : 'Posizione non indicata'}</span>
+                        <span>{servicesText(o.acc)}</span>
                         <span className="muted">
                           Fonte: {o.source ? `${o.source.label}${o.source.checkedAt ? `, ${fmtDateTime(o.source.checkedAt)}` : ''}` : 'non indicata'}
                         </span>
                       </div>
                       {o.missing.length > 0 && <div className="small lo-missing">Manca: {o.missing.join(', ')}</div>}
+                      {o.acc.cancellation && <div className="small">Cancellazione: {o.acc.cancellation}</div>}
                       {o.acc.notes && <div className="small muted">{o.acc.notes}</div>}
                       <div className="lo-actions">
-                        {(o.acc.url ?? o.source?.url) && (
-                          <a className="btn btn-small" href={o.acc.url ?? o.source?.url} target="_blank" rel="noreferrer">
-                            Fonte ↗
-                          </a>
-                        )}
+                        <ExtLink url={o.acc.url ?? o.source?.url} className="btn btn-small">
+                          Fonte ↗
+                        </ExtLink>
                         {!o.chosen && (
                           <button className="btn btn-small" onClick={() => onChoose(r.stop.id, o.acc.id)}>
                             Scegli per questa tappa

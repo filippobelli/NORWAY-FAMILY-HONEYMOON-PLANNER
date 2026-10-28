@@ -38,6 +38,8 @@ export interface NextAction {
   text: string;
   href: string;
   cta: string;
+  /** Seconda azione, quando la stessa situazione riguarda anche un'altra sezione (es. alloggio e budget) */
+  secondary?: { href: string; cta: string };
 }
 
 export interface LegRef {
@@ -278,13 +280,22 @@ export function tripOverview(trip: Trip): TripOverview {
     });
   }
   const noBed = lodging.filter((l) => !l.accommodation).length;
+  // Tappe senza alloggio: una sola azione che distingue la scelta (pianificazione) dal costo (budget)
   if (noBed > 0) {
+    const tappe = `${noBed} ${plural(noBed, 'tappa', 'tappe')} con pernottamento`;
+    const cov = budget.unchosenLodgingCoverage;
     actions.push({
       id: 'beds',
       priority: 'media',
-      text: `Scegli l'alloggio per ${noBed} ${plural(noBed, 'tappa', 'tappe')} con pernottamento.`,
+      text:
+        cov === 'nessuna'
+          ? `Scegli l'alloggio per ${tappe}. Costo da quantificare: non è ancora nel budget.`
+          : cov === 'stima'
+            ? `Scegli l'alloggio per ${tappe}. Nel budget per ora c'è la tua stima per notte.`
+            : `Scegli l'alloggio per ${tappe}. Nel budget ci sono voci manuali di alloggio: controlla che coprano queste tappe.`,
       href: '#/hytte',
       cta: 'Cerca hytte',
+      secondary: cov === 'stima' ? undefined : { href: '#/budget', cta: cov === 'nessuna' ? 'Stima nel budget' : 'Controlla il budget' },
     });
   }
   const bookedWithTentative = lodging.filter((l) => l.status === 'prenotata').length;
@@ -315,11 +326,13 @@ export function tripOverview(trip: Trip): TripOverview {
       cta: 'Apri i tratti',
     });
   }
-  if (missingPrices.length > 0) {
+  // Costi senza prezzo diversi dagli alloggi non scelti (già nell'azione sopra): es. alloggio scelto senza prezzo, traghetto
+  const otherMissing = missingPrices.length - (budget.unchosenLodgingCoverage === 'nessuna' ? budget.unchosenLodging.length : 0);
+  if (otherMissing > 0) {
     actions.push({
       id: 'prices',
       priority: 'media',
-      text: `${missingPrices.length} ${plural(missingPrices.length, 'costo noto non ha', 'costi noti non hanno')} ancora un prezzo: il totale li esclude.`,
+      text: `${otherMissing} ${plural(otherMissing, 'costo noto non ha', 'costi noti non hanno')} ancora un prezzo: il totale li esclude.`,
       href: '#/budget',
       cta: 'Apri il budget',
     });

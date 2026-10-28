@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BUDGET_CATEGORIES, budgetCompleteness, budgetOverlaps, capStatus, computeBudget, formatEur, formatPeriod, fuelCostPerKm, STATUS_LABEL } from '../domain/budget';
+import { BUDGET_CATEGORIES, budgetCompleteness, budgetOverlaps, capStatus, categoryBreakdown, computeBudget, type CategoryBreakdown, formatEur, formatPeriod, fuelCostPerKm, STATUS_LABEL } from '../domain/budget';
 import { newId } from '../domain/ids';
 import type { BudgetCategory, BudgetEstimates, BudgetItem, CarSettings, DataStatus, FuelType, Money, TripSettings } from '../domain/types';
 import { formatRateDate, refreshRatesNow } from '../state/autoRates';
@@ -9,6 +9,15 @@ import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from
 const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 const FUEL_LABEL: Record<FuelType, string> = { benzina: 'Benzina', diesel: 'Diesel', elettrica: 'Elettrica' };
 const DEFAULT_CAR: CarSettings = { fuel: 'benzina', consumption: 7, priceAuto: true };
+
+/** Subtotali per stato di una categoria: compaiono solo i gruppi con almeno una voce (anche da 0 €). */
+function statusParts(c: CategoryBreakdown): string[] {
+  const parts: string[] = [];
+  if (c.counts.firm) parts.push(`certo ${formatEur(c.firm)}`);
+  if (c.counts.estimated) parts.push(`stimato ${formatEur(c.estimated)}`);
+  if (c.counts.toVerify) parts.push(`da verificare ${formatEur(c.toVerify)}`);
+  return parts;
+}
 
 export function BudgetView() {
   const { trip, update, toast } = useTrip();
@@ -55,6 +64,11 @@ export function BudgetView() {
   const done = budgetCompleteness(b);
   const missingPrices = done.missingAmounts.length;
   const overlaps = budgetOverlaps(b);
+  const breakdown = useMemo(() => categoryBreakdown(b), [b]);
+  // Riferimento del cambio: solo data e fonte salvate; se mancano lo si dice, senza inventarle
+  const rateNote = st.nokRateNote?.trim().replace(/\.+$/, '');
+  const rateDate = st.nokRateDate ? formatRateDate(st.nokRateDate) : undefined;
+  const rateRef = `${rateDate ? (rateNote?.includes(rateDate) ? '' : ` (cambio del ${rateDate})`) : ' (data del cambio non indicata)'}${rateNote ? ` · ${rateNote}` : ' · fonte non indicata'}`;
 
   return (
     <div className="budget">
@@ -102,8 +116,8 @@ export function BudgetView() {
         </div>
       </section>
       <p className="muted small budget-rate">
-        Importi in NOK convertiti a {st.nokPerEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} NOK per 1 €
-        {st.nokRateDate ? ` (cambio del ${formatRateDate(st.nokRateDate)})` : ''}. Gli importi restano salvati nella valuta originale.
+        Importi in NOK convertiti a {st.nokPerEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} NOK per 1 €{rateRef}. Gli importi restano salvati nella
+        valuta originale.
       </p>
       {overlaps.length > 0 && (
         <section className="note-warn" aria-labelledby="budget-overlaps">
@@ -134,10 +148,30 @@ export function BudgetView() {
                 {BUDGET_CATEGORIES.map((c) => {
                   const cs = capStatus(st.budgetCapByCategory?.[c.id], b.byCategory[c.id]);
                   const ref = cs?.cap ?? b.total;
+                  const br = breakdown.find((x) => x.category === c.id)!;
+                  const parts = statusParts(br);
                   return (
                     <tr key={c.id} className={cs?.over ? 'row-over' : ''}>
                       <td>{c.label}</td>
-                      <td className="num">{b.byCategory[c.id] ? formatEur(b.byCategory[c.id]) : <span className="muted">—</span>}</td>
+                      <td className="num">
+                        {parts.length > 0 ? (
+                          <>
+                            {formatEur(br.total)}
+                            {parts.map((p) => (
+                              <span key={p} className="cat-kind">
+                                {p}
+                              </span>
+                            ))}
+                          </>
+                        ) : (
+                          <span className="muted small">non quantificata</span>
+                        )}
+                        {br.withoutAmount > 0 && (
+                          <span className="cat-missing">
+                            + {br.withoutAmount} senza importo
+                          </span>
+                        )}
+                      </td>
                       <td className="num cap-cell">
                         <NumberInput
                           value={st.budgetCapByCategory?.[c.id]}
@@ -156,7 +190,11 @@ export function BudgetView() {
               </tbody>
             </table>
           </div>
-          <p className="muted small">Con un tetto la barra mostra quanto è già impegnato di quel tetto; senza, la quota sul totale.</p>
+          <p className="muted small">
+            Sotto ogni importo, i subtotali per stato («certo» = confermato, prenotato o pagato): sommati danno il totale della categoria. «non quantificata»:
+            nessuna voce né stima (non vuol dire gratis). «senza importo»: costi noti ma non ancora prezzati, esclusi dal totale e senza stato. Con un tetto la barra
+            mostra quanto è già impegnato di quel tetto; senza, la quota sul totale.
+          </p>
         </section>
         <section className="panel">
           <h2>Cosa manca</h2>
