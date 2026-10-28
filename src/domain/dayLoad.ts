@@ -1,6 +1,6 @@
 import { DESTINATIONS } from '../data/destinations';
 import { newId } from './ids';
-import { assumptions, computeDays, formatDuration, type DayInfo } from './itinerary';
+import { assumptions, computeDays, formatDuration, legTotals, type DayInfo } from './itinerary';
 import type { DayPlan, Stop, Trip } from './types';
 
 // Carico delle giornate per una famiglia con bambini piccoli.
@@ -219,6 +219,75 @@ export function applySuggestion(trip: Trip, action: SuggestionAction): Trip {
       return { ...trip, stops };
     }
   }
+}
+
+export interface LoadFactor {
+  /** true se il fattore da solo rende la giornata faticosa */
+  strong: boolean;
+  text: string;
+  /** Verifica o riduzione possibile: è solo un suggerimento, non viene applicato */
+  hint?: string;
+}
+
+/**
+ * Spiega da cosa dipende il carico di una giornata, con i soli dati presenti (nessuna stima nuova).
+ * Soglie usate, tutte impostazioni del viaggio e non standard universali:
+ * - trasferimenti: `settings.maxTravelMinPerDay` (predefinito 4 h), confrontato con il tempo realistico;
+ * - visite: pesano se occupano più di metà del tempo attivo della giornata (`activeDayMin`).
+ */
+export function loadFactors(trip: Trip, day: DayInfo, load: DayLoad): LoadFactor[] {
+  const out: LoadFactor[] = [];
+  const max = trip.settings.maxTravelMinPerDay;
+  if (load.transferMin > 0) {
+    const over = load.transferMin > max;
+    out.push({
+      strong: over,
+      text: `Trasferimenti ~${formatDuration(load.transferMin)} con soste e attese${over ? `, oltre la soglia di ${formatDuration(max)} impostata per il viaggio` : ''}`,
+      hint: over ? 'Valuta una notte intermedia lungo il percorso o una tappa più vicina.' : undefined,
+    });
+  }
+  const estWait = day.legs.reduce((a, l) => a + legTotals(l, trip.settings).estimatedWaitMin, 0);
+  if (estWait > 0) {
+    out.push({
+      strong: false,
+      text: `Attese ai traghetti ipotizzate (${formatDuration(estWait)}), non inserite`,
+      hint: 'Inserisci l\'orario e l\'attesa reali nel dettaglio del tratto.',
+    });
+  }
+  const acts = trip.days[day.key]?.activities.length ?? 0;
+  if (acts > 0) {
+    const heavyVisits = load.visitsMin > load.capacityMin / 2;
+    out.push({
+      strong: heavyVisits,
+      text: `${acts} attività per ~${formatDuration(load.visitsMin)} di visite${load.estimatedVisits > 0 ? ` (${load.estimatedVisits} con durata stimata dal catalogo)` : ''}`,
+      hint: heavyVisits || load.level === 'eccessiva' ? 'Sposta un\'attività in un giorno più leggero o tienila come facoltativa.' : undefined,
+    });
+  }
+  if (day.legs.length > 0 && day.sleepStop && day.wakeStop && day.sleepStop.id !== day.wakeStop.id) {
+    out.push({
+      strong: false,
+      text: `Cambio di alloggio: da ${day.wakeStop.name} a ${day.sleepStop.name} (bagagli, check-out e check-in)`,
+      hint: 'Controlla gli orari di check-out e check-in dei due alloggi.',
+    });
+  }
+  if (load.incomplete) {
+    out.push({ strong: true, text: 'Tratti senza durata o non calcolati: il carico reale è più alto di quello mostrato', hint: 'Calcola il tratto o inserisci la durata mancante nella sezione Itinerario.' });
+  }
+  const unconfirmed = day.legs.flatMap((l) => l.segments).filter((s) => s.mode !== 'strada' && s.mode !== 'non_calcolato' && !['confermato', 'prenotato', 'pagato'].includes(s.status)).length;
+  if (unconfirmed > 0) {
+    out.push({
+      strong: false,
+      text: `${unconfirmed} ${unconfirmed === 1 ? 'traghetto, nave o mezzo pubblico' : 'traghetti, navi o mezzi pubblici'} con orario da verificare`,
+      hint: 'Verifica orari e operatività sul sito dell\'operatore: un\'attesa lunga cambia la giornata.',
+    });
+  }
+  if (load.unknownVisits > 0) {
+    out.push({ strong: false, text: `${load.unknownVisits} attività senza durata: non conteggiate`, hint: 'Inserisci una durata indicativa per averle nel carico.' });
+  }
+  if (day.isArrivalDay || day.isDepartureDay) {
+    out.push({ strong: false, text: `Giorno di ${day.isArrivalDay ? 'arrivo' : 'rientro'}: gli orari del volo non sono inclusi nel calcolo` });
+  }
+  return out;
 }
 
 export function describeLoad(l: DayLoad): string {

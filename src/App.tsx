@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
 import { useAutoRates } from './state/autoRates';
@@ -12,26 +12,29 @@ import { CoastalView } from './ui/CoastalView';
 import { DaysView } from './ui/DaysView';
 import { HytteView } from './ui/HytteView';
 import { ItineraryView } from './ui/ItineraryView';
+import { OverviewView } from './ui/OverviewView';
 import { ScenariosView } from './ui/ScenariosView';
 import { SettingsView } from './ui/SettingsView';
 
+// Sezioni raggruppate per fase: capire, pianificare, organizzare la logistica, decidere.
 const TABS = [
-  { id: 'itinerario', label: 'Itinerario', icon: '🗺️' },
-  { id: 'configuratore', label: 'Configuratore', icon: '🧭' },
-  { id: 'giornate', label: 'Giornate', icon: '📅' },
-  { id: 'catalogo', label: 'Catalogo', icon: '📚' },
-  { id: 'crociere', label: 'Crociere', icon: '🚢' },
-  { id: 'hytte', label: 'Hytte', icon: '🛖' },
-  { id: 'budget', label: 'Budget', icon: '💶' },
-  { id: 'scenari', label: 'Scenari', icon: '⚖️' },
-  { id: 'viaggio', label: 'Salvataggio', icon: '☁️' },
+  { id: 'panoramica', label: 'Panoramica', icon: '🏔️', group: 'Viaggio' },
+  { id: 'itinerario', label: 'Itinerario', icon: '🗺️', group: 'Pianifica' },
+  { id: 'giornate', label: 'Giornate', icon: '📅', group: 'Pianifica' },
+  { id: 'configuratore', label: 'Configuratore', icon: '🧭', group: 'Pianifica' },
+  { id: 'catalogo', label: 'Catalogo', icon: '📚', group: 'Pianifica' },
+  { id: 'hytte', label: 'Alloggi', icon: '🛖', group: 'Logistica' },
+  { id: 'crociere', label: 'Crociere', icon: '🚢', group: 'Logistica' },
+  { id: 'budget', label: 'Budget', icon: '💶', group: 'Decidi' },
+  { id: 'scenari', label: 'Scenari', icon: '⚖️', group: 'Decidi' },
+  { id: 'viaggio', label: 'Salvataggio', icon: '☁️', group: 'Impostazioni' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
 
 function readHash(): TabId {
   let h = window.location.hash.replace(/^#\/?/, '');
   if (h === 'costiera') h = 'crociere'; // vecchio nome della sezione: i link salvati continuano a funzionare
-  return (TABS.find((t) => t.id === h)?.id ?? 'itinerario') as TabId;
+  return (TABS.find((t) => t.id === h)?.id ?? 'panoramica') as TabId;
 }
 
 export default function App() {
@@ -52,6 +55,17 @@ function Shell() {
     window.addEventListener('hashchange', on);
     return () => window.removeEventListener('hashchange', on);
   }, []);
+  // Cambiando sezione si riparte dall'inizio della pagina e la voce attiva resta visibile nella barra (su smartphone scorre)
+  const navRef = useRef<HTMLElement>(null);
+  const firstTab = useRef(true);
+  useEffect(() => {
+    navRef.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if (firstTab.current) {
+      firstTab.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0 });
+  }, [tab]);
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
@@ -78,10 +92,19 @@ function Shell() {
           {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
         </a>
       </header>
-      <nav className="tabs" aria-label="Sezioni">
-        {TABS.map((t) => (
-          <a key={t.id} href={`#/${t.id}`} className={tab === t.id ? 'active' : ''} aria-current={tab === t.id ? 'page' : undefined}>
-            <span aria-hidden>{t.icon}</span> {t.label}
+      <nav className="tabs" aria-label="Sezioni" ref={navRef}>
+        {TABS.map((t, i) => (
+          <a
+            key={t.id}
+            href={`#/${t.id}`}
+            className={`${tab === t.id ? 'active' : ''} ${i > 0 && TABS[i - 1]!.group !== t.group ? 'group-start' : ''}`}
+            aria-current={tab === t.id ? 'page' : undefined}
+            title={t.group}
+          >
+            <span className="tab-icon" aria-hidden>
+              {t.icon}
+            </span>
+            <span className="tab-label">{t.label}</span>
           </a>
         ))}
       </nav>
@@ -107,6 +130,7 @@ function Shell() {
         </div>
       )}
       <main className="content">
+        {tab === 'panoramica' && <OverviewView />}
         {tab === 'itinerario' && <ItineraryView />}
         {tab === 'configuratore' && <ConfiguratorView />}
         {tab === 'giornate' && <DaysView />}

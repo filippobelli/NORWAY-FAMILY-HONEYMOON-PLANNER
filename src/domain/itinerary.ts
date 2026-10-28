@@ -73,7 +73,7 @@ export interface LegTotals {
   mixedModes: boolean;
   /** Traghetto calcolato e traghetto inserito a mano nello stesso tratto: possibile doppio conteggio */
   possibleDuplicateFerry: boolean;
-  /** Traghetti o navi senza dati confermati (orario/stato) */
+  /** Traghetti, navi, treni, bus o aerei senza dati confermati (orario/stato) */
   unverifiedCrossings: number;
 }
 
@@ -105,7 +105,7 @@ export function legTotals(leg: Leg, settings?: Partial<TripSettings>): LegTotals
       ferryCount += 1;
       if (s.waitMin === undefined) estimatedWaitMin += a.defaultFerryWaitMin;
     }
-    if ((s.mode === 'traghetto' || s.mode === 'costiera') && !['confermato', 'prenotato', 'pagato'].includes(s.status)) {
+    if (s.mode !== 'strada' && !['confermato', 'prenotato', 'pagato'].includes(s.status)) {
       unverifiedCrossings += 1;
     }
   }
@@ -128,6 +128,50 @@ export function legTotals(leg: Leg, settings?: Partial<TripSettings>): LegTotals
     mixedModes,
     possibleDuplicateFerry,
     unverifiedCrossings,
+  };
+}
+
+export type LegState = 'da_calcolare' | 'calcolato' | 'manuale' | 'misto';
+
+export interface LegSummary {
+  /** Da dove arrivano i dati del tratto */
+  state: LegState;
+  roadKm: number;
+  /** Guida teorica (solo segmenti stradali) */
+  driveMin: number;
+  /** Durate dei segmenti non stradali (traghetti, nave, treno, bus, aereo) */
+  otherMin: number;
+  /** Attese inserite dall'utente */
+  enteredWaitMin: number;
+  /** Totale teorico: assente se anche un solo segmento non ha la durata (non si somma un dato mancante) */
+  totalMin?: number;
+  /** Totale realistico con soste e attese ipotizzate: assente come sopra */
+  realisticMin?: number;
+  /** Segmenti senza durata */
+  missingDuration: number;
+  /** Segmenti non stradali con orario o operatività ancora da verificare */
+  toVerify: number;
+}
+
+/** Riepilogo di un tratto che tiene separati guida, traversate e attese; non somma dati mancanti. */
+export function legSummary(leg: Leg, settings?: Partial<TripSettings>): LegSummary {
+  const t = legTotals(leg, settings);
+  const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
+  const auto = real.filter(isAutoSeg).length;
+  const state: LegState = real.length === 0 ? 'da_calcolare' : auto === real.length ? 'calcolato' : auto === 0 ? 'manuale' : 'misto';
+  const missingDuration = real.filter((s) => s.durationMin === undefined).length;
+  const complete = real.length > 0 && !t.hasUncalculated && missingDuration === 0;
+  const toVerify = real.filter((s) => s.mode !== 'strada' && !['confermato', 'prenotato', 'pagato'].includes(s.status)).length;
+  return {
+    state,
+    roadKm: t.roadKm,
+    driveMin: t.driveMin,
+    otherMin: t.travelMin - t.driveMin,
+    enteredWaitMin: t.waitMin,
+    totalMin: complete ? t.travelMin + t.waitMin : undefined,
+    realisticMin: complete ? t.realisticMin : undefined,
+    missingDuration,
+    toVerify,
   };
 }
 
@@ -296,7 +340,7 @@ export function tripWarnings(trip: Trip): TripWarning[] {
   if (unverified > 0) {
     out.push({
       level: 'info',
-      text: `${unverified === 1 ? '1 traghetto o nave' : `${unverified} traghetti o navi`} con orari non confermati: verifica sul sito dell'operatore e segna lo stato come "Confermato".`,
+      text: `${unverified === 1 ? '1 traghetto, nave o mezzo pubblico' : `${unverified} traghetti, navi o mezzi pubblici`} con orari non confermati: verifica sul sito dell'operatore e segna lo stato come "Confermato".`,
     });
   }
 

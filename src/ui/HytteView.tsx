@@ -6,6 +6,7 @@ import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
+import { lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
@@ -34,7 +35,7 @@ function blank(partial: Partial<Accommodation> = {}): Accommodation {
 }
 
 export function HytteView() {
-  const { trip, update, toast } = useTrip();
+  const { trip, update, replace, toast } = useTrip();
   const [draft, setDraft] = useState<Accommodation | null>(null);
   const [stopId, setStopId] = useState<string>(trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
   const [radius, setRadius] = useState(15);
@@ -85,9 +86,27 @@ export function HytteView() {
     toast('Sistemazione salvata');
   };
 
+  const comparison = useMemo(() => lodgingComparison(trip), [trip]);
+  const choose = (stopId: string, accId: string) => {
+    const before = trip;
+    // Scelta esplicita dell'utente: l'alloggio diventa quello della tappa, le altre candidate restano come alternative
+    update((t) => ({
+      ...t,
+      stops: t.stops.map((s) => (s.id === stopId ? { ...s, accommodationId: accId } : s)),
+      accommodations: t.accommodations.map((a) => (a.id === accId ? { ...a, stopId } : a)),
+    }));
+    toast('Alloggio scelto per la tappa (non è una prenotazione)', 'ok', { label: 'Annulla', run: () => replace(before) });
+  };
+  const searchFor = (id: string) => {
+    setStopId(id);
+    setResults(null);
+    document.getElementById('hytte-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="hytte">
-      <section className="panel">
+      {comparison.length > 0 && <LodgingCompare rows={comparison} onChoose={choose} onSearch={searchFor} />}
+      <section className="panel" id="hytte-search">
         <h2>Cerca vicino a una tappa</h2>
         {sleepStops.length === 0 ? (
           <Empty title="Nessuna tappa con pernottamento">Aggiungi tappe con almeno una notte nell'itinerario.</Empty>
@@ -140,7 +159,8 @@ export function HytteView() {
                 <p className="muted small">
                   {results.length} strutture da OpenStreetMap (© contributori OSM)
                   {via === 'Nominatim' ? ", trovate con la ricerca Nominatim perché Overpass non risponde: l'elenco può essere meno completo" : ''}. Distanze in linea d'aria dalla tappa. Prezzi e disponibilità non
-                  inclusi.
+                  inclusi: una struttura presente su OpenStreetMap non è per questo disponibile, prenotabile o adatta a {trip.participants.adults + trip.participants.childrenAges.length}{' '}
+                  persone. Aggiunta all'elenco resta «da verificare».
                 </p>
                 <ul className="osm-results">
                   {results.map((p) => (
@@ -287,6 +307,122 @@ export function HytteView() {
         )}
       </section>
     </div>
+  );
+}
+
+const DECISION: Record<LodgingDecision, string> = {
+  da_verificare: 'Da verificare',
+  valutata: 'Valutata',
+  scelta: 'Scelta, non prenotata',
+  prenotata: '✓ Prenotata',
+};
+
+function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onChoose: (stopId: string, accId: string) => void; onSearch: (stopId: string) => void }) {
+  const { trip } = useTrip();
+  const toSearch = rows.filter((r) => r.toSearch).length;
+  const booked = rows.filter((r) => r.options.some((o) => o.chosen && o.decision === 'prenotata')).length;
+  return (
+    <section className="panel" aria-labelledby="lodging-compare">
+      <header className="panel-head">
+        <h2 id="lodging-compare">Confronto per tappa</h2>
+        <span className="muted small">
+          {rows.length} tappe · {booked} prenotate · {toSearch} da cercare
+        </span>
+      </header>
+      <p className="muted small">
+        Totale soggiorno = prezzo per notte × notti + pulizia + biancheria, come nel budget. Distanze in linea d'aria dalla tappa, non stradali. Disponibilità e
+        prezzi vanno verificati sul sito del fornitore: l'app non prenota e non controlla la disponibilità.
+      </p>
+      <div className="lodging-stops">
+        {rows.map((r) => {
+          const chosen = r.options.find((o) => o.chosen);
+          return (
+            <article key={r.stop.id} className="lodging-stop">
+              <header>
+                <h3>
+                  {r.stop.name}{' '}
+                  <span className="muted small">
+                    {r.nights} {r.nights === 1 ? 'notte' : 'notti'}
+                    {r.checkIn ? ` · dal ${formatDateIt(r.checkIn)}` : ''}
+                  </span>
+                </h3>
+                <span className="small">
+                  {r.toSearch ? (
+                    <Badge tone="warn">Da cercare</Badge>
+                  ) : chosen ? (
+                    <Badge tone={chosen.decision === 'prenotata' ? 'ok' : 'info'}>{DECISION[chosen.decision]}</Badge>
+                  ) : (
+                    <Badge tone="warn">Nessuna scelta</Badge>
+                  )}
+                </span>
+              </header>
+              {r.toSearch ? (
+                <p className="small">
+                  Nessuna sistemazione candidata.{' '}
+                  <button className="link-btn" onClick={() => onSearch(r.stop.id)}>
+                    Cerca vicino a {r.stop.name}
+                  </button>
+                </p>
+              ) : (
+                <ul className="lodging-options">
+                  {r.options.map((o) => (
+                    <li key={o.acc.id} className={o.chosen ? 'is-chosen' : ''}>
+                      <div className="lo-name">
+                        <strong>{o.acc.name}</strong>
+                        <span className="small">{o.chosen ? '★ Scelta per la tappa' : `Alternativa · ${DECISION[o.decision].toLowerCase()}`}</span>
+                      </div>
+                      <div className="lo-price">
+                        {o.stayEur !== undefined ? (
+                          <>
+                            <strong>{formatEur(o.stayEur)}</strong>
+                            <span className="small muted"> soggiorno · {fmtMoney(o.acc.pricePerNight)}/notte</span> <StatusBadge status={o.priceStatus} />
+                            {o.diffVsChosenEur !== undefined && o.diffVsChosenEur !== 0 && (
+                              <span className="small lo-diff">
+                                {o.diffVsChosenEur > 0 ? '+' : '−'}
+                                {formatEur(Math.abs(o.diffVsChosenEur))} rispetto alla scelta
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="warn-text small">Prezzo mancante: totale non calcolabile</span>
+                        )}
+                      </div>
+                      <div className="lo-facts small">
+                        <span>
+                          {o.fitsFamily === undefined
+                            ? 'Posti non indicati'
+                            : o.fitsFamily
+                              ? `${o.acc.capacity} posti indicati per ${trip.participants.adults + trip.participants.childrenAges.length} persone${o.acc.beds ? ` · ${o.acc.beds}` : ' · letti da verificare'}`
+                              : `✗ ${o.acc.capacity} posti: insufficienti`}
+                        </span>
+                        <span>{o.airKmFromStop !== undefined ? `~${o.airKmFromStop.toLocaleString('it-IT')} km in linea d'aria` : 'Posizione non indicata'}</span>
+                        <span className="muted">
+                          Fonte: {o.source ? `${o.source.label}${o.source.checkedAt ? `, ${fmtDateTime(o.source.checkedAt)}` : ''}` : 'non indicata'}
+                        </span>
+                      </div>
+                      {o.missing.length > 0 && <div className="small lo-missing">Manca: {o.missing.join(', ')}</div>}
+                      {o.acc.notes && <div className="small muted">{o.acc.notes}</div>}
+                      <div className="lo-actions">
+                        {(o.acc.url ?? o.source?.url) && (
+                          <a className="btn btn-small" href={o.acc.url ?? o.source?.url} target="_blank" rel="noreferrer">
+                            Fonte ↗
+                          </a>
+                        )}
+                        {!o.chosen && (
+                          <button className="btn btn-small" onClick={() => onChoose(r.stop.id, o.acc.id)}>
+                            Scegli per questa tappa
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 

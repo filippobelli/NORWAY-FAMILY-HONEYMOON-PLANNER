@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
-import { BUDGET_CATEGORIES, capStatus, computeBudget, formatEur, formatPeriod, fuelCostPerKm, STATUS_LABEL } from '../domain/budget';
+import { BUDGET_CATEGORIES, budgetCompleteness, budgetOverlaps, capStatus, computeBudget, formatEur, formatPeriod, fuelCostPerKm, STATUS_LABEL } from '../domain/budget';
 import { newId } from '../domain/ids';
 import type { BudgetCategory, BudgetEstimates, BudgetItem, CarSettings, DataStatus, FuelType, Money, TripSettings } from '../domain/types';
 import { formatRateDate, refreshRatesNow } from '../state/autoRates';
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
-const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Hytte', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
+const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 const FUEL_LABEL: Record<FuelType, string> = { benzina: 'Benzina', diesel: 'Diesel', elettrica: 'Elettrica' };
 const DEFAULT_CAR: CarSettings = { fuel: 'benzina', consumption: 7, priceAuto: true };
 
@@ -52,36 +52,70 @@ export function BudgetView() {
   };
 
   const firm = b.byStatus.confermato + b.byStatus.prenotato + b.byStatus.pagato;
+  const done = budgetCompleteness(b);
+  const missingPrices = done.missingAmounts.length;
+  const overlaps = budgetOverlaps(b);
 
   return (
     <div className="budget">
       <section className="kpis">
-        <div className="kpi">
-          <span>Totale previsto</span>
+        <div className={`kpi ${done.partial ? 'kpi-partial' : ''}`}>
+          <span>{done.partial ? 'Totale parziale (voci con importo)' : 'Totale previsto'}</span>
           <strong>{formatEur(b.total)}</strong>
-          <small>2 adulti e 2 bambini</small>
+          <small>
+            {done.partial
+              ? [missingPrices > 0 && `${missingPrices} ${missingPrices === 1 ? 'importo mancante' : 'importi mancanti'}`, done.emptyCategories.length > 0 && `${done.emptyCategories.length} categorie vuote`]
+                  .filter(Boolean)
+                  .join(' · ') || 'nessuna voce inserita'
+              : 'tutte le categorie hanno voci'}
+          </small>
         </div>
         <div className="kpi">
-          <span>Media giornaliera</span>
+          <span>Media giornaliera{done.partial && b.perDay !== undefined ? ' (parziale)' : ''}</span>
           <strong>{b.perDay !== undefined ? formatEur(b.perDay) : '—'}</strong>
-          <small>{b.days ? `${b.days} giorni` : 'itinerario vuoto'}</small>
+          <small>{b.days ? `${b.days} giorni${done.partial ? ': crescerà con i costi mancanti' : ''}` : 'itinerario vuoto'}</small>
         </div>
         <div className="kpi">
           <span>Già certo</span>
           <strong>{formatEur(firm)}</strong>
-          <small>confermato, prenotato o pagato</small>
+          <small>confermato da fonte, prenotato o pagato</small>
+        </div>
+        <div className="kpi">
+          <span>Stimato</span>
+          <strong>{formatEur(b.byStatus.stimato)}</strong>
+          <small>ipotesi e stime, non preventivi</small>
+        </div>
+        <div className="kpi kpi-warn">
+          <span>Da verificare</span>
+          <strong>{formatEur(b.byStatus.da_verificare)}</strong>
+          <small>importi inseriti ma non confermati</small>
+        </div>
+        <div className={`kpi ${missingPrices > 0 ? 'kpi-warn' : ''}`}>
+          <span>Costi senza importo</span>
+          <strong>{missingPrices}</strong>
+          <small>{missingPrices > 0 ? 'esclusi dal totale: un prezzo mancante non vale zero' : 'nessun prezzo noto mancante'}</small>
         </div>
         <div className={`kpi ${cap?.over ? 'kpi-bad' : ''}`}>
           <span>Tetto di spesa</span>
           <strong>{cap ? formatEur(cap.cap) : '—'}</strong>
           <small>{cap ? (cap.over ? `superato di ${formatEur(-cap.left)}` : `restano ${formatEur(cap.left)}`) : 'non impostato'}</small>
         </div>
-        <div className="kpi kpi-warn">
-          <span>Stime e da verificare</span>
-          <strong>{formatEur(b.byStatus.stimato + b.byStatus.da_verificare)}</strong>
-          <small>non sono prezzi ufficiali</small>
-        </div>
       </section>
+      <p className="muted small budget-rate">
+        Importi in NOK convertiti a {st.nokPerEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} NOK per 1 €
+        {st.nokRateDate ? ` (cambio del ${formatRateDate(st.nokRateDate)})` : ''}. Gli importi restano salvati nella valuta originale.
+      </p>
+      {overlaps.length > 0 && (
+        <section className="note-warn" aria-labelledby="budget-overlaps">
+          <strong id="budget-overlaps">Possibili doppi conteggi da verificare</strong>
+          <ul className="facts-list">
+            {overlaps.map((o) => (
+              <li key={o.category}>{o.text}</li>
+            ))}
+          </ul>
+          <span className="small">Nessun importo è stato modificato: se una voce è già inclusa in un'altra, togli quella in più.</span>
+        </section>
+      )}
 
       <div className="grid-2">
         <section className="panel">
