@@ -31,7 +31,7 @@ export interface BudgetLine {
   eur: number;
   status: DataStatus;
   /** Da dove arriva la riga: manuale o calcolata da un'altra sezione */
-  origin: 'manuale' | 'hytte' | 'costiera' | 'trasporti' | 'giornate' | 'stime';
+  origin: 'manuale' | 'hytte' | 'costiera' | 'voli' | 'trasporti' | 'giornate' | 'stime';
   itemId?: string;
 }
 
@@ -155,6 +155,17 @@ export function computeBudget(trip: Trip): BudgetSummary {
   const linked = new Set(trip.legs.flatMap((l) => l.segments.map((sg) => sg.coastalOptionId)).filter(Boolean));
   for (const o of trip.coastalOptions) {
     if (linked.has(o.id) && !o.selected) missingIn('costiera', `${o.operator} ${o.fromPort} → ${o.toPort} è nell'itinerario ma esclusa dal budget`);
+  }
+
+  // Voli inclusi nel budget (le alternative non sono conteggiate). Un volo incluso senza prezzo è un costo senza importo.
+  for (const f of trip.flights ?? []) {
+    if (!f.selected) continue;
+    const label = `Volo ${f.fromAirport} → ${f.toAirport}${f.date ? ` del ${f.date}` : ''}${f.airline ? ` (${f.airline}${f.flightNumber ? ` ${f.flightNumber}` : ''})` : ''}`;
+    if (!f.price) {
+      missingIn('voli', `Prezzo mancante: ${label}`);
+      continue;
+    }
+    lines.push({ key: `f-${f.id}`, category: 'voli', label, eur: toEur(f.price, s), status: f.priceStatus, origin: 'voli' });
   }
 
   // Navigazione costiera selezionata
@@ -319,6 +330,7 @@ const ORIGIN_TEXT: Record<BudgetLine['origin'], string> = {
   manuale: 'voce manuale',
   hytte: 'alloggi scelti',
   costiera: 'navigazione costiera',
+  voli: 'sezione Voli',
   trasporti: 'tratti dell\'itinerario',
   giornate: 'attività delle giornate',
   stime: 'stime da parametri',

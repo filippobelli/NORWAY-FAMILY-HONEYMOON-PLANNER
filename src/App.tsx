@@ -10,6 +10,7 @@ import { CatalogView } from './ui/CatalogView';
 import { ConfiguratorView } from './ui/ConfiguratorView';
 import { CoastalView } from './ui/CoastalView';
 import { DaysView } from './ui/DaysView';
+import { FlightsView } from './ui/FlightsView';
 import { HytteView } from './ui/HytteView';
 import { ItineraryView } from './ui/ItineraryView';
 import { OverviewView } from './ui/OverviewView';
@@ -23,6 +24,7 @@ const TABS = [
   { id: 'giornate', label: 'Giornate', icon: '📅', group: 'Pianifica' },
   { id: 'configuratore', label: 'Configuratore', icon: '🧭', group: 'Pianifica' },
   { id: 'catalogo', label: 'Catalogo', icon: '📚', group: 'Pianifica' },
+  { id: 'voli', label: 'Voli', icon: '✈️', group: 'Logistica' },
   { id: 'hytte', label: 'Alloggi', icon: '🛖', group: 'Logistica' },
   { id: 'crociere', label: 'Crociere', icon: '🚢', group: 'Logistica' },
   { id: 'budget', label: 'Budget', icon: '💶', group: 'Decidi' },
@@ -136,6 +138,7 @@ function Shell() {
         {tab === 'giornate' && <DaysView />}
         {tab === 'catalogo' && <CatalogView />}
         {tab === 'crociere' && <CoastalView />}
+        {tab === 'voli' && <FlightsView />}
         {tab === 'hytte' && <HytteView />}
         {tab === 'budget' && <BudgetView />}
         {tab === 'scenari' && <ScenariosView />}

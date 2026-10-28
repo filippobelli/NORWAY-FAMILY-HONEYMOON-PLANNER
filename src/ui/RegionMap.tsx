@@ -21,14 +21,15 @@ export const REGION_COLOR: Record<Region, string> = {
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
 
 interface Props {
+  /** Regioni da esplorare (comprese quelle degli aeroporti non tolte) */
   selected: Region[];
-  /** Regioni sempre comprese perché lì ci sono gli aeroporti */
-  forced: Region[];
+  /** Regioni dove si trovano gli aeroporti di arrivo e di ripartenza: si possono togliere */
+  airportRegions: Region[];
   airportIds: string[];
   onToggle: (r: Region) => void;
 }
 
-export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) {
+export function RegionPicker({ selected, airportRegions, airportIds, onToggle }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const ref = useRef<{ L: LeafletApi; map: LMap; marks: LLayerGroup; shapes: Map<Region, LPath[]> } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
@@ -93,7 +94,7 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
   useEffect(() => {
     const m = ref.current;
     if (!m || state !== 'pronta') return;
-    const on = new Set<Region>([...selected, ...forced]);
+    const on = new Set<Region>(selected);
     for (const [r, list] of m.shapes) {
       const active = on.has(r);
       const lit = hover === r;
@@ -103,7 +104,8 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
           weight: active || lit ? 2.5 : 1,
           opacity: active || lit ? 1 : 0.6,
           fillOpacity: active ? 0.38 : lit ? 0.22 : 0.06,
-          dashArray: forced.includes(r) && !selected.includes(r) ? '6 4' : undefined,
+          // Regione dell'aeroporto tolta: bordo tratteggiato (ci si passa solo per arrivare o ripartire)
+          dashArray: airportRegions.includes(r) && !active ? '6 4' : undefined,
         });
         if (active) p.bringToFront();
       }
@@ -133,7 +135,7 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
         .bindTooltip(esc(a.name), { direction: 'left' })
         .addTo(m.marks);
     }
-  }, [selected, forced, airportIds, hover, state]);
+  }, [selected, airportRegions, airportIds, hover, state]);
 
   const shown = hover ?? null;
 
@@ -145,19 +147,22 @@ export function RegionPicker({ selected, forced, airportIds, onToggle }: Props) 
         {state === 'errore' && <div className="map-overlay map-error">Mappa non disponibile: scegli le regioni dall'elenco.</div>}
       </div>
       <div className="region-list">
-        <p className="muted small">Tocca una regione sulla mappa o nell'elenco. Le regioni degli aeroporti sono sempre comprese (bordo tratteggiato).</p>
+        <p className="muted small">
+          Tocca una regione sulla mappa o nell'elenco per sceglierla o toglierla. Le regioni degli aeroporti sono comprese all'inizio: se le togli, si atterra o si
+          riparte comunque da lì, ma il viaggio non le esplora (bordo tratteggiato).
+        </p>
         <ul>
           {REGIONS.map((r) => {
             const on = selected.includes(r);
-            const isForced = forced.includes(r);
+            const isAirport = airportRegions.includes(r);
             const i = info[r];
             return (
-              <li key={r} className={`region-item ${on || isForced ? 'on' : ''} ${shown === r ? 'lit' : ''}`} onMouseEnter={() => setHover(r)} onMouseLeave={() => setHover(null)}>
+              <li key={r} className={`region-item ${on ? 'on' : ''} ${shown === r ? 'lit' : ''}`} onMouseEnter={() => setHover(r)} onMouseLeave={() => setHover(null)}>
                 <label>
-                  <input type="checkbox" checked={on || isForced} disabled={isForced && !on} onChange={() => onToggle(r)} />
+                  <input type="checkbox" checked={on} onChange={() => onToggle(r)} />
                   <span className="swatch" style={{ background: REGION_COLOR[r] }} aria-hidden />
                   <strong>{r}</strong>
-                  {isForced && <span className="muted small"> · aeroporto</span>}
+                  {isAirport && <span className="muted small">{on ? ' · aeroporto' : ' · solo aeroporto: arrivo o partenza, regione non esplorata'}</span>}
                 </label>
                 <div className="small muted">
                   Contee: {i.counties.join(', ')} · {i.count} {i.count === 1 ? 'meta' : 'mete'} nel catalogo

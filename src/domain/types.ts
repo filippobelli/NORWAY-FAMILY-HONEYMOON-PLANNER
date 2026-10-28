@@ -186,6 +186,36 @@ export interface Accommodation {
   notes: string;
 }
 
+// ---------- Voli ----------
+
+export type FlightDirection = 'andata' | 'ritorno' | 'interno';
+
+/** Volo inserito dall'utente (da un preventivo o da una ricerca su un sito esterno). Nessun dato viene letto in automatico. */
+export interface Flight {
+  id: ID;
+  direction: FlightDirection;
+  /** Codice IATA o nome dell'aeroporto */
+  fromAirport: string;
+  toAirport: string;
+  /** YYYY-MM-DD */
+  date?: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  airline: string;
+  flightNumber: string;
+  /** Numero di scali; assente se non indicato */
+  stops?: number;
+  /** Bagagli inclusi, come indicati dalla fonte */
+  baggage: string;
+  /** Prezzo totale per tutta la famiglia */
+  price?: Money;
+  priceStatus: DataStatus;
+  /** Incluso nel budget (le alternative restano escluse) */
+  selected: boolean;
+  source?: SourceRef;
+  notes: string;
+}
+
 // ---------- Budget ----------
 
 export type BudgetCategory =
@@ -251,6 +281,8 @@ export interface TripSettings {
   mealBreaksMin?: number;
   /** Margine per imprevisti, in percentuale */
   marginPct?: number;
+  /** Aeroporti di partenza dall'Italia in ordine di preferenza (codici IATA); assente = predefiniti della sezione Voli */
+  homeAirports?: string[];
 }
 
 export type FuelType = 'benzina' | 'diesel' | 'elettrica';
@@ -317,6 +349,8 @@ export interface Trip {
   legs: Leg[];
   days: Record<string, DayPlan>;
   coastalOptions: CoastalOption[];
+  /** Voli: facoltativo per compatibilità con i viaggi salvati prima della sezione Voli */
+  flights?: Flight[];
   accommodations: Accommodation[];
   budgetItems: BudgetItem[];
   favorites: ID[];

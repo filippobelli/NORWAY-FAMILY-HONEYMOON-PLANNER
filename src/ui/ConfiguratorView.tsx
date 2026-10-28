@@ -58,6 +58,7 @@ export function ConfiguratorView() {
     pace: saved.pace ?? 'equilibrato',
     maxDriveHours: saved.maxDriveHours ?? Math.round(trip.settings.maxTravelMinPerDay / 60),
     regions: saved.regions ?? ['Fiordi occidentali'],
+    excludedAirportRegions: saved.excludedAirportRegions ?? [],
     mustSee: trip.favorites.filter((id) => findDestination(id)?.category !== 'aeroporti'),
     kidFriendly: saved.kidFriendly ?? true,
   }));
@@ -65,6 +66,22 @@ export function ConfiguratorView() {
   const [error, setError] = useState('');
   const [name, setName] = useState('');
   const [extra, setExtra] = useState('');
+  // Regioni degli aeroporti: comprese finché l'utente non le toglie (si arriva e si riparte comunque dall'aeroporto)
+  const airportRegions = [...new Set([findDestination(input.arrivalAirportId)?.region, findDestination(input.departureAirportId)?.region].filter((r): r is Region => Boolean(r)))];
+  const excludedAirport = input.excludedAirportRegions ?? [];
+  const effectiveRegions = [...new Set([...input.regions, ...airportRegions.filter((r) => !excludedAirport.includes(r))])];
+  const toggleRegion = (r: Region) => {
+    const on = effectiveRegions.includes(r);
+    if (airportRegions.includes(r)) {
+      set(
+        on
+          ? { regions: input.regions.filter((x) => x !== r), excludedAirportRegions: [...excludedAirport.filter((x) => x !== r), r] }
+          : { excludedAirportRegions: excludedAirport.filter((x) => x !== r) },
+      );
+      return;
+    }
+    set({ regions: on ? input.regions.filter((x) => x !== r) : [...input.regions, r] });
+  };
   const set = (p: Partial<ConfiguratorInput>) => {
     setInput((x) => ({ ...x, ...p }));
     setResult(null);
@@ -186,10 +203,10 @@ export function ConfiguratorView() {
         <fieldset className="chips-field">
           <legend>Regioni da esplorare</legend>
           <RegionPicker
-            selected={input.regions}
-            forced={[...new Set([findDestination(input.arrivalAirportId)?.region, findDestination(input.departureAirportId)?.region].filter((r): r is Region => Boolean(r)))]}
+            selected={effectiveRegions}
+            airportRegions={airportRegions}
             airportIds={[...new Set([input.arrivalAirportId, input.departureAirportId])]}
-            onToggle={(r) => set({ regions: input.regions.includes(r) ? input.regions.filter((x) => x !== r) : [...input.regions, r] })}
+            onToggle={toggleRegion}
           />
         </fieldset>
 
