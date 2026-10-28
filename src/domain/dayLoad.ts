@@ -221,6 +221,37 @@ export function applySuggestion(trip: Trip, action: SuggestionAction): Trip {
   }
 }
 
+export interface LoadFactor {
+  /** true se il fattore da solo rende la giornata faticosa */
+  strong: boolean;
+  text: string;
+}
+
+/** Spiega da cosa dipende il carico di una giornata, con i soli dati presenti (nessuna stima nuova). */
+export function loadFactors(trip: Trip, day: DayInfo, load: DayLoad): LoadFactor[] {
+  const out: LoadFactor[] = [];
+  const max = trip.settings.maxTravelMinPerDay;
+  if (load.transferMin > 0) {
+    const over = load.transferMin > max;
+    out.push({
+      strong: over,
+      text: `Trasferimenti ~${formatDuration(load.transferMin)} con soste e attese${over ? `, oltre la soglia di ${formatDuration(max)}` : ''}`,
+    });
+  }
+  const acts = trip.days[day.key]?.activities.length ?? 0;
+  if (acts > 0) {
+    out.push({ strong: load.visitsMin > load.capacityMin / 2, text: `${acts} attività per ~${formatDuration(load.visitsMin)} di visite` });
+  }
+  if (day.legs.length > 0 && day.sleepStop && day.wakeStop && day.sleepStop.id !== day.wakeStop.id) {
+    out.push({ strong: false, text: `Cambio di alloggio: da ${day.wakeStop.name} a ${day.sleepStop.name} (bagagli e check-in)` });
+  }
+  if (load.incomplete) out.push({ strong: true, text: 'Tratti non calcolati: il carico reale è più alto di quello mostrato' });
+  const unconfirmed = day.legs.flatMap((l) => l.segments).filter((s) => (s.mode === 'traghetto' || s.mode === 'costiera') && !['confermato', 'prenotato', 'pagato'].includes(s.status)).length;
+  if (unconfirmed > 0) out.push({ strong: false, text: `${unconfirmed} ${unconfirmed === 1 ? 'traversata' : 'traversate'} con orario da verificare` });
+  if (load.unknownVisits > 0) out.push({ strong: false, text: `${load.unknownVisits} attività senza durata: non conteggiate` });
+  return out;
+}
+
 export function describeLoad(l: DayLoad): string {
   return `${formatDuration(l.totalMin)} su ${formatDuration(l.capacityMin)} disponibili (${Math.round(l.ratio * 100)}%)`;
 }

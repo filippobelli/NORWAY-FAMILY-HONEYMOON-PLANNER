@@ -3,6 +3,7 @@ import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { newId } from '../domain/ids';
 import {
+  addDays,
   computeDays,
   formatDuration,
   isRoutableLeg,
@@ -37,6 +38,13 @@ export function ItineraryView() {
   const n = totalDays(trip.stops);
   const [busy, setBusy] = useState<string | null>(null);
   const abort = useRef<AbortController | null>(null);
+  // Tappa selezionata: collega scheda e mappa (clic sul numero o sul segnaposto)
+  const [selected, setSelected] = useState<string | undefined>(undefined);
+  const selectStop = (id: string, from: 'lista' | 'mappa') => {
+    setSelected(id);
+    if (from === 'mappa') document.getElementById(`stop-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    else if (window.matchMedia('(max-width: 1099px)').matches) document.querySelector('.map-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const addStop = (s: Stop | undefined) => {
     if (!s) return;
@@ -180,8 +188,15 @@ export function ItineraryView() {
               const leg = trip.legs.find((l) => l.fromStopId === s.id);
               const day = days.find((d) => d.sleepStop?.id === s.id);
               return (
-                <li key={s.id}>
-                  <StopCard stop={s} index={i} count={trip.stops.length} dayLabel={day?.date} />
+                <li key={s.id} id={`stop-${s.id}`}>
+                  <StopCard
+                    stop={s}
+                    index={i}
+                    count={trip.stops.length}
+                    checkIn={day?.date}
+                    selected={selected === s.id}
+                    onShowOnMap={() => selectStop(s.id, 'lista')}
+                  />
                   {leg && i < trip.stops.length - 1 && <LegCard leg={leg} busy={busy === leg.id} onCalc={() => calcOne(leg)} />}
                 </li>
               );
@@ -191,7 +206,12 @@ export function ItineraryView() {
       </section>
 
       <section className="panel map-panel">
-        <MapView trip={trip} onAddDestination={(id) => addStop(stopFromDestination(id))} />
+        <MapView
+          trip={trip}
+          onAddDestination={(id) => addStop(stopFromDestination(id))}
+          selectedStopId={selected}
+          onSelectStop={(id) => selectStop(id, 'mappa')}
+        />
         <p className="muted small">
           Mappa © contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
           tratteggiate sottili indicano collegamenti senza tracciato e non rappresentano distanze.
@@ -275,7 +295,24 @@ function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) {
   );
 }
 
-function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number; count: number; dayLabel?: string }) {
+const shortDate = (iso: string) => new Date(iso).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+const ACC_STATUS_LABEL = { individuata: 'individuata', disponibile: 'disponibile', opzionata: 'opzionata', prenotata: 'prenotata' } as const;
+
+function StopCard({
+  stop,
+  index,
+  count,
+  checkIn,
+  selected,
+  onShowOnMap,
+}: {
+  stop: Stop;
+  index: number;
+  count: number;
+  checkIn?: string;
+  selected: boolean;
+  onShowOnMap: () => void;
+}) {
   const { trip, update } = useTrip();
   const dest = findDestination(stop.destinationId);
   const setStop = (patch: Partial<Stop>) => update((t) => ({ ...t, stops: t.stops.map((s) => (s.id === stop.id ? { ...s, ...patch } : s)) }));
@@ -284,14 +321,32 @@ function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number;
   const acc = trip.accommodations.find((a) => a.id === stop.accommodationId);
 
   return (
-    <article className={`stop ${stop.kind === 'a_bordo' ? 'stop-ship' : ''}`}>
+    <article className={`stop ${stop.kind === 'a_bordo' ? 'stop-ship' : ''} ${selected ? 'stop-selected' : ''}`}>
       <div className="stop-head">
-        <span className="stop-num">{index + 1}</span>
+        <button className="stop-num" onClick={onShowOnMap} aria-label={`Mostra ${stop.name} sulla mappa`} aria-pressed={selected} title="Mostra sulla mappa">
+          {index + 1}
+        </button>
         <div className="stop-title">
           <strong>{stop.name}</strong>
           <span className="muted small">
             {dest ? dest.region : stop.kind === 'a_bordo' ? 'Pernottamento in nave' : 'Luogo personalizzato'}
-            {dayLabel ? ` · prima notte ${new Date(dayLabel).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', timeZone: 'UTC' })}` : ''}
+          </span>
+          <span className="stop-meta small">
+            {checkIn && stop.nights > 0 ? (
+              <span className="stop-dates">
+                {shortDate(checkIn)} → {shortDate(addDays(checkIn, stop.nights))}
+              </span>
+            ) : stop.nights === 0 ? (
+              <span className="muted">Sosta di passaggio, senza pernottamento</span>
+            ) : null}
+            {stop.kind === 'luogo' && stop.nights > 0 &&
+              (acc ? (
+                <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>
+                  🛏 {acc.name} · {ACC_STATUS_LABEL[acc.status]}
+                </Badge>
+              ) : (
+                <Badge tone="warn">🛏 Alloggio da scegliere</Badge>
+              ))}
           </span>
         </div>
         <div className="stepper" aria-label="Notti">
@@ -329,7 +384,6 @@ function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number;
           </button>
         </div>
       </div>
-      {stop.nights === 0 && <p className="muted small">Sosta di passaggio: nessun pernottamento.</p>}
       {stop.kind === 'a_bordo' && (
         <div className="row wrap small">
           <label htmlFor={`port-${stop.id}`} className="muted">
@@ -355,11 +409,11 @@ function StopCard({ stop, index, count, dayLabel }: { stop: Stop; index: number;
       {dest?.augustNote && <p className="note-warn small">⚠️ {dest.augustNote}</p>}
       <details>
         <summary>
-          Alloggio, note e piano B {acc ? <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>{acc.name}</Badge> : null}
+          Alloggio, note e piano B{stop.notes || stop.weatherPlanB ? ' · compilati' : ''}
         </summary>
         <div className="grid-2">
           {stop.kind === 'luogo' && (
-            <Field label="Alloggio" hint="Le sistemazioni si gestiscono nella sezione Hytte">
+            <Field label="Alloggio" hint="Le sistemazioni si gestiscono nella sezione Alloggi">
               {(id) => (
                 <select
                   id={id}
@@ -407,8 +461,10 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
     setLeg((l) => ({ ...l, segments: [...l.segments.filter((s) => s.mode !== 'non_calcolato'), seg] }));
   };
 
+  const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
+  const state = t.hasUncalculated ? 'uncalc' : real.some((s) => !isAutoSegment(s)) ? 'manual' : 'calc';
   return (
-    <div className="leg" aria-busy={busy}>
+    <div className={`leg leg-${state}`} aria-busy={busy}>
       <div className="leg-head">
         <span className="leg-line" aria-hidden />
         <div className="leg-summary">
@@ -431,6 +487,22 @@ function LegCard({ leg, busy, onCalc }: { leg: Leg; busy: boolean; onCalc: () =>
               {t.ferryCount > 0 && <> · {t.ferryCount} traghett{t.ferryCount === 1 ? 'o' : 'i'}</>}
               {t.partial && <Badge tone="warn">parziale</Badge>}
             </span>
+          )}
+          {real.length > 0 && (
+            <ul className="seg-chips" aria-label="Componenti del tratto">
+              {real.map((s) => (
+                <li key={s.id} className={`seg-chip seg-${s.mode}`}>
+                  <span aria-hidden>{MODE_ICON[s.mode]}</span> {s.mode === 'strada' ? MODE_LABEL.strada : s.label}
+                  {s.distanceKm !== undefined && ` · ${Math.round(s.distanceKm)} km`}
+                  {s.durationMin !== undefined ? ` · ${formatDuration(s.durationMin)}` : ' · durata da inserire'}
+                  {s.waitMin !== undefined && ` + attesa ${formatDuration(s.waitMin)}`}
+                  {(s.mode === 'traghetto' || s.mode === 'costiera') && (
+                    <em>{['confermato', 'prenotato', 'pagato'].includes(s.status) ? (s.departureTime ? ` · ore ${s.departureTime}` : ' · confermato') : ' · orario da verificare'}</em>
+                  )}
+                  <span className="seg-src">{isAutoSegment(s) ? 'calcolato' : 'inserito a mano'}</span>
+                </li>
+              ))}
+            </ul>
           )}
           {t.estimatedWaitMin > 0 && (
             <span className="muted small">Attesa ai traghetti ipotizzata ({formatDuration(t.estimatedWaitMin)}): inserisci quella reale con l'orario.</span>

@@ -6,7 +6,7 @@ import { formatRateDate, refreshRatesNow } from '../state/autoRates';
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
-const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Hytte', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
+const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 const FUEL_LABEL: Record<FuelType, string> = { benzina: 'Benzina', diesel: 'Diesel', elettrica: 'Elettrica' };
 const DEFAULT_CAR: CarSettings = { fuel: 'benzina', consumption: 7, priceAuto: true };
 
@@ -52,6 +52,7 @@ export function BudgetView() {
   };
 
   const firm = b.byStatus.confermato + b.byStatus.prenotato + b.byStatus.pagato;
+  const missingPrices = b.missing.filter((m) => !m.startsWith('Nessuna voce')).length;
 
   return (
     <div className="budget">
@@ -80,6 +81,11 @@ export function BudgetView() {
           <span>Stime e da verificare</span>
           <strong>{formatEur(b.byStatus.stimato + b.byStatus.da_verificare)}</strong>
           <small>non sono prezzi ufficiali</small>
+        </div>
+        <div className={`kpi ${missingPrices > 0 ? 'kpi-warn' : ''}`}>
+          <span>Costi non quantificati</span>
+          <strong>{missingPrices}</strong>
+          <small>{missingPrices > 0 ? 'esclusi dal totale: prezzo mancante non vuol dire zero' : 'nessun prezzo noto mancante'}</small>
         </div>
       </section>
 

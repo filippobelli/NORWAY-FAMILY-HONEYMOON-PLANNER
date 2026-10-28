@@ -29,6 +29,7 @@ export interface LBounds {
 }
 export interface LMap {
   setView(center: [number, number], zoom: number): LMap;
+  getZoom(): number;
   fitBounds(b: LBounds, opts?: Record<string, unknown>): LMap;
   invalidateSize(): void;
   remove(): void;

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
-import { applySuggestion, computeDayLoads, describeLoad, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
+import { applySuggestion, computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
 import { assumptions, computeDays, formatDateIt, formatDuration, legTotals, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
@@ -176,6 +176,9 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
 
   const from = day.legs[0] ? trip.stops.find((s) => s.id === day.legs[0]!.fromStopId) : undefined;
   const lv = LEVEL_LABEL[load.level];
+  const factors = loadFactors(trip, day, load);
+  const heavy = load.level === 'piena' || load.level === 'eccessiva';
+  const acc = day.sleepStop?.accommodationId ? trip.accommodations.find((x) => x.id === day.sleepStop!.accommodationId) : undefined;
   return (
     <article id={`day-${day.key}`} className={`day day-${load.level}`}>
       <header className="day-head">
@@ -206,6 +209,18 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
         {load.unknownVisits > 0 && <span className="muted"> · {load.unknownVisits} attività senza durata</span>}
         {load.incomplete && <strong className="error"> · stima incompleta: ci sono tratti non calcolati</strong>}
       </p>
+      {heavy && factors.length > 0 && (
+        <div className="load-why">
+          <strong className="small">Perché è {load.level === 'eccessiva' ? 'troppo carica' : 'piena'}:</strong>
+          <ul>
+            {factors.map((f) => (
+              <li key={f.text} className={f.strong ? 'strong' : ''}>
+                {f.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {(day.isArrivalDay || day.isDepartureDay) && <p className="muted small">Giorno di volo: considera gli orari reali del volo, non inclusi nel calcolo.</p>}
 
       {day.legs.length > 0 && (
@@ -235,7 +250,26 @@ function DayCard({ day, load }: { day: DayInfo; load: DayLoad }) {
           ⚠️ {w}
         </p>
       ))}
-      {day.sleepStop?.kind === 'luogo' && !day.sleepStop.accommodationId && <p className="muted small">Alloggio non ancora scelto.</p>}
+      <p className="day-sleep small">
+        <span aria-hidden>🛏</span>{' '}
+        {!day.sleepStop ? (
+          <span className="muted">Ultimo giorno: nessun pernottamento</span>
+        ) : day.sleepStop.kind === 'a_bordo' ? (
+          <span>Notte a bordo della nave</span>
+        ) : (
+          <>
+            Si dorme a <strong>{day.sleepStop.name}</strong>
+            {day.nightIndex > 0 && <span className="muted"> (notte {day.nightIndex + 1} di {day.sleepStop.nights})</span>} ·{' '}
+            {acc ? (
+              <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>
+                {acc.name} · {acc.status}
+              </Badge>
+            ) : (
+              <Badge tone="warn">alloggio da scegliere</Badge>
+            )}
+          </>
+        )}
+      </p>
 
       <ul className="activities">
         {plan.activities.map((a) => {

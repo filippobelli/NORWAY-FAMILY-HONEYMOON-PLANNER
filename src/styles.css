@@ -1531,3 +1531,495 @@ details summary {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* ---------- Componenti condivisi (redesign UX) ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.block {
+  display: block;
+}
+
+/* Navigazione: gruppi di sezioni separati da un filetto */
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tabs a.group-start {
+  margin-left: 10px;
+  position: relative;
+}
+.tabs a.group-start::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: var(--line);
+}
+.tabs a:hover:not(.active) {
+  color: var(--ink);
+}
+/* Smartphone: barra in basso, raggiungibile con il pollice; scorre in orizzontale */
+@media (max-width: 760px) {
+  .tabs {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 4px env(safe-area-inset-bottom);
+    border-top: 1px solid var(--line);
+    border-bottom: 0;
+    box-shadow: 0 -4px 16px rgb(15 42 61 / 8%);
+    z-index: 1500;
+  }
+  .tabs a {
+    flex-direction: column;
+    gap: 2px;
+    min-width: 68px;
+    padding: 8px 6px 6px;
+    font-size: 0.72rem;
+    border-bottom: 0;
+    border-top: 3px solid transparent;
+    justify-content: center;
+  }
+  .tabs a.active {
+    border-top-color: var(--accent);
+    border-bottom-color: transparent;
+  }
+  .tab-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .tabs a.group-start {
+    margin-left: 6px;
+  }
+  .tabs a.group-start::before {
+    top: 14px;
+    bottom: 14px;
+    left: -4px;
+  }
+  .app {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+  .toasts {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- Panoramica ---------- */
+.overview {
+  display: grid;
+  gap: 16px;
+}
+.overview .panel {
+  margin-bottom: 0;
+}
+.ov-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  padding: 22px 22px 20px;
+  border-radius: var(--radius);
+  color: #fff;
+  /* Fiordo al crepuscolo: creste di montagna rese con sfumature, senza immagini esterne */
+  background:
+    linear-gradient(170deg, rgb(255 255 255 / 0%) 55%, rgb(255 255 255 / 7%) 55.2%, rgb(255 255 255 / 0%) 75%),
+    linear-gradient(195deg, rgb(255 255 255 / 0%) 60%, rgb(255 255 255 / 5%) 60.2%, rgb(255 255 255 / 0%) 85%),
+    linear-gradient(135deg, #0f2a3d 0%, #1d4b63 55%, #2f6e7a 100%);
+}
+.ov-hero h2 {
+  font-size: 1.5rem;
+  margin: 2px 0 6px;
+}
+.ov-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.ov-period {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.ov-sub {
+  margin: 4px 0 0;
+  opacity: 0.88;
+  font-size: 0.88rem;
+}
+.ov-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff4dc;
+  color: #6b4000;
+  vertical-align: middle;
+}
+.ov-facts {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  flex-wrap: wrap;
+}
+.ov-facts div {
+  background: rgb(255 255 255 / 12%);
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-width: 96px;
+}
+.ov-facts dt {
+  font-size: 0.75rem;
+  opacity: 0.88;
+}
+.ov-facts dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ov-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+.ov-step a {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  height: 100%;
+}
+.ov-step a:hover {
+  background: var(--surface-2);
+}
+.ov-step-icon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 2px solid var(--line);
+  color: var(--ink-2);
+}
+.step-fatto .ov-step-icon {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: #fff;
+}
+.step-in_corso .ov-step-icon {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.ov-step-body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.ov-step-body .small {
+  color: var(--ink-2);
+}
+@media (max-width: 520px) {
+  .ov-hero {
+    padding: 18px 16px 16px;
+  }
+  .ov-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .ov-facts div {
+    min-width: 0;
+    padding: 8px 10px;
+  }
+  .ov-facts dd {
+    font-size: 1.25rem;
+  }
+  .ov-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .ov-step a {
+    padding: 8px;
+    gap: 8px;
+  }
+  .ov-step-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 0.8rem;
+  }
+}
+.ov-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+@media (min-width: 900px) {
+  .ov-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+@media (min-width: 1280px) {
+  .ov-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ov-actions {
+    grid-row: span 2;
+  }
+}
+.ov-list {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+  display: grid;
+}
+.ov-list > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+.ov-list > li:first-child {
+  border-top: 0;
+}
+.ov-list > li.ov-action {
+  border-top: 0;
+  border-left: 3px solid var(--line);
+  padding-left: 10px;
+  margin-top: 6px;
+  flex-wrap: nowrap;
+}
+.ov-action p {
+  margin: 2px 0 0;
+}
+.ov-list > li.prio-alta {
+  border-left-color: var(--danger);
+}
+.ov-list > li.prio-media {
+  border-left-color: var(--warn);
+}
+.ov-list > li.prio-bassa {
+  border-left-color: var(--info);
+}
+.ov-prio {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.prio-alta .ov-prio {
+  color: var(--danger);
+}
+@media (max-width: 520px) {
+  .ov-list > li.ov-action {
+    flex-wrap: wrap;
+  }
+}
+.ov-total {
+  margin: 0 0 8px;
+}
+.ov-total strong {
+  font-size: 1.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.ov-split {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 8px;
+}
+.ov-split dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ov-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface-2);
+  margin-bottom: 6px;
+}
+.ov-bar .seg-firm {
+  background: var(--ok);
+}
+.ov-bar .seg-est {
+  background: var(--info);
+}
+.ov-bar .seg-ver {
+  background: var(--warn);
+}
+.ov-missing {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.ov-missing h3 {
+  margin-bottom: 4px;
+  color: var(--ink-2);
+}
+.ov-missing .ov-list > li {
+  padding: 4px 0;
+  border-top: 0;
+  font-size: 0.85rem;
+}
+
+/* ---------- Itinerario: tappe, date, alloggio, tratti ---------- */
+button.stop-num {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+button.stop-num:hover {
+  filter: brightness(1.3);
+}
+.stop {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.stop-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgb(181 54 28 / 18%);
+}
+.stop-selected .stop-num {
+  background: var(--accent);
+}
+.stop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+.stop-dates {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.stop-meta .badge {
+  white-space: normal;
+}
+.stop-pin-selected {
+  box-shadow: 0 0 0 4px #fff, 0 0 0 8px rgb(181 54 28 / 45%);
+  transform: scale(1.15);
+}
+/* Il filo tra le tappe dice lo stato del tratto: pieno = calcolato, tratteggiato = da calcolare */
+.leg-calc {
+  border-left-style: solid;
+  border-left-color: #93b4d9;
+}
+.leg-manual {
+  border-left-style: solid;
+}
+.leg-uncalc {
+  border-left-color: var(--warn);
+}
+.seg-chips {
+  list-style: none;
+  margin: 6px 0 2px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.seg-chip {
+  font-size: 0.78rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+}
+.seg-chip em {
+  font-style: normal;
+  font-weight: 600;
+}
+.seg-strada {
+  border-left-color: #2563eb;
+}
+.seg-traghetto {
+  border-left-color: #0d9488;
+}
+.seg-costiera {
+  border-left-color: #7c3aed;
+}
+.seg-treno {
+  border-left-color: #b45309;
+}
+.seg-bus {
+  border-left-color: #ca8a04;
+}
+.seg-aereo {
+  border-left-color: #64748b;
+}
+.seg-src {
+  margin-left: 4px;
+  color: var(--ink-2);
+  font-size: 0.72rem;
+}
+.seg-src::before {
+  content: '· ';
+}
+
+/* ---------- Giornate ---------- */
+.day-sleep {
+  margin: 6px 0;
+}
+.load-why {
+  background: var(--warn-bg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+.load-why ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+}
+.load-why li.strong {
+  font-weight: 600;
+}
+/* Ancore di scorrimento sotto la barra delle sezioni */
+.map-panel,
+.stops > li,
+.day {
+  scroll-margin-top: 64px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stop {
+    transition: none;
+  }
+}

@@ -9,13 +9,16 @@ interface Props {
   trip: Trip;
   onAddDestination?: (destinationId: string) => void;
   height?: number;
+  /** Tappa evidenziata: la mappa la centra */
+  selectedStopId?: string;
+  onSelectStop?: (stopId: string) => void;
 }
 
 function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
 }
 
-export function MapView({ trip, onAddDestination, height }: Props) {
+export function MapView({ trip, onAddDestination, height, selectedStopId, onSelectStop }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const mapRef = useRef<{ L: LeafletApi; map: LMap; layer: LLayerGroup } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
@@ -23,6 +26,8 @@ export function MapView({ trip, onAddDestination, height }: Props) {
   const fitted = useRef(false);
   const addRef = useRef(onAddDestination);
   addRef.current = onAddDestination;
+  const selectRef = useRef(onSelectStop);
+  selectRef.current = onSelectStop;
 
   useEffect(() => {
     let cancelled = false;
@@ -134,12 +139,13 @@ export function MapView({ trip, onAddDestination, height }: Props) {
       pts.push([s.lat, s.lng]);
       const icon = L.divIcon({
         className: 'stop-pin-wrap',
-        html: `<span class="stop-pin ${s.kind === 'a_bordo' ? 'stop-pin-ship' : ''}">${i + 1}</span>`,
+        html: `<span class="stop-pin ${s.kind === 'a_bordo' ? 'stop-pin-ship' : ''} ${s.id === selectedStopId ? 'stop-pin-selected' : ''}">${i + 1}</span>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14],
       });
-      L.marker([s.lat, s.lng], { icon, zIndexOffset: 1000 })
+      L.marker([s.lat, s.lng], { icon, zIndexOffset: s.id === selectedStopId ? 2000 : 1000 })
         .bindTooltip(`${i + 1}. ${esc(s.name)} · ${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}`)
+        .on('click', () => selectRef.current?.(s.id))
         .addTo(layer);
     });
 
@@ -151,7 +157,16 @@ export function MapView({ trip, onAddDestination, height }: Props) {
       }
     }
     if (pts.length === 0) fitted.current = false;
-  }, [trip, state]);
+  }, [trip, state, selectedStopId]);
+
+  // Centra la tappa selezionata (senza allontanare se si è già più vicini)
+  useEffect(() => {
+    const m = mapRef.current;
+    if (!m || state !== 'pronta' || !selectedStopId) return;
+    const s = trip.stops.find((x) => x.id === selectedStopId);
+    if (s) m.map.setView([s.lat, s.lng], Math.max(m.map.getZoom(), 8));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStopId, state]);
 
   return (
     <div className="map-wrap">
