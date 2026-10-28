@@ -1453,6 +1453,49 @@ details summary {
   justify-content: flex-end;
   flex: none;
 }
+/* Catalogo crociere: proposta a sinistra, prezzi e scelta a destra; su smartphone una sotto l'altra */
+.cat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.cat-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
+  gap: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.cat-main h3 {
+  margin: 0 0 2px;
+}
+.cat-main p {
+  margin: 2px 0;
+}
+.cat-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.cat-price .btn {
+  margin-top: 4px;
+}
+.cat-details summary {
+  margin-top: 4px;
+}
+.cat-days {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+@media (max-width: 760px) {
+  .cat-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .sc-open-note {
   flex-basis: 100%;
   margin: 4px 0 0;

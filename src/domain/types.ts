@@ -154,6 +154,8 @@ export interface CoastalOption {
   source?: SourceRef;
   /** Inclusa nel budget/itinerario */
   selected: boolean;
+  /** Proposta del catalogo da cui è stata creata (facoltativo: le opzioni inserite a mano non lo hanno) */
+  catalogId?: ID;
 }
 
 // ---------- Sistemazioni ----------
