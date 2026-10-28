@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
+import { catalogFor, findCatalogVoyage, type CoastalCatalogVoyage } from '../data/coastalCatalog';
 import { COASTAL_FACTS, COASTAL_SOURCES, portsFor } from '../data/coastalPorts';
 import { formatEur, STATUS_LABEL } from '../domain/budget';
-import { coastalRoute, coastalTotalEur, familyValueNotes } from '../domain/coastal';
+import { coastalRoute, coastalTotalEur, familyValueNotes, optionFromCatalog } from '../domain/coastal';
 import { newId } from '../domain/ids';
 import type { CoastalOperator, CoastalOption, Segment } from '../domain/types';
 import { useTrip } from '../state/store';
@@ -37,6 +38,8 @@ function blank(operator: CoastalOperator): CoastalOption {
 export function CoastalView() {
   const { trip, update, toast } = useTrip();
   const [draft, setDraft] = useState<CoastalOption | null>(null);
+  // Catalogo aperto con «+ Nuova opzione»: si sceglie una proposta oppure si inserisce a mano
+  const [picker, setPicker] = useState<CoastalOperator | null>(null);
   const sorted = useMemo(
     () => trip.coastalOptions.slice().sort((a, b) => (coastalTotalEur(a, trip.settings) ?? Infinity) - (coastalTotalEur(b, trip.settings) ?? Infinity)),
     [trip.coastalOptions, trip.settings],
@@ -62,7 +65,12 @@ export function CoastalView() {
       costStatus: o.priceStatus,
       coastalOptionId: o.id,
       source: o.source,
-      note: 'Il costo è conteggiato nel budget dalla sezione Navigazione costiera.',
+      note: [
+        findCatalogVoyage(o.catalogId) && `Proposta «${findCatalogVoyage(o.catalogId)!.title}» (${o.nightsOnboard} notti a bordo).`,
+        'Il costo è conteggiato nel budget dalla sezione Navigazione costiera.',
+      ]
+        .filter(Boolean)
+        .join(' '),
     };
     update((t) => ({
       ...t,
@@ -93,7 +101,14 @@ export function CoastalView() {
                 </li>
               ))}
             </ul>
-            <button className="btn btn-primary" onClick={() => setDraft(blank(op))}>
+            <button
+              className="btn btn-primary"
+              aria-expanded={picker === op}
+              onClick={() => {
+                setDraft(null);
+                setPicker(picker === op ? null : op);
+              }}
+            >
               + Nuova opzione {op}
             </button>
           </section>
@@ -104,6 +119,21 @@ export function CoastalView() {
         Tariffe e orari di agosto 2027 potrebbero non essere ancora pubblicati. Inserisci qui i preventivi reali man mano che li ottieni, indicando
         fonte e stato: l'app non inventa prezzi e non effettua prenotazioni.
       </div>
+
+      {picker && (
+        <CatalogPicker
+          operator={picker}
+          onPick={(v) => {
+            setDraft(optionFromCatalog(v, trip.participants));
+            setPicker(null);
+          }}
+          onManual={() => {
+            setDraft(blank(picker));
+            setPicker(null);
+          }}
+          onClose={() => setPicker(null)}
+        />
+      )}
 
       {draft && <CoastalForm value={draft} onCancel={() => setDraft(null)} onSave={save} />}
 
@@ -139,6 +169,7 @@ export function CoastalView() {
                       <td>
                         {o.fromPort} → {o.toPort}
                         <div className="muted small">verso {o.direction}</div>
+                        {findCatalogVoyage(o.catalogId) && <CatalogDetails v={findCatalogVoyage(o.catalogId)!} compact />}
                       </td>
                       <td>{r.valid ? r.intermediateStops : <span className="error small">{r.error}</span>}</td>
                       <td>
@@ -219,6 +250,148 @@ export function CoastalView() {
         <p className="muted small">Ordinamento per prezzo totale in euro (cambio {trip.settings.nokPerEur} NOK/EUR). Stati possibili: {Object.values(STATUS_LABEL).join(', ')}.</p>
       </section>
     </div>
+  );
+}
+
+const MEALS_SHORT: Record<CoastalOption['meals'], string> = {
+  nessuno: 'Pasti non inclusi',
+  mezza_pensione: 'Mezza pensione',
+  pensione_completa: 'Pensione completa',
+  a_la_carte: 'À la carte',
+  da_definire: 'Pasti da definire',
+};
+
+/** Programma e note estive di una proposta del catalogo. */
+function CatalogDetails({ v, compact }: { v: CoastalCatalogVoyage; compact?: boolean }) {
+  return (
+    <details className="cat-details">
+      <summary>{compact ? `Proposta: ${v.title}` : 'Dettagli e programma'}</summary>
+      {compact && <p className="small">{v.summary}</p>}
+      <ul className="mini">
+        {v.highlights.map((h) => (
+          <li key={h}>{h}</li>
+        ))}
+      </ul>
+      {v.itinerary && (
+        <ol className="cat-days small">
+          {v.itinerary.map((d) => (
+            <li key={d.day}>
+              <strong>
+                Giorno {d.day} — {d.title}:
+              </strong>{' '}
+              {d.ports.join(', ')}
+            </li>
+          ))}
+        </ol>
+      )}
+      {v.summerNotes.length > 0 && (
+        <ul className="mini small">
+          {v.summerNotes.map((n) => (
+            <li key={n}>{n}</li>
+          ))}
+        </ul>
+      )}
+      <p className="small">
+        <a href={v.url} target="_blank" rel="noreferrer">
+          Pagina ufficiale ↗
+        </a>{' '}
+        <span className="muted">· verificata il {new Date(v.checkedAt).toLocaleDateString('it-IT')}</span>
+      </p>
+    </details>
+  );
+}
+
+/** Catalogo delle proposte 1–5 giorni dell'operatore: si sceglie una proposta da precompilare o si inserisce a mano. */
+function CatalogPicker({
+  operator,
+  onPick,
+  onManual,
+  onClose,
+}: {
+  operator: CoastalOperator;
+  onPick: (v: CoastalCatalogVoyage) => void;
+  onManual: () => void;
+  onClose: () => void;
+}) {
+  const { trip } = useTrip();
+  const [maxDays, setMaxDays] = useState(5);
+  const persons = trip.participants.adults + trip.participants.childrenAges.length;
+  const list = catalogFor(operator).filter((v) => v.days <= maxDays);
+  const summer = catalogFor(operator).some((v) => v.summerPrice);
+  return (
+    <section className="panel" aria-labelledby="cat-title">
+      <header className="panel-head">
+        <div>
+          <h2 id="cat-title">Catalogo {operator}: viaggi da 1 a 5 giorni</h2>
+          <p className="muted small">
+            Proposte lette sul sito ufficiale il {new Date(catalogFor(operator)[0]?.checkedAt ?? '').toLocaleDateString('it-IT')}. Scegline una: l'opzione si apre
+            precompilata da rivedere prima di salvarla. Nulla viene prenotato.
+          </p>
+        </div>
+        <span className="row wrap">
+          <label className="check">
+            Durata fino a
+            <select value={maxDays} onChange={(e) => setMaxDays(Number(e.target.value))} aria-label="Durata massima">
+              {[2, 3, 4, 5].map((d) => (
+                <option key={d} value={d}>
+                  {d} giorni
+                </option>
+              ))}
+            </select>
+          </label>
+          <button className="btn btn-small" onClick={onManual}>
+            Inserisci a mano
+          </button>
+          <button className="btn btn-small" onClick={onClose}>
+            Chiudi
+          </button>
+        </span>
+      </header>
+      <p className={summer ? 'note-info small' : 'note-warn small'}>
+        {summer
+          ? `Prezzi per partenze di agosto 2027, minimi a persona su 2 ospiti per cabina. Nell'opzione la stima famiglia è ${persons} × prezzo minimo: riduzioni per bambini e cabina per ${persons} vanno verificate.`
+          : 'Le partenze di giugno e agosto 2027 non erano ancora in vendita al momento della lettura: i prezzi indicati valgono per il mese scritto accanto (fine 2026 o inizio 2027) e NON vengono usati come costo estivo.'}
+      </p>
+      {list.length === 0 ? (
+        <Empty title="Nessuna proposta con questa durata" />
+      ) : (
+        <ul className="cat-list">
+          {list.map((v) => {
+            const cheapest = Math.min(...v.prices.map((p) => p.perPerson));
+            return (
+              <li key={v.id} className="cat-item">
+                <div className="cat-main">
+                  <h3>{v.title}</h3>
+                  <p className="small">{v.route}</p>
+                  <p className="small muted">
+                    {v.days} giorni · {v.days - 1} {v.days - 1 === 1 ? 'notte' : 'notti'} a bordo · {v.stops} porti/località · {MEALS_SHORT[v.meals]}
+                    {v.roundTrip ? ' · andata e ritorno' : ''}
+                  </p>
+                  <p className="small">{v.summary}</p>
+                  <CatalogDetails v={v} />
+                </div>
+                <div className="cat-price">
+                  {v.prices.map((p) => (
+                    <span key={p.cabin} className="small">
+                      {p.cabin === 'non specificata' ? 'da' : `${p.cabin} da`} <strong>{p.perPerson.toLocaleString('it-IT')} €</strong> a persona
+                    </span>
+                  ))}
+                  <span className={`small ${v.summerPrice ? 'muted' : 'warn-text'}`}>{v.summerPrice ? `partenze di ${v.priceValidFor}` : `prezzo di ${v.priceValidFor}, non estivo`}</span>
+                  {v.summerPrice && (
+                    <span className="small">
+                      stima famiglia ({persons}): <strong>{(cheapest * persons).toLocaleString('it-IT')} €</strong>
+                    </span>
+                  )}
+                  <button className="btn btn-small btn-primary" onClick={() => onPick(v)}>
+                    Scegli questa proposta
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
   );
 }
 
@@ -308,7 +481,7 @@ function CoastalForm({ value, onSave, onCancel }: { value: CoastalOption; onSave
       <div className="grid-3">
         <Field label="Regole per i bambini">{(id) => <textarea id={id} rows={2} value={o.childRules} onChange={(e) => set({ childRules: e.target.value })} />}</Field>
         <Field label="Modifica e cancellazione">{(id) => <textarea id={id} rows={2} value={o.changePolicy} onChange={(e) => set({ changePolicy: e.target.value })} />}</Field>
-        <Field label="Note (collegamenti, costi aggiuntivi)">{(id) => <textarea id={id} rows={2} value={o.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
+        <Field label="Note (collegamenti, costi aggiuntivi)">{(id) => <textarea id={id} rows={o.catalogId ? 8 : 2} value={o.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
       </div>
       {!r.valid && <p className="error">{r.error}</p>}
       {r.valid && (

@@ -155,3 +155,15 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Backup**: test automatico di `exportTripFile` con dati sintetici (JSON valido, nome file, reimportazione senza perdite).
 - **Sincronizzazione**: verifica statica: `src/state`, `src/services/storage`, `types.ts`, `defaults.ts` e `supabase/` non sono stati modificati in nessuna fase. Nessun test contro il cloud.
 - Verifiche: 83/83 test, typecheck e build ok, lint con i 2 errori preesistenti; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi.
+
+## 28/10/2026 — catalogo crociere 1–5 giorni (branch `feature/catalogo-crociere`, non pubblicato)
+
+- **Catalogo** (`src/data/coastalCatalog.ts`): 24 proposte lette il 28/10/2026 sui siti ufficiali in versione tedesca, che espone i prezzi in euro.
+  - **Havila**: 11 proposte da 2 a 5 giorni, tutte in pensione completa, con i prezzi minimi a persona per partenze di **agosto 2027** (calcolati dal sito su 2 ospiti; cabina interna e vista mare) e il programma porto per porto.
+  - **Hurtigruten**: 13 proposte da 2 a 5 giorni (il sito UK in sterline ne mostra 5). Il «prezzo da» vale per partenze di novembre 2026 o gennaio 2027; le partenze di giugno e agosto 2027 cercate sul sito risultavano «senza partenze» (non ancora in vendita). Nessun prezzo estivo viene ricavato da questi valori.
+  - Riassunti e punti salienti in italiano scritti per l'app; porti, durate, pasti e prezzi come pubblicati, con link alla pagina ufficiale.
+- **«+ Nuova opzione»** apre il catalogo dell'operatore (filtro per durata 2–5 giorni) con «Scegli questa proposta» oppure «Inserisci a mano». L'opzione si apre precompilata da rivedere: direzione, porti, notti a bordo, pasti, fonte e note con programma e note estive. Per Havila il prezzo è una **stima** = persone × prezzo minimo a persona (stato «stimato»); per Hurtigruten il prezzo resta vuoto («da verificare»). La data, la durata in ore e gli orari non sono pubblicati e restano da inserire.
+- **Nel viaggio**: l'opzione salvata mostra la proposta e il programma nel confronto; collegata a un tratto, la nave compare nell'itinerario e il costo nel budget (navigazione costiera).
+- Modello: nuovo campo facoltativo `catalogId` nell'opzione costiera (compatibile con i dati e i backup esistenti).
+- Verifiche: 88/88 test, typecheck e build ok, lint con i 2 errori preesistenti; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi.
+- Da sapere: i prezzi cambiano nel tempo; Havila apre le prenotazioni circa 6 mesi prima e Hurtigruten non ha ancora l'estate 2027. Ricontrollare prima di decidere.

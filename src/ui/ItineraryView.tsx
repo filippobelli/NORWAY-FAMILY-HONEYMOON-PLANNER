@@ -488,6 +488,8 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
   };
 
   const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
+  // Il separatore «·» prima del totale solo se prima c'è già qualcosa (strada, traghetti o altri mezzi con durata)
+  const hasParts = sum.roadKm > 0 || t.ferryCount > 0 || sum.otherMin > 0;
   return (
     <div className={`leg leg-${sum.state}`} aria-busy={busy}>
       <div className="leg-head">
@@ -527,7 +529,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
               )}
               {sum.totalMin !== undefined ? (
                 <>
-                  {' · '}totale teorico {formatDuration(sum.totalMin)}
+                  {hasParts && ' · '}totale teorico {formatDuration(sum.totalMin)}
                   {sum.realisticMin !== undefined && sum.realisticMin > sum.totalMin && (
                     <span title="Con soste durante la guida e attese ai traghetti non inserite: ipotesi modificabili in Salvataggio → Viaggio">
                       {' · '}
@@ -537,7 +539,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
                 </>
               ) : (
                 <>
-                  {' · '}
+                  {hasParts && ' · '}
                   <Badge tone="warn">
                     totale non calcolabile: {sum.missingDuration} {sum.missingDuration === 1 ? 'segmento' : 'segmenti'} senza durata
                   </Badge>
