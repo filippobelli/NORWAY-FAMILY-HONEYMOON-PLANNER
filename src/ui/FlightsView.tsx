@@ -7,8 +7,10 @@ import { formatDateIt, formatDuration } from '../domain/itinerary';
 import { externalHref } from '../domain/lodging';
 import type { Flight, FlightDirection } from '../domain/types';
 import { flightSearchLinks, openJawLink, type FlightLink, type FlightQuery } from '../services/flights/links';
+import { flightPending, removeFlightFromRoute } from '../domain/placement';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { FlightDialog } from './PlacementDialog';
 
 const DIRECTION: Record<FlightDirection, string> = { andata: 'Andata', ritorno: 'Ritorno', interno: 'Volo interno' };
 
@@ -29,6 +31,7 @@ function Links({ links }: { links: FlightLink[] }) {
 }
 
 export function FlightsView() {
+  const [placing, setPlacing] = useState<Flight | null>(null);
   const { trip, update, toast } = useTrip();
   const flights = trip.flights ?? [];
   const advice = useMemo(() => flightAdvice(trip), [trip]);
@@ -62,6 +65,7 @@ export function FlightsView() {
 
   return (
     <div className="flights">
+      {placing && <FlightDialog flight={placing} onClose={() => setPlacing(null)} />}
       <section className="panel" aria-labelledby="fl-advice">
         <header className="panel-head">
           <h2 id="fl-advice">Tratte consigliate dall'itinerario</h2>
@@ -236,7 +240,8 @@ export function FlightsView() {
                       <strong>
                         {DIRECTION[f.direction]}: {f.fromAirport} → {f.toAirport}
                       </strong>{' '}
-                      {f.selected ? <Badge tone="ok">nel budget</Badge> : <Badge>alternativa</Badge>}
+                      {f.selected ? <Badge tone="ok">nel budget</Badge> : <Badge>alternativa</Badge>}{' '}
+                      {f.selected && (flightPending(trip, f) ? <Badge tone="warn">non ancora nel percorso</Badge> : <Badge tone="ok">nel percorso</Badge>)}
                       <div className="small">
                         {f.date ? formatDateIt(f.date) : 'data da definire'}
                         {f.departureTime && ` · ${f.departureTime}${f.arrivalTime ? `–${f.arrivalTime}` : ''}`}
@@ -264,6 +269,11 @@ export function FlightsView() {
                       <StatusBadge status={f.priceStatus} />
                     </div>
                     <div className="fl-row">
+                      {(!f.selected || flightPending(trip, f)) && (
+                        <button className="btn btn-small btn-primary" onClick={() => setPlacing(f)}>
+                          Aggiungi al percorso
+                        </button>
+                      )}
                       {href && (
                         <a className="btn btn-small" href={href} target="_blank" rel="noreferrer">
                           Fonte ↗
@@ -281,7 +291,7 @@ export function FlightsView() {
                       <button
                         className="btn btn-small danger"
                         onClick={() => {
-                          if (window.confirm(`Eliminare il volo ${f.fromAirport} → ${f.toAirport}?`)) update((t) => ({ ...t, flights: (t.flights ?? []).filter((x) => x.id !== f.id) }));
+                          if (window.confirm(`Eliminare il volo ${f.fromAirport} → ${f.toAirport}?`)) update((t) => ({ ...removeFlightFromRoute(t, f.id), flights: (t.flights ?? []).filter((x) => x.id !== f.id) }));
                         }}
                       >
                         Elimina
@@ -410,13 +420,17 @@ function FlightForm({ value, onSave, onCancel }: { value: Flight; onSave: (f: Fl
         <Field label="Partenza">{(id) => <input id={id} type="time" value={f.departureTime ?? ''} onChange={(e) => set({ departureTime: e.target.value || undefined })} />}</Field>
         <Field label="Arrivo">{(id) => <input id={id} type="time" value={f.arrivalTime ?? ''} onChange={(e) => set({ arrivalTime: e.target.value || undefined })} />}</Field>
         <Field label="Compagnia">{(id) => <input id={id} value={f.airline} onChange={(e) => set({ airline: e.target.value })} />}</Field>
+        <Field label="Prezzo totale famiglia">{(id) => <MoneyInput id={id} value={f.price} onChange={(m) => set({ price: m })} />}</Field>
+        <Field label="Stato prezzo">{(id) => <StatusSelect id={id} value={f.priceStatus} onChange={(v) => set({ priceStatus: v })} />}</Field>
+      </div>
+      <details className="more-fields">
+        <summary>Altri dettagli</summary>
+        <div className="grid-4">
         <Field label="Numero volo">{(id) => <input id={id} value={f.flightNumber} onChange={(e) => set({ flightNumber: e.target.value.toUpperCase() })} />}</Field>
         <Field label="Scali" hint="0 = diretto">
           {(id) => <NumberInput id={id} value={f.stops} min={0} step={1} onChange={(v) => set({ stops: v === undefined ? undefined : Math.max(0, Math.round(v)) })} />}
         </Field>
         <Field label="Bagagli inclusi">{(id) => <input id={id} value={f.baggage} placeholder="es. 1 bagaglio da stiva a testa" onChange={(e) => set({ baggage: e.target.value })} />}</Field>
-        <Field label="Prezzo totale famiglia">{(id) => <MoneyInput id={id} value={f.price} onChange={(m) => set({ price: m })} />}</Field>
-        <Field label="Stato prezzo">{(id) => <StatusSelect id={id} value={f.priceStatus} onChange={(v) => set({ priceStatus: v })} />}</Field>
         <Field label="Link della fonte">
           {(id) => (
             <input
@@ -437,8 +451,9 @@ function FlightForm({ value, onSave, onCancel }: { value: Flight; onSave: (f: Fl
             </div>
           )}
         </Field>
-      </div>
-      <Field label="Note">{(id) => <textarea id={id} rows={2} value={f.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
+        </div>
+<Field label="Note">{(id) => <textarea id={id} rows={2} value={f.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
+      </details>
       <div className="row">
         <button className="btn btn-primary" disabled={!ok} onClick={() => onSave({ ...f, fromAirport: f.fromAirport.trim(), toAirport: f.toAirport.trim() })}>
           Salva volo

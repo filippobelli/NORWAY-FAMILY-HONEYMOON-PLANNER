@@ -168,7 +168,7 @@ export function tripOverview(trip: Trip): TripOverview {
       label: 'Periodo del viaggio',
       state: trip.dateTentative ? 'da_fare' : 'fatto',
       detail: trip.dateTentative ? 'Date provvisorie' : 'Date decise',
-      href: '#/viaggio',
+      href: '#/panoramica',
     },
     {
       id: 'tappe',
@@ -304,7 +304,7 @@ export function tripOverview(trip: Trip): TripOverview {
       id: 'booked-tentative',
       priority: 'alta',
       text: `${bookedWithTentative} ${plural(bookedWithTentative, 'alloggio risulta prenotato', 'alloggi risultano prenotati')} ma le date del viaggio sono ancora provvisorie: controlla che coincidano.`,
-      href: '#/viaggio',
+      href: '#/panoramica',
       cta: 'Controlla le date',
     });
   }
@@ -348,7 +348,7 @@ export function tripOverview(trip: Trip): TripOverview {
     });
   }
   if (trip.dateTentative) {
-    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/viaggio', cta: 'Imposta le date' });
+    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/panoramica', cta: 'Imposta le date' });
   }
 
   // Prima le priorità alte; a parità di priorità resta l'ordine logico delle decisioni (sort stabile)

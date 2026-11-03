@@ -31,6 +31,7 @@ export function snapshotPlan(trip: Trip): PlanSnapshot {
     days: trip.days,
     budgetItems: trip.budgetItems,
     coastalSelected: trip.coastalOptions.filter((o) => o.selected).map((o) => o.id),
+    flights: trip.flights ?? [],
   });
 }
 
@@ -43,6 +44,7 @@ function applyPlan(trip: Trip, plan: PlanSnapshot): Trip {
     days: plan.days,
     budgetItems: plan.budgetItems,
     coastalOptions: trip.coastalOptions.map((o) => ({ ...o, selected: plan.coastalSelected.includes(o.id) })),
+    flights: plan.flights ?? trip.flights,
   };
 }
 
@@ -81,7 +83,7 @@ export function addScenario(trip: Trip, name: string, kind: ScenarioKind, from: 
   const plan: PlanSnapshot =
     from === 'copia'
       ? snapshotPlan(t)
-      : { startDate: t.startDate, stops: [], legs: [], days: {}, budgetItems: [], coastalSelected: [] };
+      : { startDate: t.startDate, stops: [], legs: [], days: {}, budgetItems: [], coastalSelected: [], flights: [] };
   const sc: Scenario = { id: newId(), name: name.trim() || SCENARIO_KIND_LABEL[kind], kind, notes: '', updatedAt: new Date().toISOString(), plan };
   return { ...t, scenarios: [...t.scenarios!, sc] };
 }

@@ -26,6 +26,7 @@ import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtDateTime, MODE_ICON, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 import { MapView } from './MapView';
+import { PendingPanel } from './PlacementDialog';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
@@ -108,7 +109,7 @@ export function ItineraryView() {
         ...cur,
         legs: cur.legs.map((l) =>
           pending.includes(l) && !isRoutableLeg(l, cur.stops)
-            ? { ...l, routingError: 'Tratto con notte a bordo: collega la navigazione costiera (sezione Crociere → Collega a un tratto).' }
+            ? { ...l, routingError: 'Tratto con notte a bordo: aggiungi la crociera dalla sezione Crociere (Aggiungi al percorso).' }
             : l,
         ),
       }));
@@ -179,6 +180,8 @@ export function ItineraryView() {
             ))}
           </ul>
         )}
+
+        <PendingPanel />
 
         <StopPicker onAdd={addStop} />
 
@@ -531,7 +534,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
                 <>
                   {hasParts && ' · '}totale teorico {formatDuration(sum.totalMin)}
                   {sum.realisticMin !== undefined && sum.realisticMin > sum.totalMin && (
-                    <span title="Con soste durante la guida e attese ai traghetti non inserite: ipotesi modificabili in Salvataggio → Viaggio">
+                    <span title="Con soste durante la guida e attese ai traghetti non inserite: ipotesi modificabili in Impostazioni → Viaggio">
                       {' · '}
                       <strong>realistici ~{formatDuration(sum.realisticMin)}</strong>
                     </span>
@@ -569,7 +572,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
           {t.mixedModes && <span className="note-warn small">Strada e treno/nave/aereo nello stesso tratto: tienili solo se sono in sequenza.</span>}
           {t.possibleDuplicateFerry && <span className="note-warn small">Traghetto calcolato e traghetto manuale insieme: probabile doppio conteggio.</span>}
           {!routable && t.hasUncalculated && (
-            <span className="muted small">Tratto in nave: collegalo a un'opzione nella sezione Crociere oppure aggiungi un tratto "Navigazione costiera".</span>
+            <span className="muted small">Tratto in nave: scegli la crociera nella sezione Crociere (Aggiungi al percorso) oppure aggiungi un tratto "Navigazione costiera".</span>
           )}
           {leg.routingError && (
             <span className="error small" role="alert">

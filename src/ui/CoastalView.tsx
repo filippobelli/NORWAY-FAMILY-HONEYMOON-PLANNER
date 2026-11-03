@@ -4,9 +4,11 @@ import { COASTAL_FACTS, COASTAL_SOURCES, portsFor } from '../data/coastalPorts';
 import { formatEur, STATUS_LABEL } from '../domain/budget';
 import { coastalRoute, coastalTotalEur, familyValueNotes, optionFromCatalog } from '../domain/coastal';
 import { newId } from '../domain/ids';
-import type { CoastalOperator, CoastalOption, Segment } from '../domain/types';
+import { cruiseInRoute, removeCruise } from '../domain/placement';
+import type { CoastalOperator, CoastalOption } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { CruiseDialog } from './PlacementDialog';
 
 const MEALS: Record<CoastalOption['meals'], string> = {
   nessuno: 'Nessun pasto',
@@ -37,6 +39,7 @@ function blank(operator: CoastalOperator): CoastalOption {
 
 export function CoastalView() {
   const { trip, update, toast } = useTrip();
+  const [placing, setPlacing] = useState<CoastalOption | null>(null);
   const [draft, setDraft] = useState<CoastalOption | null>(null);
   // Catalogo aperto con «+ Nuova opzione»: si sceglie una proposta oppure si inserisce a mano
   const [picker, setPicker] = useState<CoastalOperator | null>(null);
@@ -54,38 +57,15 @@ export function CoastalView() {
     toast('Opzione salvata');
   };
 
-  const attachToLeg = (o: CoastalOption, legId: string) => {
-    const seg: Segment = {
-      id: newId(),
-      mode: 'costiera',
-      label: `${o.operator} ${o.fromPort} → ${o.toPort}`,
-      durationMin: o.durationHours !== undefined ? Math.round(o.durationHours * 60) : undefined,
-      departureTime: o.departureTime,
-      status: o.priceStatus === 'prenotato' || o.priceStatus === 'pagato' ? 'confermato' : 'da_verificare',
-      costStatus: o.priceStatus,
-      coastalOptionId: o.id,
-      source: o.source,
-      note: [
-        findCatalogVoyage(o.catalogId) && `Proposta «${findCatalogVoyage(o.catalogId)!.title}» (${o.nightsOnboard} notti a bordo).`,
-        'Il costo è conteggiato nel budget dalla sezione Navigazione costiera.',
-      ]
-        .filter(Boolean)
-        .join(' '),
-    };
-    update((t) => ({
-      ...t,
-      coastalOptions: t.coastalOptions.map((x) => (x.id === o.id ? { ...x, selected: true } : x)),
-      legs: t.legs.map((l) => (l.id === legId ? { ...l, segments: [...l.segments.filter((s) => s.mode !== 'non_calcolato'), seg] } : l)),
-    }));
-    toast('Navigazione aggiunta al tratto');
-  };
-
   return (
     <div className="coastal">
+      {placing && <CruiseDialog option={placing} onClose={() => setPlacing(null)} />}
       <div className="grid-2">
         {(['Hurtigruten', 'Havila'] as const).map((op) => (
           <section key={op} className="panel">
             <h2>{op}</h2>
+            <details className="more-fields">
+              <summary>Cosa sapere su {op}</summary>
             <p className="muted small">Fatti verificati sulle pagine ufficiali il 27/10/2026. Non sono tariffe né orari 2027.</p>
             <ul className="facts-list">
               {COASTAL_FACTS[op].map((f) => (
@@ -101,6 +81,7 @@ export function CoastalView() {
                 </li>
               ))}
             </ul>
+            </details>
             <button
               className="btn btn-primary"
               aria-expanded={picker === op}
@@ -164,7 +145,7 @@ export function CoastalView() {
                     <tr key={o.id} className={o.selected ? 'row-selected' : ''}>
                       <td>
                         <strong>{o.operator}</strong>
-                        {o.selected && <Badge tone="ok">nel viaggio</Badge>}
+                        {cruiseInRoute(trip, o.id) ? <Badge tone="ok">nel percorso</Badge> : o.selected && <Badge tone="warn">nel budget, non nel percorso</Badge>}
                       </td>
                       <td>
                         {o.fromPort} → {o.toPort}
@@ -207,33 +188,27 @@ export function CoastalView() {
                         >
                           {o.selected ? 'Escludi dal budget' : 'Includi nel budget'}
                         </button>
-                        {trip.legs.length > 0 && (
-                          <select
-                            aria-label="Collega a un tratto dell'itinerario"
-                            value=""
-                            onChange={(e) => e.target.value && attachToLeg(o, e.target.value)}
+                        {cruiseInRoute(trip, o.id) ? (
+                          <button
+                            className="btn btn-small"
+                            onClick={() => {
+                              const prev = trip;
+                              update((t) => removeCruise(t, o.id));
+                              toast('Crociera tolta dal percorso. Le notti che aveva sostituito non tornano da sole.', 'ok', { label: 'Annulla', run: () => update(() => prev) });
+                            }}
                           >
-                            <option value="">Collega a un tratto…</option>
-                            {trip.legs.map((l) => {
-                              const a = trip.stops.find((s) => s.id === l.fromStopId);
-                              const b = trip.stops.find((s) => s.id === l.toStopId);
-                              return (
-                                <option key={l.id} value={l.id}>
-                                  {a?.name} → {b?.name}
-                                </option>
-                              );
-                            })}
-                          </select>
+                            Togli dal percorso
+                          </button>
+                        ) : (
+                          <button className="btn btn-small btn-primary" onClick={() => setPlacing(o)}>
+                            Aggiungi al percorso
+                          </button>
                         )}
                         <button
                           className="btn btn-small danger"
                           onClick={() => {
-                            if (window.confirm('Eliminare questa opzione? Verrà scollegata anche dai tratti.')) {
-                              update((t) => ({
-                                ...t,
-                                coastalOptions: t.coastalOptions.filter((x) => x.id !== o.id),
-                                legs: t.legs.map((l) => ({ ...l, segments: l.segments.filter((s) => s.coastalOptionId !== o.id) })),
-                              }));
+                            if (window.confirm('Eliminare questa opzione? Viene tolta anche dal percorso.')) {
+                              update((t) => ({ ...removeCruise(t, o.id), coastalOptions: t.coastalOptions.filter((x) => x.id !== o.id) }));
                             }
                           }}
                         >
@@ -439,10 +414,16 @@ function CoastalForm({ value, onSave, onCancel }: { value: CoastalOption; onSave
           )}
         </Field>
         <Field label="Data">{(id) => <input id={id} type="date" value={o.date ?? ''} onChange={(e) => set({ date: e.target.value || undefined })} />}</Field>
+        <Field label="Notti a bordo">{(id) => <NumberInput id={id} value={o.nightsOnboard} min={0} onChange={(v) => set({ nightsOnboard: v ?? 0 })} />}</Field>
+        <Field label="Prezzo totale famiglia">{(id) => <MoneyInput id={id} value={o.price} onChange={(m) => set({ price: m })} />}</Field>
+        <Field label="Stato prezzo">{(id) => <StatusSelect id={id} value={o.priceStatus} onChange={(v) => set({ priceStatus: v })} />}</Field>
+      </div>
+      <details className="more-fields">
+        <summary>Altri dettagli</summary>
+        <div className="grid-4">
         <Field label="Partenza">{(id) => <input id={id} type="time" value={o.departureTime ?? ''} onChange={(e) => set({ departureTime: e.target.value || undefined })} />}</Field>
         <Field label="Arrivo">{(id) => <input id={id} type="time" value={o.arrivalTime ?? ''} onChange={(e) => set({ arrivalTime: e.target.value || undefined })} />}</Field>
         <Field label="Durata (ore)">{(id) => <NumberInput id={id} value={o.durationHours} min={0} onChange={(v) => set({ durationHours: v })} />}</Field>
-        <Field label="Notti a bordo">{(id) => <NumberInput id={id} value={o.nightsOnboard} min={0} onChange={(v) => set({ nightsOnboard: v ?? 0 })} />}</Field>
         <Field label="Cabina">{(id) => <input id={id} value={o.cabin} placeholder="es. cabina interna 4 posti, poltrona" onChange={(e) => set({ cabin: e.target.value })} />}</Field>
         <Field label="Pasti">
           {(id) => (
@@ -455,9 +436,7 @@ function CoastalForm({ value, onSave, onCancel }: { value: CoastalOption; onSave
             </select>
           )}
         </Field>
-        <Field label="Prezzo totale famiglia">{(id) => <MoneyInput id={id} value={o.price} onChange={(m) => set({ price: m })} />}</Field>
         <Field label="Extra (auto, pasti…)">{(id) => <MoneyInput id={id} value={o.extras} onChange={(m) => set({ extras: m })} />}</Field>
-        <Field label="Stato prezzo">{(id) => <StatusSelect id={id} value={o.priceStatus} onChange={(v) => set({ priceStatus: v })} />}</Field>
         <Field label="Con auto">
           {(id) => (
             <select id={id} value={o.withCar ? 'si' : 'no'} onChange={(e) => set({ withCar: e.target.value === 'si' })}>
@@ -477,12 +456,13 @@ function CoastalForm({ value, onSave, onCancel }: { value: CoastalOption; onSave
             />
           )}
         </Field>
-      </div>
-      <div className="grid-3">
+        </div>
+<div className="grid-3">
         <Field label="Regole per i bambini">{(id) => <textarea id={id} rows={2} value={o.childRules} onChange={(e) => set({ childRules: e.target.value })} />}</Field>
         <Field label="Modifica e cancellazione">{(id) => <textarea id={id} rows={2} value={o.changePolicy} onChange={(e) => set({ changePolicy: e.target.value })} />}</Field>
         <Field label="Note (collegamenti, costi aggiuntivi)">{(id) => <textarea id={id} rows={o.catalogId ? 8 : 2} value={o.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
       </div>
+      </details>
       {!r.valid && <p className="error">{r.error}</p>}
       {r.valid && (
         <p className="muted small">

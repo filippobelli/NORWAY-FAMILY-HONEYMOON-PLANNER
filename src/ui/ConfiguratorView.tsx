@@ -107,13 +107,14 @@ export function ConfiguratorView() {
     if (!result) return;
     const scName = name.trim() || defaultName;
     const memo = [...result.notes, ...result.warnings.map((w) => `Da guardare: ${w}`)].join('\n');
-    update((t) => addScenarioWithPlan(t, scName, scenarioKindFor(input.modes), result.plan, memo));
+    // Crociere e voli scelti restano scelti: se non coincidono con la proposta compaiono tra quelli da aggiungere al percorso
+    update((t) => addScenarioWithPlan(t, scName, scenarioKindFor(input.modes), { ...result.plan, coastalSelected: t.coastalOptions.filter((o) => o.selected).map((o) => o.id) }, memo));
     try {
       sessionStorage.setItem(AUTO_ROUTE_KEY, '1');
     } catch {
       /* senza sessionStorage il calcolo dei tratti resta manuale */
     }
-    toast(`Scenario "${scName}" creato e attivo: l'itinerario precedente è salvato in Scenari`);
+    toast(`Versione "${scName}" creata e attiva: il percorso precedente è salvato in Versioni`);
     window.location.hash = '#/itinerario';
   };
 
@@ -131,8 +132,8 @@ export function ConfiguratorView() {
     <div className="configurator">
       <div className="note-info">
         Il configuratore propone un itinerario con le destinazioni del catalogo, rispettando giorni, aeroporti, ritmo e ore di guida. Per scegliere l'ordine usa
-        <strong> distanze stimate</strong> (non calcolate): km e tempi veri si calcolano subito dopo, nell'Itinerario. Crea sempre uno{' '}
-        <strong>scenario nuovo</strong>: quello attuale resta salvato e confrontabile in Scenari. Nessun prezzo, orario o disponibilità viene inventato.
+        <strong> distanze stimate</strong> (non calcolate): km e tempi veri si calcolano subito dopo, in Tappe e mappa. Crea sempre uno{' '}
+        <strong>versione nuova</strong>: quella attuale resta salvata e confrontabile in Versioni. Nessun prezzo, orario o disponibilità viene inventato.
       </div>
 
       <section className="panel">
@@ -308,11 +309,11 @@ export function ConfiguratorView() {
             ))}
           </ul>
           <div className="row wrap">
-            <Field label="Nome dello scenario">
+            <Field label="Nome della versione">
               {(id) => <input id={id} value={name} placeholder={defaultName} onChange={(e) => setName(e.target.value)} />}
             </Field>
             <button className="btn btn-primary" onClick={create}>
-              Crea come nuovo scenario e calcola i tratti
+              Crea come nuova versione e calcola i tratti
             </button>
             <Badge tone="info">L'itinerario attuale non viene toccato</Badge>
           </div>

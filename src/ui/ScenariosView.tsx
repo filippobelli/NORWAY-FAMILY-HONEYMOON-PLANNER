@@ -95,12 +95,12 @@ export function ScenariosView() {
   return (
     <div className="scenarios">
       <div className="note-info">
-        Ogni scenario è un itinerario completo (tappe, tratti, giornate e voci di budget). Hytte e opzioni costiere sono condivise. Confrontare gli scenari
+        Ogni versione è un percorso completo (tappe, tratti, giornate, voli e voci di budget). Alloggi e opzioni di crociera sono condivisi. Confrontare gli scenari
         non modifica l'itinerario attivo: cambia solo con «Apri per modificare».
       </div>
 
       <section className="panel">
-        <h2>Nuovo scenario</h2>
+        <h2>Nuova versione</h2>
         <div className="grid-4">
           <Field label="Nome">{(id) => <input id={id} value={name} placeholder="es. Fiordi in auto" onChange={(e) => setName(e.target.value)} />}</Field>
           <Field label="Tipo">
@@ -117,7 +117,7 @@ export function ScenariosView() {
           <Field label="Partenza da">
             {(id) => (
               <select id={id} value={from} onChange={(e) => setFrom(e.target.value as 'copia' | 'vuoto')}>
-                <option value="copia">Copia dello scenario attivo</option>
+                <option value="copia">Copia della versione attiva</option>
                 <option value="vuoto">Itinerario vuoto</option>
               </select>
             )}
@@ -132,10 +132,10 @@ export function ScenariosView() {
                 onClick={() => {
                   update((cur) => addScenario(cur, name, kind, from));
                   setName('');
-                  toast('Scenario creato: aprilo per modificarlo');
+                  toast('Versione creata: aprila per modificarla');
                 }}
               >
-                Crea scenario
+                Crea versione
               </button>
             </div>
           </div>
@@ -270,7 +270,7 @@ export function ScenariosView() {
                     className="btn btn-small btn-primary"
                     onClick={() => {
                       update((cur) => switchScenario(cur, s.id));
-                      toast(`Aperto "${s.name}": Itinerario, Giornate e Budget ora mostrano questo scenario`);
+                      toast(`Aperto "${s.name}": Percorso, Giorno per giorno e Budget ora mostrano questa versione`);
                     }}
                   >
                     Apri per modificare

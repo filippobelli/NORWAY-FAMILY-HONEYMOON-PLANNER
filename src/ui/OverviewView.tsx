@@ -4,7 +4,7 @@ import { formatDateIt } from '../domain/itinerary';
 import { tripOverview, type NextAction, type StepState } from '../domain/overview';
 import type { AccommodationStatus } from '../domain/types';
 import { useTrip } from '../state/store';
-import { Badge } from './common';
+import { Badge, Field, NumberInput } from './common';
 
 const STEP_ICON: Record<StepState, string> = { fatto: '✓', in_corso: '◐', da_fare: '○' };
 const STEP_TEXT: Record<StepState, string> = { fatto: 'Fatto', in_corso: 'In corso', da_fare: 'Da fare' };
@@ -38,7 +38,7 @@ function Clipped<T>({ items, max = 4, render }: { items: T[]; max?: number; rend
 }
 
 export function OverviewView() {
-  const { trip } = useTrip();
+  const { trip, update } = useTrip();
   const o = useMemo(() => tripOverview(trip), [trip]);
   const done = o.steps.filter((s) => s.state === 'fatto').length;
   const [top, ...rest] = o.actions;
@@ -49,7 +49,7 @@ export function OverviewView() {
     <div className="overview">
       <section className="ov-hero" aria-labelledby="ov-title">
         <div>
-          <p className="ov-eyebrow">Panoramica</p>
+          <p className="ov-eyebrow">Il viaggio</p>
           <h2 id="ov-title">{trip.title || 'Norvegia 2027'}</h2>
           {o.period ? (
             <p className={`ov-period ${o.period.tentative ? 'is-tentative' : 'is-confirmed'}`}>
@@ -101,6 +101,53 @@ export function OverviewView() {
         </section>
       )}
 
+      <details className="panel ov-trip-form" open={trip.dateTentative}>
+        <summary>Date e partecipanti</summary>
+        <div className="grid-4">
+          <Field label="Titolo">{(id) => <input id={id} value={trip.title} onChange={(e) => update((t) => ({ ...t, title: e.target.value }))} />}</Field>
+          <Field label="Data di partenza" hint={trip.dateTentative ? 'Provvisoria' : 'Confermata'}>
+            {(id) => (
+              <input
+                id={id}
+                type="date"
+                value={trip.startDate}
+                min="2027-07-01"
+                max="2027-09-30"
+                onChange={(e) => e.target.value && update((t) => ({ ...t, startDate: e.target.value }))}
+              />
+            )}
+          </Field>
+          <Field label="Date">
+            {(id) => (
+              <select id={id} value={trip.dateTentative ? 'p' : 'c'} onChange={(e) => update((t) => ({ ...t, dateTentative: e.target.value === 'p' }))}>
+                <option value="p">Provvisorie</option>
+                <option value="c">Decise</option>
+              </select>
+            )}
+          </Field>
+          <Field label="Adulti">
+            {(id) => (
+              <NumberInput id={id} value={trip.participants.adults} min={1} onChange={(v) => v && update((t) => ({ ...t, participants: { ...t.participants, adults: v } }))} />
+            )}
+          </Field>
+          <Field label="Età bambini (ad agosto 2027)" hint="Separate da virgola">
+            {(id) => (
+              <input
+                id={id}
+                defaultValue={trip.participants.childrenAges.join(', ')}
+                onBlur={(e) => {
+                  const ages = e.target.value
+                    .split(',')
+                    .map((x: string) => Number(x.trim()))
+                    .filter((x: number) => Number.isFinite(x) && x >= 0 && x < 18);
+                  update((t) => ({ ...t, participants: { ...t.participants, childrenAges: ages } }));
+                }}
+              />
+            )}
+          </Field>
+        </div>
+      </details>
+
       <section className="panel" aria-labelledby="ov-steps">
         <header className="panel-head">
           <h2 id="ov-steps">Decisioni da prendere</h2>
@@ -131,6 +178,8 @@ export function OverviewView() {
         </ol>
       </section>
 
+      <details className="ov-more">
+        <summary>Riepilogo: altre azioni, alloggi, giornate, budget e trasferimenti</summary>
       <div className="ov-grid">
         <div className="ov-col">
           <section className="panel ov-actions" aria-labelledby="ov-more">
@@ -201,7 +250,7 @@ export function OverviewView() {
             <header className="panel-head">
               <h2 id="ov-days">Giornate impegnative</h2>
               <a href="#/giornate" className="small">
-                Giornate
+                Giorno per giorno
               </a>
             </header>
             {o.days === 0 ? (
@@ -283,7 +332,7 @@ export function OverviewView() {
             <header className="panel-head">
               <h2 id="ov-legs">Trasferimenti</h2>
               <a href="#/itinerario" className="small">
-                Itinerario
+                Percorso
               </a>
             </header>
             {o.uncalculatedLegs.length + o.shipLegsMissing.length === 0 ? (
@@ -325,6 +374,7 @@ export function OverviewView() {
           </section>
         </div>
       </div>
+      </details>
     </div>
   );
 }

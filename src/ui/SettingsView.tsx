@@ -5,6 +5,7 @@ import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, s
 import { useCloudSync } from '../state/cloudSync';
 import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, NumberInput } from './common';
+import { RatesPanel } from './RatesPanel';
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
@@ -13,29 +14,8 @@ export function SettingsView() {
   return (
     <div className="settings">
       <section className="panel">
-        <h2>Viaggio</h2>
+        <h2>Preferenze</h2>
         <div className="grid-4">
-          <Field label="Titolo">{(id) => <input id={id} value={trip.title} onChange={(e) => update((t) => ({ ...t, title: e.target.value }))} />}</Field>
-          <Field label="Data di partenza" hint={trip.dateTentative ? 'Provvisoria' : 'Confermata'}>
-            {(id) => (
-              <input
-                id={id}
-                type="date"
-                value={trip.startDate}
-                min="2027-07-01"
-                max="2027-09-30"
-                onChange={(e) => e.target.value && update((t) => ({ ...t, startDate: e.target.value }))}
-              />
-            )}
-          </Field>
-          <Field label="Date">
-            {(id) => (
-              <select id={id} value={trip.dateTentative ? 'p' : 'c'} onChange={(e) => update((t) => ({ ...t, dateTentative: e.target.value === 'p' }))}>
-                <option value="p">Provvisorie</option>
-                <option value="c">Decise</option>
-              </select>
-            )}
-          </Field>
           <Field label="Soglia trasferimenti al giorno (min)" hint="Oltre questa soglia la giornata è segnalata">
             {(id) => (
               <NumberInput
@@ -43,26 +23,6 @@ export function SettingsView() {
                 value={trip.settings.maxTravelMinPerDay}
                 min={60}
                 onChange={(v) => v && update((t) => ({ ...t, settings: { ...t.settings, maxTravelMinPerDay: v } }))}
-              />
-            )}
-          </Field>
-          <Field label="Adulti">
-            {(id) => (
-              <NumberInput id={id} value={trip.participants.adults} min={1} onChange={(v) => v && update((t) => ({ ...t, participants: { ...t.participants, adults: v } }))} />
-            )}
-          </Field>
-          <Field label="Età bambini (ad agosto 2027)" hint="Separate da virgola">
-            {(id) => (
-              <input
-                id={id}
-                defaultValue={trip.participants.childrenAges.join(', ')}
-                onBlur={(e) => {
-                  const ages = e.target.value
-                    .split(',')
-                    .map((x: string) => Number(x.trim()))
-                    .filter((x: number) => Number.isFinite(x) && x >= 0 && x < 18);
-                  update((t) => ({ ...t, participants: { ...t.participants, childrenAges: ages } }));
-                }}
               />
             )}
           </Field>
@@ -111,6 +71,8 @@ export function SettingsView() {
           ))}
         </div>
       </section>
+
+      <RatesPanel />
 
       <CloudPanel />
 

@@ -17,26 +17,45 @@ import { OverviewView } from './ui/OverviewView';
 import { ScenariosView } from './ui/ScenariosView';
 import { SettingsView } from './ui/SettingsView';
 
-// Sezioni raggruppate per fase: capire, pianificare, organizzare la logistica, decidere.
-const TABS = [
-  { id: 'panoramica', label: 'Panoramica', icon: '🏔️', group: 'Viaggio' },
-  { id: 'itinerario', label: 'Itinerario', icon: '🗺️', group: 'Pianifica' },
-  { id: 'giornate', label: 'Giornate', icon: '📅', group: 'Pianifica' },
-  { id: 'configuratore', label: 'Configuratore', icon: '🧭', group: 'Pianifica' },
-  { id: 'catalogo', label: 'Catalogo', icon: '📚', group: 'Pianifica' },
-  { id: 'voli', label: 'Voli', icon: '✈️', group: 'Logistica' },
-  { id: 'hytte', label: 'Alloggi', icon: '🛖', group: 'Logistica' },
-  { id: 'crociere', label: 'Crociere', icon: '🚢', group: 'Logistica' },
-  { id: 'budget', label: 'Budget', icon: '💶', group: 'Decidi' },
-  { id: 'scenari', label: 'Scenari', icon: '⚖️', group: 'Decidi' },
-  { id: 'viaggio', label: 'Salvataggio', icon: '☁️', group: 'Impostazioni' },
+// Il menù segue le domande di chi organizza: chi e quando, dove, come ci si muove, dove si dorme, cosa si fa, quanto costa.
+// Ogni voce può avere più viste; gli indirizzi delle viste restano quelli di sempre, così i link salvati continuano a funzionare.
+const SECTIONS = [
+  { id: 'il-viaggio', label: 'Il viaggio', icon: '🏔️', views: [{ id: 'panoramica', label: 'Il viaggio' }] },
+  {
+    id: 'percorso',
+    label: 'Percorso',
+    icon: '🗺️',
+    views: [
+      { id: 'itinerario', label: 'Tappe e mappa' },
+      { id: 'configuratore', label: 'Fatti proporre un percorso' },
+      { id: 'catalogo', label: 'Mete' },
+      { id: 'scenari', label: 'Versioni' },
+    ],
+  },
+  {
+    id: 'trasporti',
+    label: 'Trasporti',
+    icon: '✈️',
+    views: [
+      { id: 'voli', label: 'Voli' },
+      { id: 'crociere', label: 'Crociere' },
+    ],
+  },
+  { id: 'alloggi', label: 'Alloggi', icon: '🛖', views: [{ id: 'hytte', label: 'Alloggi' }] },
+  { id: 'giorni', label: 'Giorno per giorno', icon: '📅', views: [{ id: 'giornate', label: 'Giorno per giorno' }] },
+  { id: 'costi', label: 'Budget', icon: '💶', views: [{ id: 'budget', label: 'Budget' }] },
 ] as const;
-type TabId = (typeof TABS)[number]['id'];
+type TabId = (typeof SECTIONS)[number]['views'][number]['id'] | 'impostazioni';
+
+// Vecchi nomi: «viaggio» erano le impostazioni, «costiera» le crociere
+const ALIASES: Record<string, TabId> = { viaggio: 'impostazioni', costiera: 'crociere', percorso: 'itinerario', trasporti: 'voli' };
 
 function readHash(): TabId {
-  let h = window.location.hash.replace(/^#\/?/, '');
-  if (h === 'costiera') h = 'crociere'; // vecchio nome della sezione: i link salvati continuano a funzionare
-  return (TABS.find((t) => t.id === h)?.id ?? 'panoramica') as TabId;
+  const h = window.location.hash.replace(/^#\/?/, '');
+  if (ALIASES[h]) return ALIASES[h]!;
+  if (h === 'impostazioni') return h;
+  for (const s of SECTIONS) for (const v of s.views) if (v.id === h) return v.id;
+  return 'panoramica';
 }
 
 export default function App() {
@@ -68,6 +87,7 @@ function Shell() {
     }
     window.scrollTo({ top: 0 });
   }, [tab]);
+  const section = SECTIONS.find((s) => s.views.some((v) => v.id === tab));
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
@@ -90,26 +110,34 @@ function Shell() {
             </p>
           </div>
         </div>
-        <a href="#/viaggio" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-          {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
-        </a>
+        <div className="topbar-right">
+          <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
+            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+          </a>
+          <a href="#/impostazioni" className={`gear ${tab === 'impostazioni' ? 'active' : ''}`} aria-label="Impostazioni, salvataggio e backup" title="Impostazioni, salvataggio e backup" aria-current={tab === 'impostazioni' ? 'page' : undefined}>
+            ⚙️
+          </a>
+        </div>
       </header>
       <nav className="tabs" aria-label="Sezioni" ref={navRef}>
-        {TABS.map((t, i) => (
-          <a
-            key={t.id}
-            href={`#/${t.id}`}
-            className={`${tab === t.id ? 'active' : ''} ${i > 0 && TABS[i - 1]!.group !== t.group ? 'group-start' : ''}`}
-            aria-current={tab === t.id ? 'page' : undefined}
-            title={t.group}
-          >
+        {SECTIONS.map((s) => (
+          <a key={s.id} href={`#/${s.views[0].id}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
             <span className="tab-icon" aria-hidden>
-              {t.icon}
+              {s.icon}
             </span>
-            <span className="tab-label">{t.label}</span>
+            <span className="tab-label">{s.label}</span>
           </a>
         ))}
       </nav>
+      {section && section.views.length > 1 && (
+        <nav className="subtabs" aria-label={`Viste di ${section.label}`}>
+          {section.views.map((v) => (
+            <a key={v.id} href={`#/${v.id}`} className={tab === v.id ? 'active' : ''} aria-current={tab === v.id ? 'page' : undefined}>
+              {v.label}
+            </a>
+          ))}
+        </nav>
+      )}
       {cloud.status === 'conflitto' && (
         <div className="note-warn banner conflict" role="alert">
           <span>
@@ -142,7 +170,7 @@ function Shell() {
         {tab === 'hytte' && <HytteView />}
         {tab === 'budget' && <BudgetView />}
         {tab === 'scenari' && <ScenariosView />}
-        {tab === 'viaggio' && <SettingsView />}
+        {tab === 'impostazioni' && <SettingsView />}
       </main>
       <div className="toasts" aria-live="polite">
         {toasts.map((t) => (

@@ -177,3 +177,13 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - Modello: `flights?: Flight[]` nel viaggio e `homeAirports?` nelle impostazioni, entrambi facoltativi (compatibili con dati e backup esistenti).
 - Verifiche: 94/94 test, typecheck e build ok, lint con i 2 errori preesistenti; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi.
 - **Configuratore, regioni degli aeroporti** (stesso branch): prima erano sempre comprese e la casella era bloccata; ora sono preselezionate ma si possono togliere dall'elenco o dalla mappa. Tolta la regione, si atterra o si riparte comunque da quell'aeroporto ma il viaggio non la esplora (es. arrivo a Oslo: nessuna notte in Østlandet, tappa intermedia a Lillehammer verso i fiordi). Senza esclusioni il risultato è identico a prima (`excludedAirportRegions` facoltativo).
+
+## 03/11/2026 — menù a 6 voci e inserimento nel percorso
+
+- **Menù**: Il viaggio, Percorso (Tappe e mappa, Fatti proporre un percorso, Mete, Versioni), Trasporti (Voli, Crociere), Alloggi, Giorno per giorno, Budget; ⚙️ per le impostazioni. Gli indirizzi delle viste restano validi, anche `#/viaggio` e `#/costiera`. Date e partecipanti stanno in «Il viaggio»; cambio e carburante in Impostazioni (`src/ui/RatesPanel.tsx`).
+- **Inserimento nel percorso** (`src/domain/placement.ts`, `src/ui/PlacementDialog.tsx`): crociere, voli e mete si aggiungono con «Aggiungi al percorso». Crociera: giorno, notti a bordo, cosa fare se i giorni sono occupati (sostituisci, allunga, accorcia) e dove resta l'auto; crea porti e notti a bordo. Volo: chiede se date e aeroporti non coincidono; quello interno sostituisce un tratto. Sempre con anteprima prima/dopo e «Annulla» (disponibile solo per 8 secondi nell'avviso).
+- **Da collocare**: in «Tappe e mappa» il riquadro «Scelti ma non ancora nel percorso» elenca crociere e voli inclusi nel budget ma fuori dal percorso.
+- **Versioni**: ogni versione ha i suoi voli (`PlanSnapshot.flights`); i piani salvati prima tengono quelli attuali. Alloggi e opzioni di crociera restano condivisi. Il configuratore non deseleziona più le crociere scelte.
+- **Limiti**: la durata in nave con notti a bordo non conta come trasferimento della giornata (0 minuti, spiegato nella nota); le coordinate dei porti sono approssimative; il volo interno non include i trasferimenti da e per gli aeroporti.
+- **Non snellito**: «Tappe e mappa» resta densa (schede di tappe e tratti) e restano molti testi di spiegazione in Giorno per giorno, Versioni e Alloggi.
+- Verifiche: test, typecheck e build ok, lint con i 2 errori preesistenti; browser a 1360 e 390 px con dati sintetici in localhost, poi rimossi.

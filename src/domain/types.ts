@@ -80,6 +80,8 @@ export interface Stop {
   accommodationId?: ID;
   notes: string;
   weatherPlanB: string;
+  /** Crociera per cui la tappa è stata creata (porti e notti a bordo): si toglie insieme a lei */
+  placedFrom?: ID;
 }
 
 export type TransportMode = 'strada' | 'traghetto' | 'costiera' | 'treno' | 'bus' | 'aereo' | 'non_calcolato';
@@ -98,6 +100,8 @@ export interface Segment {
   source?: SourceRef;
   status: DataStatus;
   coastalOptionId?: ID;
+  /** Volo interno della sezione Voli che copre questo tratto: il costo è conteggiato lì */
+  flightId?: ID;
   /** [lat, lng] */
   geometry?: [number, number][];
   note?: string;
@@ -214,6 +218,8 @@ export interface Flight {
   selected: boolean;
   source?: SourceRef;
   notes: string;
+  /** Differenze con il percorso che l'utente ha deciso di lasciare così: non vengono richieste */
+  keptIssues?: string[];
 }
 
 // ---------- Budget ----------
@@ -317,7 +323,7 @@ export interface BudgetEstimates {
 
 export type ScenarioKind = 'auto_hytte' | 'auto_traghetti_costiera' | 'misto_treni' | 'altro';
 
-/** Parte del viaggio che cambia da uno scenario all'altro. Hytte, opzioni costiere e catalogo sono condivisi. */
+/** Parte del viaggio che cambia da una versione all'altra. Alloggi, opzioni costiere e catalogo sono condivisi. */
 export interface PlanSnapshot {
   startDate: string;
   stops: Stop[];
@@ -326,6 +332,8 @@ export interface PlanSnapshot {
   budgetItems: BudgetItem[];
   /** Opzioni costiere incluse nel budget in questo scenario */
   coastalSelected: ID[];
+  /** Voli di questa versione; assente nei piani salvati prima: restano quelli attuali */
+  flights?: Flight[];
 }
 
 export interface Scenario {

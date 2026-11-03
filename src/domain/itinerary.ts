@@ -26,7 +26,7 @@ export function syncLegs(stops: Stop[], legs: Leg[]): Leg[] {
   return out;
 }
 
-/** Ipotesi di pianificazione usate per le stime realistiche (modificabili in Salvataggio → Viaggio). */
+/** Ipotesi di pianificazione usate per le stime realistiche (modificabili in Impostazioni). */
 export const DEFAULT_ASSUMPTIONS = {
   breakEveryMin: 120,
   breakMin: 20,

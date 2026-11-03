@@ -478,7 +478,6 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
             </select>
           )}
         </Field>
-        <Field label="Località">{(id) => <input id={id} value={a.locality} onChange={(e) => set({ locality: e.target.value })} />}</Field>
         <Field label="Tappa">
           {(id) => (
             <select id={id} value={a.stopId ?? ''} onChange={(e) => set({ stopId: e.target.value || undefined })}>
@@ -493,8 +492,6 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
             </select>
           )}
         </Field>
-        <Field label="Latitudine">{(id) => <NumberInput id={id} value={a.lat} onChange={(v) => set({ lat: v })} />}</Field>
-        <Field label="Longitudine">{(id) => <NumberInput id={id} value={a.lng} onChange={(v) => set({ lng: v })} />}</Field>
         <Field label="Link prenotazione / ufficiale">{(id) => <input id={id} type="url" value={a.url ?? ''} onChange={(e) => set({ url: e.target.value || undefined })} />}</Field>
         <Field label="Stato">
           {(id) => (
@@ -509,9 +506,16 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
         </Field>
         <Field label="Prezzo per notte">{(id) => <MoneyInput id={id} value={a.pricePerNight} onChange={(m) => set({ pricePerNight: m })} />}</Field>
         <Field label="Stato prezzo">{(id) => <StatusSelect id={id} value={a.priceStatus} onChange={(v) => set({ priceStatus: v })} />}</Field>
+        <Field label="Posti letto">{(id) => <NumberInput id={id} value={a.capacity} min={0} onChange={(v) => set({ capacity: v })} />}</Field>
+      </div>
+      <details className="more-fields">
+        <summary>Altri dettagli</summary>
+        <div className="grid-4">
+        <Field label="Località">{(id) => <input id={id} value={a.locality} onChange={(e) => set({ locality: e.target.value })} />}</Field>
+        <Field label="Latitudine">{(id) => <NumberInput id={id} value={a.lat} onChange={(v) => set({ lat: v })} />}</Field>
+        <Field label="Longitudine">{(id) => <NumberInput id={id} value={a.lng} onChange={(v) => set({ lng: v })} />}</Field>
         <Field label="Pulizia finale">{(id) => <MoneyInput id={id} value={a.cleaningFee} onChange={(m) => set({ cleaningFee: m })} />}</Field>
         <Field label="Biancheria">{(id) => <MoneyInput id={id} value={a.linenFee} onChange={(m) => set({ linenFee: m })} />}</Field>
-        <Field label="Posti letto">{(id) => <NumberInput id={id} value={a.capacity} min={0} onChange={(v) => set({ capacity: v })} />}</Field>
         <Field label="Configurazione letti">{(id) => <input id={id} value={a.beds} placeholder="es. 1 matrimoniale + letto a castello" onChange={(e) => set({ beds: e.target.value })} />}</Field>
         <Field label="Bagno">
           {(id) => (
@@ -524,11 +528,12 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
         </Field>
         <Field label="Cucina">{(id) => yn(a.kitchen, (x) => set({ kitchen: x }), id)}</Field>
         <Field label="Parcheggio">{(id) => yn(a.parking, (x) => set({ parking: x }), id)}</Field>
-      </div>
-      <div className="grid-2">
+        </div>
+<div className="grid-2">
         <Field label="Politica di cancellazione">{(id) => <textarea id={id} rows={2} value={a.cancellation} onChange={(e) => set({ cancellation: e.target.value })} />}</Field>
         <Field label="Note (distanze, servizi)">{(id) => <textarea id={id} rows={2} value={a.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
       </div>
+      </details>
       {a.capacity !== undefined && a.capacity < trip.participants.adults + trip.participants.childrenAges.length && (
         <p className="note-warn small">⚠️ Posti letto insufficienti per la famiglia.</p>
       )}

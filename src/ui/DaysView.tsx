@@ -26,7 +26,7 @@ export function DaysView() {
   const orphans = useMemo(() => orphanDayKeys(trip), [trip]);
   const a = assumptions(trip.settings);
 
-  if (days.length === 0) return <Empty title="Nessuna giornata">Aggiungi le tappe nella sezione Itinerario: le giornate si generano dalle notti.</Empty>;
+  if (days.length === 0) return <Empty title="Nessuna giornata">Aggiungi le tappe in Percorso: le giornate si generano dalle notti.</Empty>;
 
   const apply = (sg: Suggestion) => {
     if (!sg.action) return;
@@ -41,13 +41,13 @@ export function DaysView() {
   return (
     <div className="days">
       {trip.dateTentative && (
-        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in Salvataggio → Viaggio.</p>
+        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in «Il viaggio».</p>
       )}
       <section className="panel">
         <h2>Ritmo del viaggio</h2>
         <p className="muted small">
           Carico = trasferimenti realistici + visite + pause pasto ({formatDuration(a.mealBreaksMin)}) + margine imprevisti ({a.marginPct}%), su{' '}
-          {formatDuration(a.activeDayMin)} di tempo attivo al giorno. Sono ipotesi modificabili in Salvataggio → Viaggio.
+          {formatDuration(a.activeDayMin)} di tempo attivo al giorno. Sono ipotesi modificabili in Impostazioni.
         </p>
         <div className="load-strip" role="list" aria-label="Carico giornaliero">
           {loads.map((l) => (

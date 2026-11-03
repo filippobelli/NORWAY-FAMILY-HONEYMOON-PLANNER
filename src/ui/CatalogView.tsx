@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS } from '../data/destinations';
 import { WIKI } from '../data/wiki';
-import type { Category, Destination, Region } from '../domain/types';
+import type { Category, Destination, Region, Stop } from '../domain/types';
 import { commonsImageUrl, fetchImageCredit, fetchWikiIntro, type ImageCredit, type WikiIntro } from '../services/wiki';
 import { useTrip } from '../state/store';
 import { Badge } from './common';
 import { stopFromDestination } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
+import { StopDialog } from './PlacementDialog';
 
 const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
 
 export function CatalogView() {
-  const { trip, update, toast } = useTrip();
+  const { trip, update } = useTrip();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState<Category | ''>('');
   const [region, setRegion] = useState<Region | ''>('');
@@ -33,9 +34,11 @@ export function CatalogView() {
   }, [q, cat, region, kids, onlyFav, trip.favorites]);
 
   const inTrip = new Set(trip.stops.map((s) => s.destinationId));
+  const [placing, setPlacing] = useState<Stop | null>(null);
 
   return (
     <div className="catalog">
+      {placing && <StopDialog stop={placing} onClose={() => setPlacing(null)} />}
       <div className="note-info">
         {DESTINATIONS.length} destinazioni. Coordinate verificate su OpenStreetMap per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length}{' '}
         schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>
@@ -79,10 +82,7 @@ export function CatalogView() {
             }
             onAdd={() => {
               const st = stopFromDestination(d.id);
-              if (st) {
-                update((t) => ({ ...t, stops: [...t.stops, st] }));
-                toast(`${d.name} aggiunta all'itinerario`);
-              }
+              if (st) setPlacing(st);
             }}
           />
         ))}
@@ -274,7 +274,7 @@ function DestinationCard({
               title={d.id === 'aurora' ? 'Non realistica ad agosto' : undefined}
               onClick={onAdd}
             >
-              {inTrip ? 'Aggiungi di nuovo' : "Aggiungi all'itinerario"}
+              {inTrip ? 'Aggiungi di nuovo' : 'Aggiungi al percorso'}
             </button>
           </footer>
         </div>
