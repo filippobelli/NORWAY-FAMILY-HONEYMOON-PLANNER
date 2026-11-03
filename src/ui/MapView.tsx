@@ -41,7 +41,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
-        const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true }).setView([65, 15], 4);
+        const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true, zoomAnimation: false }).setView([65, 15], 4);
         L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
         const layer = L.layerGroup().addTo(map);
         mapRef.current = { L, map, layer };
@@ -75,9 +75,9 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
         if (usedDest.has(d.id)) continue;
         const marker = L.circleMarker([d.lat, d.lng], {
           radius: 5,
-          color: '#475569',
+          color: '#5C6B70',
           weight: 1,
-          fillColor: '#cbd5e1',
+          fillColor: '#DCE3E1',
           fillOpacity: 0.9,
         });
         const box = document.createElement('div');

@@ -49,7 +49,7 @@ export function ConflictDialog({ conflict, onClose }: { conflict: CloudConflict;
         >
           Applica le scelte
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Decido dopo
         </button>
       </div>
@@ -99,7 +99,7 @@ export function LogoutDialog({ onClose }: { onClose: () => void }) {
         >
           Esci
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>

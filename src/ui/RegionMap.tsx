@@ -1,3 +1,4 @@
+import { iconSvg } from './icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { COUNTIES, REGION_COUNTIES } from '../data/regionShapes';
@@ -9,13 +10,13 @@ export const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', '
 
 /** Un colore per regione, distinguibile anche sopra la mappa topografica */
 export const REGION_COLOR: Record<Region, string> = {
-  'Oslo e Østlandet': '#2563eb',
-  'Innlandet e montagne': '#16a34a',
-  'Fiordi occidentali': '#0891b2',
-  'Sørlandet e Rogaland': '#ea580c',
-  Trøndelag: '#9333ea',
-  'Nordland e Lofoten': '#dc2626',
-  'Troms e Finnmark': '#ca8a04',
+  'Oslo e Østlandet': '#1F5F7A',
+  'Innlandet e montagne': '#315B4A',
+  'Fiordi occidentali': '#1E7F78',
+  'Sørlandet e Rogaland': '#B86D26',
+  Trøndelag: '#5A4A8C',
+  'Nordland e Lofoten': '#A84236',
+  'Troms e Finnmark': '#7D6A12',
 };
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
@@ -55,7 +56,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
-        const map = L.map(el.current, { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25 }).setView([65, 15], 4);
+        const map = L.map(el.current, { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25, zoomAnimation: false }).setView([65, 15], 4);
         L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
         const shapes = new Map<Region, LPath[]>();
         for (const r of REGIONS) {
@@ -119,7 +120,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         radius: active ? 5 : 3,
         color: '#ffffff',
         weight: 1.5,
-        fillColor: active ? REGION_COLOR[d.region] : '#64748b',
+        fillColor: active ? REGION_COLOR[d.region] : '#5C6B70',
         fillOpacity: 1,
       });
       mk.bindTooltip(esc(d.name), { permanent: active, direction: 'right', offset: [6, 0], className: 'region-label' });
@@ -129,7 +130,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
       const a = findDestination(id);
       if (!a) continue;
       m.L.marker([a.lat, a.lng], {
-        icon: m.L.divIcon({ className: 'airport-pin', html: '✈', iconSize: [22, 22] }),
+        icon: m.L.divIcon({ className: 'airport-pin', html: iconSvg('plane'), iconSize: [22, 22] }),
         title: a.name,
       })
         .bindTooltip(esc(a.name), { direction: 'left' })

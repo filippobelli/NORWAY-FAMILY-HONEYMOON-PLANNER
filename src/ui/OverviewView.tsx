@@ -5,8 +5,9 @@ import { tripOverview, type NextAction, type StepState } from '../domain/overvie
 import type { AccommodationStatus } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
+import { Icon, type IconName } from './icons';
 
-const STEP_ICON: Record<StepState, string> = { fatto: '✓', in_corso: '◐', da_fare: '○' };
+const STEP_ICON: Record<StepState, IconName> = { fatto: 'check', in_corso: 'progress', da_fare: 'circle' };
 const STEP_TEXT: Record<StepState, string> = { fatto: 'Fatto', in_corso: 'In corso', da_fare: 'Da fare' };
 const PRIORITY_TEXT: Record<NextAction['priority'], string> = { alta: 'Priorità alta', media: 'Da sistemare', bassa: 'Rifinitura' };
 const ACC_TEXT: Record<AccommodationStatus, string> = {
@@ -160,7 +161,7 @@ export function OverviewView() {
             <li key={s.id} className={`ov-step step-${s.state}`}>
               <a href={s.href}>
                 <span className="ov-step-icon" aria-hidden>
-                  {STEP_ICON[s.state]}
+                  <Icon name={STEP_ICON[s.state]} />
                 </span>
                 <span className="ov-step-body">
                   <strong>

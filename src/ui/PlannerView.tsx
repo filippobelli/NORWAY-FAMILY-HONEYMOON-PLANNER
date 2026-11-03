@@ -10,7 +10,8 @@ import { formatSelection, parseSelection, selectionCosts, selectionExists, selec
 import type { Accommodation, BudgetCategory, BudgetItem, DataStatus, Money, Stop } from '../domain/types';
 import { buildHash, parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
-import { Empty, Field, MoneyInput, MODE_ICON, StatusBadge, StatusSelect } from './common';
+import { Empty, Field, MoneyInput, ModeIcon, StatusBadge, StatusSelect } from './common';
+import { Icon } from './icons';
 import { DayCard } from './DaysView';
 import { AccommodationForm, blankAccommodation } from './HytteView';
 import { LegCard, StopCard, StopPicker, useLegRouting } from './ItineraryView';
@@ -168,7 +169,7 @@ function Outline({
               return (
                 <li key={s.id}>
                   <button className={`ol-item ol-stop ${is('stop', s.id) ? 'active' : ''}`} aria-current={is('stop', s.id) ? 'true' : undefined} onClick={() => onSelect({ kind: 'stop', id: s.id })}>
-                    <span className="ol-num">{s.kind === 'a_bordo' ? '🚢' : i + 1}</span>
+                    <span className="ol-num">{s.kind === 'a_bordo' ? <Icon name="ship" label="Notti a bordo" /> : i + 1}</span>
                     <span className="ol-name">{s.name}</span>
                     <span className="small muted">
                       {s.nights === 0 ? 'di passaggio' : `${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}`}
@@ -192,7 +193,7 @@ function Outline({
                   )}
                   {leg && i < trip.stops.length - 1 && (
                     <button className={`ol-item ol-leg ${is('leg', leg.id) ? 'active' : ''}`} aria-current={is('leg', leg.id) ? 'true' : undefined} onClick={() => onSelect({ kind: 'leg', id: leg.id })}>
-                      {leg.segments.map((x) => MODE_ICON[x.mode]).join(' ')} {totals?.hasUncalculated ? 'Tratto non calcolato' : totals?.partial ? 'Durata da inserire' : formatDuration(totals?.realisticMin ?? 0)}
+                      {leg.segments.map((x) => <ModeIcon key={x.id} mode={x.mode} />)} {totals?.hasUncalculated ? 'Tratto non calcolato' : totals?.partial ? 'Durata da inserire' : formatDuration(totals?.realisticMin ?? 0)}
                     </button>
                   )}
                 </li>

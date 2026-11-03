@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from 'react';
 import { STATUS_LABEL } from '../domain/budget';
 import type { Currency, DataStatus, Money, TransportMode } from '../domain/types';
+import { Icon, type IconName } from './icons';
 
 export const MODE_LABEL: Record<TransportMode, string> = {
   strada: 'Strada',
@@ -12,24 +13,29 @@ export const MODE_LABEL: Record<TransportMode, string> = {
   non_calcolato: 'Non calcolato',
 };
 
-export const MODE_ICON: Record<TransportMode, string> = {
-  strada: '🚗',
-  traghetto: '⛴️',
-  costiera: '🚢',
-  treno: '🚆',
-  bus: '🚌',
-  aereo: '✈️',
-  non_calcolato: '❔',
+const MODE_ICON: Record<TransportMode, IconName> = {
+  strada: 'car',
+  traghetto: 'ferry',
+  costiera: 'ship',
+  treno: 'train',
+  bus: 'bus',
+  aereo: 'plane',
+  non_calcolato: 'question',
 };
 
+export function ModeIcon({ mode }: { mode: TransportMode }) {
+  return <Icon name={MODE_ICON[mode]} label={MODE_LABEL[mode]} />;
+}
+
+// Stessi valori di --m-* in styles.css: Leaflet ha bisogno del colore esplicito
 export const MODE_COLOR: Record<TransportMode, string> = {
-  strada: '#2563eb',
-  traghetto: '#0d9488',
-  costiera: '#7c3aed',
-  treno: '#b45309',
-  bus: '#ca8a04',
-  aereo: '#64748b',
-  non_calcolato: '#94a3b8',
+  strada: '#1F5F7A',
+  traghetto: '#1E7F78',
+  costiera: '#5A4A8C',
+  treno: '#A3541C',
+  bus: '#7D6A12',
+  aereo: '#5C6B70',
+  non_calcolato: '#8A979B',
 };
 
 export function StatusBadge({ status }: { status: DataStatus }) {

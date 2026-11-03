@@ -10,18 +10,19 @@ import { deleteBlob, getBlob, putBlob } from '../services/storage/blobs';
 import { useAppMode } from '../state/mode';
 import type { ViewId } from '../state/route';
 import { useTrip } from '../state/store';
-import { Badge, Empty, Field, fmtDateTime, MODE_ICON } from './common';
+import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
+import { Icon, type IconName } from './icons';
 import { MapView } from './MapView';
 import { PlanBDialog } from './PlanBDialog';
 
 // Travel Mode: stesso viaggio e stessi dati del Planning Mode, pensato per il telefono.
 
-const BAR: { id: ViewId; label: string; icon: string }[] = [
-  { id: 't/oggi', label: 'Oggi', icon: '☀️' },
-  { id: 't/itinerario', label: 'Itinerario', icon: '📋' },
-  { id: 't/mappa', label: 'Mappa', icon: '🗺️' },
-  { id: 't/diario', label: 'Diario', icon: '📔' },
-  { id: 't/altro', label: 'Altro', icon: '☰' },
+const BAR: { id: ViewId; label: string; icon: IconName }[] = [
+  { id: 't/oggi', label: 'Oggi', icon: 'sun' },
+  { id: 't/itinerario', label: 'Itinerario', icon: 'list' },
+  { id: 't/mappa', label: 'Mappa', icon: 'map' },
+  { id: 't/diario', label: 'Diario', icon: 'book' },
+  { id: 't/altro', label: 'Altro', icon: 'menu' },
 ];
 
 const localToday = () => {
@@ -42,7 +43,7 @@ export function TravelShell({ tab, status, children }: { tab: ViewId; status: Re
       <nav className="travel-bar" aria-label="Modalità viaggio">
         {BAR.map((b) => (
           <a key={b.id} href={`#/${b.id}`} className={active === b.id ? 'active' : ''} aria-current={active === b.id ? 'page' : undefined}>
-            <span aria-hidden>{b.icon}</span>
+            <Icon name={b.icon} />
             {b.label}
           </a>
         ))}
@@ -51,7 +52,18 @@ export function TravelShell({ tab, status, children }: { tab: ViewId; status: Re
   );
 }
 
-const BOOKING_ICON: Record<BookingInfo['kind'], string> = { volo: '✈️', crociera: '🚢', alloggio: '🛏', trasporto: '⛴' };
+const STATE_ICON: Record<string, IconName> = { pianificata: 'circle', da_fare: 'circle', in_corso: 'progress', visitata: 'check', fatta: 'check', saltata: 'skip' };
+const STATE_TEXT: Record<string, string> = { pianificata: 'Pianificata', da_fare: 'Da fare', in_corso: 'In corso', visitata: 'Visitata', fatta: 'Fatta', saltata: 'Saltata' };
+
+function StateChip({ state }: { state: string }) {
+  return (
+    <span className={`state-chip state-${state}`}>
+      <Icon name={STATE_ICON[state] ?? 'circle'} /> {STATE_TEXT[state] ?? state}
+    </span>
+  );
+}
+
+const BOOKING_ICON: Record<BookingInfo['kind'], IconName> = { volo: 'plane', crociera: 'ship', alloggio: 'bed', trasporto: 'ferry' };
 const ACC_LABEL: Record<string, string> = { individuata: 'Individuata', disponibile: 'Disponibile', opzionata: 'Opzionata', prenotata: 'Prenotata' };
 const bookingLabel = (s: BookingInfo['status']) => ACC_LABEL[s] ?? STATUS_LABEL[s as keyof typeof STATUS_LABEL];
 
@@ -94,7 +106,16 @@ export function TodayScreen() {
       </div>
       {note && <p className="note-info small">{note}</p>}
 
-      <section className="t-card t-next" aria-label="Prossima cosa da fare">
+      <div className="t-card t-today">
+      {v.place && (
+        <section className="t-today-row" aria-label="Tappa corrente">
+          <h2>Tappa</h2>
+          <p className="t-today-place">
+            {v.place.name} <StateChip state={stopState(trip, v.place.id)} />
+          </p>
+        </section>
+      )}
+      <section className="t-today-row" aria-label="Prossima cosa da fare">
         <h2>Prossimo</h2>
         {v.next ? (
           <>
@@ -127,17 +148,17 @@ export function TodayScreen() {
         )}
         <div className="t-actions t-note-btn">
           <button className="btn" aria-expanded={noting} onClick={() => setNoting((x) => !x)}>
-            📝 Annota
+            <Icon name="note" /> Annota
           </button>
           <button className="btn" onClick={() => setPlanB(true)}>
-            ☔ Piano B
+            <Icon name="umbrella" /> Piano B
           </button>
         </div>
         {planB && <PlanBDialog onClose={() => setPlanB(false)} />}
         {noting && <DiaryComposer dayDate={v.day.date} stop={v.place ? { id: v.place.id, name: v.place.name } : undefined} onDone={() => setNoting(false)} />}
       </section>
 
-      <section className="t-card" aria-label="Trasferimento">
+      <section className="t-today-row" aria-label="Trasferimento">
         <h2>Trasferimento</h2>
         {v.transfers.length === 0 ? (
           <p className="muted small">Nessun trasferimento previsto.</p>
@@ -146,7 +167,7 @@ export function TodayScreen() {
             {v.transfers.map((t) => (
               <li key={t.leg.id}>
                 <span>
-                  {t.leg.segments.map((s) => MODE_ICON[s.mode]).join(' ')} {t.from} → {t.to}
+                  {t.leg.segments.map((s) => <ModeIcon key={s.id} mode={s.mode} />)} {t.from} → {t.to}
                 </span>
                 <span className="small muted">{t.uncalculated ? 'Non calcolato: tempi non disponibili' : t.partial ? 'Durata incompleta' : `Circa ${formatDuration(t.realisticMin)} con soste (teorico ${formatDuration(t.theoreticalMin)})`}</span>
               </li>
@@ -155,11 +176,11 @@ export function TodayScreen() {
         )}
       </section>
 
-      <section className="t-card" aria-label="Pernottamento">
+      <section className="t-today-row" aria-label="Pernottamento">
         <h2>Pernottamento</h2>
         {v.sleep ? (
           <p>
-            {v.sleep.kind === 'a_bordo' ? '🚢 ' : '🛏 '}
+            <Icon name={v.sleep.kind === 'a_bordo' ? 'ship' : 'bed'} />{' '}
             {v.sleep.name}
             {v.accommodation ? ` · ${v.accommodation.name}` : v.sleep.kind === 'luogo' ? ' · alloggio da scegliere' : ''}
           </p>
@@ -167,6 +188,7 @@ export function TodayScreen() {
           <p className="muted small">Ultimo giorno: nessun pernottamento.</p>
         )}
       </section>
+      </div>
 
       {v.activities.length > 0 && (
         <section className="t-card" aria-label="Attività">
@@ -175,7 +197,7 @@ export function TodayScreen() {
             {v.activities.map(({ activity: a, state }) => (
               <li key={a.id} className={`t-row is-${state}`}>
                 <span>
-                  {a.title || 'Attività'} <span className="small muted">· {state === 'da_fare' ? 'da fare' : state}</span>
+                  {a.title || 'Attività'} <StateChip state={state} />
                 </span>
                 <span className="t-actions">
                   {state !== 'da_fare' ? (
@@ -208,7 +230,7 @@ export function TodayScreen() {
             {v.bookings.map((b, i) => (
               <li key={i}>
                 <span>
-                  {BOOKING_ICON[b.kind]} {b.text}
+                  <Icon name={BOOKING_ICON[b.kind]} /> {b.text}
                 </span>
                 <Badge tone={b.status === 'prenotato' || b.status === 'pagato' || b.status === 'prenotata' ? 'ok' : 'neutral'}>{bookingLabel(b.status)}</Badge>
               </li>
@@ -223,7 +245,7 @@ export function TodayScreen() {
           {v.notes && <p className="small">{v.notes}</p>}
           {v.planB.map((p) => (
             <p key={p} className="small">
-              ☔ {p}
+              <Icon name="umbrella" /> {p}
             </p>
           ))}
         </section>
@@ -250,12 +272,13 @@ export function TravelItinerary() {
           <li key={s.id} className={`t-card t-stop is-${st}`}>
             <div>
               <strong>
-                {i + 1}. {s.kind === 'a_bordo' ? '🚢 ' : ''}
+                {i + 1}. {s.kind === 'a_bordo' && <Icon name="ship" />}{' '}
                 {s.name}
               </strong>
               <p className="small muted">
-                {d ? `${formatDateIt(d.date)} → ${formatDateIt(addDays(d.date, s.nights))} · ${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}` : 'Di passaggio, senza notti'} · {STOP_STATE_LABEL[st]}
+                {d ? `${formatDateIt(d.date)} → ${formatDateIt(addDays(d.date, s.nights))} · ${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}` : 'Di passaggio, senza notti'}
               </p>
+              <StateChip state={st} />
             </div>
             <div className="t-actions">
               {st !== 'visitata' && (
@@ -318,7 +341,7 @@ export function TravelMap() {
       <MapView trip={{ ...trip, settings: { ...trip.settings, showCatalogOnMap: false } }} height={320} selectedStopId={selected} onSelectStop={setSelected} />
       <div className="t-actions">
         <button className="btn" disabled={busy} onClick={locate}>
-          {busy ? 'Cerco la posizione…' : '📍 Trova la tappa più vicina'}
+          <Icon name="pin" /> {busy ? 'Cerco la posizione…' : 'Trova la tappa più vicina'}
         </button>
       </div>
       {near && <p className="small" role="status">{near}</p>}
@@ -445,7 +468,7 @@ function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
   if (a.state === 'errore') {
     return (
       <li className="small">
-        📎 {a.name}: <span className="warn-text">non salvato</span>{' '}
+        <Icon name="clip" /> {a.name}: <span className="warn-text">non salvato</span>{' '}
         {failedFiles.has(a.id) ? (
           <button className="btn btn-small" onClick={() => void retry()}>
             Riprova
@@ -459,7 +482,7 @@ function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
   return (
     <li className="small">
       {url && a.type.startsWith('image/') && <img className="diary-img" src={url} alt={a.name} />}
-      📎 {url ? <a href={url} download={a.name}>{a.name}</a> : a.name}
+      <Icon name="clip" /> {url ? <a href={url} download={a.name}>{a.name}</a> : a.name}
       <span className="muted"> · {missing ? 'file non presente su questo dispositivo' : 'solo su questo dispositivo'}</span>
     </li>
   );
@@ -568,16 +591,16 @@ export function DiaryScreen() {
   );
 }
 
-const MORE_LINKS: [string, string][] = [
-  ['#/panoramica', '🏔️ Il viaggio'],
-  ['#/itinerario', '🗺️ Tappe e mappa'],
-  ['#/giornate', '📅 Giorno per giorno'],
-  ['#/voli', '✈️ Voli'],
-  ['#/crociere', '🚢 Crociere'],
-  ['#/hytte', '🛖 Alloggi'],
-  ['#/budget', '💶 Budget'],
-  ['#/scenari', '⚖️ Versioni e piano B'],
-  ['#/impostazioni', '⚙️ Impostazioni, salvataggio e backup'],
+const MORE_LINKS: [string, IconName, string][] = [
+  ['#/panoramica', 'mountain', 'Il viaggio'],
+  ['#/itinerario', 'route', 'Tappe e mappa'],
+  ['#/giornate', 'calendar', 'Giorno per giorno'],
+  ['#/voli', 'plane', 'Voli'],
+  ['#/crociere', 'ship', 'Crociere'],
+  ['#/hytte', 'bed', 'Alloggi'],
+  ['#/budget', 'wallet', 'Budget'],
+  ['#/scenari', 'scale', 'Versioni e piano B'],
+  ['#/impostazioni', 'gear', 'Impostazioni, salvataggio e backup'],
 ];
 
 export function MoreScreen() {
@@ -586,9 +609,11 @@ export function MoreScreen() {
     <div className="more">
       <h1>Altro</h1>
       <ul className="more-links">
-        {MORE_LINKS.map(([href, label]) => (
+        {MORE_LINKS.map(([href, icon, label]) => (
           <li key={href}>
-            <a href={href}>{label}</a>
+            <a href={href}>
+              <Icon name={icon} /> {label}
+            </a>
           </li>
         ))}
       </ul>

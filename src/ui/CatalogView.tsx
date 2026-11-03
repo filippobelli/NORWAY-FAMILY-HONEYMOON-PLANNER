@@ -5,6 +5,7 @@ import type { Category, Destination, Region, Stop } from '../domain/types';
 import { commonsImageUrl, fetchImageCredit, fetchWikiIntro, type ImageCredit, type WikiIntro } from '../services/wiki';
 import { useTrip } from '../state/store';
 import { Badge } from './common';
+import { Icon, type IconName } from './icons';
 import { stopFromDestination } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
 import { StopDialog } from './PlacementDialog';
@@ -91,18 +92,18 @@ export function CatalogView() {
   );
 }
 
-const CATEGORY_ICON: Record<Category, string> = {
-  citta: '🏘️',
-  fiordi: '🌊',
-  natura: '🏔️',
-  strade: '🛣️',
-  isole: '🏝️',
-  treni: '🚆',
-  fauna: '🐋',
-  musei: '🏛️',
-  parchi: '🎡',
-  stagionali: '✨',
-  aeroporti: '✈️',
+const CATEGORY_ICON: Record<Category, IconName> = {
+  citta: 'building',
+  fiordi: 'ship',
+  natura: 'mountain',
+  strade: 'route',
+  isole: 'map',
+  treni: 'train',
+  fauna: 'pin',
+  musei: 'building',
+  parchi: 'star',
+  stagionali: 'sparkle',
+  aeroporti: 'plane',
 };
 
 function DestinationCard({
@@ -157,7 +158,7 @@ function DestinationCard({
       <img src={commonsImageUrl(wiki.image, open ? 960 : 500)} alt={`Foto: ${d.name}`} loading="lazy" decoding="async" onError={() => setImgOk(false)} />
     ) : (
       <div className={`photo-placeholder cat-${d.category}`} aria-hidden>
-        <span>{CATEGORY_ICON[d.category]}</span>
+        <Icon name={CATEGORY_ICON[d.category]} />
       </div>
     );
 
@@ -182,7 +183,7 @@ function DestinationCard({
         aria-label={fav ? `Togli ${d.name} dai preferiti` : `Aggiungi ${d.name} ai preferiti`}
         onClick={onFav}
       >
-        {fav ? '★' : '☆'}
+        <Icon name="star" filled={fav} />
       </button>
       {wiki?.image && imgOk && !open && <span className="photo-credit-mini">Foto Wikimedia Commons</span>}
 
@@ -219,7 +220,7 @@ function DestinationCard({
               <OfficialLink id={d.id} />
             </p>
           )}
-          {d.augustNote && <p className="note-warn small">⚠️ {d.augustNote}</p>}
+          {d.augustNote && <p className="note-warn small"><Icon name="warning" /> {d.augustNote}</p>}
 
           <section className="wiki-text" aria-live="polite">
             {!wiki && <p className="muted small">Nessuna voce enciclopedica collegata a questa scheda.</p>}

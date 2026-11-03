@@ -23,7 +23,8 @@ import { isAutoSegment, mergeRouted } from '../domain/routeMerge';
 import type { Leg, Segment, Stop, TransportMode, Trip } from '../domain/types';
 import { getRoutingProvider, RoutingError } from '../services/routing';
 import { useTrip } from '../state/store';
-import { Badge, Empty, Field, fmtDateTime, MODE_ICON, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Badge, Empty, Field, fmtDateTime, ModeIcon, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Icon } from './icons';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 import { MapView } from './MapView';
 import { PendingPanel } from './PlacementDialog';
@@ -355,7 +356,7 @@ export function StopCard({
         <div className="stop-title">
           <strong>
             {stop.name}
-            {selected && <span className="sel-tag">◉ sulla mappa</span>}
+            {selected && <span className="sel-tag"><Icon name="pin" /> sulla mappa</span>}
           </strong>
           <span className="muted small">
             {dest ? dest.region : stop.kind === 'a_bordo' ? 'Pernottamento in nave' : 'Luogo personalizzato'}
@@ -371,10 +372,10 @@ export function StopCard({
             {stop.kind === 'luogo' && stop.nights > 0 &&
               (acc ? (
                 <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>
-                  🛏 {acc.name} · {ACC_STATUS_LABEL[acc.status]}
+                  <Icon name="bed" /> {acc.name} · {ACC_STATUS_LABEL[acc.status]}
                 </Badge>
               ) : (
-                <Badge tone="warn">🛏 Alloggio da scegliere</Badge>
+                <Badge tone="warn"><Icon name="bed" /> Alloggio da scegliere</Badge>
               ))}
           </span>
         </div>
@@ -409,7 +410,7 @@ export function StopCard({
               }
             }}
           >
-            ✕
+            <Icon name="close" />
           </button>
         </div>
       </div>
@@ -435,7 +436,7 @@ export function StopCard({
           </select>
         </div>
       )}
-      {dest?.augustNote && <p className="note-warn small">⚠️ {dest.augustNote}</p>}
+      {dest?.augustNote && <p className="note-warn small"><Icon name="warning" /> {dest.augustNote}</p>}
       <details open={expanded}>
         <summary>
           Alloggio, note e piano B{stop.notes || stop.weatherPlanB ? ' · compilati' : ''}
@@ -479,10 +480,10 @@ export function StopCard({
 }
 
 const LEG_STATE: Record<LegState, string> = {
-  da_calcolare: '❔ Da calcolare',
+  da_calcolare: 'Da calcolare',
   calcolato: '✓ Calcolato (OSRM)',
-  manuale: '✎ Inserito a mano',
-  misto: '✓ Calcolato + ✎ a mano',
+  manuale: 'Inserito a mano',
+  misto: '✓ Calcolato + a mano',
 };
 const FIRM_STATUS = ['confermato', 'prenotato', 'pagato'];
 
@@ -521,7 +522,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
             <span className={`leg-state state-${sum.state}`}>{LEG_STATE[sum.state]}</span>
           </div>
           {real.length === 0 ? (
-            <span className="muted">❔ Collegamento non calcolato: distanza e durata non disponibili</span>
+            <span className="muted"><Icon name="question" /> Collegamento non calcolato: distanza e durata non disponibili</span>
           ) : (
             <span className="leg-totals">
               {sum.roadKm > 0 && (
@@ -565,7 +566,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
             <ul className="seg-chips" aria-label="Componenti del tratto">
               {real.map((s) => (
                 <li key={s.id} className={`seg-chip seg-${s.mode}`}>
-                  <span aria-hidden>{MODE_ICON[s.mode]}</span> {s.mode === 'strada' ? MODE_LABEL.strada : s.label}
+                  <ModeIcon mode={s.mode} /> {s.mode === 'strada' ? MODE_LABEL.strada : s.label}
                   {s.distanceKm !== undefined ? ` · ${Math.round(s.distanceKm)} km` : s.mode === 'strada' ? ' · distanza da inserire' : ''}
                   {s.durationMin !== undefined ? ` · ${formatDuration(s.durationMin)}` : <em> · durata da inserire</em>}
                   {s.waitMin !== undefined && ` + attesa ${formatDuration(s.waitMin)}`}
@@ -618,7 +619,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
             <option value="">Aggiungi tratto manuale…</option>
             {(['traghetto', 'costiera', 'treno', 'bus', 'aereo', 'strada'] as const).map((m) => (
               <option key={m} value={m}>
-                {MODE_ICON[m]} {MODE_LABEL[m]}
+                {MODE_LABEL[m]}
               </option>
             ))}
           </select>
@@ -647,10 +648,10 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
     <div className="segment">
       <div className="segment-head">
         <span>
-          {MODE_ICON[seg.mode]} <strong>{seg.label}</strong> <StatusBadge status={seg.status} />
+          <ModeIcon mode={seg.mode} /> <strong>{seg.label}</strong> <StatusBadge status={seg.status} />
         </span>
         <button className="icon-btn danger" aria-label="Rimuovi tratto" onClick={onRemove}>
-          ✕
+          <Icon name="close" />
         </button>
       </div>
       {seg.note && <p className="muted small">{seg.note}</p>}

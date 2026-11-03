@@ -16,6 +16,7 @@ import { addScenarioWithPlan } from '../domain/scenarios';
 import type { Region } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
+import { Icon } from './icons';
 import { RegionPicker } from './RegionMap';
 
 const PACE_LABEL: Record<Pace, string> = { tranquillo: 'Tranquillo', equilibrato: 'Equilibrato', intenso: 'Intenso' };
@@ -298,7 +299,7 @@ export function ConfiguratorView() {
             <ul className="warnings">
               {result.warnings.map((w) => (
                 <li key={w} className="note-warn small">
-                  ⚠️ {w}
+                  <Icon name="warning" /> {w}
                 </li>
               ))}
             </ul>

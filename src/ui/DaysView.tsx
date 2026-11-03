@@ -8,7 +8,8 @@ import type { Activity, DayPlan } from '../domain/types';
 import { haversineKm } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { OfficialLink } from './OfficialLink';
-import { Badge, Empty, Field, fmtMoney, MODE_ICON, MoneyInput, NumberInput, StatusSelect } from './common';
+import { Badge, Empty, Field, fmtMoney, ModeIcon, MoneyInput, NumberInput, StatusSelect } from './common';
+import { Icon } from './icons';
 
 const emptyDay = (): DayPlan => ({ activities: [], notes: '', planB: '' });
 
@@ -248,7 +249,7 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
         <ul className="day-flights small">
           {dayFlights.map((f) => (
             <li key={f.id}>
-              ✈️ {f.fromAirport} → {f.toAirport}
+              <Icon name="plane" /> {f.fromAirport} → {f.toAirport}
               {f.departureTime ? ` · ${f.departureTime}${f.arrivalTime ? `–${f.arrivalTime}` : ''}` : ' · orario da inserire'}
               {f.airline ? ` · ${f.airline}${f.flightNumber ? ` ${f.flightNumber}` : ''}` : ''}
               {f.selected ? '' : ' (alternativa)'}
@@ -266,7 +267,7 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
             const t = legSummary(l, trip.settings);
             return (
               <li key={l.id}>
-                {l.segments.map((s) => MODE_ICON[s.mode]).join(' ')} {t.roadKm > 0 && `${Math.round(t.roadKm)} km su strada · guida ${formatDuration(t.driveMin)} · `}
+                {l.segments.map((s) => <ModeIcon key={s.id} mode={s.mode} />)} {t.roadKm > 0 && `${Math.round(t.roadKm)} km su strada · guida ${formatDuration(t.driveMin)} · `}
                 {t.totalMin !== undefined
                   ? `totale teorico ${formatDuration(t.totalMin)} · realistici ~${formatDuration(t.realisticMin ?? t.totalMin)}`
                   : t.state === 'da_calcolare'
@@ -288,11 +289,11 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
       )}
       {!attention && day.warnings.map((w) => (
         <p key={w} className="note-warn small">
-          ⚠️ {w}
+          <Icon name="warning" /> {w}
         </p>
       ))}
       <p className="day-sleep small">
-        <span aria-hidden>🛏</span>{' '}
+        <Icon name="bed" />{' '}
         {!day.sleepStop ? (
           <span className="muted">Ultimo giorno: nessun pernottamento</span>
         ) : day.sleepStop.kind === 'a_bordo' ? (
@@ -331,10 +332,10 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
                 aria-label={`Rimuovi ${a.title || 'attività'}`}
                 onClick={() => setPlan((p) => ({ ...p, activities: p.activities.filter((x) => x.id !== a.id) }))}
               >
-                ✕
+                <Icon name="close" />
               </button>
               {dest?.officialUrl && <OfficialLink id={dest.id} />}
-              {dest?.augustNote && <span className="note-warn small">⚠️ {dest.augustNote}</span>}
+              {dest?.augustNote && <span className="note-warn small"><Icon name="warning" /> {dest.augustNote}</span>}
             </li>
           );
         })}

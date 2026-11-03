@@ -197,3 +197,12 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Piano B** (`src/domain/planImpact.ts`, `src/ui/PlanBDialog.tsx`): Salva alternativa, Applica piano, Annulla; confronto di tappe, date, notti, attività non assegnate, trasporti, alloggi, prenotazioni, tempi e budget; conferma aggiuntiva se coinvolge elementi prenotati o pagati. Ogni Undo ripristina solo il piano (`restorePlanOnly`, `undoVersion`).
 - **Offline e sincronizzazione** (`src/services/storage/syncEngine.ts`, `src/domain/merge.ts`, `public/sw.js`): coda durevole per viaggio in `localStorage` (il documento resta lì, non in IndexedDB: è piccolo e la lettura sincrona è già usata ovunque); idempotenza con `lastMutationId` nel documento, senza migrazioni; unione a tre vie, con scelta per ordine e sostituzioni. Service worker solo in produzione: file dell'app e Leaflet, mai Supabase, routing o tile. Logout con avviso e rimozione dei dati; cambio utente senza logout: dati messi da parte per il proprietario.
 - **Limiti**: allegati non sincronizzati; niente mappe offline; una sola modifica in coda per viaggio (il documento è inviato intero); il confronto dei conflitti è per gruppi di dati, non per singola tappa; `verify/e2e/sync.cjs` cerca i vecchi pulsanti del conflitto e va aggiornato.
+
+## 03/11/2026 — identità visiva (branch `nuova-versione`)
+
+- **Palette** in un solo punto, in cima a `src/styles.css`: Fiordo, Abete, Ghiaccio, Carta, Bianco, Ardesia, Nebbia, Ambra, Errore, Linea. Per il contrasto Nebbia è `#5C6B70` invece di `#68777C`; per i testi su fondo chiaro si usa Ambra testo `#8A4F14`, l'Ambra piena solo per bordi e segni. Colori dei mezzi anche in `MODE_COLOR` (Leaflet vuole il valore esplicito).
+- **Solo tema chiaro**: l'app non segue più il tema scuro del sistema. Si usa all'aperto e la palette è chiara.
+- **Icone** in `src/ui/icons.tsx`, disegnate a mano, al posto delle emoji funzionali. Restano i segni tipografici ✓ ★ ✗ dentro alcuni testi.
+- **Testata chiara** con viaggio, modalità, versione attiva e stato di sincronizzazione separati. **Oggi** riunisce tappa, prossima cosa, trasferimento e notte in un'unica scheda; stati con icona e testo, non solo colore.
+- **Piano B**: tabella Prima/Dopo; con prenotazioni coinvolte «Applica piano» non è in evidenza finché non si conferma.
+- Verifiche: 5 viewport e 17 viste con dati sintetici; contrasto misurato sul testo reale; rilevatore di design senza segnalazioni.

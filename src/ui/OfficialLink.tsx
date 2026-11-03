@@ -1,3 +1,4 @@
+import { Icon } from './icons';
 import { OFFICIAL_KIND_LABEL, OFFICIAL_SITES } from '../data/officialSites';
 
 /** Link al sito ufficiale (o del gestore / ente turistico) di una destinazione del catalogo. */
@@ -12,7 +13,7 @@ export function OfficialLink({ id, compact = false }: { id: string; compact?: bo
   }
   return (
     <a className="official-link" href={s.url} target="_blank" rel="noreferrer" title={`${OFFICIAL_KIND_LABEL[s.kind]}: ${s.url}`}>
-      {compact ? '🔗' : `${OFFICIAL_KIND_LABEL[s.kind]} · ${host}`} ↗
+      {compact ? <Icon name="link" label={OFFICIAL_KIND_LABEL[s.kind]} /> : `${OFFICIAL_KIND_LABEL[s.kind]} · ${host}`} ↗
     </a>
   );
 }

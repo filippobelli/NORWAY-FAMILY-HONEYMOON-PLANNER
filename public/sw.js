@@ -1,6 +1,6 @@
 // Service worker: l'app si apre anche senza rete. Solo file pubblici dell'app e Leaflet nella versione fissata.
 // Mai risposte autenticate, Supabase, routing o tile: quelli richiedono rete e l'app lo dichiara.
-const CACHE = 'nfhp-app-v1';
+const CACHE = 'nfhp-app-v2';
 const LEAFLET = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 
 self.addEventListener('install', (event) => {

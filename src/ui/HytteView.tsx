@@ -9,6 +9,7 @@ import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
 import { upsertAccommodation, externalHref, lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Icon } from './icons';
 
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
   individuata: { label: 'Individuata (non verificata)', tone: 'neutral' },
@@ -525,7 +526,7 @@ export function AccommodationForm({ value, onSave, onCancel }: { value: Accommod
       </div>
       </details>
       {a.capacity !== undefined && a.capacity < trip.participants.adults + trip.participants.childrenAges.length && (
-        <p className="note-warn small">⚠️ Posti letto insufficienti per la famiglia.</p>
+        <p className="note-warn small"><Icon name="warning" /> Posti letto insufficienti per la famiglia.</p>
       )}
       <div className="row">
         <button className="btn btn-primary" disabled={!a.name.trim()} onClick={() => onSave({ ...a, name: a.name.trim() })}>

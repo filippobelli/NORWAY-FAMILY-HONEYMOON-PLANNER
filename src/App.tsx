@@ -8,6 +8,7 @@ import { isTravelView, parseRoute, type ViewId } from './state/route';
 import { useAppMode } from './state/mode';
 import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
+import { Icon, type IconName } from './ui/icons';
 import { ConflictDialog } from './ui/SyncDialogs';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
@@ -26,11 +27,11 @@ import { DiaryScreen, MoreScreen, TodayScreen, TravelItinerary, TravelMap, Trave
 // Il menù segue le domande di chi organizza: chi e quando, dove, come ci si muove, dove si dorme, cosa si fa, quanto costa.
 // Ogni voce può avere più viste; gli indirizzi delle viste restano quelli di sempre, così i link salvati continuano a funzionare.
 const SECTIONS = [
-  { id: 'il-viaggio', label: 'Il viaggio', icon: '🏔️', views: [{ id: 'panoramica', label: 'Il viaggio' }] },
+  { id: 'il-viaggio', label: 'Il viaggio', icon: 'mountain', views: [{ id: 'panoramica', label: 'Il viaggio' }] },
   {
     id: 'percorso',
     label: 'Percorso',
-    icon: '🗺️',
+    icon: 'route',
     views: [
       { id: 'pianifica', label: 'Area di lavoro' },
       { id: 'itinerario', label: 'Tappe e mappa' },
@@ -42,16 +43,16 @@ const SECTIONS = [
   {
     id: 'trasporti',
     label: 'Trasporti',
-    icon: '✈️',
+    icon: 'plane',
     views: [
       { id: 'voli', label: 'Voli' },
       { id: 'crociere', label: 'Crociere' },
     ],
   },
-  { id: 'alloggi', label: 'Alloggi', icon: '🛖', views: [{ id: 'hytte', label: 'Alloggi' }] },
-  { id: 'giorni', label: 'Giorno per giorno', icon: '📅', views: [{ id: 'giornate', label: 'Giorno per giorno' }] },
-  { id: 'costi', label: 'Budget', icon: '💶', views: [{ id: 'budget', label: 'Budget' }] },
-] as const;
+  { id: 'alloggi', label: 'Alloggi', icon: 'bed', views: [{ id: 'hytte', label: 'Alloggi' }] },
+  { id: 'giorni', label: 'Giorno per giorno', icon: 'calendar', views: [{ id: 'giornate', label: 'Giorno per giorno' }] },
+  { id: 'costi', label: 'Budget', icon: 'wallet', views: [{ id: 'budget', label: 'Budget' }] },
+] as const satisfies readonly { id: string; label: string; icon: IconName; views: readonly { id: string; label: string }[] }[];
 
 function readHash(): ViewId {
   return parseRoute(window.location.hash).view;
@@ -189,7 +190,7 @@ function Shell() {
         tab={tab}
         status={
           <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+            <Icon name={saveIcon(localState, cloud.status)} /> {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
           </a>
         }
       >
@@ -204,19 +205,24 @@ function Shell() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="logo" aria-hidden>
-            ⛰
+          <span className="logo">
+            <Icon name="mountain" />
           </span>
           <div>
             <h1>{trip.title || 'Norvegia 2027'}</h1>
             <p>
-              {activeScenario && `${activeScenario} · `}
               {days ? `${days} giorni` : 'Itinerario da costruire'} · {trip.participants.adults} adulti, {trip.participants.childrenAges.length} bambini
               {total > 0 && ` · ${formatEur(total)}`}
             </p>
           </div>
         </div>
         <div className="topbar-right">
+          <span className="mode-tag">Pianificazione</span>
+          {activeScenario && (
+            <a href="#/scenari" className="scenario-tag" title="Versione attiva">
+              <Icon name="scale" /> {activeScenario}
+            </a>
+          )}
           <button
             className="mode-link"
             onClick={() => {
@@ -224,21 +230,21 @@ function Shell() {
               window.location.hash = '#/t/oggi';
             }}
           >
-            📱 Modalità viaggio
+            <Icon name="phone" /> Modalità viaggio
           </button>
           <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+            <Icon name={saveIcon(localState, cloud.status)} /> {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
           </a>
           <a href="#/impostazioni" className={`gear ${tab === 'impostazioni' ? 'active' : ''}`} aria-label="Impostazioni, salvataggio e backup" title="Impostazioni, salvataggio e backup" aria-current={tab === 'impostazioni' ? 'page' : undefined}>
-            ⚙️
+            <Icon name="gear" />
           </a>
         </div>
       </header>
       <nav className="tabs" aria-label="Sezioni" ref={navRef}>
         {SECTIONS.map((s) => (
           <a key={s.id} href={`#/${s.views[0].id}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
-            <span className="tab-icon" aria-hidden>
-              {s.icon}
+            <span className="tab-icon">
+              <Icon name={s.icon} />
             </span>
             <span className="tab-label">{s.label}</span>
           </a>
@@ -258,6 +264,14 @@ function Shell() {
       {toastList}
     </div>
   );
+}
+
+function saveIcon(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus): IconName {
+  if (local === 'errore' || cloud === 'errore' || cloud === 'conflitto') return 'warning';
+  if (cloud === 'offline') return 'cloudOff';
+  if (cloud === 'in_attesa' || cloud === 'in_corso') return 'sync';
+  if (cloud === 'sincronizzato') return 'cloud';
+  return 'circle';
 }
 
 function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus, lastSyncAt?: string): string {

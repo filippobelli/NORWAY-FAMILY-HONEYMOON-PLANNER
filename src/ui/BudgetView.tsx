@@ -5,6 +5,7 @@ import type { BudgetCategory, BudgetEstimates, BudgetItem, DataStatus, Money, Tr
 import { formatRateDate } from '../state/autoRates';
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Icon } from './icons';
 
 const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', voli: 'Da Voli', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 
@@ -312,7 +313,7 @@ export function BudgetView() {
                         aria-label={`Elimina ${l.label}`}
                         onClick={() => update((t) => ({ ...t, budgetItems: t.budgetItems.filter((x) => x.id !== l.itemId) }))}
                       >
-                        ✕
+                        <Icon name="close" />
                       </button>
                     )}
                   </td>

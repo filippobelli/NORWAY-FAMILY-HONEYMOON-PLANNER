@@ -7,32 +7,41 @@ import { useTrip } from '../state/store';
 import { Field, NumberInput } from './common';
 import { Modal } from './PlacementDialog';
 
+function ImpactRow({ label, before, after }: { label: string; before: string; after: string }) {
+  return (
+    <tr className={before === after ? '' : 'is-changed'}>
+      <th scope="row">{label}</th>
+      <td>{before}</td>
+      <td>{after}</td>
+    </tr>
+  );
+}
+
 // Confronto prima/dopo. Tutto ciò che qui è mostrato viene dalle funzioni di dominio: nessun dato stimato in più.
 function ImpactView({ i }: { i: PlanImpact }) {
   return (
     <section className="impact" aria-label="Cosa cambia">
       <h3>Cosa cambia</h3>
-      <dl className="impact-grid">
-        <dt>Durata</dt>
-        <dd>
-          {i.route.daysBefore} → {i.route.daysAfter} giorni · {i.nights.before} → {i.nights.after} notti
-        </dd>
-        <dt>Date</dt>
-        <dd>
-          {formatDateIt(i.route.startBefore)}
-          {i.end.before ? ` – ${formatDateIt(i.end.before)}` : ''} → {formatDateIt(i.route.startAfter)}
-          {i.end.after ? ` – ${formatDateIt(i.end.after)}` : ''}
-        </dd>
-        <dt>Trasferimenti</dt>
-        <dd>
-          Realistici {formatDuration(i.times.realisticBefore)} → {formatDuration(i.times.realisticAfter)} · teorici {formatDuration(i.times.theoreticalBefore)} → {formatDuration(i.times.theoreticalAfter)}
-          {!i.times.complete && ' · dato parziale'}
-        </dd>
-        <dt>Budget</dt>
-        <dd>
-          {formatEur(i.budget.before)} → {formatEur(i.budget.after)} · costi senza importo {i.budget.missingBefore} → {i.budget.missingAfter}
-        </dd>
-      </dl>
+      <table className="impact-table small">
+        <caption className="sr-only">Prima e dopo la modifica</caption>
+        <thead>
+          <tr>
+            <td />
+            <th scope="col">Prima</th>
+            <th scope="col">Dopo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ImpactRow label="Giorni" before={String(i.route.daysBefore)} after={String(i.route.daysAfter)} />
+          <ImpactRow label="Notti" before={String(i.nights.before)} after={String(i.nights.after)} />
+          <ImpactRow label="Partenza" before={formatDateIt(i.route.startBefore)} after={formatDateIt(i.route.startAfter)} />
+          <ImpactRow label="Fine" before={i.end.before ? formatDateIt(i.end.before) : '—'} after={i.end.after ? formatDateIt(i.end.after) : '—'} />
+          <ImpactRow label="Trasferimenti realistici" before={formatDuration(i.times.realisticBefore)} after={`${formatDuration(i.times.realisticAfter)}${i.times.complete ? '' : ' · dato parziale'}`} />
+          <ImpactRow label="Trasferimenti teorici" before={formatDuration(i.times.theoreticalBefore)} after={formatDuration(i.times.theoreticalAfter)} />
+          <ImpactRow label="Budget" before={formatEur(i.budget.before)} after={formatEur(i.budget.after)} />
+          <ImpactRow label="Costi senza importo" before={String(i.budget.missingBefore)} after={String(i.budget.missingAfter)} />
+        </tbody>
+      </table>
       <h4>Tappe e ordine{i.orderChanged ? ' (ordine cambiato)' : ''}</h4>
       <ol className="place-rows">
         {i.route.rows.map((r, k) => (
@@ -170,7 +179,7 @@ export function PlanBDialog({ onClose }: { onClose: () => void }) {
           Salva alternativa
         </button>
         <button
-          className="btn btn-primary"
+          className={`btn ${impact.needsBookingConfirm && !ok ? '' : 'btn-primary'}`}
           disabled={!changed || (impact.needsBookingConfirm && !ok)}
           onClick={() => {
             const r = saveAlternative(trip, name, draft);
@@ -182,7 +191,7 @@ export function PlanBDialog({ onClose }: { onClose: () => void }) {
         >
           Applica piano
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>
@@ -203,7 +212,7 @@ export function ApplyVersionDialog({ scenario, onClose }: { scenario: Scenario; 
       <BookingConfirm i={impact} ok={ok} setOk={setOk} />
       <div className="row wrap place-actions">
         <button
-          className="btn btn-primary"
+          className={`btn ${impact.needsBookingConfirm && !ok ? '' : 'btn-primary'}`}
           disabled={impact.needsBookingConfirm && !ok}
           onClick={() => {
             apply(scenario.id, trip.activeScenarioId, scenario.name);
@@ -212,7 +221,7 @@ export function ApplyVersionDialog({ scenario, onClose }: { scenario: Scenario; 
         >
           Applica piano
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>

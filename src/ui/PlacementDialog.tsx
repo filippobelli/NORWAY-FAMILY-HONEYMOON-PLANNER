@@ -18,6 +18,7 @@ import {
 import type { CoastalOption, Flight, Stop, Trip } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Field, NumberInput } from './common';
+import { Icon } from './icons';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
@@ -50,7 +51,7 @@ function RoutePreview({ before, after }: { before: Trip; after: Trip }) {
         {d.rows.map((r, i) => (
           <li key={i} className={`place-row is-${r.change}`}>
             <span>
-              {r.kind === 'a_bordo' ? '🚢 ' : ''}
+              {r.kind === 'a_bordo' && <Icon name="ship" />}{' '}
               {r.name}
             </span>
             <span className="small">
@@ -171,7 +172,7 @@ export function CruiseDialog({ option, onClose, stayHere = false }: { option: Co
         <button className="btn btn-primary" disabled={!after} onClick={() => after && apply(after, 'Crociera aggiunta al percorso')}>
           Applica al percorso
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>
@@ -219,7 +220,7 @@ export function FlightDialog({ flight, onClose, stayHere = false }: { flight: Fl
         <button className="btn btn-primary" disabled={blocked} onClick={() => apply(after, 'Volo aggiunto al percorso')}>
           Applica al percorso
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>
@@ -255,7 +256,7 @@ export function StopDialog({ stop, onClose }: { stop: Stop; onClose: () => void 
         <button className="btn btn-primary" onClick={() => apply(after, `${stop.name} aggiunta al percorso`)}>
           Applica al percorso
         </button>
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-ghost" onClick={onClose}>
           Annulla
         </button>
       </div>
@@ -277,7 +278,7 @@ export function PendingPanel() {
         {p.flights.map((f) => (
           <li key={f.id}>
             <span>
-              ✈️ Volo {f.fromAirport} → {f.toAirport}
+              <Icon name="plane" /> Volo {f.fromAirport} → {f.toAirport}
               {f.date ? ` · ${formatDateIt(f.date)}` : ' · data da inserire'}
             </span>
             <button className="btn btn-small" onClick={() => setFlight(f)}>
@@ -288,7 +289,7 @@ export function PendingPanel() {
         {p.cruises.map((o) => (
           <li key={o.id}>
             <span>
-              🚢 {o.operator} {o.fromPort} → {o.toPort}
+              <Icon name="ship" /> {o.operator} {o.fromPort} → {o.toPort}
               {o.date ? ` · ${formatDateIt(o.date)}` : ''}
             </span>
             <button className="btn btn-small" onClick={() => setCruise(o)}>
