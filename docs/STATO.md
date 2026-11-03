@@ -206,3 +206,5 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Testata chiara** con viaggio, modalità, versione attiva e stato di sincronizzazione separati. **Oggi** riunisce tappa, prossima cosa, trasferimento e notte in un'unica scheda; stati con icona e testo, non solo colore.
 - **Piano B**: tabella Prima/Dopo; con prenotazioni coinvolte «Applica piano» non è in evidenza finché non si conferma.
 - Verifiche: 5 viewport e 17 viste con dati sintetici; contrasto misurato sul testo reale; rilevatore di design senza segnalazioni.
+- **Primo ingresso**: da computer, senza indirizzo, l'app apre l'Area di lavoro se ci sono tappe e «Il viaggio» se il percorso è vuoto.
+- **Query su `lastMutationId`**: il 03/11/2026 verificata la sintassi sul Supabase reale con una sola lettura anonima (200 con elenco vuoto per la RLS; una colonna inesistente dà 400). Non prova il salvataggio né i conflitti su quel servizio.

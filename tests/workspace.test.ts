@@ -7,7 +7,7 @@ import { upsertAccommodation } from '../src/domain/lodging';
 import { parseSelection, formatSelection, selectionCosts, selectionExists, selectionStopId } from '../src/domain/selection';
 import type { Accommodation, Stop, Trip } from '../src/domain/types';
 import { getRoutingProvider, RoutingError } from '../src/services/routing';
-import { buildHash, parseRoute } from '../src/state/route';
+import { buildHash, parseRoute, startView } from '../src/state/route';
 
 const stop = (id: string, name: string, nights: number): Stop => ({ id, kind: 'luogo', name, lat: 60, lng: 7, nights, notes: '', weatherPlanB: '' });
 
@@ -75,4 +75,13 @@ test('Routing non disponibile: errore dichiarato, nessun tempo inventato, il pia
   } finally {
     globalThis.fetch = real;
   }
+});
+
+test('Primo ingresso: area di lavoro se ci sono tappe, Oggi in viaggio, i link espliciti non si toccano', () => {
+  assert.equal(startView('', 'planning', true), 'pianifica');
+  assert.equal(startView('#/', 'planning', true), 'pianifica');
+  assert.equal(startView('', 'planning', false), undefined, 'viaggio vuoto: resta «Il viaggio»');
+  assert.equal(startView('', 'travel', false), 't/oggi');
+  assert.equal(startView('#/panoramica', 'planning', true), undefined);
+  assert.equal(startView('#/budget', 'travel', true), undefined);
 });

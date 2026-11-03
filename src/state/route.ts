@@ -53,3 +53,10 @@ export function buildHash(view: ViewId, params: Record<string, string | undefine
 }
 
 export const isTravelView = (v: ViewId) => v.startsWith('t/');
+
+/** Dove aprire l'app senza un indirizzo. Un link esplicito resta dov'è: qui si decide solo il primo ingresso. */
+export function startView(hash: string, mode: 'planning' | 'travel', hasStops: boolean): ViewId | undefined {
+  if (hash.replace(/^#\/?/, '')) return undefined;
+  if (mode === 'travel') return 't/oggi';
+  return hasStops ? 'pianifica' : undefined;
+}

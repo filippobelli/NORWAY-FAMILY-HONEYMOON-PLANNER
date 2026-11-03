@@ -4,7 +4,7 @@ import { totalDays } from './domain/itinerary';
 import { useAutoRates } from './state/autoRates';
 import { CloudSyncProvider, useCloudSync, type CloudStatus } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
-import { isTravelView, parseRoute, type ViewId } from './state/route';
+import { isTravelView, parseRoute, startView, type ViewId } from './state/route';
 import { useAppMode } from './state/mode';
 import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
@@ -79,9 +79,11 @@ function Shell() {
     return () => window.removeEventListener('hashchange', on);
   }, []);
   // Senza un indirizzo si apre la schermata principale della modalità; un link esplicito resta dov'è
+  const hasStops = trip.stops.length > 0;
   useEffect(() => {
-    if (mode === 'travel' && !window.location.hash.replace(/^#\/?/, '')) window.location.hash = '#/t/oggi';
-  }, [mode]);
+    const start = startView(window.location.hash, mode, hasStops);
+    if (start) window.location.hash = `#/${start}`;
+  }, [mode, hasStops]);
   // Cambiando sezione si riparte dall'inizio della pagina e la voce attiva resta visibile nella barra (su smartphone scorre)
   const navRef = useRef<HTMLElement>(null);
   const firstTab = useRef(true);
