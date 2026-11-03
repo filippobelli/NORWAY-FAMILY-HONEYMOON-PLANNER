@@ -8,7 +8,7 @@ import { isTravelView, parseRoute, startView, type ViewId } from './state/route'
 import { useAppMode } from './state/mode';
 import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
-import { Icon, type IconName } from './ui/icons';
+import { FlagMark, Icon, type IconName } from './ui/icons';
 import { ConflictDialog } from './ui/SyncDialogs';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
@@ -27,7 +27,7 @@ import { DiaryScreen, MoreScreen, TodayScreen, TravelItinerary, TravelMap, Trave
 // Il menù segue le domande di chi organizza: chi e quando, dove, come ci si muove, dove si dorme, cosa si fa, quanto costa.
 // Ogni voce può avere più viste; gli indirizzi delle viste restano quelli di sempre, così i link salvati continuano a funzionare.
 const SECTIONS = [
-  { id: 'il-viaggio', label: 'Il viaggio', icon: 'mountain', views: [{ id: 'panoramica', label: 'Il viaggio' }] },
+  { id: 'il-viaggio', label: 'Il viaggio', icon: 'mountain', views: [{ id: 'panoramica', label: 'Panoramica' }] },
   {
     id: 'percorso',
     label: 'Percorso',
@@ -192,7 +192,7 @@ function Shell() {
         tab={tab}
         status={
           <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            <Icon name={saveIcon(localState, cloud.status)} /> {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
           </a>
         }
       >
@@ -208,9 +208,10 @@ function Shell() {
       <header className="topbar">
         <div className="brand">
           <span className="logo">
-            <Icon name="mountain" />
+            <FlagMark />
           </span>
           <div>
+            <p className="eyebrow">Viaggio / {section?.views.find((v) => v.id === tab)?.label ?? 'Impostazioni'}</p>
             <h1>{trip.title || 'Norvegia 2027'}</h1>
             <p>
               {days ? `${days} giorni` : 'Itinerario da costruire'} · {trip.participants.adults} adulti, {trip.participants.childrenAges.length} bambini
@@ -235,7 +236,7 @@ function Shell() {
             <Icon name="phone" /> Modalità viaggio
           </button>
           <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            <Icon name={saveIcon(localState, cloud.status)} /> {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
           </a>
           <a href="#/impostazioni" className={`gear ${tab === 'impostazioni' ? 'active' : ''}`} aria-label="Impostazioni, salvataggio e backup" title="Impostazioni, salvataggio e backup" aria-current={tab === 'impostazioni' ? 'page' : undefined}>
             <Icon name="gear" />
@@ -243,6 +244,9 @@ function Shell() {
         </div>
       </header>
       <nav className="tabs" aria-label="Sezioni" ref={navRef}>
+        <span className="rail-logo">
+          <FlagMark />
+        </span>
         {SECTIONS.map((s) => (
           <a key={s.id} href={`#/${s.views[0].id}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
             <span className="tab-icon">
@@ -268,14 +272,6 @@ function Shell() {
   );
 }
 
-function saveIcon(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus): IconName {
-  if (local === 'errore' || cloud === 'errore' || cloud === 'conflitto') return 'warning';
-  if (cloud === 'offline') return 'cloudOff';
-  if (cloud === 'in_attesa' || cloud === 'in_corso') return 'sync';
-  if (cloud === 'sincronizzato') return 'cloud';
-  return 'circle';
-}
-
 function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus, lastSyncAt?: string): string {
   if (local === 'errore') return 'Salvataggio su questo dispositivo NON riuscito';
   switch (cloud) {
@@ -287,7 +283,7 @@ function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus
     case 'in_corso':
       return 'Salvataggio nel cloud…';
     case 'sincronizzato':
-      return lastSyncAt ? `Salvato nel cloud · ${new Date(lastSyncAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}` : 'Salvato nel cloud';
+      return lastSyncAt ? `Sincronizzato · ${new Date(lastSyncAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronizzato';
     case 'offline':
       return 'Offline · modifiche salvate qui, in attesa di invio';
     case 'errore':

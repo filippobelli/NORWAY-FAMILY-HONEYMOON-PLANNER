@@ -62,6 +62,17 @@ export function Icon({ name, label, filled }: { name: IconName; label?: string; 
   );
 }
 
+/** Bandiera norvegese: 22×16, croce nordica decentrata verso l'asta. */
+export function FlagMark() {
+  return (
+    <svg className="flag" viewBox="0 0 22 16" aria-hidden="true">
+      <rect width="22" height="16" style={{ fill: 'var(--rosso)' }} />
+      <path d="M6 0h4v16H6zM0 6h22v4H0z" style={{ fill: 'var(--bianco)' }} />
+      <path d="M7 0h2v16H7zM0 7h22v2H0z" style={{ fill: 'var(--blu)' }} />
+    </svg>
+  );
+}
+
 /** Stessa icona come testo, per i segnaposto della mappa. */
 export const iconSvg = (name: IconName) =>
   `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${PATHS[name]}"/></svg>`;

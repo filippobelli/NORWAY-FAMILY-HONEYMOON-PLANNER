@@ -11,7 +11,7 @@ import { useAppMode } from '../state/mode';
 import { isTravelView, type ViewId } from '../state/route';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
-import { Icon, type IconName } from './icons';
+import { FlagMark, Icon, type IconName } from './icons';
 import { MapView } from './MapView';
 import { PlanBDialog } from './PlanBDialog';
 
@@ -37,7 +37,15 @@ export function TravelShell({ tab, status, children }: { tab: ViewId; status: Re
   return (
     <div className="travel">
       <header className="travel-top">
-        <strong>{trip.title || 'Norvegia 2027'}</strong>
+        <div className="travel-brand">
+          <span className="logo">
+            <FlagMark />
+          </span>
+          <div>
+            <span className="eyebrow">Viaggio / {BAR.find((b) => b.id === active)?.label}</span>
+            <strong>{trip.title || 'Norvegia 2027'}</strong>
+          </div>
+        </div>
         <div className="travel-top-right">
           {status}
           <button

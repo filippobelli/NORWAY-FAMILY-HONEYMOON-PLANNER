@@ -30,7 +30,7 @@ let patchCount = 0, postCount = 0;
   await p.goto('http://localhost:4175/#/viaggio'); await p.waitForSelector('text=Backup su file');
   /accedi per il cloud/.test(await label()) ? ok('prima dell\'accesso: ' + await label()) : fail('label ' + await label());
   await p.fill('input[type=email]', 'f@x.it'); await p.fill('input[type=password]', 'segreta123'); await p.click('button[type=submit]');
-  await p.waitForFunction(() => /Salvato nel cloud/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('dopo accesso: viaggio caricato nel cloud')).catch(async () => fail('dopo accesso ' + await label()));
+  await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('dopo accesso: viaggio caricato nel cloud')).catch(async () => fail('dopo accesso ' + await label()));
   db.size === 1 ? ok('1 viaggio nel cloud (POST)') : fail('db ' + db.size);
   const id = [...db.keys()][0];
 
@@ -38,7 +38,7 @@ let patchCount = 0, postCount = 0;
   await p.click('a[href="#/itinerario"]');
   await p.fill('input[aria-label="Cerca località"]', 'Bergen'); await p.click('.suggestions button >> nth=0');
   await p.waitForTimeout(500); /Salvataggio nel cloud/.test(await label()) ? ok('in attesa: ' + await label()) : fail('attesa ' + await label());
-  await p.waitForFunction(() => /Salvato nel cloud/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 });
+  await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 });
   db.get(id).data.stops.length === 1 ? ok('modifica salvata in automatico (PATCH condizionato)') : fail('stops ' + db.get(id).data.stops.length);
 
   // Modifica da un altro dispositivo → ritorno in primo piano
@@ -54,7 +54,7 @@ let patchCount = 0, postCount = 0;
   await p.waitForSelector('.conflict', { timeout: 8000 }).then(() => ok('conflitto rilevato, nessuna sovrascrittura')).catch(() => fail('conflitto'));
   db.get(id).data.title === 'Titolo da altro device' ? ok('cloud non sovrascritto') : fail('sovrascritto!');
   await p.click('text=Tieni questa versione');
-  await p.waitForFunction(() => /Salvato nel cloud/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('scelta "tieni questa versione" salvata')).catch(async () => fail('keep ' + await label()));
+  await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('scelta "tieni questa versione" salvata')).catch(async () => fail('keep ' + await label()));
   db.get(id).data.stops[0].nights === 2 ? ok('cloud aggiornato con la versione locale') : fail('nights');
 
   // Offline
@@ -63,7 +63,7 @@ let patchCount = 0, postCount = 0;
   await p.waitForFunction(() => /non raggiungibile/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('offline segnalato, dati locali salvi')).catch(async () => fail('offline ' + await label()));
   // Ricarica: sessione e dirty persistono → al ritorno online salva
   await p.unroute(/supabase\.co\/rest\//);
-  await p.reload(); await p.waitForFunction(() => /Salvato nel cloud/.test(document.querySelector('.save-state').textContent), null, { timeout: 10000 }).then(() => ok('dopo ricarica: modifiche pendenti inviate')).catch(async () => fail('reload ' + await label()));
+  await p.reload(); await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 10000 }).then(() => ok('dopo ricarica: modifiche pendenti inviate')).catch(async () => fail('reload ' + await label()));
   db.get(id).data.stops[0].nights === 3 ? ok('modifica fatta offline arrivata nel cloud') : fail('offline nights ' + db.get(id).data.stops[0].nights);
   // Logout e nuovo accesso dopo una modifica fatta altrove: deve scaricarla, senza falso conflitto
   await p.click('a[href="#/viaggio"]'); await p.click('text=esci');

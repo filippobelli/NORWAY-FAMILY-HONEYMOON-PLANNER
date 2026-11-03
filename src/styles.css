@@ -1,53 +1,53 @@
-/* Palette: guida di viaggio norvegese. Ogni colore dell'interfaccia passa da qui. */
+/* Palette: i colori della bandiera norvegese. Ogni colore dell'interfaccia passa da qui. */
 :root {
-  --fiordo: #173b4a;
-  --abete: #315b4a;
-  --ghiaccio: #eaf2f2;
-  --carta: #f7f5ef;
+  --blu: #00205b;
+  --blu-hover: #0a2f75;
+  --rosso: #ba0c2f;
+  /* Avvisi: testo su fondo tenue, con il bordo dei badge */
+  --rosso-testo: #9b0a27;
+  --rosso-tenue: #fbeaee;
+  --rosso-bordo: #f1c3cd;
   --bianco: #ffffff;
-  --ardesia: #27343a;
-  /* Nebbia del brief (#68777C) scurita: su Carta e Ghiaccio non arrivava a 4,5:1 */
-  --nebbia: #5c6b70;
-  --ambra: #b86d26;
-  /* Ambra per i testi: quella piena arriva a 4:1 su bianco, va bene solo per bordi e segni */
-  --ambra-testo: #8a4f14;
-  --ambra-tenue: #fbf0e2;
-  --abete-tenue: #e6f0ea;
-  --errore: #a84236;
-  --errore-tenue: #f8e9e6;
-  --linea: #dce3e1;
+  --secondario: #4a5468;
+  --linea: #d5dce7;
+  --linea-timeline: #c8d2e2;
   /* Bordo dei controlli: almeno 3:1 sul bianco, la Linea resta per i separatori */
-  --linea-forte: #859599;
+  --linea-forte: #7f8ba0;
+  --mare: #cdd9ea;
+  --terra: #f5f7fa;
+  --regione: #e3eaf5;
+  --vetro: rgb(255 255 255 / 87%);
+  --vetro-blur: blur(16px);
 
   /* Ruoli usati dai componenti */
-  --bg: var(--carta);
+  --bg: var(--terra);
   --surface: var(--bianco);
-  --surface-2: #f2f4ef;
-  --ink: var(--ardesia);
-  --ink-2: var(--nebbia);
+  --surface-2: #edf1f7;
+  --ink: var(--blu);
+  --ink-2: var(--secondario);
   --line: var(--linea);
-  --fjord: var(--fiordo);
-  --accent: var(--fiordo);
+  --fjord: var(--blu);
+  --accent: var(--blu);
   --accent-ink: var(--bianco);
-  --ok: var(--abete);
-  --ok-bg: var(--abete-tenue);
-  --warn: var(--ambra-testo);
-  --warn-bg: var(--ambra-tenue);
-  --info: var(--fiordo);
-  --info-bg: var(--ghiaccio);
-  --danger: var(--errore);
+  --ok: var(--blu);
+  --ok-bg: var(--regione);
+  --warn: var(--rosso-testo);
+  --warn-bg: var(--rosso-tenue);
+  --info: var(--blu);
+  --info-bg: var(--regione);
+  --danger: var(--rosso-testo);
 
-  /* Mezzi di trasporto: stessi valori di MODE_COLOR in ui/common.tsx */
-  --m-strada: #1f5f7a;
-  --m-traghetto: #1e7f78;
-  --m-costiera: #5a4a8c;
-  --m-treno: #a3541c;
-  --m-bus: #7d6a12;
-  --m-aereo: #5c6b70;
+  /* Mezzi di trasporto: stessi valori di MODE_COLOR in ui/common.tsx; il tratto li distingue sulla mappa */
+  --m-strada: #ba0c2f;
+  --m-traghetto: #00205b;
+  --m-costiera: #00205b;
+  --m-treno: #9b0a27;
+  --m-bus: #9b0a27;
+  --m-aereo: #4a5468;
 
   --radius: 10px;
-  --shadow: 0 1px 2px rgb(23 59 74 / 5%);
-  --shadow-float: 0 8px 28px rgb(23 59 74 / 16%);
+  --shadow: 0 1px 2px rgb(0 32 91 / 6%);
+  --shadow-float: 0 8px 28px rgb(0 32 91 / 18%);
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --ease: 120ms ease-out;
   /* Chiaro anche con il sistema in tema scuro: si usa soprattutto all'aperto e la palette è chiara */
@@ -69,7 +69,7 @@ body {
   scrollbar-color: var(--linea-forte) transparent;
 }
 ::selection {
-  background: var(--fiordo);
+  background: var(--blu);
   color: var(--bianco);
 }
 .icon {
@@ -84,7 +84,7 @@ h2,
 h3 {
   margin: 0;
   line-height: 1.2;
-  color: var(--fiordo);
+  color: var(--blu);
   letter-spacing: -0.012em;
   text-wrap: balance;
 }
@@ -113,7 +113,9 @@ code {
 }
 
 .topbar {
-  background: var(--bianco);
+  background: var(--vetro);
+  -webkit-backdrop-filter: var(--vetro-blur);
+  backdrop-filter: var(--vetro-blur);
   color: var(--ink);
   border-bottom: 1px solid var(--line);
   padding: 10px 20px;
@@ -136,7 +138,7 @@ code {
   box-shadow: var(--shadow-float);
 }
 .place-dialog::backdrop {
-  background: rgb(23 59 74 / 45%);
+  background: rgb(0 32 91 / 45%);
 }
 .place-dialog h2 {
   margin-top: 0;
@@ -195,13 +197,13 @@ code {
   border-radius: 6px;
 }
 .place-row.is-nuova {
-  background: var(--abete-tenue);
-  color: var(--abete);
+  background: var(--regione);
+  color: var(--blu);
   font-weight: 600;
 }
 .place-row.is-cambiata {
-  background: var(--ambra-tenue);
-  color: var(--ambra-testo);
+  background: var(--rosso-tenue);
+  color: var(--rosso-testo);
   font-weight: 600;
 }
 .place-removed {
@@ -253,8 +255,8 @@ code {
 .planner-outline,
 .planner-inspector {
   position: sticky;
-  top: 60px;
-  max-height: calc(100vh - 130px);
+  top: 84px;
+  max-height: calc(100vh - 100px);
   overflow-y: auto;
 }
 .planner-outline p {
@@ -290,15 +292,18 @@ code {
   cursor: pointer;
 }
 .ol-item:hover:not(.active) {
-  background: var(--ghiaccio);
+  background: var(--regione);
 }
 .ol-item.active {
-  background: var(--fiordo);
+  background: var(--blu);
   color: var(--bianco);
+}
+.ol-item.ol-stop.active {
+  background: var(--rosso);
 }
 .ol-item.active .muted,
 .ol-item.active .ol-num {
-  color: var(--ghiaccio);
+  color: var(--regione);
 }
 .ol-stop .ol-name {
   font-weight: 600;
@@ -351,9 +356,9 @@ code {
   font-weight: 500;
 }
 .segmented > button.active {
-  background: var(--ghiaccio);
-  border-color: var(--fiordo);
-  color: var(--fiordo);
+  background: var(--regione);
+  border-color: var(--blu);
+  color: var(--blu);
   font-weight: 600;
 }
 .segmented .btn {
@@ -380,15 +385,15 @@ code {
   cursor: pointer;
 }
 .tl-day:hover {
-  background: var(--ghiaccio);
+  background: var(--regione);
 }
 .timeline li.active .tl-day {
-  border-color: var(--fiordo);
-  background: var(--fiordo);
+  border-color: var(--blu);
+  background: var(--blu);
   color: var(--bianco);
 }
 .timeline li.active .tl-day .muted {
-  color: var(--ghiaccio);
+  color: var(--regione);
 }
 /* Dentro il pannello le schede non sono altre schede: niente card annidate */
 .planner-inspector .stop,
@@ -454,9 +459,22 @@ code {
   flex-direction: column;
   padding-bottom: calc(68px + env(safe-area-inset-bottom));
 }
+.travel-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.travel-brand .logo {
+  width: 30px;
+}
+.travel-brand strong,
+.travel-brand .eyebrow {
+  display: block;
+}
 .travel-top {
   background: var(--bianco);
-  color: var(--fiordo);
+  color: var(--blu);
   border-bottom: 1px solid var(--line);
   padding: 8px 14px;
   padding-top: max(8px, env(safe-area-inset-top));
@@ -494,10 +512,9 @@ code {
   z-index: 1500;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  background: var(--surface);
-  border-top: 1px solid var(--line);
+  background: var(--blu);
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -4px 16px rgb(23 59 74 / 8%);
+  box-shadow: 0 -4px 16px rgb(0 32 91 / 18%);
 }
 .travel-bar a {
   display: grid;
@@ -507,19 +524,17 @@ code {
   padding: 8px 2px 6px;
   font-size: 0.72rem;
   font-weight: 500;
-  color: var(--ink-2);
+  color: var(--bianco);
   text-decoration: none;
-  border-top: 3px solid transparent;
 }
 .travel-bar a .icon {
   width: 22px;
   height: 22px;
 }
 .travel-bar a.active {
-  color: var(--fiordo);
+  color: var(--blu);
   font-weight: 700;
-  border-top-color: var(--fiordo);
-  background: var(--ghiaccio);
+  background: var(--bianco);
 }
 .travel .btn,
 .travel .btn-small,
@@ -560,7 +575,7 @@ code {
 }
 .t-today {
   padding: 0;
-  border-color: var(--fiordo);
+  border-color: var(--blu);
 }
 .t-today-row {
   padding: 12px 14px;
@@ -570,12 +585,12 @@ code {
 }
 .t-today-place {
   font-weight: 600;
-  color: var(--fiordo);
+  color: var(--blu);
 }
 .t-next-title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--fiordo);
+  color: var(--blu);
 }
 .t-actions {
   display: flex;
@@ -610,7 +625,7 @@ code {
   text-decoration: line-through;
 }
 .t-stop.is-in_corso {
-  border-color: var(--fiordo);
+  border-color: var(--blu);
 }
 .t-stop.is-saltata {
   border-style: dashed;
@@ -628,13 +643,13 @@ code {
 }
 .state-visitata,
 .state-fatta {
-  color: var(--abete);
+  color: var(--blu);
 }
 .state-in_corso {
-  color: var(--fiordo);
+  color: var(--blu);
 }
 .state-saltata {
-  color: var(--ambra-testo);
+  color: var(--rosso-testo);
 }
 .t-map h2 {
   margin-top: 14px;
@@ -675,7 +690,7 @@ code {
   border: 1px solid var(--linea-forte);
   border-radius: 8px;
   background: var(--bianco);
-  color: var(--fiordo);
+  color: var(--blu);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 500;
@@ -713,7 +728,7 @@ code {
   font-variant-numeric: tabular-nums;
 }
 .impact-table thead th {
-  color: var(--fiordo);
+  color: var(--blu);
   font-weight: 700;
 }
 .impact-table tbody th {
@@ -722,11 +737,11 @@ code {
 }
 .impact-table tr.is-changed td:last-child {
   font-weight: 700;
-  color: var(--fiordo);
-  background: var(--ghiaccio);
+  color: var(--blu);
+  background: var(--regione);
 }
 .impact-booked {
-  background: var(--errore-tenue);
+  background: var(--rosso-tenue);
   border: 1px solid var(--danger);
   border-radius: 8px;
   padding: 8px 10px;
@@ -771,7 +786,7 @@ code {
   margin-left: 0;
 }
 .mode-link:hover {
-  background: var(--ghiaccio);
+  background: var(--regione);
 }
 .topbar-right {
   display: flex;
@@ -789,12 +804,12 @@ code {
   flex: none;
   border-radius: 9px;
   text-decoration: none;
-  color: var(--fiordo);
+  color: var(--blu);
   font-size: 1.05rem;
 }
 .gear:hover,
 .gear.active {
-  background: var(--ghiaccio);
+  background: var(--regione);
 }
 .subtabs {
   display: flex;
@@ -818,8 +833,8 @@ code {
   background: var(--surface);
 }
 .subtabs a.active {
-  background: var(--ghiaccio);
-  color: var(--fiordo);
+  background: var(--regione);
+  color: var(--blu);
   font-weight: 600;
 }
 .ov-trip-form summary,
@@ -850,14 +865,7 @@ code {
   font-size: 0.82rem;
 }
 .logo {
-  font-size: 1.35rem;
   width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  background: var(--fiordo);
-  color: var(--bianco);
-  border-radius: 9px;
   flex: none;
 }
 .save-state {
@@ -865,42 +873,53 @@ code {
   align-items: center;
   gap: 6px;
   min-height: 30px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 1.25;
+  text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 999px;
   text-decoration: none;
-  border: 1px solid var(--line);
-  background: var(--surface-2);
-  color: var(--ink);
+  border: 1px solid transparent;
+  color: var(--secondario);
+}
+.save-state::before {
+  content: '●';
+  font-size: 9px;
+  letter-spacing: 0;
 }
 .save-offline,
 .save-conflitto,
-.save-non_connesso {
-  background: var(--ambra-tenue);
-  border-color: var(--ambra);
-  color: var(--ambra-testo);
-}
+.save-non_connesso,
 .save-errore {
-  background: var(--errore-tenue);
-  border-color: var(--errore);
-  color: var(--errore);
+  background: var(--rosso-tenue);
+  border-color: var(--rosso-bordo);
+  color: var(--rosso-testo);
 }
-.save-sincronizzato {
-  background: var(--abete-tenue);
-  border-color: transparent;
-  color: var(--abete);
-}
+.save-sincronizzato,
 .save-in_corso,
 .save-in_attesa {
-  background: var(--ghiaccio);
-  border-color: transparent;
-  color: var(--fiordo);
+  color: var(--blu);
 }
+
+.eyebrow,
 .mode-tag {
-  font-size: 0.8rem;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--fiordo);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--secondario);
+}
+.brand p.eyebrow {
+  margin: 0;
+  font-size: 11px;
+}
+.flag {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
 }
 .scenario-tag {
   display: inline-flex;
@@ -926,8 +945,7 @@ code {
   display: flex;
   gap: 2px;
   overflow-x: auto;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  background: var(--blu);
   padding: 0 12px;
   position: sticky;
   top: 0;
@@ -937,16 +955,16 @@ code {
 .tabs a {
   padding: 12px 14px;
   text-decoration: none;
-  color: var(--ink-2);
+  color: var(--bianco);
   white-space: nowrap;
   border-bottom: 3px solid transparent;
   font-weight: 500;
   transition: color var(--ease);
 }
 .tabs a.active {
-  color: var(--fiordo);
+  background: var(--bianco);
+  color: var(--blu);
   font-weight: 600;
-  border-bottom-color: var(--fiordo);
 }
 
 .content {
@@ -1106,7 +1124,7 @@ select:focus-visible,
 textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--fiordo);
+  outline: 2px solid var(--blu);
   outline-offset: 2px;
 }
 input:disabled,
@@ -1117,12 +1135,12 @@ textarea:disabled {
   cursor: not-allowed;
 }
 ::placeholder {
-  color: var(--nebbia);
+  color: var(--secondario);
   opacity: 1;
 }
 input[type='checkbox'],
 input[type='radio'] {
-  accent-color: var(--fiordo);
+  accent-color: var(--blu);
 }
 .field {
   display: flex;
@@ -1171,7 +1189,7 @@ input[type='radio'] {
   font-size: 0.9rem;
   border: 1px solid var(--linea-forte);
   background: var(--surface);
-  color: var(--fiordo);
+  color: var(--blu);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
@@ -1184,12 +1202,12 @@ input[type='radio'] {
   transition: background var(--ease), border-color var(--ease);
 }
 .btn:hover:not(:disabled) {
-  background: var(--ghiaccio);
+  background: var(--regione);
 }
 .btn:disabled {
   background: var(--surface-2);
   border-color: var(--line);
-  color: var(--nebbia);
+  color: var(--secondario);
   cursor: not-allowed;
 }
 .btn-primary {
@@ -1198,13 +1216,13 @@ input[type='radio'] {
   color: var(--accent-ink);
 }
 .btn-primary:hover:not(:disabled) {
-  background: #205062;
-  border-color: #205062;
+  background: var(--blu-hover);
+  border-color: var(--blu-hover);
 }
 .btn-primary:disabled {
   background: var(--surface-2);
   border-color: var(--line);
-  color: var(--nebbia);
+  color: var(--secondario);
 }
 .btn-ghost {
   border-color: transparent;
@@ -1221,11 +1239,11 @@ input[type='radio'] {
   color: var(--danger);
 }
 .btn.danger {
-  border-color: var(--errore);
+  border-color: var(--rosso-testo);
 }
 .btn.danger:hover:not(:disabled),
 .icon-btn.danger:hover:not(:disabled) {
-  background: var(--errore-tenue);
+  background: var(--rosso-tenue);
 }
 .icon-btn {
   border: 1px solid transparent;
@@ -1245,7 +1263,7 @@ input[type='radio'] {
   opacity: 0.3;
 }
 .icon-btn.fav.on {
-  color: var(--ambra);
+  color: var(--rosso);
 }
 .link-btn {
   background: none;
@@ -1259,8 +1277,10 @@ input[type='radio'] {
 
 .badge {
   display: inline-block;
-  font-size: 0.72rem;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--surface-2);
@@ -1275,32 +1295,30 @@ input[type='radio'] {
 }
 .badge-confermato,
 .badge-tone-ok {
-  background: var(--abete-tenue);
-  color: var(--abete);
+  background: var(--regione);
+  color: var(--blu);
   border-color: transparent;
 }
-.badge-prenotato {
-  background: var(--fiordo);
-  color: var(--bianco);
-  border-color: transparent;
-}
+.badge-prenotato,
 .badge-pagato {
-  background: var(--abete);
+  background: var(--blu);
   color: var(--bianco);
   border-color: transparent;
+}
+.badge-pagato::before {
+  content: '✓ ';
 }
 .badge-stimato,
 .badge-tone-info {
-  background: var(--ghiaccio);
-  color: var(--fiordo);
-  border-color: transparent;
+  background: var(--bianco);
+  color: var(--secondario);
+  border-color: var(--linea);
 }
 .badge-da_verificare,
 .badge-tone-warn {
-  background: var(--ambra-tenue);
-  color: var(--ambra-testo);
-  border-color: var(--ambra);
-  border-style: dashed;
+  background: var(--rosso-tenue);
+  color: var(--rosso-testo);
+  border-color: var(--rosso-bordo);
 }
 
 .note-info,
@@ -1316,7 +1334,7 @@ input[type='radio'] {
 .note-warn {
   background: var(--warn-bg);
   color: var(--ink);
-  box-shadow: inset 0 0 0 1px rgb(184 109 38 / 35%);
+  box-shadow: inset 0 0 0 1px var(--rosso-bordo);
 }
 p.note-warn.small {
   padding: 6px 10px;
@@ -1515,6 +1533,22 @@ details summary {
 .map-box {
   position: relative;
 }
+/* Mappa nei colori del viaggio: una matrice porta i toni di OSM su --mare e --terra */
+.map.leaflet-container {
+  background: var(--mare);
+}
+.map .leaflet-tile-pane {
+  filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeColorMatrix values='.235 .791 .08 0 -.076 .177 .594 .06 0 .19 .093 .313 .032 0 .57 0 0 0 1 0'/%3E%3C/filter%3E%3C/svg%3E#f");
+}
+.map .leaflet-popup-content-wrapper,
+.map .leaflet-popup-tip,
+.map .leaflet-tooltip:not(.region-label) {
+  background: var(--vetro);
+  -webkit-backdrop-filter: var(--vetro-blur);
+  backdrop-filter: var(--vetro-blur);
+  color: var(--blu);
+  box-shadow: var(--shadow-float);
+}
 .map {
   width: 100%;
   border-radius: 10px;
@@ -1555,11 +1589,7 @@ details summary {
   color: var(--ink-2);
   margin-top: 8px;
 }
-.legend i {
-  display: inline-block;
-  width: 14px;
-  height: 4px;
-  border-radius: 2px;
+.legend svg {
   vertical-align: middle;
 }
 .stop-pin-wrap {
@@ -1572,14 +1602,16 @@ details summary {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--fiordo);
+  background: var(--blu);
   color: #fff;
   font: 700 13px/1 system-ui, sans-serif;
   border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgb(23 59 74 / 40%);
+  box-shadow: 0 1px 4px rgb(0 32 91 / 40%);
 }
 .stop-pin-ship {
-  background: var(--m-costiera);
+  background: var(--bianco);
+  color: var(--blu);
+  border-color: var(--blu);
 }
 .map-popup {
   display: grid;
@@ -1599,7 +1631,7 @@ details summary {
   padding: 12px 14px;
 }
 .day-warn {
-  border-color: var(--ambra);
+  border-color: var(--rosso);
 }
 .day-head {
   display: flex;
@@ -1809,7 +1841,7 @@ details summary {
   padding: 0 2px;
   font-size: 10.5px;
   font-weight: 700;
-  color: var(--ardesia);
+  color: var(--blu);
   text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
 }
 .leaflet-tooltip.region-label::before {
@@ -2061,7 +2093,7 @@ details summary {
   pointer-events: none;
 }
 .toast {
-  background: var(--ardesia);
+  background: var(--blu);
   color: #fff;
   padding: 10px 14px;
   border-radius: 10px;
@@ -2104,10 +2136,10 @@ details summary {
 
 /* Ritmo del viaggio */
 :root {
-  --load-leggera: var(--abete);
-  --load-equilibrata: #2b6a82;
-  --load-piena: var(--ambra-testo);
-  --load-eccessiva: var(--errore);
+  --load-leggera: var(--secondario);
+  --load-equilibrata: var(--blu);
+  --load-piena: var(--rosso);
+  --load-eccessiva: var(--rosso-testo);
 }
 .load-strip {
   display: flex;
@@ -2159,7 +2191,7 @@ details summary {
   border-color: var(--load-eccessiva);
 }
 .day-piena {
-  border-color: var(--ambra);
+  border-color: var(--rosso);
 }
 .suggestion-list {
   list-style: none;
@@ -2532,8 +2564,8 @@ details summary {
   display: grid;
   place-items: center;
   font-size: 2.4rem;
-  background: var(--ghiaccio);
-  color: var(--fiordo);
+  background: var(--regione);
+  color: var(--blu);
 }
 .dest-title {
   display: flex;
@@ -2564,12 +2596,12 @@ details summary {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgb(23 59 74 / 70%);
+  background: rgb(0 32 91 / 70%);
   color: #fff;
   border-radius: 50%;
 }
 .dest-fav.on {
-  color: #f4c477;
+  background: var(--rosso);
 }
 .photo-credit-mini {
   position: absolute;
@@ -2673,7 +2705,7 @@ details summary {
   background: var(--line);
 }
 .tabs a:hover:not(.active) {
-  color: var(--ink);
+  background: rgb(255 255 255 / 14%);
 }
 /* Smartphone: barra in basso, raggiungibile con il pollice; scorre in orizzontale */
 @media (max-width: 760px) {
@@ -2684,9 +2716,8 @@ details summary {
     left: 0;
     right: 0;
     padding: 0 4px env(safe-area-inset-bottom);
-    border-top: 1px solid var(--line);
     border-bottom: 0;
-    box-shadow: 0 -4px 16px rgb(23 59 74 / 8%);
+    box-shadow: 0 -4px 16px rgb(0 32 91 / 18%);
     z-index: 1500;
   }
   .tabs a {
@@ -2704,7 +2735,6 @@ details summary {
     justify-content: center;
   }
   .tabs a.active {
-    border-top-color: var(--accent);
     border-bottom-color: transparent;
   }
   .tab-icon {
@@ -2778,12 +2808,12 @@ details summary {
   border-radius: 999px;
 }
 .is-tentative .ov-period-kind {
-  border: 1px dashed var(--ambra);
-  color: var(--ambra-testo);
+  border: 1px dashed var(--rosso);
+  color: var(--rosso-testo);
 }
 .is-confirmed .ov-period-kind {
-  background: var(--abete-tenue);
-  color: var(--abete);
+  background: var(--regione);
+  color: var(--blu);
 }
 .ov-period-note {
   flex-basis: 100%;
@@ -2813,7 +2843,7 @@ details summary {
 }
 .ov-facts dd {
   margin: 0;
-  color: var(--fiordo);
+  color: var(--blu);
   font-size: 1.5rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -3072,11 +3102,11 @@ button.stop-num:hover {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .stop-selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgb(23 59 74 / 18%);
+  border-color: var(--rosso);
+  box-shadow: 0 0 0 2px rgb(186 12 47 / 18%);
 }
 .stop-selected .stop-num {
-  background: var(--accent);
+  background: var(--rosso);
 }
 .stop-meta {
   display: flex;
@@ -3093,7 +3123,8 @@ button.stop-num:hover {
   white-space: normal;
 }
 .stop-pin-selected {
-  box-shadow: 0 0 0 4px var(--bianco), 0 0 0 8px rgb(23 59 74 / 45%);
+  background: var(--rosso);
+  box-shadow: 0 0 0 4px var(--bianco), 0 0 0 8px rgb(186 12 47 / 45%);
   transform: scale(1.15);
 }
 /* Il filo tra le tappe dice lo stato del tratto: pieno = calcolato, tratteggiato = da calcolare */
@@ -3252,8 +3283,14 @@ button.stop-num:hover {
   flex-wrap: wrap;
 }
 /* Focus visibile anche dentro la barra delle sezioni (che taglia l'outline esterno) */
-.tabs a:focus-visible {
-  outline-offset: -3px;
+.tabs a:focus-visible,
+.travel-bar a:focus-visible {
+  outline-color: var(--bianco);
+  outline-offset: -4px;
+}
+.tabs a.active:focus-visible,
+.travel-bar a.active:focus-visible {
+  outline-color: var(--blu);
 }
 /* Area di tocco di almeno 44 px attorno al numero della tappa, senza ingrandirlo */
 button.stop-num {
@@ -3268,11 +3305,64 @@ button.stop-num:focus-visible {
   outline: 3px solid var(--info);
   outline-offset: 2px;
 }
+/* Barra icone: a sinistra sul computer, in basso sul telefono */
+.rail-logo {
+  display: none;
+}
+@media (min-width: 761px) {
+  .app {
+    padding-left: 84px;
+  }
+  .tabs {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 84px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 8px;
+    overflow: hidden auto;
+    z-index: 1500;
+  }
+  .tabs a {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 2px;
+    border: 0;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+  }
+  .tab-icon .icon {
+    width: 22px;
+    height: 22px;
+  }
+  .rail-logo {
+    display: block;
+    width: 44px;
+    margin: 0 auto 12px;
+    flex: none;
+  }
+  .rail-logo .flag {
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 70%);
+  }
+  .brand .logo {
+    display: none;
+  }
+}
+@media (min-width: 1100px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1400;
+  }
+}
 /* Ancore di scorrimento sotto la barra delle sezioni */
 .map-panel,
 .stops > li,
 .day {
-  scroll-margin-top: 64px;
+  scroll-margin-top: 84px;
 }
 @media (prefers-reduced-motion: reduce) {
   .stop,

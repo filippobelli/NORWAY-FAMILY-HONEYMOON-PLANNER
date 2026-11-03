@@ -8,16 +8,9 @@ import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup,
 
 export const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 
-/** Un colore per regione, distinguibile anche sopra la mappa topografica */
-export const REGION_COLOR: Record<Region, string> = {
-  'Oslo e Østlandet': '#1F5F7A',
-  'Innlandet e montagne': '#315B4A',
-  'Fiordi occidentali': '#1E7F78',
-  'Sørlandet e Rogaland': '#B86D26',
-  Trøndelag: '#5A4A8C',
-  'Nordland e Lofoten': '#A84236',
-  'Troms e Finnmark': '#7D6A12',
-};
+// Blu per le regioni, rosso per quella evidenziata: Leaflet ha bisogno del colore esplicito
+const BLU = '#00205B';
+const ROSSO = '#BA0C2F';
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
 
@@ -62,7 +55,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         for (const r of REGIONS) {
           const list: LPath[] = [];
           for (const c of COUNTIES.filter((x) => REGION_COUNTIES[r].includes(x.nr))) {
-            const p = L.polygon(c.rings, { color: REGION_COLOR[r], weight: 1, fillOpacity: 0.1 }) as LPath;
+            const p = L.polygon(c.rings, { color: BLU, weight: 1, fillOpacity: 0.1 }) as LPath;
             p.bindTooltip(`<strong>${esc(r)}</strong><br>${esc(c.name)}`, { sticky: true });
             p.on('click', () => toggleRef.current(r));
             p.on('mouseover', () => setHover(r));
@@ -101,7 +94,8 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
       const lit = hover === r;
       for (const p of list) {
         p.setStyle({
-          color: REGION_COLOR[r],
+          color: lit ? ROSSO : BLU,
+          fillColor: BLU,
           weight: active || lit ? 2.5 : 1,
           opacity: active || lit ? 1 : 0.6,
           fillOpacity: active ? 0.38 : lit ? 0.22 : 0.06,
@@ -120,7 +114,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         radius: active ? 5 : 3,
         color: '#ffffff',
         weight: 1.5,
-        fillColor: active ? REGION_COLOR[d.region] : '#5C6B70',
+        fillColor: active ? BLU : '#4A5468',
         fillOpacity: 1,
       });
       mk.bindTooltip(esc(d.name), { permanent: active, direction: 'right', offset: [6, 0], className: 'region-label' });
@@ -161,7 +155,6 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
               <li key={r} className={`region-item ${on ? 'on' : ''} ${shown === r ? 'lit' : ''}`} onMouseEnter={() => setHover(r)} onMouseLeave={() => setHover(null)}>
                 <label>
                   <input type="checkbox" checked={on} onChange={() => onToggle(r)} />
-                  <span className="swatch" style={{ background: REGION_COLOR[r] }} aria-hidden />
                   <strong>{r}</strong>
                   {isAirport && <span className="muted small">{on ? ' · aeroporto' : ' · solo aeroporto: arrivo o partenza, regione non esplorata'}</span>}
                 </label>

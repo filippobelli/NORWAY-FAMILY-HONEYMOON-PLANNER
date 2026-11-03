@@ -4,7 +4,7 @@ import { coastalRoute } from '../domain/coastal';
 import type { TransportMode, Trip } from '../domain/types';
 import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
 import { isAutoSegment } from '../domain/routeMerge';
-import { MODE_COLOR, MODE_LABEL } from './common';
+import { MODE_COLOR, MODE_DASH, MODE_LABEL } from './common';
 
 interface Props {
   trip: Trip;
@@ -75,9 +75,9 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
         if (usedDest.has(d.id)) continue;
         const marker = L.circleMarker([d.lat, d.lng], {
           radius: 5,
-          color: '#5C6B70',
+          color: '#4A5468',
           weight: 1,
-          fillColor: '#DCE3E1',
+          fillColor: '#D5DCE7',
           fillOpacity: 0.9,
         });
         const box = document.createElement('div');
@@ -110,7 +110,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
             color: MODE_COLOR[seg.mode],
             weight: touched ? 6 : 4,
             opacity: 0.85,
-            dashArray: seg.mode === 'traghetto' ? '8 6' : undefined,
+            dashArray: MODE_DASH[seg.mode],
           })
             .bindTooltip(
               `${ends}<br>${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''} · ${isAutoSegment(seg) ? 'calcolato (OSRM)' : 'tracciato inserito a mano'}`,
@@ -123,7 +123,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
           if (r?.valid) {
             L.polyline(
               r.ports.map((p) => [p.lat, p.lng] as [number, number]),
-              { color: MODE_COLOR.costiera, weight: 4, dashArray: '2 8', opacity: 0.9 },
+              { color: MODE_COLOR.costiera, weight: 4, dashArray: MODE_DASH.costiera, opacity: 0.9 },
             )
               .bindTooltip(`${ends}<br>${esc(seg.label)} (tracciato indicativo tra i porti)`)
               .addTo(layer);
@@ -198,7 +198,10 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       <div className="legend" aria-label="Legenda">
         {legendModes(trip).map((m) => (
           <span key={m}>
-            <i style={{ background: MODE_COLOR[m] }} /> {MODE_LABEL[m]}
+            <svg width="28" height="6" aria-hidden="true">
+              <line x1="0" y1="3" x2="28" y2="3" stroke={MODE_COLOR[m]} strokeWidth="3" strokeDasharray={MODE_DASH[m]} />
+            </svg>{' '}
+            {MODE_LABEL[m]}
           </span>
         ))}
       </div>
