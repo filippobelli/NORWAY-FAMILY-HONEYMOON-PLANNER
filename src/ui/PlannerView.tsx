@@ -65,7 +65,10 @@ export function PlannerView() {
   useEffect(() => {
     saveUi({ sel: formatSelection(current), center, filter, scroll: outlineRef.current?.scrollTop });
     // replaceState: la selezione è nell'indirizzo ma non riempie la cronologia e non ricarica la vista
-    window.history.replaceState(null, '', buildHash('pianifica', { sel: formatSelection(current), centro: center === 'timeline' ? center : undefined }));
+    // Solo se l'indirizzo è ancora questo: durante un cambio di modalità non deve riportare qui
+    if (parseRoute(window.location.hash).view === 'pianifica') {
+      window.history.replaceState(null, '', buildHash('pianifica', { sel: formatSelection(current), centro: center === 'timeline' ? center : undefined }));
+    }
   }, [current, center, filter]);
 
   useLayoutEffect(() => {

@@ -466,6 +466,15 @@ code {
   justify-content: space-between;
   gap: 4px 10px;
 }
+.travel-top-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.travel-top .mode-link {
+  min-height: 44px;
+}
 .travel-main {
   padding: 12px;
   width: 100%;

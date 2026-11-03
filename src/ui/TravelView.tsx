@@ -8,7 +8,7 @@ import { defaultDayIndex, phaseNote, todayView, type BookingInfo } from '../doma
 import type { DiaryAttachment, DiaryEntry, StopVisitState } from '../domain/types';
 import { deleteBlob, getBlob, putBlob } from '../services/storage/blobs';
 import { useAppMode } from '../state/mode';
-import type { ViewId } from '../state/route';
+import { isTravelView, type ViewId } from '../state/route';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
 import { Icon, type IconName } from './icons';
@@ -33,11 +33,24 @@ const localToday = () => {
 export function TravelShell({ tab, status, children }: { tab: ViewId; status: ReactNode; children: ReactNode }) {
   const { trip } = useTrip();
   const active = BAR.some((b) => b.id === tab) ? tab : 't/altro';
+  const { setMode } = useAppMode();
   return (
     <div className="travel">
       <header className="travel-top">
         <strong>{trip.title || 'Norvegia 2027'}</strong>
-        {status}
+        <div className="travel-top-right">
+          {status}
+          <button
+            className="mode-link"
+            onClick={() => {
+              setMode('planning');
+              // Una vista completa resta aperta; dalle schermate di viaggio si va all'area di lavoro
+              if (isTravelView(tab)) window.location.hash = '#/pianifica';
+            }}
+          >
+            <Icon name="gear" /> Pianificazione
+          </button>
+        </div>
       </header>
       <main className="travel-main">{children}</main>
       <nav className="travel-bar" aria-label="Modalità viaggio">
