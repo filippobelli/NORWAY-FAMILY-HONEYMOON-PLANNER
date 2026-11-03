@@ -192,7 +192,7 @@ test('Backup JSON: l\'esportazione produce un file leggibile e reimportabile sen
   assert.match(fileName, /^norvegia-2027-\d{4}-\d{2}-\d{2}\.json$/);
   const text = await blob.text();
   const parsed = JSON.parse(text) as Trip;
-  assert.equal(parsed.schemaVersion, 1);
+  assert.equal(parsed.schemaVersion, 2);
   const back = await readTripFile(new File([text], fileName, { type: 'application/json' }));
   // Confronto nella forma JSON: un campo con valore undefined equivale a un campo assente (è così che viene salvato)
   const asJson = (t: Trip) => JSON.parse(JSON.stringify(t)) as unknown;

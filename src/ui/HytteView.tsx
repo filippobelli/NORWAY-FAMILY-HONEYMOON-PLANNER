@@ -1,3 +1,4 @@
+import { restorePlanOnly } from '../domain/actuals';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { toEur } from '../domain/coastal';
 import { newId } from '../domain/ids';
@@ -6,7 +7,7 @@ import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
-import { externalHref, lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
+import { upsertAccommodation, externalHref, lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
@@ -16,7 +17,7 @@ const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'in
   prenotata: { label: 'Prenotata', tone: 'ok' },
 };
 
-function blank(partial: Partial<Accommodation> = {}): Accommodation {
+export function blank(partial: Partial<Accommodation> = {}): Accommodation {
   return {
     id: newId(),
     name: '',
@@ -35,7 +36,7 @@ function blank(partial: Partial<Accommodation> = {}): Accommodation {
 }
 
 export function HytteView() {
-  const { trip, update, replace, toast } = useTrip();
+  const { trip, update, toast } = useTrip();
   const [draft, setDraft] = useState<Accommodation | null>(null);
   const [stopId, setStopId] = useState<string>(trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
   const [radius, setRadius] = useState(15);
@@ -70,18 +71,7 @@ export function HytteView() {
   };
 
   const save = (a: Accommodation) => {
-    update((t) => {
-      const exists = t.accommodations.some((x) => x.id === a.id);
-      const accommodations = exists ? t.accommodations.map((x) => (x.id === a.id ? a : x)) : [...t.accommodations, a];
-      // Mantiene coerente il collegamento tappa ↔ alloggio
-      // La tappa adotta la sistemazione solo se non ne ha già una scelta (le altre restano candidate).
-      const stops = t.stops.map((s) => {
-        if (s.id === a.stopId && !s.accommodationId) return { ...s, accommodationId: a.id };
-        if (s.accommodationId === a.id && s.id !== a.stopId) return { ...s, accommodationId: undefined };
-        return s;
-      });
-      return { ...t, accommodations, stops };
-    });
+    update((t) => upsertAccommodation(t, a));
     setDraft(null);
     toast('Sistemazione salvata');
   };
@@ -95,7 +85,7 @@ export function HytteView() {
       stops: t.stops.map((s) => (s.id === stopId ? { ...s, accommodationId: accId } : s)),
       accommodations: t.accommodations.map((a) => (a.id === accId ? { ...a, stopId } : a)),
     }));
-    toast('Alloggio scelto per la tappa (non è una prenotazione)', 'ok', { label: 'Annulla', run: () => replace(before) });
+    toast('Alloggio scelto per la tappa (non è una prenotazione)', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, before)) });
   };
   const searchFor = (id: string) => {
     setStopId(id);
@@ -452,7 +442,7 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
   );
 }
 
-function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; onSave: (a: Accommodation) => void; onCancel: () => void }) {
+export function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; onSave: (a: Accommodation) => void; onCancel: () => void }) {
   const { trip } = useTrip();
   const [a, setA] = useState(value);
   const set = (p: Partial<Accommodation>) => setA((x) => ({ ...x, ...p }));
@@ -549,3 +539,4 @@ function AccommodationForm({ value, onSave, onCancel }: { value: Accommodation; 
   );
 }
 
+export const blankAccommodation = blank;

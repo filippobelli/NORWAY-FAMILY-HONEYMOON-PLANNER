@@ -22,6 +22,8 @@ export interface CloudTripRow {
   id: string;
   title: string;
   updated_at: string;
+  /** Ultimo invio scritto nel documento */
+  last_mutation?: string | null;
 }
 
 const CONFIG_KEY = 'nfhp.cloud.config';
@@ -169,10 +171,12 @@ async function validSession(cfg: CloudConfig): Promise<CloudSession> {
     method: 'POST',
     body: JSON.stringify({ refresh_token: s.refreshToken }),
   });
-  if (!res.ok) {
+  // Solo un rifiuto vero chiude la sessione: un errore temporaneo del server no
+  if (res.status === 400 || res.status === 401 || res.status === 403) {
     storeSession(undefined);
     throw new CloudError('Sessione scaduta: accedi di nuovo', 401);
   }
+  if (!res.ok) throw new CloudError(`Errore del server di accesso (${res.status}). I dati restano salvati in locale.`, res.status);
   const ns = toSession((await res.json()) as AuthResponse, s.email);
   storeSession(ns);
   return ns;
@@ -201,7 +205,7 @@ export async function listCloudTrips(cfg: CloudConfig): Promise<CloudTripRow[]> 
 
 export async function getCloudTripMeta(cfg: CloudConfig, id: string): Promise<CloudTripRow | undefined> {
   const s = await validSession(cfg);
-  const res = await call(cfg, `/rest/v1/trips?select=id,title,updated_at&id=eq.${encodeURIComponent(id)}`, { token: s.accessToken });
+  const res = await call(cfg, `/rest/v1/trips?select=id,title,updated_at,last_mutation:data->>lastMutationId&id=eq.${encodeURIComponent(id)}`, { token: s.accessToken });
   if (!res.ok) throw await restError(res);
   const rows = (await res.json()) as CloudTripRow[];
   return rows[0];

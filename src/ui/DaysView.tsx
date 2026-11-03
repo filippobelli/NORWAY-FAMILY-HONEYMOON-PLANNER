@@ -1,3 +1,4 @@
+import { restorePlanOnly } from '../domain/actuals';
 import { useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { applySuggestion, computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
@@ -19,7 +20,7 @@ const LEVEL_LABEL: Record<DayLoad['level'], { label: string; tone: 'ok' | 'info'
 };
 
 export function DaysView() {
-  const { trip, update, replace, toast } = useTrip();
+  const { trip, update, toast } = useTrip();
   const days = useMemo(() => computeDays(trip), [trip]);
   const loads = useMemo(() => computeDayLoads(trip, days), [trip, days]);
   const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
@@ -33,7 +34,7 @@ export function DaysView() {
     const action = sg.action;
     const before = trip;
     update((t) => applySuggestion(t, action));
-    toast('Proposta applicata', 'ok', { label: 'Annulla', run: () => replace(before) });
+    toast('Proposta applicata', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, before)) });
   };
 
   const counts = loads.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.level]: (acc[l.level] ?? 0) + 1 }), {});
@@ -160,7 +161,7 @@ function OrphanDay({ dayKey, days }: { dayKey: string; days: DayInfo[] }) {
   );
 }
 
-function DayCard({ day, load, suggestions, onApply }: { day: DayInfo; load: DayLoad; suggestions: Suggestion[]; onApply: (sg: Suggestion) => void }) {
+export function DayCard({ day, load, suggestions, onApply, expanded }: { day: DayInfo; load: DayLoad; suggestions: Suggestion[]; onApply: (sg: Suggestion) => void; expanded?: boolean }) {
   const { trip, update } = useTrip();
   const plan = trip.days[day.key] ?? emptyDay();
   const [title, setTitle] = useState('');
@@ -366,7 +367,7 @@ function DayCard({ day, load, suggestions, onApply }: { day: DayInfo; load: DayL
           ))}
         </div>
       )}
-      <details>
+      <details open={expanded}>
         <summary>Note e piano B {plan.activities.some((a) => a.cost) && `· ${plan.activities.filter((a) => a.cost).map((a) => fmtMoney(a.cost)).join(' + ')}`}</summary>
         <div className="grid-2">
           <Field label="Note operative">{(id) => <textarea id={id} rows={2} value={plan.notes} onChange={(e) => setPlan((p) => ({ ...p, notes: e.target.value }))} />}</Field>

@@ -1,11 +1,12 @@
 import { newId } from './ids';
 import { DEFAULT_ASSUMPTIONS, migrateDayKeys } from './itinerary';
+import { CURRENT_SCHEMA, migrateDocument } from './migrations';
 import { ensureScenarios } from './scenarios';
 import type { Trip } from './types';
 
 export function createEmptyTrip(): Trip {
   return ensureScenarios({
-    schemaVersion: 1,
+    schemaVersion: CURRENT_SCHEMA as Trip['schemaVersion'],
     id: newId(),
     title: 'Norvegia, agosto 2027',
     // Data provvisoria: modificabile, segnalata come non decisa.
@@ -20,6 +21,8 @@ export function createEmptyTrip(): Trip {
     accommodations: [],
     budgetItems: [],
     favorites: [],
+    actuals: { stops: {}, activities: {} },
+    diary: [],
     settings: {
       nokPerEur: 10.3885,
       nokRateNote: 'Norges Bank, cambio del 27/10/2026. Si aggiorna in automatico all\'apertura dell\'app.',
@@ -48,6 +51,7 @@ export function validateTripShape(t: Partial<Trip>): string[] {
     else if (!isNum(s.lat) || !isNum(s.lng) || Math.abs(s.lat) > 90 || Math.abs(s.lng) > 180) errors.push(`tappa ${i + 1}: coordinate non valide`);
     else if (!isNum(s.nights) || s.nights < 0 || s.nights > 60) errors.push(`tappa ${i + 1}: numero di notti non valido`);
   });
+  if (t.diary !== undefined && !Array.isArray(t.diary)) errors.push('diario non valido');
   (Array.isArray(t.budgetItems) ? t.budgetItems : []).forEach((b, i) => {
     if (!b || !b.amount || !isNum(b.amount.amount)) errors.push(`voce di budget ${i + 1}: importo non valido`);
   });
@@ -56,9 +60,7 @@ export function validateTripShape(t: Partial<Trip>): string[] {
 
 /** Normalizza un documento caricato (locale, file o cloud) senza perdere campi sconosciuti. */
 export function normalizeTrip(raw: unknown): Trip {
-  if (!raw || typeof raw !== 'object') throw new Error('Documento non valido');
-  const t = raw as Partial<Trip>;
-  if (t.schemaVersion !== 1) throw new Error('Versione del documento non supportata');
+  const t = migrateDocument(raw) as Partial<Trip>;
   const errors = validateTripShape(t);
   if (errors.length) throw new Error(`Documento non valido: ${errors.slice(0, 3).join('; ')}`);
   const base = createEmptyTrip();

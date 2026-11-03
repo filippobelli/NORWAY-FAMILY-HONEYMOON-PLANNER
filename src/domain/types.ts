@@ -346,8 +346,55 @@ export interface Scenario {
   plan?: PlanSnapshot;
 }
 
+// ---------- Stato effettivo e diario (fuori dal piano: non cambiano date, ordine, notti o budget) ----------
+
+export type StopVisitState = 'in_corso' | 'visitata' | 'saltata';
+export type ActivityDoneState = 'fatta' | 'saltata';
+
+/** Solo ciò che è stato segnato: una tappa assente è Pianificata, un'attività assente è Da fare. */
+export interface Actuals {
+  stops: Record<ID, { state: StopVisitState; at: string }>;
+  activities: Record<ID, { state: ActivityDoneState; at: string }>;
+}
+
+export interface DiaryAttachment {
+  id: ID;
+  name: string;
+  type: string;
+  size: number;
+  /** Il file sta sul dispositivo, non nel documento del viaggio */
+  state: 'solo_dispositivo' | 'errore';
+  error?: string;
+}
+
+export interface DiaryEntry {
+  id: ID;
+  createdAt: string;
+  updatedAt: string;
+  /** Data e ora locali di chi ha scritto */
+  localDate: string;
+  localTime: string;
+  tzOffsetMin: number;
+  text: string;
+  /** Giornata per data, non per posizione: riordinare le tappe non la sposta */
+  dayDate?: string;
+  stopId?: ID;
+  /** Nome al momento della scrittura: resta anche se la tappa viene tolta */
+  stopName?: string;
+  attachments?: DiaryAttachment[];
+  deletedAt?: string;
+}
+
+export interface PlanLogEntry {
+  id: ID;
+  at: string;
+  label: string;
+  from: ID;
+  to: ID;
+}
+
 export interface Trip {
-  schemaVersion: 1;
+  schemaVersion: 2;
   id: ID;
   title: string;
   startDate: string;
@@ -362,6 +409,12 @@ export interface Trip {
   accommodations: Accommodation[];
   budgetItems: BudgetItem[];
   favorites: ID[];
+  actuals?: Actuals;
+  diary?: DiaryEntry[];
+  /** Registro delle versioni applicate, per rivedere e annullare */
+  planLog?: PlanLogEntry[];
+  /** Ultimo invio al cloud: riconosce la propria scrittura se la risposta si è persa */
+  lastMutationId?: ID;
   scenarios?: Scenario[];
   activeScenarioId?: ID;
   settings: TripSettings;

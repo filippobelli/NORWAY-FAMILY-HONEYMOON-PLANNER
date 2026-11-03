@@ -1,0 +1,11 @@
+{
+  "name": "Norvegia 2027",
+  "short_name": "Norvegia",
+  "lang": "it",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f2a3d",
+  "theme_color": "#0f2a3d",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

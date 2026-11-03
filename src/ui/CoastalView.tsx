@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { catalogFor, findCatalogVoyage, type CoastalCatalogVoyage } from '../data/coastalCatalog';
 import { COASTAL_FACTS, COASTAL_SOURCES, portsFor } from '../data/coastalPorts';
+import { restorePlanOnly } from '../domain/actuals';
 import { formatEur, STATUS_LABEL } from '../domain/budget';
 import { coastalRoute, coastalTotalEur, familyValueNotes, optionFromCatalog } from '../domain/coastal';
 import { newId } from '../domain/ids';
@@ -194,7 +195,7 @@ export function CoastalView() {
                             onClick={() => {
                               const prev = trip;
                               update((t) => removeCruise(t, o.id));
-                              toast('Crociera tolta dal percorso. Le notti che aveva sostituito non tornano da sole.', 'ok', { label: 'Annulla', run: () => update(() => prev) });
+                              toast('Crociera tolta dal percorso. Le notti che aveva sostituito non tornano da sole.', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, prev)) });
                             }}
                           >
                             Togli dal percorso

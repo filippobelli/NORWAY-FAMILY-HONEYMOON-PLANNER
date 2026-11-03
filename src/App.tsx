@@ -4,7 +4,11 @@ import { totalDays } from './domain/itinerary';
 import { useAutoRates } from './state/autoRates';
 import { CloudSyncProvider, useCloudSync, type CloudStatus } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
+import { isTravelView, parseRoute, type ViewId } from './state/route';
+import { useAppMode } from './state/mode';
+import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
+import { ConflictDialog } from './ui/SyncDialogs';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
 import { ConfiguratorView } from './ui/ConfiguratorView';
@@ -14,8 +18,10 @@ import { FlightsView } from './ui/FlightsView';
 import { HytteView } from './ui/HytteView';
 import { ItineraryView } from './ui/ItineraryView';
 import { OverviewView } from './ui/OverviewView';
+import { PlannerView } from './ui/PlannerView';
 import { ScenariosView } from './ui/ScenariosView';
 import { SettingsView } from './ui/SettingsView';
+import { DiaryScreen, MoreScreen, TodayScreen, TravelItinerary, TravelMap, TravelShell } from './ui/TravelView';
 
 // Il menù segue le domande di chi organizza: chi e quando, dove, come ci si muove, dove si dorme, cosa si fa, quanto costa.
 // Ogni voce può avere più viste; gli indirizzi delle viste restano quelli di sempre, così i link salvati continuano a funzionare.
@@ -26,6 +32,7 @@ const SECTIONS = [
     label: 'Percorso',
     icon: '🗺️',
     views: [
+      { id: 'pianifica', label: 'Area di lavoro' },
       { id: 'itinerario', label: 'Tappe e mappa' },
       { id: 'configuratore', label: 'Fatti proporre un percorso' },
       { id: 'catalogo', label: 'Mete' },
@@ -45,17 +52,9 @@ const SECTIONS = [
   { id: 'giorni', label: 'Giorno per giorno', icon: '📅', views: [{ id: 'giornate', label: 'Giorno per giorno' }] },
   { id: 'costi', label: 'Budget', icon: '💶', views: [{ id: 'budget', label: 'Budget' }] },
 ] as const;
-type TabId = (typeof SECTIONS)[number]['views'][number]['id'] | 'impostazioni';
 
-// Vecchi nomi: «viaggio» erano le impostazioni, «costiera» le crociere
-const ALIASES: Record<string, TabId> = { viaggio: 'impostazioni', costiera: 'crociere', percorso: 'itinerario', trasporti: 'voli' };
-
-function readHash(): TabId {
-  const h = window.location.hash.replace(/^#\/?/, '');
-  if (ALIASES[h]) return ALIASES[h]!;
-  if (h === 'impostazioni') return h;
-  for (const s of SECTIONS) for (const v of s.views) if (v.id === h) return v.id;
-  return 'panoramica';
+function readHash(): ViewId {
+  return parseRoute(window.location.hash).view;
 }
 
 export default function App() {
@@ -69,13 +68,19 @@ export default function App() {
 }
 
 function Shell() {
-  const { trip, localState, loadError, toasts, dismissToast } = useTrip();
-  const [tab, setTab] = useState<TabId>(readHash);
+  const { trip, localState, loadError, staleTab, toasts, dismissToast } = useTrip();
+  const [showConflict, setShowConflict] = useState(false);
+  const { mode, setMode } = useAppMode();
+  const [tab, setTab] = useState<ViewId>(readHash);
   useEffect(() => {
     const on = () => setTab(readHash());
     window.addEventListener('hashchange', on);
     return () => window.removeEventListener('hashchange', on);
   }, []);
+  // Senza un indirizzo si apre la schermata principale della modalità; un link esplicito resta dov'è
+  useEffect(() => {
+    if (mode === 'travel' && !window.location.hash.replace(/^#\/?/, '')) window.location.hash = '#/t/oggi';
+  }, [mode]);
   // Cambiando sezione si riparte dall'inizio della pagina e la voce attiva resta visibile nella barra (su smartphone scorre)
   const navRef = useRef<HTMLElement>(null);
   const firstTab = useRef(true);
@@ -94,6 +99,107 @@ function Shell() {
   useAutoRates(cloud.status);
   const activeScenario = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
 
+  const banners = (
+    <>
+      {cloud.conflict && (
+        <div className="note-warn banner conflict" role="alert">
+          <span>
+            Questo viaggio è stato modificato sia qui sia su un altro dispositivo
+            {cloud.conflict.remoteUpdatedAt ? ` (cloud: ${fmtDateTime(cloud.conflict.remoteUpdatedAt)})` : ''}. L'invio al cloud è in pausa finché non scegli.
+          </span>
+          <button className="btn btn-small btn-primary" onClick={() => setShowConflict(true)}>
+            Confronta e scegli
+          </button>
+        </div>
+      )}
+      {showConflict && cloud.conflict && <ConflictDialog conflict={cloud.conflict} onClose={() => setShowConflict(false)} />}
+      {staleTab && (
+        <div className="note-warn banner" role="alert">
+          <span>Il viaggio è stato modificato in un'altra scheda. Questa è in pausa per non sovrascriverlo.</span>
+          <button className="btn btn-small" onClick={() => window.location.reload()}>
+            Ricarica
+          </button>
+        </div>
+      )}
+      {localState === 'errore' && (
+        <div className="note-warn banner" role="alert">
+          <span>Salvataggio su questo dispositivo NON riuscito (spazio esaurito o archivio non disponibile). Le ultime modifiche sono solo in questa pagina: non chiuderla.</span>
+          <button className="btn btn-small" onClick={() => exportTripFile(trip)}>
+            Esporta un backup
+          </button>
+        </div>
+      )}
+      {cloud.status === 'errore' && cloud.error && (
+        <div className="note-warn banner" role="alert">
+          {cloud.error}
+        </div>
+      )}
+      {loadError && (
+        <div className="note-warn banner" role="alert">
+          {loadError}
+        </div>
+      )}
+    </>
+  );
+  const page = (
+    <>
+      {tab === 'panoramica' && <OverviewView />}
+      {tab === 'pianifica' && <PlannerView />}
+      {tab === 'itinerario' && <ItineraryView />}
+      {tab === 'configuratore' && <ConfiguratorView />}
+      {tab === 'giornate' && <DaysView />}
+      {tab === 'catalogo' && <CatalogView />}
+      {tab === 'crociere' && <CoastalView />}
+      {tab === 'voli' && <FlightsView />}
+      {tab === 'hytte' && <HytteView />}
+      {tab === 'budget' && <BudgetView />}
+      {tab === 'scenari' && <ScenariosView />}
+      {tab === 'impostazioni' && <SettingsView />}
+      {tab === 't/oggi' && <TodayScreen />}
+      {tab === 't/itinerario' && <TravelItinerary />}
+      {tab === 't/mappa' && <TravelMap />}
+      {tab === 't/diario' && <DiaryScreen />}
+      {tab === 't/altro' && <MoreScreen />}
+    </>
+  );
+  const toastList = (
+    <div className="toasts" aria-live="polite">
+      {toasts.map((t) => (
+        <div key={t.id} className={`toast toast-${t.kind}`}>
+          <span>{t.msg}</span>
+          {t.action && (
+            <button
+              className="toast-action"
+              onClick={() => {
+                t.action?.run();
+                dismissToast(t.id);
+              }}
+            >
+              {t.action.label}
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  if (isTravelView(tab) || mode === 'travel') {
+    return (
+      <TravelShell
+        tab={tab}
+        status={
+          <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
+            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
+          </a>
+        }
+      >
+        {banners}
+        {page}
+        {toastList}
+      </TravelShell>
+    );
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -111,6 +217,15 @@ function Shell() {
           </div>
         </div>
         <div className="topbar-right">
+          <button
+            className="mode-link"
+            onClick={() => {
+              setMode('travel');
+              window.location.hash = '#/t/oggi';
+            }}
+          >
+            📱 Modalità viaggio
+          </button>
           <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
             {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
           </a>
@@ -138,58 +253,9 @@ function Shell() {
           ))}
         </nav>
       )}
-      {cloud.status === 'conflitto' && (
-        <div className="note-warn banner conflict" role="alert">
-          <span>
-            Questo viaggio è stato modificato sia qui sia su un altro dispositivo
-            {cloud.conflictRemoteAt ? ` (cloud: ${fmtDateTime(cloud.conflictRemoteAt)})` : ''}. Il salvataggio automatico è in pausa finché non scegli:
-          </span>
-          <span className="row wrap">
-            <button className="btn btn-small btn-primary" onClick={cloud.keepLocal}>
-              Tieni questa versione
-            </button>
-            <button className="btn btn-small" onClick={cloud.useRemote}>
-              Usa la versione del cloud
-            </button>
-          </span>
-        </div>
-      )}
-      {loadError && (
-        <div className="note-warn banner" role="alert">
-          {loadError}
-        </div>
-      )}
-      <main className="content">
-        {tab === 'panoramica' && <OverviewView />}
-        {tab === 'itinerario' && <ItineraryView />}
-        {tab === 'configuratore' && <ConfiguratorView />}
-        {tab === 'giornate' && <DaysView />}
-        {tab === 'catalogo' && <CatalogView />}
-        {tab === 'crociere' && <CoastalView />}
-        {tab === 'voli' && <FlightsView />}
-        {tab === 'hytte' && <HytteView />}
-        {tab === 'budget' && <BudgetView />}
-        {tab === 'scenari' && <ScenariosView />}
-        {tab === 'impostazioni' && <SettingsView />}
-      </main>
-      <div className="toasts" aria-live="polite">
-        {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.kind}`}>
-            <span>{t.msg}</span>
-            {t.action && (
-              <button
-                className="toast-action"
-                onClick={() => {
-                  t.action?.run();
-                  dismissToast(t.id);
-                }}
-              >
-                {t.action.label}
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+      {banners}
+      <main className="content">{page}</main>
+      {toastList}
     </div>
   );
 }
@@ -207,8 +273,10 @@ function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus
     case 'sincronizzato':
       return lastSyncAt ? `Salvato nel cloud · ${new Date(lastSyncAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}` : 'Salvato nel cloud';
     case 'offline':
-      return 'Cloud non raggiungibile · salvato qui, riprovo';
+      return 'Offline · modifiche salvate qui, in attesa di invio';
+    case 'errore':
+      return 'Errore del cloud · salvato qui';
     case 'conflitto':
-      return 'Sincronizzazione in pausa';
+      return 'Sincronizzazione in pausa: da scegliere';
   }
 }

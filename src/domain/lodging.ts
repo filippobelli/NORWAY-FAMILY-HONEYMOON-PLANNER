@@ -120,3 +120,15 @@ export function lodgingComparison(trip: Trip): StopLodging[] {
       return { stop, checkIn: days.find((d) => d.sleepStop?.id === stop.id)?.date, nights: stop.nights, options, toSearch: options.length === 0 };
     });
 }
+
+/** Salva una sistemazione. La tappa la adotta solo se non ne ha già una scelta: le altre restano candidate. */
+export function upsertAccommodation(t: Trip, a: Accommodation): Trip {
+  const exists = t.accommodations.some((x) => x.id === a.id);
+  const accommodations = exists ? t.accommodations.map((x) => (x.id === a.id ? a : x)) : [...t.accommodations, a];
+  const stops = t.stops.map((s) => {
+    if (s.id === a.stopId && !s.accommodationId) return { ...s, accommodationId: a.id };
+    if (s.accommodationId === a.id && s.id !== a.stopId) return { ...s, accommodationId: undefined };
+    return s;
+  });
+  return { ...t, accommodations, stops };
+}

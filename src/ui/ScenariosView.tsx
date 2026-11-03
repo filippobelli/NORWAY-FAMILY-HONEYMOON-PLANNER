@@ -9,14 +9,14 @@ import {
   SCENARIO_KIND_LABEL,
   scenarioKindNotes,
   scenarioMetrics,
-  switchScenario,
   tripForScenario,
   updateScenarioMeta,
   type CompareBasis,
   type ScenarioCompleteness,
   type ScenarioMetrics,
 } from '../domain/scenarios';
-import type { ScenarioKind } from '../domain/types';
+import type { Scenario, ScenarioKind } from '../domain/types';
+import { ApplyVersionDialog, PlanBDialog } from './PlanBDialog';
 import { useTrip } from '../state/store';
 import { Badge, Field } from './common';
 
@@ -78,6 +78,8 @@ export function ScenariosView() {
   const [kind, setKind] = useState<ScenarioKind>('auto_hytte');
   const [from, setFrom] = useState<'copia' | 'vuoto'>('copia');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [applying, setApplying] = useState<Scenario | null>(null);
+  const [planB, setPlanB] = useState(false);
   const all = metrics.map(({ m }) => m);
 
   // Il migliore si indica solo se la riga è confrontabile con i dati di tutti gli scenari
@@ -94,13 +96,20 @@ export function ScenariosView() {
 
   return (
     <div className="scenarios">
+      {applying && <ApplyVersionDialog scenario={applying} onClose={() => setApplying(null)} />}
+      {planB && <PlanBDialog onClose={() => setPlanB(false)} />}
       <div className="note-info">
         Ogni versione è un percorso completo (tappe, tratti, giornate, voli e voci di budget). Alloggi e opzioni di crociera sono condivisi. Confrontare gli scenari
-        non modifica l'itinerario attivo: cambia solo con «Apri per modificare».
+        non modifica il percorso attivo: cambia solo con «Applica piano», dopo il confronto.
       </div>
 
       <section className="panel">
-        <h2>Nuova versione</h2>
+        <header className="panel-head">
+          <h2>Nuova versione</h2>
+          <button className="btn" disabled={trip.stops.length === 0} onClick={() => setPlanB(true)}>
+            Prepara un piano B
+          </button>
+        </header>
         <div className="grid-4">
           <Field label="Nome">{(id) => <input id={id} value={name} placeholder="es. Fiordi in auto" onChange={(e) => setName(e.target.value)} />}</Field>
           <Field label="Tipo">
@@ -268,20 +277,15 @@ export function ScenariosView() {
                 {!active && (
                   <button
                     className="btn btn-small btn-primary"
-                    onClick={() => {
-                      update((cur) => switchScenario(cur, s.id));
-                      toast(`Aperto "${s.name}": Percorso, Giorno per giorno e Budget ora mostrano questa versione`);
-                    }}
+                    onClick={() => setApplying(s)}
                   >
-                    Apri per modificare
+                    Vedi cosa cambia e applica
                   </button>
                 )}
                 {!active && (
                   <p className="muted small sc-open-note">
-                    «Apri per modificare» salva prima lo scenario attivo con tutte le sue modifiche (nessuno scenario viene eliminato). Poi Itinerario, Giornate e
-                    Budget mostrano questo scenario: cambiano data di partenza, tappe (con l'alloggio scelto per ciascuna), tratti, giornate, voci di budget e navi
-                    incluse. Restano condivisi l'elenco degli alloggi, le opzioni costiere, le impostazioni e le stime del budget. Per tornare indietro riapri lo
-                    scenario precedente.
+                    Prima di applicare vedi il confronto. La versione attuale resta salvata con tutte le sue modifiche. Cambiano data di partenza, tappe, tratti, giornate,
+                    voli, voci di budget e navi incluse; restano condivisi alloggi, opzioni di crociera e impostazioni. Diario e stati di visita non cambiano.
                   </p>
                 )}
                 {!active &&

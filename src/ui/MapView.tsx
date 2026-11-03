@@ -55,6 +55,8 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       });
     return () => {
       cancelled = true;
+      // Ferma le animazioni in corso: altrimenti Leaflet le completa su una mappa già rimossa
+      mapRef.current?.map.stop();
       mapRef.current?.map.remove();
       mapRef.current = null;
     };

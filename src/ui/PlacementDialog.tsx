@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { restorePlanOnly } from '../domain/actuals';
 import { formatDateIt, totalNights } from '../domain/itinerary';
 import {
   cruiseChoices,
@@ -19,7 +20,7 @@ import { useTrip } from '../state/store';
 import { Field, NumberInput } from './common';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -80,7 +81,7 @@ function useApply(onClose: () => void, stayHere: boolean) {
   return (next: Trip, msg: string) => {
     const prev = trip;
     update(() => next);
-    toast(msg, 'ok', { label: 'Annulla', run: () => update(() => prev) });
+    toast(msg, 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, prev)) });
     onClose();
     if (stayHere) return;
     try {

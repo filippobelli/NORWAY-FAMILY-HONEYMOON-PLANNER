@@ -326,6 +326,17 @@ export function computeBudget(trip: Trip): BudgetSummary {
   };
 }
 
+/** Da dove arriva una riga di budget, per le etichette. */
+export const ORIGIN_NAME: Record<BudgetLine['origin'], string> = {
+  manuale: 'voce manuale',
+  hytte: 'da Alloggi',
+  costiera: 'da Crociere',
+  voli: 'da Voli',
+  trasporti: 'dal percorso',
+  giornate: 'dalle giornate',
+  stime: 'stima da parametri',
+};
+
 const ORIGIN_TEXT: Record<BudgetLine['origin'], string> = {
   manuale: 'voce manuale',
   hytte: 'alloggi scelti',

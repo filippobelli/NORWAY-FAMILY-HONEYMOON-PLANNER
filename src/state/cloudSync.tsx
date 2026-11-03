@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createEmptyTrip } from '../domain/defaults';
+import { resolveConflicts, type MergeResult, type Side } from '../domain/merge';
+import { FutureSchemaError } from '../domain/migrations';
 import type { Trip } from '../domain/types';
+import { clearBlobs } from '../services/storage/blobs';
+import { loadLocalTrip } from '../services/storage/local';
 import {
   CloudError,
   getCloudConfig,
@@ -8,17 +13,39 @@ import {
   loadCloudTrip,
   loadSession,
   saveCloudTripIfUnchanged,
+  signOut,
   type CloudConfig,
   type CloudSession,
 } from '../services/storage/supabase';
+import {
+  adoptMerged,
+  enqueue,
+  getLastSync as kvLastSync,
+  getOwner,
+  getPending,
+  holdForOwner,
+  purgeTripData,
+  pushOnce,
+  restoreHold,
+  setLastSync as kvSetLastSync,
+  setOwner,
+  writeBase,
+  type PushResult,
+  type SyncTransport,
+} from '../services/storage/syncEngine';
 import { useTrip } from './store';
 
 // Sincronizzazione automatica con il cloud:
-// - ogni modifica viene salvata nel cloud dopo pochi secondi, senza azioni dell'utente;
-// - all'apertura e quando l'app torna in primo piano si scaricano le modifiche fatte da altri dispositivi;
-// - se le due versioni sono cambiate entrambe, la sincronizzazione si ferma e l'utente sceglie (nessuna sovrascrittura silenziosa).
+// - ogni modifica si salva prima sul dispositivo e resta in coda finché il cloud non la conferma;
+// - si riprova all'apertura, al ritorno in primo piano, al ritorno della rete e ogni 30 secondi;
+// - voci di diario e dati indipendenti si uniscono; se la stessa cosa è cambiata in modo diverso, sceglie l'utente.
 
-export type CloudStatus = 'non_configurato' | 'non_connesso' | 'sincronizzato' | 'in_attesa' | 'in_corso' | 'offline' | 'conflitto';
+export type CloudStatus = 'non_configurato' | 'non_connesso' | 'sincronizzato' | 'in_attesa' | 'in_corso' | 'offline' | 'errore' | 'conflitto';
+
+export interface CloudConflict {
+  merge: MergeResult;
+  remoteUpdatedAt: string;
+}
 
 interface CloudSync {
   config?: CloudConfig;
@@ -26,13 +53,16 @@ interface CloudSync {
   status: CloudStatus;
   lastSyncAt?: string;
   error?: string;
-  conflictRemoteAt?: string;
+  conflict?: CloudConflict;
+  /** Modifiche non ancora confermate dal cloud */
+  pending: boolean;
   setSession: (s: CloudSession | undefined) => void;
   reloadConfig: () => void;
   syncNow: () => void;
-  keepLocal: () => void;
-  useRemote: () => void;
+  resolve: (choices: Record<string, Side>) => void;
   loadTrip: (id: string) => Promise<void>;
+  /** Esce e toglie i dati del viaggio dal dispositivo */
+  logout: () => Promise<void>;
 }
 
 const Ctx = createContext<CloudSync | null>(null);
@@ -40,54 +70,80 @@ const Ctx = createContext<CloudSync | null>(null);
 const SYNC_DELAY_MS = 2500;
 const RETRY_MS = 30_000;
 
-function lsGet(k: string): string | undefined {
+const kv = (): Storage => localStorage;
+
+export const getLastSync = (id: string) => {
   try {
-    return localStorage.getItem(k) ?? undefined;
+    return kvLastSync(kv(), id);
   } catch {
     return undefined;
   }
-}
-function lsSet(k: string, v: string | undefined): void {
-  try {
-    if (v === undefined) localStorage.removeItem(k);
-    else localStorage.setItem(k, v);
-  } catch {
-    /* storage non disponibile */
-  }
-}
-export const getLastSync = (id: string) => lsGet(`nfhp.cloud.lastSync.${id}`);
-const setLastSync = (id: string, v: string) => lsSet(`nfhp.cloud.lastSync.${id}`, v);
-const setDirtyFlag = (id: string, v: boolean) => lsSet(`nfhp.cloud.dirty.${id}`, v ? '1' : undefined);
+};
 
 function hasContent(t: Trip): boolean {
-  return t.stops.length > 0 || t.coastalOptions.length > 0 || t.accommodations.length > 0 || t.budgetItems.length > 0;
+  return (
+    t.stops.length > 0 ||
+    t.coastalOptions.length > 0 ||
+    t.accommodations.length > 0 ||
+    t.budgetItems.length > 0 ||
+    (t.flights?.length ?? 0) > 0 ||
+    (t.diary?.length ?? 0) > 0 ||
+    Object.keys(t.days).length > 0 ||
+    Object.keys(t.actuals?.stops ?? {}).length > 0 ||
+    Object.keys(t.actuals?.activities ?? {}).length > 0
+  );
 }
 
 /** Ci sono modifiche locali non ancora nel cloud? (prudente: nel dubbio sì, così non si sovrascrive nulla) */
 export function hasUnsyncedChanges(t: Trip): boolean {
-  if (lsGet(`nfhp.cloud.dirty.${t.id}`)) return true;
-  const known = getLastSync(t.id);
-  return known ? false : hasContent(t);
+  try {
+    if (getPending(kv(), t.id)) return true;
+    return getLastSync(t.id) ? false : hasContent(t);
+  } catch {
+    return true;
+  }
+}
+
+function transportFor(config: CloudConfig): SyncTransport {
+  return {
+    getMeta: async (id) => {
+      const m = await getCloudTripMeta(config, id);
+      return m ? { updated_at: m.updated_at, lastMutationId: m.last_mutation ?? undefined } : undefined;
+    },
+    load: (id) => loadCloudTrip(config, id),
+    save: (t, known, opts) => saveCloudTripIfUnchanged(config, t, known, opts),
+  };
 }
 
 export function CloudSyncProvider({ children }: { children: ReactNode }) {
-  const { trip, replace, toast } = useTrip();
+  const { trip, replace, toast, readOnly } = useTrip();
   const [config, setConfig] = useState(getCloudConfig);
   const [session, setSessionState] = useState<CloudSession | undefined>(() => (getCloudConfig() ? loadSession() : undefined));
   const [status, setStatus] = useState<CloudStatus>(() => (!getCloudConfig() ? 'non_configurato' : loadSession() ? 'in_corso' : 'non_connesso'));
   const [lastSyncAt, setLastSyncAt] = useState(() => getLastSync(trip.id));
   const [error, setError] = useState<string>();
-  const [conflictRemoteAt, setConflict] = useState<string>();
+  const [conflict, setConflictState] = useState<CloudConflict>();
+  const [pending, setPending] = useState(() => {
+    try {
+      return Boolean(getPending(kv(), trip.id));
+    } catch {
+      return false;
+    }
+  });
 
   const tripRef = useRef(trip);
   tripRef.current = trip;
   const lastSeenTrip = useRef(trip);
   const applyingRemote = useRef(false);
   const busy = useRef(false);
-  const pending = useRef(false);
+  const again = useRef(false);
+  const recreated = useRef(false);
   const timer = useRef<number | undefined>(undefined);
-  const conflictRef = useRef<string | undefined>(undefined);
-  conflictRef.current = conflictRemoteAt;
+  const conflictRef = useRef<CloudConflict | undefined>(undefined);
+  const setConflict = useCallback((c: CloudConflict | undefined) => {
+    conflictRef.current = c;
+    setConflictState(c);
+  }, []);
 
   const fail = useCallback((e: unknown) => {
     if (e instanceof CloudError && e.status === 401) {
@@ -96,22 +152,25 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
       setError('Sessione scaduta: accedi di nuovo. Le modifiche restano salvate su questo dispositivo.');
       return;
     }
-    setStatus('offline');
-    setError(e instanceof Error ? e.message : 'Errore di rete');
+    // Senza codice HTTP è un problema di rete; con un codice è un errore da leggere, non «offline»
+    const network = e instanceof CloudError && e.status === undefined;
+    setStatus(network ? 'offline' : 'errore');
+    setError(e instanceof FutureSchemaError ? e.message : e instanceof Error ? e.message : 'Errore di rete');
   }, []);
 
   const applyRemote = useCallback(
     (t: Trip, at: string) => {
       applyingRemote.current = true;
       replace(t);
-      setLastSync(t.id, at);
-      setDirtyFlag(t.id, false);
+      kvSetLastSync(kv(), t.id, at);
+      writeBase(kv(), t);
       setLastSyncAt(at);
+      setPending(false);
       setConflict(undefined);
       setStatus('sincronizzato');
       setError(undefined);
     },
-    [replace],
+    [replace, setConflict],
   );
 
   const schedule = useCallback((ms: number, fn: () => void) => {
@@ -119,51 +178,78 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
     timer.current = window.setTimeout(fn, ms);
   }, []);
 
+  /** Applica l'esito di un invio. Restituisce true se serve un altro invio. */
+  const handle = useCallback(
+    (r: PushResult, sent: Trip): boolean => {
+      switch (r.kind) {
+        case 'niente':
+          setPending(false);
+          setStatus('sincronizzato');
+          return false;
+        case 'salvato': {
+          recreated.current = false;
+          setLastSyncAt(r.updatedAt);
+          const still = Boolean(getPending(kv(), sent.id));
+          setPending(still);
+          setStatus(still ? 'in_attesa' : 'sincronizzato');
+          setError(undefined);
+          return still;
+        }
+        case 'unito':
+          applyingRemote.current = true;
+          replace(r.merge.trip);
+          adoptMerged(kv(), r.merge.trip, r.merge.remote, r.remoteUpdatedAt);
+          setPending(true);
+          toast(`Unito con le modifiche di un altro dispositivo${r.merge.merged.length ? `: ${r.merge.merged.join(', ')}` : ''}`);
+          return true;
+        case 'conflitto':
+          setConflict({ merge: r.merge, remoteUpdatedAt: r.remoteUpdatedAt });
+          setStatus('conflitto');
+          return false;
+        case 'assente':
+          if (recreated.current) {
+            setStatus('errore');
+            setError('Il viaggio non si può ricreare nel cloud. Le modifiche restano su questo dispositivo: esporta un backup.');
+            return false;
+          }
+          recreated.current = true;
+          toast('Il viaggio non era più nel cloud: viene ricreato da questo dispositivo');
+          return true;
+        case 'inaccessibile':
+          setStatus('errore');
+          setError('Questo viaggio nel cloud non è accessibile con questo account. Le modifiche restano su questo dispositivo: esporta un backup.');
+          return false;
+      }
+    },
+    [replace, toast, setConflict],
+  );
+
   const push = useCallback(async (): Promise<void> => {
-    if (!config || !loadSession() || conflictRef.current) return;
+    if (readOnly || !config || !loadSession() || conflictRef.current) return;
     if (busy.current) {
-      pending.current = true;
+      again.current = true;
       return;
     }
     busy.current = true;
     const t = tripRef.current;
     setStatus('in_corso');
     try {
-      const r = await saveCloudTripIfUnchanged(config, t, getLastSync(t.id));
-      if (r.kind === 'conflitto') {
-        const meta = await getCloudTripMeta(config, t.id);
-        if (!meta) {
-          // Nel cloud il viaggio non c'è più: lo ricrea con la versione locale
-          lsSet(`nfhp.cloud.lastSync.${t.id}`, undefined);
-          pending.current = true;
-          return;
-        }
-        setConflict(meta.updated_at);
-        setStatus('conflitto');
-        return;
-      }
-      setLastSync(t.id, r.updatedAt);
-      setLastSyncAt(r.updatedAt);
-      const changedMeanwhile = tripRef.current !== t;
-      setDirtyFlag(t.id, changedMeanwhile);
-      if (changedMeanwhile) pending.current = true;
-      setStatus(changedMeanwhile ? 'in_attesa' : 'sincronizzato');
-      setError(undefined);
+      if (handle(await pushOnce(kv(), transportFor(config), t), t)) again.current = true;
     } catch (e) {
       fail(e);
       schedule(RETRY_MS, () => void push());
     } finally {
       busy.current = false;
-      if (pending.current) {
-        pending.current = false;
+      if (again.current) {
+        again.current = false;
         schedule(SYNC_DELAY_MS, () => void push());
       }
     }
-  }, [config, fail, schedule]);
+  }, [config, fail, handle, readOnly, schedule]);
 
-  /** Scarica le novità dal cloud; carica in automatico solo se qui non ci sono modifiche non salvate. */
+  /** Scarica le novità dal cloud; carica in automatico solo se qui non ci sono modifiche in attesa. */
   const pull = useCallback(async (): Promise<void> => {
-    if (!config || !loadSession() || busy.current || conflictRef.current) return;
+    if (readOnly || !config || !loadSession() || busy.current || conflictRef.current) return;
     busy.current = true;
     let thenPush = false;
     try {
@@ -178,13 +264,14 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
             applyRemote(r.trip, r.updatedAt);
             if (known) toast('Viaggio aggiornato con le modifiche fatte su un altro dispositivo');
           } else {
-            setConflict(remote.updated_at);
-            setStatus('conflitto');
+            // Il motore riconosce le proprie scritture e unisce ciò che è indipendente
+            if (!getPending(kv(), t.id)) enqueue(kv(), t.id);
+            thenPush = true;
           }
-          return;
+        } else {
+          thenPush = dirty;
+          setStatus(dirty ? 'in_attesa' : 'sincronizzato');
         }
-        thenPush = dirty;
-        setStatus(dirty ? 'in_attesa' : 'sincronizzato');
       } else if (!hasContent(t)) {
         // Dispositivo nuovo con viaggio vuoto: apre il viaggio più recente del cloud, se esiste
         const rows = await listCloudTrips(config);
@@ -195,20 +282,24 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
           toast(`Aperto dal cloud: ${r.trip.title}`);
           return;
         }
-        thenPush = true;
+        thenPush = dirty;
+        if (!dirty) setStatus('sincronizzato');
       } else {
-        thenPush = true; // viaggio non ancora nel cloud: lo carica
+        if (!getPending(kv(), t.id)) enqueue(kv(), t.id); // viaggio non ancora nel cloud: lo carica
+        thenPush = true;
       }
       setError(undefined);
     } catch (e) {
       fail(e);
+      // Aperta senza rete: riprova da sola anche se la pagina resta in primo piano
+      if (loadSession()) schedule(RETRY_MS, () => void pull());
     } finally {
       busy.current = false;
     }
     if (thenPush) await push();
-  }, [config, applyRemote, toast, fail, push]);
+  }, [readOnly, config, applyRemote, toast, fail, push, schedule]);
 
-  // Ogni modifica locale: segna "da sincronizzare" e programma il salvataggio nel cloud
+  // Ogni modifica locale: in coda in modo durevole, poi il salvataggio nel cloud
   useEffect(() => {
     // Reagisce solo a modifiche reali del viaggio, non al cambio di sessione o configurazione
     const changed = trip !== lastSeenTrip.current;
@@ -218,7 +309,8 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
       applyingRemote.current = false;
       return;
     }
-    setDirtyFlag(trip.id, true);
+    enqueue(kv(), trip.id);
+    setPending(true);
     setLastSyncAt(getLastSync(trip.id));
     if (!config || !session || conflictRef.current) return;
     setStatus('in_attesa');
@@ -230,7 +322,7 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
     if (config && session) void pull();
   }, [config, session, pull]);
 
-  // Torna in primo piano → cerca novità; va in secondo piano → salva subito
+  // Torna in primo piano o torna la rete → riprova; va in secondo piano → invia subito
   useEffect(() => {
     if (!config || !session) return;
     const onVis = () => {
@@ -239,22 +331,27 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
         return;
       }
       const t = tripRef.current;
-      if (!conflictRef.current && !busy.current && hasUnsyncedChanges(t)) {
-        void saveCloudTripIfUnchanged(config, t, getLastSync(t.id), { keepalive: true })
-          .then((r) => {
-            if (r.kind === 'salvato') {
-              setLastSync(t.id, r.updatedAt);
-              if (tripRef.current === t) setDirtyFlag(t.id, false);
-            }
-          })
-          .catch(() => undefined);
-      }
+      if (conflictRef.current || busy.current || !getPending(kv(), t.id)) return;
+      busy.current = true;
+      void pushOnce(kv(), transportFor(config), t, { keepalive: true })
+        .then((r) => {
+          if (r.kind === 'salvato') {
+            setLastSyncAt(r.updatedAt);
+            setPending(Boolean(getPending(kv(), t.id)));
+          }
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          busy.current = false;
+        });
     };
     document.addEventListener('visibilitychange', onVis);
     window.addEventListener('online', onVis);
+    window.addEventListener('pageshow', onVis);
     return () => {
       document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('online', onVis);
+      window.removeEventListener('pageshow', onVis);
     };
   }, [config, session, pull]);
 
@@ -267,8 +364,27 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
       status,
       lastSyncAt,
       error,
-      conflictRemoteAt,
+      conflict,
+      pending,
       setSession: (s) => {
+        if (s) {
+          const owner = getOwner(kv());
+          // Accede un altro utente: i dati del precedente non restano visibili e tornano quando quell'utente rientra
+          if (owner && owner !== s.userId) {
+            if (!holdForOwner(kv(), owner)) {
+              setStatus('errore');
+              setError('Spazio esaurito sul dispositivo: esporta un backup e riprova ad accedere.');
+              return;
+            }
+            restoreHold(kv(), s.userId);
+            applyingRemote.current = true;
+            replace(loadLocalTrip().trip ?? createEmptyTrip());
+            setPending(false);
+          } else if (!owner) {
+            restoreHold(kv(), s.userId);
+          }
+          setOwner(kv(), s.userId);
+        }
         setSessionState(s);
         setError(undefined);
         setStatus(s ? 'in_corso' : 'non_connesso');
@@ -283,32 +399,51 @@ export function CloudSyncProvider({ children }: { children: ReactNode }) {
         window.clearTimeout(timer.current);
         void (hasUnsyncedChanges(tripRef.current) ? push() : pull());
       },
-      keepLocal: () => {
-        // L'utente sceglie questa versione: diventa la base e sovrascrive il cloud
+      resolve: (choices) => {
+        const c = conflictRef.current;
+        if (!c) return;
         const t = tripRef.current;
-        if (conflictRef.current) setLastSync(t.id, conflictRef.current);
-        conflictRef.current = undefined;
+        // Copia di sicurezza di questo dispositivo prima di applicare le scelte
+        try {
+          kv().setItem(`nfhp.sync.copia.${t.id}`, JSON.stringify(t));
+        } catch {
+          /* senza spazio resta il backup su file */
+        }
+        const merged = resolveConflicts(c.merge, choices);
+        applyingRemote.current = true;
+        replace(merged);
+        adoptMerged(kv(), merged, c.merge.remote, c.remoteUpdatedAt);
         setConflict(undefined);
-        setDirtyFlag(t.id, true);
-        void push();
-      },
-      useRemote: () => {
-        if (!config) return;
-        const id = tripRef.current.id;
-        void loadCloudTrip(config, id)
-          .then((r) => {
-            applyRemote(r.trip, r.updatedAt);
-            toast('Caricata la versione del cloud');
-          })
-          .catch(fail);
+        setPending(true);
+        setStatus('in_attesa');
+        schedule(200, () => void push());
       },
       loadTrip: async (id: string) => {
         if (!config) return;
         const r = await loadCloudTrip(config, id);
         applyRemote(r.trip, r.updatedAt);
       },
+      logout: async () => {
+        window.clearTimeout(timer.current);
+        if (config) await signOut(config, loadSession());
+        purgeTripData(kv());
+        try {
+          sessionStorage.clear();
+        } catch {
+          /* niente da togliere */
+        }
+        await clearBlobs().catch(() => undefined);
+        setConflict(undefined);
+        setPending(false);
+        setSessionState(undefined);
+        setLastSyncAt(undefined);
+        setError(undefined);
+        setStatus(config ? 'non_connesso' : 'non_configurato');
+        applyingRemote.current = true;
+        replace(createEmptyTrip());
+      },
     }),
-    [config, session, status, lastSyncAt, error, conflictRemoteAt, push, pull, applyRemote, toast, fail],
+    [config, session, status, lastSyncAt, error, conflict, pending, push, pull, applyRemote, replace, schedule, setConflict],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

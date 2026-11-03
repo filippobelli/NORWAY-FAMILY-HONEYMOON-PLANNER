@@ -36,26 +36,11 @@ export function stopFromDestination(destinationId: string): Stop | undefined {
   return { id: newId(), kind: 'luogo', destinationId: d.id, name: d.name, lat: d.lat, lng: d.lng, nights, notes: '', weatherPlanB: '' };
 }
 
-export function ItineraryView() {
+/** Calcolo dei tratti: usato da Tappe e mappa e dall'area di lavoro. */
+export function useLegRouting() {
   const { trip, update, toast } = useTrip();
-  const days = useMemo(() => computeDays(trip), [trip]);
-  const warnings = useMemo(() => tripWarnings(trip), [trip]);
-  const n = totalDays(trip.stops);
   const [busy, setBusy] = useState<string | null>(null);
   const abort = useRef<AbortController | null>(null);
-  // Tappa selezionata: collega scheda e mappa (clic sul numero o sul segnaposto)
-  const [selected, setSelected] = useState<string | undefined>(undefined);
-  const selectStop = (id: string, from: 'lista' | 'mappa') => {
-    setSelected(id);
-    if (from === 'mappa') document.getElementById(`stop-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    else if (window.matchMedia('(max-width: 1099px)').matches) document.querySelector('.map-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const addStop = (s: Stop | undefined) => {
-    if (!s) return;
-    update((t) => ({ ...t, stops: [...t.stops, s] }));
-    toast(`Aggiunta tappa: ${s.name}`);
-  };
 
   const routeLeg = async (leg: Leg, t: Trip, signal: AbortSignal): Promise<void> => {
     const a = t.stops.find((s) => s.id === leg.fromStopId);
@@ -133,6 +118,29 @@ export function ItineraryView() {
     }
     setBusy(null);
     toast(`Calcolati ${ok} tratti${ko ? `, ${ko} non riusciti` : ''}${skipped ? `, ${skipped} in nave da collegare` : ''}`, ko ? 'errore' : 'ok');
+  };
+
+  return { busy, abort, calcOne, calcAll };
+}
+
+export function ItineraryView() {
+  const { trip, update, toast } = useTrip();
+  const days = useMemo(() => computeDays(trip), [trip]);
+  const warnings = useMemo(() => tripWarnings(trip), [trip]);
+  const n = totalDays(trip.stops);
+  const { busy, abort, calcOne, calcAll } = useLegRouting();
+  // Tappa selezionata: collega scheda e mappa (clic sul numero o sul segnaposto)
+  const [selected, setSelected] = useState<string | undefined>(undefined);
+  const selectStop = (id: string, from: 'lista' | 'mappa') => {
+    setSelected(id);
+    if (from === 'mappa') document.getElementById(`stop-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    else if (window.matchMedia('(max-width: 1099px)').matches) document.querySelector('.map-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const addStop = (s: Stop | undefined) => {
+    if (!s) return;
+    update((t) => ({ ...t, stops: [...t.stops, s] }));
+    toast(`Aggiunta tappa: ${s.name}`);
   };
 
   // Dopo il configuratore: calcolo automatico dei tratti del nuovo scenario (una sola volta)
@@ -236,7 +244,7 @@ export function ItineraryView() {
   );
 }
 
-function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) {
+export function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) {
   const [q, setQ] = useState('');
   const [custom, setCustom] = useState(false);
   const [c, setC] = useState<{ name: string; lat?: number; lng?: number }>({ name: '' });
@@ -313,13 +321,14 @@ function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) {
 const shortDate = (iso: string) => new Date(iso).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 const ACC_STATUS_LABEL = { individuata: 'individuata', disponibile: 'disponibile', opzionata: 'opzionata', prenotata: 'prenotata' } as const;
 
-function StopCard({
+export function StopCard({
   stop,
   index,
   count,
   checkIn,
   selected,
   onShowOnMap,
+  expanded,
 }: {
   stop: Stop;
   index: number;
@@ -327,6 +336,8 @@ function StopCard({
   checkIn?: string;
   selected: boolean;
   onShowOnMap: () => void;
+  /** Dettagli già aperti, come nell'area di lavoro */
+  expanded?: boolean;
 }) {
   const { trip, update } = useTrip();
   const dest = findDestination(stop.destinationId);
@@ -425,7 +436,7 @@ function StopCard({
         </div>
       )}
       {dest?.augustNote && <p className="note-warn small">⚠️ {dest.augustNote}</p>}
-      <details>
+      <details open={expanded}>
         <summary>
           Alloggio, note e piano B{stop.notes || stop.weatherPlanB ? ' · compilati' : ''}
         </summary>
@@ -475,7 +486,7 @@ const LEG_STATE: Record<LegState, string> = {
 };
 const FIRM_STATUS = ['confermato', 'prenotato', 'pagato'];
 
-function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: number; day?: DayInfo; busy: boolean; onCalc: () => void }) {
+export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Leg; fromNum: number; day?: DayInfo; busy: boolean; onCalc: () => void; expanded?: boolean }) {
   const { trip, update } = useTrip();
   const t = legTotals(leg, trip.settings);
   const sum = legSummary(leg, trip.settings);
@@ -586,7 +597,7 @@ function LegCard({ leg, fromNum, day, busy, onCalc }: { leg: Leg; fromNum: numbe
           </button>
         )}
       </div>
-      <details className="leg-details">
+      <details className="leg-details" open={expanded}>
         <summary>Dettaglio tratti{leg.calculatedAt ? ` · calcolato ${fmtDateTime(leg.calculatedAt)}` : ''}</summary>
         {leg.segments.map((s) => (
           <SegmentEditor

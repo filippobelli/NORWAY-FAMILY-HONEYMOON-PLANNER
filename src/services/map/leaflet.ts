@@ -33,6 +33,7 @@ export interface LMap {
   fitBounds(b: LBounds, opts?: Record<string, unknown>): LMap;
   invalidateSize(): void;
   remove(): void;
+  stop(): LMap;
 }
 export interface LeafletApi {
   map(el: HTMLElement, opts?: Record<string, unknown>): LMap;

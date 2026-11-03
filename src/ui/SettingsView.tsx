@@ -1,21 +1,45 @@
 import { useRef, useState } from 'react';
 import { createEmptyTrip } from '../domain/defaults';
 import { exportTripFile, readTripFile } from '../services/storage/local';
-import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, signOut, type CloudTripRow } from '../services/storage/supabase';
+import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, type CloudTripRow } from '../services/storage/supabase';
 import { useCloudSync } from '../state/cloudSync';
+import { useAppMode } from '../state/mode';
 import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, NumberInput } from './common';
+import { LogoutDialog } from './SyncDialogs';
 import { RatesPanel } from './RatesPanel';
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
   const fileRef = useRef<HTMLInputElement>(null);
+  const { setMode } = useAppMode();
+  const [modeChoice, setChoice] = useState<'auto' | 'planning' | 'travel'>(() => {
+    try {
+      const v = localStorage.getItem('nfhp.ui.mode');
+      return v === 'planning' || v === 'travel' ? v : 'auto';
+    } catch {
+      return 'auto';
+    }
+  });
+  const setModeChoice = (v: 'auto' | 'planning' | 'travel') => {
+    setChoice(v);
+    setMode(v === 'auto' ? undefined : v);
+  };
 
   return (
     <div className="settings">
       <section className="panel">
         <h2>Preferenze</h2>
         <div className="grid-4">
+          <Field label="Modalità su questo dispositivo" hint="Non dipende da date o posizione">
+            {(id) => (
+              <select id={id} value={modeChoice} onChange={(e) => setModeChoice(e.target.value as 'auto' | 'planning' | 'travel')}>
+                <option value="auto">Automatica (dalla larghezza dello schermo)</option>
+                <option value="planning">Pianificazione</option>
+                <option value="travel">Viaggio</option>
+              </select>
+            )}
+          </Field>
           <Field label="Soglia trasferimenti al giorno (min)" hint="Oltre questa soglia la giornata è segnalata">
             {(id) => (
               <NumberInput
@@ -72,6 +96,16 @@ export function SettingsView() {
         </div>
       </section>
 
+      <section className="panel">
+        <h2>Cosa funziona senza rete</h2>
+        <ul className="small">
+          <li>Dopo una prima apertura online: l'app, il viaggio, Oggi, l'itinerario in elenco, il diario, gli stati di visita, il budget già calcolato.</li>
+          <li>Ogni modifica si salva sul dispositivo e resta in attesa di invio al cloud; riparte alla riapertura, al ritorno della rete e ogni 30 secondi.</li>
+          <li>Serve la rete: sfondo della mappa, calcolo dei percorsi, ricerca alloggi, cambio e carburante, foto del catalogo, accesso al cloud.</li>
+          <li>Gli allegati del diario restano su questo dispositivo e non vanno nel cloud. Mappe offline non disponibili.</li>
+        </ul>
+      </section>
+
       <RatesPanel />
 
       <CloudPanel />
@@ -123,6 +157,7 @@ export function SettingsView() {
 }
 
 function CloudPanel() {
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const { trip, toast } = useTrip();
   const cloud = useCloudSync();
   const cfg = cloud.config;
@@ -233,15 +268,11 @@ function CloudPanel() {
             Accesso come <strong>{session.email}</strong>{' '}
             <button
               className="link-btn"
-              onClick={() =>
-                run(async () => {
-                  await signOut(cfg, session);
-                  cloud.setSession(undefined);
-                })
-              }
+              onClick={() => setLogoutOpen(true)}
             >
               esci
             </button>
+            {logoutOpen && <LogoutDialog onClose={() => setLogoutOpen(false)} />}
           </p>
           <p className="muted small">
             Salvataggio automatico: ogni modifica arriva nel cloud dopo pochi secondi. Ultima sincronizzazione:{' '}
@@ -309,6 +340,7 @@ export function CloudBadge() {
     in_attesa: ['info', 'in salvataggio'],
     in_corso: ['info', 'in salvataggio'],
     offline: ['warn', 'non raggiungibile'],
+    errore: ['warn', 'errore'],
     conflitto: ['warn', 'da risolvere'],
   } as const;
   const [tone, label] = map[status];
