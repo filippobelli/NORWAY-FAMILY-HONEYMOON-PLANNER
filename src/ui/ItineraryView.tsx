@@ -19,6 +19,7 @@ import {
   TRIP_MIN_DAYS,
   uncalculatedSegment,
 } from '../domain/itinerary';
+import { googleDirectionsUrl, googleModeForLeg } from '../domain/googleMaps';
 import { isAutoSegment, mergeRouted } from '../domain/routeMerge';
 import type { Leg, Segment, Stop, TransportMode, Trip } from '../domain/types';
 import { getRoutingProvider, RoutingError } from '../services/routing';
@@ -319,7 +320,7 @@ export function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) 
   );
 }
 
-const shortDate = (iso: string) => new Date(iso).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+export const shortDate = (iso: string) => new Date(iso).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 const ACC_STATUS_LABEL = { individuata: 'individuata', disponibile: 'disponibile', opzionata: 'opzionata', prenotata: 'prenotata' } as const;
 
 export function StopCard({
@@ -330,6 +331,7 @@ export function StopCard({
   selected,
   onShowOnMap,
   expanded,
+  hideDetails,
 }: {
   stop: Stop;
   index: number;
@@ -339,12 +341,13 @@ export function StopCard({
   onShowOnMap: () => void;
   /** Dettagli già aperti, come nell'area di lavoro */
   expanded?: boolean;
+  /** Senza il blocco alloggio, note e piano B (nel Percorso sono in schede separate) */
+  hideDetails?: boolean;
 }) {
   const { trip, update } = useTrip();
   const dest = findDestination(stop.destinationId);
   const setStop = (patch: Partial<Stop>) => update((t) => ({ ...t, stops: t.stops.map((s) => (s.id === stop.id ? { ...s, ...patch } : s)) }));
   const move = (to: number) => update((t) => ({ ...t, stops: moveItem(t.stops, index, to) }));
-  const accs = trip.accommodations.filter((a) => !a.stopId || a.stopId === stop.id);
   const acc = trip.accommodations.find((a) => a.id === stop.accommodationId);
 
   return (
@@ -437,45 +440,54 @@ export function StopCard({
         </div>
       )}
       {dest?.augustNote && <p className="note-warn small"><Icon name="warning" /> {dest.augustNote}</p>}
+      {!hideDetails && (
       <details open={expanded}>
         <summary>
           Alloggio, note e piano B{stop.notes || stop.weatherPlanB ? ' · compilati' : ''}
         </summary>
         <div className="grid-2">
-          {stop.kind === 'luogo' && (
-            <Field label="Alloggio" hint="Le sistemazioni si gestiscono nella sezione Alloggi">
-              {(id) => (
-                <select
-                  id={id}
-                  value={stop.accommodationId ?? ''}
-                  onChange={(e) => {
-                    const accommodationId = e.target.value || undefined;
-                    update((t) => ({
-                      ...t,
-                      stops: t.stops.map((s) => (s.id === stop.id ? { ...s, accommodationId } : s)),
-                      accommodations: t.accommodations.map((a) =>
-                        a.id === accommodationId ? { ...a, stopId: stop.id } : a.id === stop.accommodationId ? { ...a, stopId: undefined } : a,
-                      ),
-                    }));
-                  }}
-                >
-                  <option value="">— nessuno —</option>
-                  {accs.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name} ({a.status})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </Field>
-          )}
+          {stop.kind === 'luogo' && <StopLodgingSelect stop={stop} />}
           <Field label="Note">{(id) => <textarea id={id} rows={2} value={stop.notes} onChange={(e) => setStop({ notes: e.target.value })} />}</Field>
           <Field label="Alternativa in caso di maltempo">
             {(id) => <textarea id={id} rows={2} value={stop.weatherPlanB} onChange={(e) => setStop({ weatherPlanB: e.target.value })} />}
           </Field>
         </div>
       </details>
+      )}
     </article>
+  );
+}
+
+/** Scelta della sistemazione di una tappa (le sistemazioni si gestiscono nella sezione Alloggi) */
+export function StopLodgingSelect({ stop }: { stop: Stop }) {
+  const { trip, update } = useTrip();
+  const accs = trip.accommodations.filter((a) => !a.stopId || a.stopId === stop.id);
+  return (
+    <Field label="Alloggio" hint="Le sistemazioni si gestiscono nella sezione Alloggi">
+      {(id) => (
+        <select
+          id={id}
+          value={stop.accommodationId ?? ''}
+          onChange={(e) => {
+            const accommodationId = e.target.value || undefined;
+            update((t) => ({
+              ...t,
+              stops: t.stops.map((s) => (s.id === stop.id ? { ...s, accommodationId } : s)),
+              accommodations: t.accommodations.map((a) =>
+                a.id === accommodationId ? { ...a, stopId: stop.id } : a.id === stop.accommodationId ? { ...a, stopId: undefined } : a,
+              ),
+            }));
+          }}
+        >
+          <option value="">— nessuno —</option>
+          {accs.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name} ({a.status})
+            </option>
+          ))}
+        </select>
+      )}
+    </Field>
   );
 }
 
@@ -596,6 +608,17 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
           <button className="btn btn-small" onClick={onCalc} disabled={busy}>
             {busy ? 'Calcolo…' : leg.calculatedAt ? 'Ricalcola strada' : 'Calcola strada'}
           </button>
+        )}
+        {routable && fromStop && toStop && (
+          <a
+            className="btn btn-small"
+            href={googleDirectionsUrl(fromStop, toStop, googleModeForLeg(leg))}
+            target="_blank"
+            rel="noreferrer"
+            title="Apre il tratto in Google Maps in una nuova scheda: strada, traghetti e navigazione"
+          >
+            <Icon name="map" /> Google Maps ↗
+          </a>
         )}
       </div>
       <details className="leg-details" open={expanded}>

@@ -11,6 +11,9 @@ declare module 'react' {
   export function useState<S>(init: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
   export function useState<S = undefined>(): [S | undefined, Dispatch<SetStateAction<S | undefined>>];
   export function useEffect(fn: () => void | (() => void), deps?: readonly unknown[]): void;
+  export function useLayoutEffect(fn: () => void | (() => void), deps?: readonly unknown[]): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export interface KeyboardEvent<T = Element> { key: string; currentTarget: T & { querySelectorAll<E = any>(sel: string): Iterable<E> & ArrayLike<E> }; target: any; preventDefault(): void; shiftKey: boolean; ctrlKey: boolean; metaKey: boolean; altKey: boolean }
   export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T;
   export function useCallback<T extends (...a: never[]) => unknown>(fn: T, deps: readonly unknown[]): T;
   export function useRef<T>(init: T): MutableRefObject<T>;
@@ -32,16 +35,21 @@ declare module '*.css';
 declare namespace JSX {
   type Element = unknown;
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  interface Ev { target: any; currentTarget: any; preventDefault(): void; key?: string }
+  interface Ev { target: any; currentTarget: any; preventDefault(): void; key: any; shiftKey: boolean; ctrlKey: boolean; metaKey: boolean; altKey: boolean }
   interface Props {
     [k: string]: unknown;
     onChange?: (e: Ev) => void;
     onClick?: (e: Ev) => void;
     onSubmit?: (e: Ev) => void;
     onBlur?: (e: Ev) => void;
+    onKeyDown?: (e: Ev) => void;
+    onKeyUp?: (e: Ev) => void;
+    onScroll?: (e: Ev) => void;
+    onFocus?: (e: Ev) => void;
+    onInput?: (e: Ev) => void;
   }
   interface IntrinsicElements { [name: string]: Props }
   interface ElementChildrenAttribute { children: unknown }
   interface IntrinsicAttributes { key?: string | number }
 }
-interface ImportMeta { readonly env?: Record<string, string | undefined> }
+interface ImportMeta { readonly env: { readonly PROD: boolean; readonly DEV: boolean; readonly [k: string]: string | boolean | undefined } }
