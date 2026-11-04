@@ -335,6 +335,15 @@ code {
   width: calc(100% - 22px);
   color: var(--ink-2);
 }
+/* Selezione di più tappe da eliminare */
+.ol-pick-bar {
+  margin: 8px 0;
+}
+.ol-pick input {
+  flex: none;
+  width: auto;
+  margin: 0 2px 0 0;
+}
 /* Trascinamento delle tappe */
 .ol-grip {
   flex: none;

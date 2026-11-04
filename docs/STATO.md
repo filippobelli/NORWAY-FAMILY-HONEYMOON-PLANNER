@@ -217,6 +217,13 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - `StopCard` ha `hideDetails` e la scelta dell'alloggio è il componente `StopLodgingSelect`, usato sia in «Tappe e mappa» sia nel Percorso.
 - Verifiche: typecheck con lo shim aggiornato (`verify/react-shim.d.ts`: `useLayoutEffect`, `KeyboardEvent`, eventi da tastiera), 137 test ok, build ok; Percorso provato a 1440 e 390 px con 7 tappe sintetiche, nessun errore e nessuno scorrimento orizzontale. Gli script `verify/e2e/*.cjs` cercano ancora i vecchi link del menù e falliscono anche senza queste modifiche: vanno aggiornati.
 
+## 04/11/2026 — nomi del Percorso, svuota scenario, eliminazione multipla
+
+- Nomi: Pianificatore (era Area di lavoro), Pianificatore automatico (era Fatti proporre un percorso), Luoghi da visitare (era Mete), Scenari (era Versioni). Indirizzi invariati.
+- Scenari: «Svuota» su ogni scheda con tappe. Toglie tappe, tratti e giornate; voli, crociere scelte e voci di budget solo con la casella apposita. Mostra cosa cambia, chiede conferma se tocca voci prenotate o pagate, si può annullare.
+- Pianificatore: «Seleziona tappe da eliminare», con «Seleziona tutte». Come per la tappa singola, attività e note restano senza giornata.
+- Provato a schermo con dati sintetici a 1400 e 390 px. Non provati a schermo: conferma per le voci prenotate, telefono vero.
+
 ## 04/11/2026 — mappa con i nomi in italiano
 
 - **Fondo vettoriale** (`src/services/map/leaflet.ts`, `addBaseMap`; `src/services/map/baseStyle.ts`): OpenFreeMap (stile positron, dati OpenStreetMap, nessuna chiave) disegnato con MapLibre 5.24.0 dentro Leaflet tramite `@maplibre/maplibre-gl-leaflet` 0.1.4, da CDN con impronte SRI. Le scritte usano `name:it` e, se manca, il nome locale. Tappe, tratti e popup restano livelli Leaflet.

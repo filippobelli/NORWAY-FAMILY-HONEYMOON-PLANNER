@@ -394,6 +394,19 @@ export function moveStopTo(t: Trip, stopId: string, to: number): Trip {
   return stops === t.stops ? t : { ...t, stops, legs: syncLegs(stops, t.legs) };
 }
 
+/** Toglie più tappe insieme, come la rimozione di una sola: le attività restano senza giornata e non si perdono. */
+export function removeStops(t: Trip, ids: string[]): Trip {
+  const gone = new Set(ids);
+  const stops = t.stops.filter((s) => !gone.has(s.id));
+  if (stops.length === t.stops.length) return t;
+  return {
+    ...t,
+    stops,
+    legs: syncLegs(stops, t.legs),
+    accommodations: t.accommodations.map((a) => (a.stopId && gone.has(a.stopId) ? { ...a, stopId: undefined } : a)),
+  };
+}
+
 export function moveItem<T>(arr: T[], from: number, to: number): T[] {
   if (from === to || from < 0 || to < 0 || from >= arr.length || to >= arr.length) return arr;
   const copy = arr.slice();

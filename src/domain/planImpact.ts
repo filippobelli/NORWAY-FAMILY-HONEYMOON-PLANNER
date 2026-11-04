@@ -100,7 +100,7 @@ export function planImpact(before: Trip, after: Trip): PlanImpact {
   for (const f of before.flights ?? []) {
     if (!isCommercial(f.priceStatus)) continue;
     const label = `Volo ${f.fromAirport} → ${f.toAirport}${f.date ? ` del ${formatDateIt(f.date)}` : ''}`;
-    if (!(after.flights ?? []).some((x) => x.id === f.id)) booked.push({ kind: 'volo', label, status: f.priceStatus, effect: 'non è in questa versione' });
+    if (!(after.flights ?? []).some((x) => x.id === f.id)) booked.push({ kind: 'volo', label, status: f.priceStatus, effect: 'non è in questo scenario' });
     else if (f.direction === 'andata' && f.date && f.date !== after.startDate) booked.push({ kind: 'volo', label, status: f.priceStatus, effect: `il viaggio partirebbe il ${formatDateIt(after.startDate)}` });
     else if (f.direction === 'ritorno' && f.date && f.date !== lastDay(after)) booked.push({ kind: 'volo', label, status: f.priceStatus, effect: lastDay(after) ? `il percorso finirebbe il ${formatDateIt(lastDay(after)!)}` : 'percorso vuoto' });
   }
@@ -120,7 +120,7 @@ export function planImpact(before: Trip, after: Trip): PlanImpact {
     for (const a of after.days[k]?.activities ?? []) if (isCommercial(a.costStatus)) booked.push({ kind: 'attività', label: a.title || 'Attività', status: a.costStatus, effect: 'resta senza giornata' });
   }
   for (const b of before.budgetItems) {
-    if (isCommercial(b.status) && !after.budgetItems.some((x) => x.id === b.id)) booked.push({ kind: 'costo', label: b.label, status: b.status, effect: 'non è in questa versione' });
+    if (isCommercial(b.status) && !after.budgetItems.some((x) => x.id === b.id)) booked.push({ kind: 'costo', label: b.label, status: b.status, effect: 'non è in questo scenario' });
   }
 
   const mB = scenarioMetrics(before);

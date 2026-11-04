@@ -6,6 +6,7 @@ import {
   computeDays,
   formatDuration,
   legTotals,
+  removeStops,
   syncLegs,
   totalDays,
   totalNights,
@@ -107,7 +108,33 @@ export function removeScenario(trip: Trip, id: string): Trip {
   return { ...t, scenarios: t.scenarios!.filter((s) => s.id !== id) };
 }
 
+/**
+ * Svuota uno scenario: tappe, tratti e giornate. Voli, crociere scelte e voci di budget possono essere già prenotati:
+ * restano, salvo richiesta esplicita (costs), e quelli scelti tornano tra le cose da aggiungere al percorso.
+ */
+export function clearScenario(trip: Trip, id: string, opts: { costs?: boolean } = {}): Trip {
+  const t = ensureScenarios(trip);
+  const updatedAt = new Date().toISOString();
+  if (id === t.activeScenarioId) {
+    const cleared = removeStops(t, t.stops.map((s) => s.id));
+    return {
+      ...cleared,
+      days: {},
+      ...(opts.costs ? { budgetItems: [], flights: [], coastalOptions: t.coastalOptions.map((o) => ({ ...o, selected: false })) } : {}),
+      scenarios: t.scenarios!.map((s) => (s.id === id ? { ...s, updatedAt } : s)),
+    };
+  }
+  return {
+    ...t,
+    scenarios: t.scenarios!.map((s) =>
+      s.id === id && s.plan ? { ...s, updatedAt, plan: { ...s.plan, stops: [], legs: [], days: {}, ...(opts.costs ? { budgetItems: [], coastalSelected: [], flights: [] } : {}) } } : s,
+    ),
+  };
+}
+
 export interface ScenarioMetrics {
+  /** Tappe, comprese quelle senza notti */
+  stops: number;
   days: number;
   nights: number;
   inTarget: boolean;
@@ -232,6 +259,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
   }
 
   return {
+    stops: view.stops.length,
     transferLegs: view.legs.length,
     transferDays: days.filter((d) => d.legs.length > 0).length,
     uncalculatedLegs: uncalculated,

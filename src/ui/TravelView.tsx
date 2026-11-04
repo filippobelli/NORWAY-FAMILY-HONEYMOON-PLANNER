@@ -95,7 +95,7 @@ export function TodayScreen() {
   const [noting, setNoting] = useState(false);
   const [planB, setPlanB] = useState(false);
   const v = useMemo(() => todayView(trip, index), [trip, index]);
-  if (!v) return <Empty title="Il percorso è vuoto">Aggiungi le tappe dall'area di lavoro su computer, o da Altro → Tappe e mappa.</Empty>;
+  if (!v) return <Empty title="Il percorso è vuoto">Aggiungi le tappe dal Pianificatore su computer, o da Altro → Tappe e mappa.</Empty>;
   const note = phaseNote(trip, today);
 
   const markStop = (id: string, name: string, state: StopVisitState) => {
@@ -620,7 +620,7 @@ const MORE_LINKS: [string, IconName, string][] = [
   ['#/crociere', 'ship', 'Crociere'],
   ['#/hytte', 'bed', 'Alloggi'],
   ['#/budget', 'wallet', 'Budget'],
-  ['#/scenari', 'scale', 'Versioni e piano B'],
+  ['#/scenari', 'scale', 'Scenari e piano B'],
   ['#/impostazioni', 'gear', 'Impostazioni, salvataggio e backup'],
 ];
 

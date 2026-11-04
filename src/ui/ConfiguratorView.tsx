@@ -115,7 +115,7 @@ export function ConfiguratorView() {
     } catch {
       /* senza sessionStorage il calcolo dei tratti resta manuale */
     }
-    toast(`Versione "${scName}" creata e attiva: il percorso precedente è salvato in Versioni`);
+    toast(`Scenario "${scName}" creato e attivo: il percorso precedente è salvato in Scenari`);
     window.location.hash = '#/itinerario';
   };
 
@@ -132,9 +132,9 @@ export function ConfiguratorView() {
   return (
     <div className="configurator">
       <div className="note-info">
-        Il configuratore propone un itinerario con le destinazioni del catalogo, rispettando giorni, aeroporti, ritmo e ore di guida. Per scegliere l'ordine usa
+        Il Pianificatore automatico propone un itinerario con i luoghi del catalogo, rispettando giorni, aeroporti, ritmo e ore di guida. Per scegliere l'ordine usa
         <strong> distanze stimate</strong> (non calcolate): km e tempi veri si calcolano subito dopo, in Tappe e mappa. Crea sempre uno{' '}
-        <strong>versione nuova</strong>: quella attuale resta salvata e confrontabile in Versioni. Nessun prezzo, orario o disponibilità viene inventato.
+        <strong>scenario nuovo</strong>: quello attuale resta salvato e confrontabile in Scenari. Nessun prezzo, orario o disponibilità viene inventato.
       </div>
 
       <section className="panel">
@@ -310,11 +310,11 @@ export function ConfiguratorView() {
             ))}
           </ul>
           <div className="row wrap">
-            <Field label="Nome della versione">
+            <Field label="Nome dello scenario">
               {(id) => <input id={id} value={name} placeholder={defaultName} onChange={(e) => setName(e.target.value)} />}
             </Field>
             <button className="btn btn-primary" onClick={create}>
-              Crea come nuova versione e calcola i tratti
+              Crea come nuovo scenario e calcola i tratti
             </button>
             <Badge tone="info">L'itinerario attuale non viene toccato</Badge>
           </div>

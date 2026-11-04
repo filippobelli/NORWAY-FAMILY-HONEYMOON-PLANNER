@@ -21,7 +21,7 @@ import { LegCard, shortDate, StopCard, StopLodgingSelect, StopPicker, useLegRout
 import { OfficialLink } from './OfficialLink';
 import { MapView } from './MapView';
 import { PendingPanel } from './PlacementDialog';
-import { PlanBDialog } from './PlanBDialog';
+import { PlanBDialog, RemoveStopsDialog } from './PlanBDialog';
 import { useStopDrag } from './useStopDrag';
 
 // Percorso: in alto la linea del viaggio (tutte le tappe e i tratti), sotto l'elenco con il dettaglio
@@ -267,8 +267,19 @@ function Outline({
   const shown = trip.stops.filter((s) => !q || s.name.toLowerCase().includes(q));
   const is = (kind: Selection['kind'], id: string) => sel?.kind === kind && sel.id === id;
   const { readOnly } = useTrip();
+  // Selezione di più tappe da eliminare insieme: finché è aperta le righe si spuntano e non si trascinano
+  const [picking, setPicking] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [confirming, setConfirming] = useState(false);
+  const chosen = trip.stops.filter((s) => picked.includes(s.id));
+  const allShown = shown.length > 0 && shown.every((s) => picked.includes(s.id));
+  const stopPicking = () => {
+    setPicking(false);
+    setPicked([]);
+    setConfirming(false);
+  };
   // Con il filtro attivo le posizioni visibili non sono quelle del viaggio
-  const canDrag = !q && !readOnly && trip.stops.length > 1;
+  const canDrag = !q && !readOnly && !picking && trip.stops.length > 1;
   const drag = useStopDrag({ axis: 'y', disabled: !canDrag, onDrop: onMove });
 
   // Frecce su e giù tra le voci dell'outline
@@ -286,6 +297,27 @@ function Outline({
       <StopPicker onAdd={onAddStop} />
       <PendingPanel />
       {trip.stops.length > 3 && <input className="ol-filter" type="search" placeholder="Filtra le tappe" aria-label="Filtra le tappe" value={filter} onChange={(e) => setFilter(e.target.value)} />}
+      {trip.stops.length > 0 && !readOnly &&
+        (picking ? (
+          <div className="row wrap ol-pick-bar">
+            <button className="btn btn-small" onClick={() => setPicked(allShown ? [] : shown.map((s) => s.id))}>
+              {allShown ? 'Deseleziona tutte' : 'Seleziona tutte'}
+            </button>
+            <button className="btn btn-small danger" disabled={chosen.length === 0} onClick={() => setConfirming(true)}>
+              Elimina{chosen.length > 0 && ` (${chosen.length})`}
+            </button>
+            <button className="btn btn-small btn-ghost" onClick={stopPicking}>
+              Fine
+            </button>
+          </div>
+        ) : (
+          <div className="ol-pick-bar">
+            <button className="btn btn-small" onClick={() => setPicking(true)}>
+              Seleziona tappe da eliminare
+            </button>
+          </div>
+        ))}
+      {confirming && <RemoveStopsDialog stops={chosen} onClose={() => setConfirming(false)} onDone={stopPicking} />}
       {canDrag && <p className="small muted">Tieni premuta una tappa e trascinala per cambiare l'ordine.</p>}
       {drag.ghost}
       <div className="ol-scroll" onKeyDown={onKey}>
@@ -293,6 +325,19 @@ function Outline({
           <Empty title="Inizia dall'arrivo">Aggiungi come prima tappa l'aeroporto o la città di arrivo, poi le località dove dormire.</Empty>
         ) : shown.length === 0 ? (
           <p className="muted small">Nessuna tappa corrisponde al filtro.</p>
+        ) : picking ? (
+          <ol className="ol-list">
+            {shown.map((s) => (
+              <li key={s.id}>
+                <label className="ol-item ol-stop ol-pick">
+                  <input type="checkbox" checked={picked.includes(s.id)} onChange={(e) => setPicked(e.target.checked ? [...picked, s.id] : picked.filter((x) => x !== s.id))} />
+                  <span className="ol-num">{s.kind === 'a_bordo' ? <Icon name="ship" label="Notti a bordo" /> : trip.stops.indexOf(s) + 1}</span>
+                  <span className="ol-name">{s.name}</span>
+                  <span className="small muted">{s.nights === 0 ? 'di passaggio' : `${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}`}</span>
+                </label>
+              </li>
+            ))}
+          </ol>
         ) : (
           <ol className="ol-list" data-stop-list>
             {shown.map((s) => {

@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import { restorePlanOnly } from '../domain/actuals';
 import { formatEur } from '../domain/budget';
-import { formatDateIt, formatDuration } from '../domain/itinerary';
+import { formatDateIt, formatDuration, removeStops } from '../domain/itinerary';
 import { applyVersion, draftMoveStop, draftRemoveStop, draftSetNights, planImpact, previewVersion, saveAlternative, undoVersion, type PlanImpact } from '../domain/planImpact';
-import type { ID, Scenario, Trip } from '../domain/types';
+import { clearScenario, tripForScenario } from '../domain/scenarios';
+import type { ID, Scenario, Stop, Trip } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Field, NumberInput } from './common';
 import { Modal } from './PlacementDialog';
@@ -208,7 +210,7 @@ export function ApplyVersionDialog({ scenario, onClose }: { scenario: Scenario; 
   return (
     <Modal title={`Applica «${scenario.name}»`} onClose={onClose}>
       <ImpactView i={impact} />
-      <p className="muted small">Il percorso attuale resta salvato tra le versioni.</p>
+      <p className="muted small">Il percorso attuale resta salvato tra gli scenari.</p>
       <BookingConfirm i={impact} ok={ok} setOk={setOk} />
       <div className="row wrap place-actions">
         <button
@@ -220,6 +222,78 @@ export function ApplyVersionDialog({ scenario, onClose }: { scenario: Scenario; 
           }}
         >
           Applica piano
+        </button>
+        <button className="btn btn-ghost" onClick={onClose}>
+          Annulla
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/** Svuota uno scenario in un colpo solo, dopo aver visto cosa cambia. Si può annullare. */
+export function ClearScenarioDialog({ scenario, onClose }: { scenario: Scenario; onClose: () => void }) {
+  const { trip, update, toast } = useTrip();
+  const [costs, setCosts] = useState(false);
+  const [ok, setOk] = useState(false);
+  const before = useMemo(() => tripForScenario(trip, scenario.id), [trip, scenario.id]);
+  const impact = useMemo(() => planImpact(before, tripForScenario(clearScenario(trip, scenario.id, { costs }), scenario.id)), [trip, before, scenario.id, costs]);
+  const flights = before.flights?.length ?? 0;
+  const items = before.budgetItems.length;
+  return (
+    <Modal title={`Svuota «${scenario.name}»`} onClose={onClose}>
+      <p className="small">Si tolgono tappe, tratti e giornate con le loro attività. Restano la data di partenza, gli alloggi salvati e il diario.</p>
+      <label className="check">
+        <input type="checkbox" checked={costs} onChange={(e) => setCosts(e.target.checked)} /> Togli anche voli ({flights}), crociere scelte e voci di budget ({items})
+      </label>
+      <ImpactView i={impact} />
+      <BookingConfirm i={impact} ok={ok} setOk={setOk} />
+      <div className="row wrap place-actions">
+        <button
+          className="btn danger"
+          disabled={impact.needsBookingConfirm && !ok}
+          onClick={() => {
+            const previous = trip;
+            update((t) => clearScenario(t, scenario.id, { costs }));
+            toast(`Scenario «${scenario.name}» svuotato`, 'ok', { label: 'Annulla', run: () => update((t) => restorePlanOnly(t, previous)) });
+            onClose();
+          }}
+        >
+          Svuota scenario
+        </button>
+        <button className="btn btn-ghost" onClick={onClose}>
+          Annulla
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/** Elimina più tappe insieme, dopo aver visto cosa cambia. Si può annullare. */
+export function RemoveStopsDialog({ stops, onClose, onDone }: { stops: Stop[]; onClose: () => void; onDone: () => void }) {
+  const { trip, update, toast } = useTrip();
+  const [ok, setOk] = useState(false);
+  const ids = stops.map((s) => s.id);
+  const key = ids.join();
+  const impact = useMemo(() => planImpact(trip, removeStops(trip, key.split(','))), [trip, key]);
+  const label = stops.length === 1 ? '1 tappa' : `${stops.length} tappe`;
+  return (
+    <Modal title={`Elimina ${label}`} onClose={onClose}>
+      <p className="small">{stops.map((s) => s.name).join(' · ')}</p>
+      <ImpactView i={impact} />
+      <BookingConfirm i={impact} ok={ok} setOk={setOk} />
+      <div className="row wrap place-actions">
+        <button
+          className="btn danger"
+          disabled={impact.needsBookingConfirm && !ok}
+          onClick={() => {
+            const previous = trip;
+            update((t) => removeStops(t, ids));
+            toast(stops.length === 1 ? '1 tappa eliminata' : `${stops.length} tappe eliminate`, 'ok', { label: 'Annulla', run: () => update((t) => restorePlanOnly(t, previous)) });
+            onDone();
+          }}
+        >
+          Elimina {label}
         </button>
         <button className="btn btn-ghost" onClick={onClose}>
           Annulla

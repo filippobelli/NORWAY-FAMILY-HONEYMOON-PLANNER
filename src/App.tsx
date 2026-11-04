@@ -33,11 +33,11 @@ const SECTIONS = [
     label: 'Percorso',
     icon: 'route',
     views: [
-      { id: 'pianifica', label: 'Area di lavoro' },
+      { id: 'pianifica', label: 'Pianificatore' },
       { id: 'itinerario', label: 'Tappe e mappa' },
-      { id: 'configuratore', label: 'Fatti proporre un percorso' },
-      { id: 'catalogo', label: 'Mete' },
-      { id: 'scenari', label: 'Versioni' },
+      { id: 'configuratore', label: 'Pianificatore automatico' },
+      { id: 'catalogo', label: 'Luoghi da visitare' },
+      { id: 'scenari', label: 'Scenari' },
     ],
   },
   {
@@ -222,7 +222,7 @@ function Shell() {
         <div className="topbar-right">
           <span className="mode-tag">Pianificazione</span>
           {activeScenario && (
-            <a href="#/scenari" className="scenario-tag" title="Versione attiva">
+            <a href="#/scenari" className="scenario-tag" title="Scenario attivo">
               <Icon name="scale" /> {activeScenario}
             </a>
           )}

@@ -33,7 +33,7 @@ function summarizePlan(t: Trip): string {
 // L'ordine delle tappe e le sostituzioni si scelgono sempre: il piano è un gruppo unico, comprese le versioni salvate
 const PLAN_KEYS = ['startDate', 'dateTentative', 'stops', 'legs', 'days', 'budgetItems', 'flights', 'scenarios', 'activeScenarioId', 'planLog'] as const;
 const GROUPS: { id: string; label: string; keys: readonly (keyof Trip)[]; summary: (t: Trip) => string }[] = [
-  { id: 'piano', label: 'Percorso, date e versioni', keys: PLAN_KEYS, summary: summarizePlan },
+  { id: 'piano', label: 'Percorso, date e scenari', keys: PLAN_KEYS, summary: summarizePlan },
   { id: 'alloggi', label: 'Alloggi', keys: ['accommodations'], summary: (t) => `${t.accommodations.length} sistemazioni: ${t.accommodations.map((a) => `${a.name} (${a.status})`).join(', ') || 'nessuna'}.` },
   { id: 'crociere', label: 'Opzioni di crociera', keys: ['coastalOptions'], summary: (t) => `${t.coastalOptions.length} opzioni: ${t.coastalOptions.map((o) => `${o.operator} ${o.fromPort} → ${o.toPort}`).join(', ') || 'nessuna'}.` },
   { id: 'titolo', label: 'Titolo e partecipanti', keys: ['title', 'participants'], summary: (t) => `${t.title} · ${t.participants.adults} adulti, ${t.participants.childrenAges.length} bambini.` },

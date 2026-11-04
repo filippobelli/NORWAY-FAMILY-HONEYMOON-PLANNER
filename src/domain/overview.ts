@@ -241,7 +241,7 @@ export function tripOverview(trip: Trip): TripOverview {
   const actions: NextAction[] = [];
   const plural = (k: number, one: string, many: string) => (k === 1 ? one : many);
   if (trip.stops.length === 0) {
-    actions.push({ id: 'start', priority: 'alta', text: 'Costruisci l\'itinerario: aggiungi le tappe o fatti proporre un percorso.', href: '#/configuratore', cta: 'Fatti proporre un percorso' });
+    actions.push({ id: 'start', priority: 'alta', text: 'Costruisci l\'itinerario: aggiungi le tappe o usa il Pianificatore automatico.', href: '#/configuratore', cta: 'Pianificatore automatico' });
   } else if (!inTarget) {
     actions.push({
       id: 'length',

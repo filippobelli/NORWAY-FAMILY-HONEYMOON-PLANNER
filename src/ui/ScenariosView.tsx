@@ -16,7 +16,7 @@ import {
   type ScenarioMetrics,
 } from '../domain/scenarios';
 import type { Scenario, ScenarioKind } from '../domain/types';
-import { ApplyVersionDialog, PlanBDialog } from './PlanBDialog';
+import { ApplyVersionDialog, ClearScenarioDialog, PlanBDialog } from './PlanBDialog';
 import { useTrip } from '../state/store';
 import { Badge, Field } from './common';
 
@@ -70,7 +70,7 @@ const LEVEL: Record<ScenarioCompleteness['level'], { label: string; tone: 'ok' |
 };
 
 export function ScenariosView() {
-  const { trip, update, toast } = useTrip();
+  const { trip, update, toast, readOnly } = useTrip();
   const t = useMemo(() => ensureScenarios(trip), [trip]);
   const scenarios = t.scenarios!;
   const metrics = useMemo(() => scenarios.map((s) => ({ s, m: scenarioMetrics(tripForScenario(t, s.id)) })), [t, scenarios]);
@@ -79,6 +79,7 @@ export function ScenariosView() {
   const [from, setFrom] = useState<'copia' | 'vuoto'>('copia');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [applying, setApplying] = useState<Scenario | null>(null);
+  const [clearing, setClearing] = useState<Scenario | null>(null);
   const [planB, setPlanB] = useState(false);
   const all = metrics.map(({ m }) => m);
 
@@ -97,15 +98,16 @@ export function ScenariosView() {
   return (
     <div className="scenarios">
       {applying && <ApplyVersionDialog scenario={applying} onClose={() => setApplying(null)} />}
+      {clearing && <ClearScenarioDialog scenario={clearing} onClose={() => setClearing(null)} />}
       {planB && <PlanBDialog onClose={() => setPlanB(false)} />}
       <div className="note-info">
-        Ogni versione è un percorso completo (tappe, tratti, giornate, voli e voci di budget). Alloggi e opzioni di crociera sono condivisi. Confrontare gli scenari
+        Ogni scenario è un percorso completo (tappe, tratti, giornate, voli e voci di budget). Alloggi e opzioni di crociera sono condivisi. Confrontare gli scenari
         non modifica il percorso attivo: cambia solo con «Applica piano», dopo il confronto.
       </div>
 
       <section className="panel">
         <header className="panel-head">
-          <h2>Nuova versione</h2>
+          <h2>Nuovo scenario</h2>
           <button className="btn" disabled={trip.stops.length === 0} onClick={() => setPlanB(true)}>
             Prepara un piano B
           </button>
@@ -126,7 +128,7 @@ export function ScenariosView() {
           <Field label="Partenza da">
             {(id) => (
               <select id={id} value={from} onChange={(e) => setFrom(e.target.value as 'copia' | 'vuoto')}>
-                <option value="copia">Copia della versione attiva</option>
+                <option value="copia">Copia dello scenario attivo</option>
                 <option value="vuoto">Itinerario vuoto</option>
               </select>
             )}
@@ -141,10 +143,10 @@ export function ScenariosView() {
                 onClick={() => {
                   update((cur) => addScenario(cur, name, kind, from));
                   setName('');
-                  toast('Versione creata: aprila per modificarla');
+                  toast('Scenario creato: applicalo per modificarlo');
                 }}
               >
-                Crea versione
+                Crea scenario
               </button>
             </div>
           </div>
@@ -284,9 +286,14 @@ export function ScenariosView() {
                 )}
                 {!active && (
                   <p className="muted small sc-open-note">
-                    Prima di applicare vedi il confronto. La versione attuale resta salvata con tutte le sue modifiche. Cambiano data di partenza, tappe, tratti, giornate,
+                    Prima di applicare vedi il confronto. Lo scenario attuale resta salvato con tutte le sue modifiche. Cambiano data di partenza, tappe, tratti, giornate,
                     voli, voci di budget e navi incluse; restano condivisi alloggi, opzioni di crociera e impostazioni. Diario e stati di visita non cambiano.
                   </p>
+                )}
+                {!readOnly && m.stops > 0 && (
+                  <button className="btn btn-small danger" onClick={() => setClearing(s)}>
+                    Svuota
+                  </button>
                 )}
                 {!active &&
                   (confirmDelete === s.id ? (

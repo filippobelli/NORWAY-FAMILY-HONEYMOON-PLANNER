@@ -160,7 +160,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
                   {isAirport && <span className="muted small">{on ? ' · aeroporto' : ' · solo aeroporto: arrivo o partenza, regione non esplorata'}</span>}
                 </label>
                 <div className="small muted">
-                  Contee: {i.counties.join(', ')} · {i.count} {i.count === 1 ? 'meta' : 'mete'} nel catalogo
+                  Contee: {i.counties.join(', ')} · {i.count} {i.count === 1 ? 'luogo' : 'luoghi'} da visitare nel catalogo
                 </div>
                 {i.bases.length > 0 && <div className="small">Dove dormire: {i.bases.join(', ')}</div>}
                 {i.examples.length > 0 && <div className="small muted">Per i bambini: {i.examples.join(', ')}</div>}

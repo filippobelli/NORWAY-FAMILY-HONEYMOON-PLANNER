@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { computeBudget } from '../src/domain/budget';
 import { createEmptyTrip } from '../src/domain/defaults';
-import { computeDays, moveStopTo, syncLegs } from '../src/domain/itinerary';
+import { computeDays, moveStopTo, removeStops, syncLegs } from '../src/domain/itinerary';
 import { upsertAccommodation } from '../src/domain/lodging';
+import { addScenario, clearScenario, tripForScenario } from '../src/domain/scenarios';
 import { parseSelection, formatSelection, selectionCosts, selectionExists, selectionStopId } from '../src/domain/selection';
-import type { Accommodation, Stop, Trip } from '../src/domain/types';
+import type { Accommodation, BudgetItem, Flight, Stop, Trip } from '../src/domain/types';
 import { getRoutingProvider, RoutingError } from '../src/services/routing';
 import { buildHash, parseRoute, startView } from '../src/state/route';
 
@@ -116,4 +117,49 @@ test('Fondo mappa: nomi in italiano o locali, mai in inglese; sigle delle strade
   assert.equal(out.layers[0]?.paint?.['background-color'], '#f5f7fa');
   assert.deepEqual(style.layers[1]?.layout?.['text-field'], nameField, 'lo stile scaricato non si tocca');
   assert.deepEqual(withoutLabels(style).layers.map((l) => l.id), ['background', 'road']);
+});
+
+test('Eliminare più tappe: tratti riallineati, alloggi sganciati, attività senza giornata conservate', () => {
+  const stop = (id: string): Stop => ({ id, kind: 'luogo', name: id, lat: 60, lng: 7, nights: 2, notes: '', weatherPlanB: '' });
+  const stops = [stop('a'), stop('b'), stop('c')];
+  const trip: Trip = {
+    ...createEmptyTrip(),
+    stops,
+    legs: syncLegs(stops, []),
+    days: { 'b#0': { activities: [], notes: 'da conservare' } as unknown as Trip['days'][string] },
+    accommodations: [{ id: 'h', stopId: 'b' } as Accommodation],
+  };
+  const out = removeStops(trip, ['a', 'b']);
+  assert.deepEqual(out.stops.map((s) => s.id), ['c']);
+  assert.equal(out.legs.length, 0);
+  assert.equal(out.accommodations[0]?.stopId, undefined);
+  assert.ok(out.days['b#0'], 'le note e le attività non si perdono');
+  assert.equal(removeStops(trip, ['nessuna']), trip);
+});
+
+test('Svuotare uno scenario: attivo o salvato, gli altri restano; voli e costi solo su richiesta', () => {
+  const stop = (id: string): Stop => ({ id, kind: 'luogo', name: id, lat: 60, lng: 7, nights: 2, notes: '', weatherPlanB: '' });
+  const stops = [stop('a'), stop('b')];
+  const flight = { id: 'f', priceStatus: 'pagato' } as Flight;
+  const item = { id: 'i', category: 'attrazioni', label: 'Ingresso', amount: { amount: 10, currency: 'EUR' }, status: 'pagato', notes: '' } as BudgetItem;
+  const trip = addScenario({ ...createEmptyTrip(), stops, legs: syncLegs(stops, []), flights: [flight], budgetItems: [item] }, 'Copia', 'altro', 'copia');
+  const activeId = trip.activeScenarioId!;
+  const copyId = trip.scenarios!.find((s) => s.id !== activeId)!.id;
+
+  const a = clearScenario(trip, activeId);
+  assert.equal(a.stops.length, 0);
+  assert.equal(a.legs.length, 0);
+  assert.equal(a.flights?.length, 1, 'i voli restano');
+  assert.equal(a.budgetItems.length, 1, 'i costi restano');
+  assert.equal(a.scenarios!.find((s) => s.id === copyId)?.plan?.stops.length, 2, "l'altro scenario non cambia");
+
+  const c = clearScenario(trip, copyId);
+  assert.equal(c.stops.length, 2, 'lo scenario attivo non cambia');
+  assert.equal(tripForScenario(c, copyId).stops.length, 0);
+  assert.equal(tripForScenario(c, copyId).flights?.length, 1);
+
+  const all = clearScenario(trip, activeId, { costs: true });
+  assert.equal(all.flights?.length, 0);
+  assert.equal(all.budgetItems.length, 0);
+  assert.equal(tripForScenario(clearScenario(trip, copyId, { costs: true }), copyId).budgetItems.length, 0);
 });
