@@ -4,7 +4,7 @@ import { DESTINATIONS, findDestination } from '../data/destinations';
 import { COUNTIES, REGION_COUNTIES } from '../data/regionShapes';
 import { BASE_IDS } from '../domain/configurator';
 import type { Region } from '../domain/types';
-import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup, type LMap, type LPath } from '../services/map/leaflet';
+import { addBaseMap, loadLeaflet, type LeafletApi, type LLayerGroup, type LMap, type LPath } from '../services/map/leaflet';
 
 export const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 
@@ -50,7 +50,8 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
       .then((L) => {
         if (cancelled || !el.current) return;
         const map = L.map(el.current, { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25, zoomAnimation: false }).setView([65, 15], 4);
-        L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
+        // Le località scelte hanno già la loro etichetta: quelle del fondo si sovrapporrebbero
+        void addBaseMap(L, map, () => cancelled, { labels: false });
         const shapes = new Map<Region, LPath[]>();
         for (const r of REGIONS) {
           const list: LPath[] = [];

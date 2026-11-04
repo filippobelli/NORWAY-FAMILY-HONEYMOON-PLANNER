@@ -238,7 +238,7 @@ export function ItineraryView() {
           onSelectStop={(id) => selectStop(id, 'mappa')}
         />
         <p className="muted small">
-          Mappa © contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
+          Mappa: OpenFreeMap, © OpenMapTiles e contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
           tratteggiate sottili indicano collegamenti senza tracciato e non rappresentano distanze.
         </p>
       </section>

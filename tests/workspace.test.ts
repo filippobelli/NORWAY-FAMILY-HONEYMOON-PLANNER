@@ -1,3 +1,4 @@
+import { italianStyle, withoutLabels } from '../src/services/map/baseStyle';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { computeBudget } from '../src/domain/budget';
@@ -95,4 +96,24 @@ test('Trascinamento: la tappa arriva nella posizione scelta, i tratti si riallin
   assert.deepEqual(moveStopTo(moved, 'c', 2).stops.map((s) => s.id), ['a', 'b', 'c']);
   assert.equal(moveStopTo(t, 'a', 0), t, 'stessa posizione: nessuna modifica');
   assert.equal(moveStopTo(t, 'x', 1), t, 'tappa inesistente: nessuna modifica');
+});
+
+test('Fondo mappa: nomi in italiano o locali, mai in inglese; sigle delle strade intatte', () => {
+  const nameField = ['coalesce', ['get', 'name_en'], ['get', 'name']];
+  const style = {
+    version: 8,
+    layers: [
+      { id: 'background', type: 'background', paint: { 'background-color': '#000' } },
+      { id: 'label_town', type: 'symbol', layout: { 'text-field': nameField, 'text-size': 12 } },
+      { id: 'shield', type: 'symbol', layout: { 'text-field': ['to-string', ['get', 'ref']] } },
+      { id: 'road', type: 'line', paint: { 'line-color': '#111' } },
+    ],
+  };
+  const out = italianStyle(style);
+  assert.deepEqual(out.layers[1]?.layout, { 'text-field': ['coalesce', ['get', 'name:it'], ['get', 'name']], 'text-size': 12 });
+  assert.equal(out.layers[2], style.layers[2]);
+  assert.equal(out.layers[3], style.layers[3]);
+  assert.equal(out.layers[0]?.paint?.['background-color'], '#f5f7fa');
+  assert.deepEqual(style.layers[1]?.layout?.['text-field'], nameField, 'lo stile scaricato non si tocca');
+  assert.deepEqual(withoutLabels(style).layers.map((l) => l.id), ['background', 'road']);
 });

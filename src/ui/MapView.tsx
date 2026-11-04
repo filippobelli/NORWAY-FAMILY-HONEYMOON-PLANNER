@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DESTINATIONS } from '../data/destinations';
 import { coastalRoute } from '../domain/coastal';
 import type { TransportMode, Trip } from '../domain/types';
-import { loadLeaflet, TILE_OPTIONS, TILE_URL, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
+import { addBaseMap, loadLeaflet, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
 import { isAutoSegment } from '../domain/routeMerge';
 import { MODE_COLOR, MODE_DASH, MODE_LABEL } from './common';
 
@@ -42,7 +42,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       .then((L) => {
         if (cancelled || !el.current) return;
         const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true, zoomAnimation: false }).setView([65, 15], 4);
-        L.tileLayer(TILE_URL, TILE_OPTIONS).addTo(map);
+        void addBaseMap(L, map, () => cancelled);
         const layer = L.layerGroup().addTo(map);
         mapRef.current = { L, map, layer };
         setState('pronta');

@@ -216,3 +216,10 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Google Maps senza chiave e senza costi** (`src/domain/googleMaps.ts`): pulsante «Google Maps ↗» su ogni tratto stradale (in auto, o con i mezzi pubblici se il tratto ha treno o bus) e «Vedi su Google Maps» nella Panoramica della tappa. Sono link pubblici (Maps URLs): l'app non scarica dati da Google. La mappa interna resta Leaflet/OpenStreetMap; la Maps JavaScript API non è attivata.
 - `StopCard` ha `hideDetails` e la scelta dell'alloggio è il componente `StopLodgingSelect`, usato sia in «Tappe e mappa» sia nel Percorso.
 - Verifiche: typecheck con lo shim aggiornato (`verify/react-shim.d.ts`: `useLayoutEffect`, `KeyboardEvent`, eventi da tastiera), 137 test ok, build ok; Percorso provato a 1440 e 390 px con 7 tappe sintetiche, nessun errore e nessuno scorrimento orizzontale. Gli script `verify/e2e/*.cjs` cercano ancora i vecchi link del menù e falliscono anche senza queste modifiche: vanno aggiornati.
+
+## 04/11/2026 — mappa con i nomi in italiano
+
+- **Fondo vettoriale** (`src/services/map/leaflet.ts`, `addBaseMap`; `src/services/map/baseStyle.ts`): OpenFreeMap (stile positron, dati OpenStreetMap, nessuna chiave) disegnato con MapLibre 5.24.0 dentro Leaflet tramite `@maplibre/maplibre-gl-leaflet` 0.1.4, da CDN con impronte SRI. Le scritte usano `name:it` e, se manca, il nome locale. Tappe, tratti e popup restano livelli Leaflet.
+- **Riserva**: da file locale, senza WebGL2 o se stile e librerie non arrivano entro 10 secondi si usa lo sfondo OSM di prima. Se il servizio cade dopo l'apertura, le parti non ancora scaricate restano vuote.
+- **Mappa delle regioni**: fondo senza scritte, perché le località scelte hanno già la loro etichetta.
+- Verifiche: 139 test ok, build ok; provata su build locale a 1400 e 390 px, con zoom, trascinamento e servizio bloccato. Non provata su telefono reale né nella mappa della modalità viaggio.

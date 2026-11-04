@@ -1882,6 +1882,10 @@ details summary {
 .map .leaflet-tile-pane {
   filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeColorMatrix values='.235 .791 .08 0 -.076 .177 .594 .06 0 .19 .093 .313 .032 0 .57 0 0 0 1 0'/%3E%3C/filter%3E%3C/svg%3E#f");
 }
+/* Il fondo vettoriale ha già i colori giusti */
+.map.map-vector .leaflet-tile-pane {
+  filter: none;
+}
 .map .leaflet-popup-content-wrapper,
 .map .leaflet-popup-tip,
 .map .leaflet-tooltip:not(.region-label) {
