@@ -5,8 +5,9 @@ import { computeDayLoads, suggestAlternatives, applySuggestion, type Suggestion 
 import { newId } from '../domain/ids';
 import { findDestination } from '../data/destinations';
 import { googlePlaceUrl } from '../domain/googleMaps';
-import { addDays, computeDays, formatDateIt, formatDuration, legTotals, TRIP_MAX_DAYS, TRIP_MIN_DAYS, totalDays, type DayInfo } from '../domain/itinerary';
+import { addDays, computeDays, formatDateIt, formatDuration, legTotals, moveStopTo, TRIP_MAX_DAYS, TRIP_MIN_DAYS, totalDays, type DayInfo } from '../domain/itinerary';
 import { upsertAccommodation } from '../domain/lodging';
+import { planImpact } from '../domain/planImpact';
 import { defaultInsertIndex, insertStop } from '../domain/placement';
 import { formatSelection, parseSelection, selectionCosts, selectionExists, selectionStopId, type Selection } from '../domain/selection';
 import type { Accommodation, BudgetCategory, BudgetItem, DataStatus, Leg, Money, Stop, Trip } from '../domain/types';
@@ -21,6 +22,7 @@ import { OfficialLink } from './OfficialLink';
 import { MapView } from './MapView';
 import { PendingPanel } from './PlacementDialog';
 import { PlanBDialog } from './PlanBDialog';
+import { useStopDrag } from './useStopDrag';
 
 // Percorso: in alto la linea del viaggio (tutte le tappe e i tratti), sotto l'elenco con il dettaglio
 // della selezione aperto in linea e, a destra, la mappa (o la timeline dei giorni) che resta ferma.
@@ -86,6 +88,18 @@ export function PlannerView() {
     toast(`Aggiunta tappa: ${s.name}`);
   };
 
+  const moveStop = (id: string, to: number) => {
+    const from = trip.stops.findIndex((s) => s.id === id);
+    const name = trip.stops[from]?.name ?? 'Tappa';
+    // Le date di quello che segue cambiano: se tocca qualcosa di prenotato o pagato va detto subito
+    const booked = planImpact(trip, moveStopTo(trip, id, to)).booked.length;
+    update((t) => moveStopTo(t, id, to));
+    toast(booked > 0 ? `${name} spostata. Controlla ${booked} ${booked === 1 ? 'voce prenotata o pagata' : 'voci prenotate o pagate'}: le date non coincidono più` : `${name} spostata`, 'ok', {
+      label: 'Annulla',
+      run: () => update((t) => moveStopTo(t, id, from)),
+    });
+  };
+
   // Scelta dalla linea in alto o dalla mappa: porta in vista il dettaglio aperto nell'elenco
   const selKey = formatSelection(current);
   useEffect(() => {
@@ -115,10 +129,11 @@ export function PlannerView() {
             </button>
           </div>
         </div>
-        {trip.stops.length > 0 && <RouteLine trip={trip} days={days} sel={current} onSelect={setSel} />}
+        {trip.stops.length > 0 && <RouteLine trip={trip} days={days} sel={current} onSelect={setSel} onMove={moveStop} />}
       </section>
       <div className="planner-cols">
         <Outline
+          onMove={moveStop}
           trip={trip}
           days={days}
           sel={current}
@@ -159,7 +174,9 @@ function legLabel(leg: Leg, trip: Trip): string {
 }
 
 /** Linea del percorso (stile metropolitana): panoramica di tutto il viaggio e scelta rapida di tappe e tratti */
-function RouteLine({ trip, days, sel, onSelect }: { trip: Trip; days: DayInfo[]; sel?: Selection; onSelect: (s: Selection) => void }) {
+function RouteLine({ trip, days, sel, onSelect, onMove }: { trip: Trip; days: DayInfo[]; sel?: Selection; onSelect: (s: Selection) => void; onMove: (id: string, to: number) => void }) {
+  const { readOnly } = useTrip();
+  const drag = useStopDrag({ axis: 'x', disabled: readOnly, onDrop: onMove });
   const activeStop = selectionStopId(trip, days, sel);
   const navRef = useRef<HTMLElement>(null);
   // Solo scorrimento orizzontale della linea, senza spostare la pagina
@@ -179,14 +196,15 @@ function RouteLine({ trip, days, sel, onSelect }: { trip: Trip; days: DayInfo[];
   });
   return (
     <nav className="route-line" aria-label="Tappe del viaggio" ref={navRef}>
-      <ol>
+      {drag.ghost}
+      <ol data-stop-list>
         {trip.stops.map((s, i) => {
           const leg = i < trip.stops.length - 1 ? trip.legs.find((l) => l.fromStopId === s.id) : undefined;
           const on = s.id === activeStop && sel?.kind !== 'leg';
           const legOn = leg !== undefined && sel?.kind === 'leg' && sel.id === leg.id;
           return (
-            <li key={s.id} className={`${on ? 'is-selected' : ''} ${s.kind === 'a_bordo' ? 'is-ship' : ''}`}>
-              <button type="button" className="route-station" aria-current={on ? 'step' : undefined} onClick={() => onSelect({ kind: 'stop', id: s.id })}>
+            <li key={s.id} data-stop-id={s.id} className={`${on ? 'is-selected' : ''} ${s.kind === 'a_bordo' ? 'is-ship' : ''} ${drag.rowClass(s.id)}`}>
+              <button type="button" className="route-station" aria-current={on ? 'step' : undefined} onPointerDown={(e) => drag.press(e, s.id, s.name)} onClick={() => onSelect({ kind: 'stop', id: s.id })}>
                 <span className="route-dot">{s.kind === 'a_bordo' ? <Icon name="ship" label="Notti a bordo" /> : i + 1}</span>
                 <span className="route-name">{s.name}</span>
                 <span className="route-meta">
@@ -217,6 +235,7 @@ function RouteLine({ trip, days, sel, onSelect }: { trip: Trip; days: DayInfo[];
 }
 
 function Outline({
+  onMove,
   trip,
   days,
   sel,
@@ -229,6 +248,7 @@ function Outline({
   detail,
   summary,
 }: {
+  onMove: (id: string, to: number) => void;
   trip: ReturnType<typeof useTrip>['trip'];
   days: ReturnType<typeof computeDays>;
   sel?: Selection;
@@ -246,6 +266,10 @@ function Outline({
   const q = filter.trim().toLowerCase();
   const shown = trip.stops.filter((s) => !q || s.name.toLowerCase().includes(q));
   const is = (kind: Selection['kind'], id: string) => sel?.kind === kind && sel.id === id;
+  const { readOnly } = useTrip();
+  // Con il filtro attivo le posizioni visibili non sono quelle del viaggio
+  const canDrag = !q && !readOnly && trip.stops.length > 1;
+  const drag = useStopDrag({ axis: 'y', disabled: !canDrag, onDrop: onMove });
 
   // Frecce su e giù tra le voci dell'outline
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -262,21 +286,28 @@ function Outline({
       <StopPicker onAdd={onAddStop} />
       <PendingPanel />
       {trip.stops.length > 3 && <input className="ol-filter" type="search" placeholder="Filtra le tappe" aria-label="Filtra le tappe" value={filter} onChange={(e) => setFilter(e.target.value)} />}
+      {canDrag && <p className="small muted">Tieni premuta una tappa e trascinala per cambiare l'ordine.</p>}
+      {drag.ghost}
       <div className="ol-scroll" onKeyDown={onKey}>
         {trip.stops.length === 0 ? (
           <Empty title="Inizia dall'arrivo">Aggiungi come prima tappa l'aeroporto o la città di arrivo, poi le località dove dormire.</Empty>
         ) : shown.length === 0 ? (
           <p className="muted small">Nessuna tappa corrisponde al filtro.</p>
         ) : (
-          <ol className="ol-list">
+          <ol className="ol-list" data-stop-list>
             {shown.map((s) => {
               const i = trip.stops.indexOf(s);
               const leg = trip.legs.find((l) => l.fromStopId === s.id);
               const stopDays = days.filter((d) => d.sleepStop?.id === s.id);
               const totals = leg ? legTotals(leg, trip.settings) : undefined;
               return (
-                <li key={s.id}>
-                  <button className={`ol-item ol-stop ${is('stop', s.id) ? 'active' : ''}`} aria-current={is('stop', s.id) ? 'true' : undefined} onClick={() => onSelect({ kind: 'stop', id: s.id })}>
+                <li key={s.id} data-stop-id={s.id} className={drag.rowClass(s.id)}>
+                  <button className={`ol-item ol-stop ${is('stop', s.id) ? 'active' : ''}`} aria-current={is('stop', s.id) ? 'true' : undefined} onPointerDown={(e) => drag.press(e, s.id, s.name)} onClick={() => onSelect({ kind: 'stop', id: s.id })}>
+                    {canDrag && (
+                      <span className="ol-grip">
+                        <Icon name="grip" />
+                      </span>
+                    )}
                     <span className="ol-num">{s.kind === 'a_bordo' ? <Icon name="ship" label="Notti a bordo" /> : i + 1}</span>
                     <span className="ol-name">{s.name}</span>
                     <span className="small muted">

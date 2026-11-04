@@ -388,6 +388,12 @@ export function formatDuration(min: number): string {
   return r === 0 ? `${h} h` : `${h} h ${String(r).padStart(2, '0')}`;
 }
 
+/** Sposta una tappa nella posizione indicata: le giornate la seguono, i tratti si riallineano. */
+export function moveStopTo(t: Trip, stopId: string, to: number): Trip {
+  const stops = moveItem(t.stops, t.stops.findIndex((s) => s.id === stopId), to);
+  return stops === t.stops ? t : { ...t, stops, legs: syncLegs(stops, t.legs) };
+}
+
 export function moveItem<T>(arr: T[], from: number, to: number): T[] {
   if (from === to || from < 0 || to < 0 || from >= arr.length || to >= arr.length) return arr;
   const copy = arr.slice();

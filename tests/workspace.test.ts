@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { computeBudget } from '../src/domain/budget';
 import { createEmptyTrip } from '../src/domain/defaults';
-import { computeDays, syncLegs } from '../src/domain/itinerary';
+import { computeDays, moveStopTo, syncLegs } from '../src/domain/itinerary';
 import { upsertAccommodation } from '../src/domain/lodging';
 import { parseSelection, formatSelection, selectionCosts, selectionExists, selectionStopId } from '../src/domain/selection';
 import type { Accommodation, Stop, Trip } from '../src/domain/types';
@@ -84,4 +84,15 @@ test('Primo ingresso: area di lavoro se ci sono tappe, Oggi in viaggio, i link e
   assert.equal(startView('', 'travel', false), 't/oggi');
   assert.equal(startView('#/panoramica', 'planning', true), undefined);
   assert.equal(startView('#/budget', 'travel', true), undefined);
+});
+
+test('Trascinamento: la tappa arriva nella posizione scelta, i tratti si riallineano e si può annullare', () => {
+  const stops = [stop('a', 'PROVA A', 1), stop('b', 'PROVA B', 2), stop('c', 'PROVA C', 1)];
+  const t: Trip = { ...createEmptyTrip(), stops, legs: syncLegs(stops, []) };
+  const moved = moveStopTo(t, 'c', 0);
+  assert.deepEqual(moved.stops.map((s) => s.id), ['c', 'a', 'b']);
+  assert.deepEqual(moved.legs.map((l) => [l.fromStopId, l.toStopId]), [['c', 'a'], ['a', 'b']]);
+  assert.deepEqual(moveStopTo(moved, 'c', 2).stops.map((s) => s.id), ['a', 'b', 'c']);
+  assert.equal(moveStopTo(t, 'a', 0), t, 'stessa posizione: nessuna modifica');
+  assert.equal(moveStopTo(t, 'x', 1), t, 'tappa inesistente: nessuna modifica');
 });

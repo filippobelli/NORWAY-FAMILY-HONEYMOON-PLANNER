@@ -335,6 +335,86 @@ code {
   width: calc(100% - 22px);
   color: var(--ink-2);
 }
+/* Trascinamento delle tappe */
+.ol-grip {
+  flex: none;
+  margin: 0 -4px;
+  color: var(--linea-forte);
+  cursor: grab;
+}
+.ol-item.active .ol-grip {
+  color: var(--regione);
+}
+.ol-stop,
+.route-station {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.stop-dragging,
+.stop-dragging * {
+  cursor: grabbing !important;
+  -webkit-user-select: none;
+  user-select: none;
+}
+[data-stop-list] > .is-dragged {
+  opacity: 0.45;
+}
+[data-stop-list] > .drop-before,
+[data-stop-list] > .drop-after {
+  position: relative;
+}
+.ol-list > .drop-before::before,
+.ol-list > .drop-after::after,
+.route-line ol > .drop-before::before,
+.route-line ol > .drop-after::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  background: var(--rosso);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.ol-list > .drop-before::before,
+.ol-list > .drop-after::after {
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.ol-list > .drop-before::before {
+  top: -2px;
+}
+.ol-list > .drop-after::after {
+  bottom: -2px;
+}
+.route-line ol > .drop-before::before,
+.route-line ol > .drop-after::after {
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+.route-line ol > .drop-before::before {
+  left: 0;
+}
+.route-line ol > .drop-after::after {
+  right: 0;
+}
+.stop-drag-ghost {
+  position: fixed;
+  z-index: 3000;
+  max-width: 220px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--blu);
+  color: var(--bianco);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: var(--shadow-float);
+  pointer-events: none;
+}
 .segmented {
   display: flex;
   flex-wrap: wrap;
