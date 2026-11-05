@@ -1,11 +1,12 @@
 import { restorePlanOnly } from '../domain/actuals';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { applySuggestion, computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
 import { assumptions, computeDays, formatDateIt, formatDuration, legSummary, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
 import { haversineKm } from '../services/accommodation/search';
+import { parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
 import { OfficialLink } from './OfficialLink';
 import { Badge, Empty, Field, fmtMoney, ModeIcon, MoneyInput, NumberInput, StatusSelect } from './common';
@@ -27,8 +28,18 @@ export function DaysView() {
   const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
   const orphans = useMemo(() => orphanDayKeys(trip), [trip]);
   const a = assumptions(trip.settings);
+  // Dall'Itinerario si arriva sulla giornata che si stava guardando
+  useEffect(() => {
+    const wanted = parseRoute(window.location.hash).params.giorno;
+    if (wanted) document.getElementById(`day-${wanted}`)?.scrollIntoView({ block: 'start' });
+  }, []);
 
-  if (days.length === 0) return <Empty title="Nessuna giornata">Aggiungi le tappe in Percorso: le giornate si generano dalle notti.</Empty>;
+  if (days.length === 0)
+    return (
+      <Empty title="Nessuna giornata">
+        Le giornate si generano dalle notti delle tappe: <a href="#/pianifica">aggiungile nell'Itinerario</a>.
+      </Empty>
+    );
 
   const apply = (sg: Suggestion) => {
     if (!sg.action) return;
@@ -42,8 +53,11 @@ export function DaysView() {
 
   return (
     <div className="days">
+      <p className="muted small">
+        Qui organizzi attività, carico e proposte per alleggerire. Tappe, notti e trasferimenti si cambiano nell'<a href="#/pianifica">Itinerario</a>, che mostra gli stessi giorni in forma compatta.
+      </p>
       {trip.dateTentative && (
-        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in «Il viaggio».</p>
+        <p className="note-info">Date provvisorie: la partenza è impostata al {formatDateIt(trip.startDate)} e si può cambiare in <a href="#/panoramica?sezione=date">Viaggio</a>.</p>
       )}
       <section className="panel">
         <h2>Ritmo del viaggio</h2>

@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
 import { useAutoRates } from './state/autoRates';
-import { CloudSyncProvider, useCloudSync, type CloudStatus } from './state/cloudSync';
+import { CloudSyncProvider, useCloudSync } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
 import { isTravelView, parseRoute, startView, type ViewId } from './state/route';
 import { useAppMode } from './state/mode';
+import { saveLastPlanning, useOnline } from './state/uiContext';
 import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
 import { FlagMark, Icon, type IconName } from './ui/icons';
 import { ConflictDialog } from './ui/SyncDialogs';
+import { SyncBadge } from './ui/SyncStatus';
+import { BookingsView } from './ui/BookingsView';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
 import { ConfiguratorView } from './ui/ConfiguratorView';
@@ -17,42 +20,53 @@ import { CoastalView } from './ui/CoastalView';
 import { DaysView } from './ui/DaysView';
 import { FlightsView } from './ui/FlightsView';
 import { HytteView } from './ui/HytteView';
-import { ItineraryView } from './ui/ItineraryView';
 import { OverviewView } from './ui/OverviewView';
 import { PlannerView } from './ui/PlannerView';
 import { ScenariosView } from './ui/ScenariosView';
 import { SettingsView } from './ui/SettingsView';
 import { DiaryScreen, MoreScreen, TodayScreen, TravelItinerary, TravelMap, TravelShell } from './ui/TravelView';
 
-// Il menù segue le domande di chi organizza: chi e quando, dove, come ci si muove, dove si dorme, cosa si fa, quanto costa.
-// Ogni voce può avere più viste; gli indirizzi delle viste restano quelli di sempre, così i link salvati continuano a funzionare.
-const SECTIONS = [
-  { id: 'il-viaggio', label: 'Il viaggio', icon: 'mountain', views: [{ id: 'panoramica', label: 'Panoramica' }] },
+// Il menù segue l'ordine consigliato del lavoro, senza imporlo: viaggio, itinerario, prenotazioni, giornate, budget e, a parte, la modalità viaggio.
+// Gli indirizzi delle viste restano quelli di sempre; quelli vecchi sono mappati in state/route.ts.
+interface Section {
+  id: string;
+  label: string;
+  icon: IconName;
+  home: ViewId;
+  views: { id: ViewId; label: string }[];
+  /** Sottomenù visibile. Dentro l'Itinerario no: proposta, catalogo e versioni si aprono dallo spazio di lavoro */
+  subnav?: boolean;
+}
+const SECTIONS: Section[] = [
+  { id: 'viaggio', label: 'Viaggio', icon: 'mountain', home: 'panoramica', views: [{ id: 'panoramica', label: 'Panoramica' }] },
   {
-    id: 'percorso',
-    label: 'Percorso',
+    id: 'itinerario',
+    label: 'Itinerario',
     icon: 'route',
+    home: 'pianifica',
     views: [
-      { id: 'pianifica', label: 'Pianificatore' },
-      { id: 'itinerario', label: 'Tappe e mappa' },
-      { id: 'configuratore', label: 'Pianificatore automatico' },
-      { id: 'catalogo', label: 'Luoghi da visitare' },
-      { id: 'scenari', label: 'Scenari' },
+      { id: 'pianifica', label: 'Spazio di lavoro' },
+      { id: 'configuratore', label: 'Proposta automatica' },
+      { id: 'catalogo', label: 'Catalogo dei luoghi' },
+      { id: 'scenari', label: 'Versioni del percorso' },
     ],
   },
   {
-    id: 'trasporti',
-    label: 'Trasporti',
-    icon: 'plane',
+    id: 'prenotazioni',
+    label: 'Prenotazioni',
+    icon: 'bed',
+    home: 'prenotazioni',
+    subnav: true,
     views: [
+      { id: 'prenotazioni', label: 'Riepilogo' },
       { id: 'voli', label: 'Voli' },
       { id: 'crociere', label: 'Crociere' },
+      { id: 'hytte', label: 'Alloggi' },
     ],
   },
-  { id: 'alloggi', label: 'Alloggi', icon: 'bed', views: [{ id: 'hytte', label: 'Alloggi' }] },
-  { id: 'giorni', label: 'Giorno per giorno', icon: 'calendar', views: [{ id: 'giornate', label: 'Giorno per giorno' }] },
-  { id: 'costi', label: 'Budget', icon: 'wallet', views: [{ id: 'budget', label: 'Budget' }] },
-] as const satisfies readonly { id: string; label: string; icon: IconName; views: readonly { id: string; label: string }[] }[];
+  { id: 'giornate', label: 'Giornate', icon: 'calendar', home: 'giornate', views: [{ id: 'giornate', label: 'Attività e carico' }] },
+  { id: 'budget', label: 'Budget', icon: 'wallet', home: 'budget', views: [{ id: 'budget', label: 'Costi' }] },
+];
 
 function readHash(): ViewId {
   return parseRoute(window.location.hash).view;
@@ -70,6 +84,7 @@ export default function App() {
 
 function Shell() {
   const { trip, localState, loadError, staleTab, toasts, dismissToast } = useTrip();
+  const online = useOnline();
   const [showConflict, setShowConflict] = useState(false);
   const { mode, setMode } = useAppMode();
   const [tab, setTab] = useState<ViewId>(readHash);
@@ -95,7 +110,12 @@ function Shell() {
     }
     window.scrollTo({ top: 0 });
   }, [tab]);
+  // Ritorno dalla modalità viaggio: si riparte dalla schermata di pianificazione che era aperta
+  useEffect(() => {
+    if (!isTravelView(tab) && mode === 'planning') saveLastPlanning(window.location.hash);
+  }, [tab, mode]);
   const section = SECTIONS.find((s) => s.views.some((v) => v.id === tab));
+  const viewLabel = section?.views.find((v) => v.id === tab)?.label;
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
@@ -134,7 +154,17 @@ function Shell() {
       )}
       {cloud.status === 'errore' && cloud.error && (
         <div className="note-warn banner" role="alert">
-          {cloud.error}
+          <span>{cloud.error} Le modifiche restano su questo dispositivo.</span>
+          <span className="row wrap">
+            {online && (
+              <button className="btn btn-small btn-primary" onClick={cloud.syncNow}>
+                Riprova
+              </button>
+            )}
+            <button className="btn btn-small" onClick={() => exportTripFile(trip)}>
+              Esporta un backup
+            </button>
+          </span>
         </div>
       )}
       {loadError && (
@@ -148,10 +178,10 @@ function Shell() {
     <>
       {tab === 'panoramica' && <OverviewView />}
       {tab === 'pianifica' && <PlannerView />}
-      {tab === 'itinerario' && <ItineraryView />}
       {tab === 'configuratore' && <ConfiguratorView />}
       {tab === 'giornate' && <DaysView />}
       {tab === 'catalogo' && <CatalogView />}
+      {tab === 'prenotazioni' && <BookingsView />}
       {tab === 'crociere' && <CoastalView />}
       {tab === 'voli' && <FlightsView />}
       {tab === 'hytte' && <HytteView />}
@@ -188,14 +218,7 @@ function Shell() {
 
   if (isTravelView(tab) || mode === 'travel') {
     return (
-      <TravelShell
-        tab={tab}
-        status={
-          <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
-          </a>
-        }
-      >
+      <TravelShell tab={tab} status={<SyncBadge compact />} online={online}>
         {banners}
         {page}
         {toastList}
@@ -211,7 +234,7 @@ function Shell() {
             <FlagMark />
           </span>
           <div>
-            <p className="eyebrow">Viaggio / {section?.views.find((v) => v.id === tab)?.label ?? 'Impostazioni'}</p>
+            <p className="eyebrow">{section ? `${section.label}${viewLabel && section.views.length > 1 ? ` / ${viewLabel}` : ''}` : 'Impostazioni'}</p>
             <h1>{trip.title || 'Norvegia 2027'}</h1>
             <p>
               {days ? `${days} giorni` : 'Itinerario da costruire'} · {trip.participants.adults} adulti, {trip.participants.childrenAges.length} bambini
@@ -220,24 +243,12 @@ function Shell() {
           </div>
         </div>
         <div className="topbar-right">
-          <span className="mode-tag">Pianificazione</span>
-          {activeScenario && (
-            <a href="#/scenari" className="scenario-tag" title="Scenario attivo">
+          {activeScenario && tab !== 'pianifica' && (
+            <a href="#/scenari" className="scenario-tag" title="Versione attiva del percorso">
               <Icon name="scale" /> {activeScenario}
             </a>
           )}
-          <button
-            className="mode-link"
-            onClick={() => {
-              setMode('travel');
-              window.location.hash = '#/t/oggi';
-            }}
-          >
-            <Icon name="phone" /> Modalità viaggio
-          </button>
-          <a href="#/impostazioni" className={`save-state save-${localState === 'errore' ? 'errore' : cloud.status}`} role="status" title={cloud.error}>
-            {saveLabel(localState, cloud.status, cloud.lastSyncAt)}
-          </a>
+          <SyncBadge />
           <a href="#/impostazioni" className={`gear ${tab === 'impostazioni' ? 'active' : ''}`} aria-label="Impostazioni, salvataggio e backup" title="Impostazioni, salvataggio e backup" aria-current={tab === 'impostazioni' ? 'page' : undefined}>
             <Icon name="gear" />
           </a>
@@ -248,15 +259,21 @@ function Shell() {
           <FlagMark />
         </span>
         {SECTIONS.map((s) => (
-          <a key={s.id} href={`#/${s.views[0].id}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
+          <a key={s.id} href={`#/${s.home}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
             <span className="tab-icon">
               <Icon name={s.icon} />
             </span>
             <span className="tab-label">{s.label}</span>
           </a>
         ))}
+        <a href="#/t/oggi" className="tab-travel" onClick={() => setMode('travel')} title="Passa alla gestione da smartphone: oggi, itinerario, mappa e diario">
+          <span className="tab-icon">
+            <Icon name="phone" />
+          </span>
+          <span className="tab-label">Modalità viaggio</span>
+        </a>
       </nav>
-      {section && section.views.length > 1 && (
+      {section?.subnav && (
         <nav className="subtabs" aria-label={`Viste di ${section.label}`}>
           {section.views.map((v) => (
             <a key={v.id} href={`#/${v.id}`} className={tab === v.id ? 'active' : ''} aria-current={tab === v.id ? 'page' : undefined}>
@@ -266,29 +283,15 @@ function Shell() {
         </nav>
       )}
       {banners}
-      <main className="content">{page}</main>
+      <main className="content">
+        {section?.id === 'itinerario' && tab !== 'pianifica' && (
+          <p className="crumb">
+            <a href="#/pianifica">← Torna all'itinerario</a> <span aria-hidden>/</span> <span>{viewLabel}</span>
+          </p>
+        )}
+        {page}
+      </main>
       {toastList}
     </div>
   );
-}
-
-function saveLabel(local: 'salvato' | 'in_attesa' | 'errore', cloud: CloudStatus, lastSyncAt?: string): string {
-  if (local === 'errore') return 'Salvataggio su questo dispositivo NON riuscito';
-  switch (cloud) {
-    case 'non_configurato':
-      return 'Modalità locale · salvato su questo dispositivo';
-    case 'non_connesso':
-      return 'Salvato solo qui · accedi per il cloud';
-    case 'in_attesa':
-    case 'in_corso':
-      return 'Salvataggio nel cloud…';
-    case 'sincronizzato':
-      return lastSyncAt ? `Sincronizzato · ${new Date(lastSyncAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronizzato';
-    case 'offline':
-      return 'Offline · modifiche salvate qui, in attesa di invio';
-    case 'errore':
-      return 'Errore del cloud · salvato qui';
-    case 'conflitto':
-      return 'Sincronizzazione in pausa: da scegliere';
-  }
 }

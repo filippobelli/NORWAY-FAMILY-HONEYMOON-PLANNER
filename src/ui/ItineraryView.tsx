@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { newId } from '../domain/ids';
 import {
   addDays,
-  computeDays,
   formatDateIt,
   formatDuration,
   isRoutableLeg,
@@ -13,10 +12,6 @@ import {
   type DayInfo,
   type LegState,
   moveItem,
-  totalDays,
-  tripWarnings,
-  TRIP_MAX_DAYS,
-  TRIP_MIN_DAYS,
   uncalculatedSegment,
 } from '../domain/itinerary';
 import { googleDirectionsUrl, googleModeForLeg } from '../domain/googleMaps';
@@ -24,11 +19,8 @@ import { isAutoSegment, mergeRouted } from '../domain/routeMerge';
 import type { Leg, Segment, Stop, TransportMode, Trip } from '../domain/types';
 import { getRoutingProvider, RoutingError } from '../services/routing';
 import { useTrip } from '../state/store';
-import { Badge, Empty, Field, fmtDateTime, ModeIcon, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Badge, Field, fmtDateTime, ModeIcon, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { Icon } from './icons';
-import { AUTO_ROUTE_KEY } from './ConfiguratorView';
-import { MapView } from './MapView';
-import { PendingPanel } from './PlacementDialog';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
@@ -38,7 +30,7 @@ export function stopFromDestination(destinationId: string): Stop | undefined {
   return { id: newId(), kind: 'luogo', destinationId: d.id, name: d.name, lat: d.lat, lng: d.lng, nights, notes: '', weatherPlanB: '' };
 }
 
-/** Calcolo dei tratti: usato da Tappe e mappa e dall'area di lavoro. */
+/** Calcolo dei tratti dell'area di lavoro dell'itinerario. */
 export function useLegRouting() {
   const { trip, update, toast } = useTrip();
   const [busy, setBusy] = useState<string | null>(null);
@@ -125,128 +117,7 @@ export function useLegRouting() {
   return { busy, abort, calcOne, calcAll };
 }
 
-export function ItineraryView() {
-  const { trip, update, toast } = useTrip();
-  const days = useMemo(() => computeDays(trip), [trip]);
-  const warnings = useMemo(() => tripWarnings(trip), [trip]);
-  const n = totalDays(trip.stops);
-  const { busy, abort, calcOne, calcAll } = useLegRouting();
-  // Tappa selezionata: collega scheda e mappa (clic sul numero o sul segnaposto)
-  const [selected, setSelected] = useState<string | undefined>(undefined);
-  const selectStop = (id: string, from: 'lista' | 'mappa') => {
-    setSelected(id);
-    if (from === 'mappa') document.getElementById(`stop-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    else if (window.matchMedia('(max-width: 1099px)').matches) document.querySelector('.map-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const addStop = (s: Stop | undefined) => {
-    if (!s) return;
-    update((t) => ({ ...t, stops: [...t.stops, s] }));
-    toast(`Aggiunta tappa: ${s.name}`);
-  };
-
-  // Dopo il configuratore: calcolo automatico dei tratti del nuovo scenario (una sola volta)
-  useEffect(() => {
-    let pending = false;
-    try {
-      pending = sessionStorage.getItem(AUTO_ROUTE_KEY) === '1';
-      if (pending) sessionStorage.removeItem(AUTO_ROUTE_KEY);
-    } catch {
-      pending = false;
-    }
-    if (pending) void calcAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <div className="itinerary">
-      <section className="panel">
-        <header className="panel-head">
-          <div>
-            <h2>Tappe</h2>
-            <p className="muted">
-              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
-            </p>
-          </div>
-          <div className="row">
-            {busy ? (
-              <button className="btn" onClick={() => abort.current?.abort()}>
-                Interrompi calcolo
-              </button>
-            ) : (
-              <button className="btn btn-primary" onClick={calcAll} disabled={trip.legs.length === 0}>
-                Calcola tratti mancanti
-              </button>
-            )}
-          </div>
-        </header>
-
-        {warnings.length > 0 && (
-          <ul className="warnings">
-            {warnings.map((w) => (
-              <li key={w.text} className={`warn-${w.level}`}>
-                {w.text}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <PendingPanel />
-
-        <StopPicker onAdd={addStop} />
-
-        {trip.stops.length === 0 ? (
-          <Empty title="Inizia dall'arrivo">
-            Aggiungi come prima tappa l'aeroporto o la città di arrivo, poi le località dove dormire. Puoi anche cliccare un punto sulla mappa.
-          </Empty>
-        ) : (
-          <ol className="stops">
-            {trip.stops.map((s, i) => {
-              const leg = trip.legs.find((l) => l.fromStopId === s.id);
-              const day = days.find((d) => d.sleepStop?.id === s.id);
-              return (
-                <li key={s.id} id={`stop-${s.id}`}>
-                  <StopCard
-                    stop={s}
-                    index={i}
-                    count={trip.stops.length}
-                    checkIn={day?.date}
-                    selected={selected === s.id}
-                    onShowOnMap={() => selectStop(s.id, 'lista')}
-                  />
-                  {leg && i < trip.stops.length - 1 && (
-                    <LegCard
-                      leg={leg}
-                      fromNum={i + 1}
-                      day={days.find((d) => d.legs.some((l) => l.id === leg.id))}
-                      busy={busy === leg.id}
-                      onCalc={() => calcOne(leg)}
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        )}
-      </section>
-
-      <section className="panel map-panel">
-        <MapView
-          trip={trip}
-          onAddDestination={(id) => addStop(stopFromDestination(id))}
-          selectedStopId={selected}
-          onSelectStop={(id) => selectStop(id, 'mappa')}
-        />
-        <p className="muted small">
-          Mappa: OpenFreeMap, © OpenMapTiles e contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM (routing.openstreetmap.de). Coordinate del catalogo approssimative. Le linee
-          tratteggiate sottili indicano collegamenti senza tracciato e non rappresentano distanze.
-        </p>
-      </section>
-    </div>
-  );
-}
-
-export function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) {
+export function StopPicker({ onAdd, onBrowse }: { onAdd: (s: Stop | undefined) => void; onBrowse?: () => void }) {
   const [q, setQ] = useState('');
   const [custom, setCustom] = useState(false);
   const [c, setC] = useState<{ name: string; lat?: number; lng?: number }>({ name: '' });
@@ -266,6 +137,11 @@ export function StopPicker({ onAdd }: { onAdd: (s: Stop | undefined) => void }) 
           onChange={(e) => setQ(e.target.value)}
           aria-label="Cerca località"
         />
+        {onBrowse && (
+          <button className="btn" onClick={onBrowse}>
+            Sfoglia il catalogo
+          </button>
+        )}
         <button className="btn" onClick={() => setCustom((v) => !v)} aria-expanded={custom}>
           Luogo personalizzato
         </button>
@@ -458,12 +334,12 @@ export function StopCard({
   );
 }
 
-/** Scelta della sistemazione di una tappa (le sistemazioni si gestiscono nella sezione Alloggi) */
+/** Scelta della sistemazione di una tappa (le sistemazioni si gestiscono in Prenotazioni › Alloggi) */
 export function StopLodgingSelect({ stop }: { stop: Stop }) {
   const { trip, update } = useTrip();
   const accs = trip.accommodations.filter((a) => !a.stopId || a.stopId === stop.id);
   return (
-    <Field label="Alloggio" hint="Le sistemazioni si gestiscono nella sezione Alloggi">
+    <Field label="Alloggio scelto" hint="Le sistemazioni si gestiscono in Prenotazioni › Alloggi">
       {(id) => (
         <select
           id={id}

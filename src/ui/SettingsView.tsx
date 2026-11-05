@@ -8,6 +8,7 @@ import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, NumberInput } from './common';
 import { LogoutDialog } from './SyncDialogs';
 import { RatesPanel } from './RatesPanel';
+import { OfflineInfo } from './SyncStatus';
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
@@ -98,12 +99,8 @@ export function SettingsView() {
 
       <section className="panel">
         <h2>Cosa funziona senza rete</h2>
-        <ul className="small">
-          <li>Dopo una prima apertura online: l'app, il viaggio, Oggi, l'itinerario in elenco, il diario, gli stati di visita, il budget già calcolato.</li>
-          <li>Ogni modifica si salva sul dispositivo e resta in attesa di invio al cloud; riparte alla riapertura, al ritorno della rete e ogni 30 secondi.</li>
-          <li>Serve la rete: sfondo della mappa, calcolo dei percorsi, ricerca alloggi, cambio e carburante, foto del catalogo, accesso al cloud.</li>
-          <li>Gli allegati del diario restano su questo dispositivo e non vanno nel cloud. Mappe offline non disponibili.</li>
-        </ul>
+        <OfflineInfo />
+        <p className="small muted">Ogni modifica si salva sul dispositivo e resta in attesa di invio al cloud; riparte alla riapertura, al ritorno della rete e ogni 30 secondi.</p>
       </section>
 
       <RatesPanel />

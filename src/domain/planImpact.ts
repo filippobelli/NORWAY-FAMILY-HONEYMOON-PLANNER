@@ -4,7 +4,7 @@ import { routeDiff, type RouteDiff } from './placement';
 import { ensureScenarios, snapshotPlan, switchScenario, tripForScenario } from './scenarios';
 import { scenarioMetrics } from './scenarios';
 import { newId } from './ids';
-import type { DataStatus, ID, Trip } from './types';
+import type { DataStatus, ID, ScenarioKind, Trip } from './types';
 
 // Piano B: una variante resta una proposta finché non viene applicata. L'impatto si calcola solo con le funzioni
 // di dominio esistenti. L'applicazione cambia il piano, mai il diario né gli stati di visita, e si può annullare.
@@ -13,7 +13,7 @@ const COMMERCIAL: DataStatus[] = ['prenotato', 'pagato'];
 const isCommercial = (s: DataStatus) => COMMERCIAL.includes(s);
 
 export interface BookedItem {
-  kind: 'alloggio' | 'volo' | 'crociera' | 'trasporto' | 'attività' | 'costo';
+  kind: 'alloggio' | 'volo' | 'crociera' | 'trasporto' | 'attività' | 'costo' | 'visita';
   label: string;
   status: string;
   effect: string;
@@ -122,6 +122,18 @@ export function planImpact(before: Trip, after: Trip): PlanImpact {
   for (const b of before.budgetItems) {
     if (isCommercial(b.status) && !after.budgetItems.some((x) => x.id === b.id)) booked.push({ kind: 'costo', label: b.label, status: b.status, effect: 'non è in questo scenario' });
   }
+  // Già vissuto: tappe visitate e attività fatte che escono dal percorso. Il registro resta, ma va detto prima
+  for (const s of before.stops) {
+    const st = before.actuals?.stops[s.id]?.state;
+    if ((st === 'visitata' || st === 'in_corso') && !stillThere.has(s.id)) booked.push({ kind: 'visita', label: s.name, status: st === 'visitata' ? 'Visitata' : 'In corso', effect: 'la tappa esce dal percorso; lo stato resta registrato' });
+  }
+  const orphansAfter = new Set(orphanDayKeys(after));
+  const stillPlanned = new Set(Object.entries(after.days).filter(([k]) => !orphansAfter.has(k)).flatMap(([, d]) => d.activities.map((a) => a.id)));
+  for (const d of Object.values(before.days)) {
+    for (const a of d.activities) {
+      if (before.actuals?.activities[a.id]?.state === 'fatta' && !stillPlanned.has(a.id)) booked.push({ kind: 'visita', label: a.title || 'Attività', status: 'Fatta', effect: "l'attività esce dal percorso; lo stato resta registrato" });
+    }
+  }
 
   const mB = scenarioMetrics(before);
   const mA = scenarioMetrics(after);
@@ -180,10 +192,10 @@ export function draftSetNights(t: Trip, stopId: ID, nights: number): Trip {
 // ---------- Salvataggio, applicazione, annullamento ----------
 
 /** Salva la bozza come alternativa, senza applicarla. */
-export function saveAlternative(trip: Trip, name: string, draft: Trip, notes = ''): { trip: Trip; id: ID } {
+export function saveAlternative(trip: Trip, name: string, draft: Trip, notes = '', kind: ScenarioKind = 'altro'): { trip: Trip; id: ID } {
   const t = ensureScenarios(trip);
   const id = newId();
-  const scenario = { id, name: name.trim() || 'Piano B', kind: 'altro' as const, notes, updatedAt: new Date().toISOString(), plan: snapshotPlan(draft) };
+  const scenario = { id, name: name.trim() || 'Piano B', kind, notes, updatedAt: new Date().toISOString(), plan: snapshotPlan(draft) };
   return { trip: { ...t, scenarios: [...t.scenarios!, scenario] }, id };
 }
 

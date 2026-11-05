@@ -2,6 +2,14 @@
 
 Ultimo audit: [AUDIT-2026-10-27.md](AUDIT-2026-10-27.md) (22 problemi, 18 risolti).
 
+## Navigazione e flussi (riorganizzazione UX, 5 novembre 2026)
+
+- **Aree**: Viaggio, Itinerario, Prenotazioni, Giornate, Budget e il passaggio alla Modalità viaggio. Impostazioni dal controllo secondario in alto.
+- **Itinerario** (`#/pianifica`) è l'unica destinazione per modificare il percorso: `#/itinerario` (ex «Tappe e mappa») è ora un alias. Proposta automatica, catalogo (anche in pannello laterale) e versioni si aprono da lì.
+- **Proposta automatica**: impostazioni → revisione (tempi calcolati, stimati e da verificare dichiarati, limite giornaliero, alloggi, orari) → conferma con confronto → attivazione. Salvare senza attivare è possibile. Attivando, il limite giornaliero della proposta diventa quello del viaggio.
+- **Prenotazioni** (`#/prenotazioni`): riepilogo unico con stato per elemento, derivato da `src/domain/bookings.ts`. Le schede restano in Voli, Crociere e Alloggi.
+- **Verifiche e2e**: `verify/e2e/*.cjs` usano ancora selettori della vecchia interfaccia (già prima di questo intervento) e vanno riallineati.
+
 ## Punto di partenza
 
 Non esisteva un repository: il progetto è stato creato da zero con lo stack indicato in CLAUDE.md (React, TypeScript rigoroso, Vite, Leaflet, Supabase con RLS).

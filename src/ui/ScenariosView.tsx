@@ -16,6 +16,7 @@ import {
   type ScenarioMetrics,
 } from '../domain/scenarios';
 import type { Scenario, ScenarioKind } from '../domain/types';
+import { undoVersion } from '../domain/planImpact';
 import { ApplyVersionDialog, ClearScenarioDialog, PlanBDialog } from './PlanBDialog';
 import { useTrip } from '../state/store';
 import { Badge, Field } from './common';
@@ -82,6 +83,10 @@ export function ScenariosView() {
   const [clearing, setClearing] = useState<Scenario | null>(null);
   const [planB, setPlanB] = useState(false);
   const all = metrics.map(({ m }) => m);
+  const active = scenarios.find((s) => s.id === t.activeScenarioId);
+  // Ultima applicazione ancora reversibile: il registro resta dopo la chiusura del messaggio temporaneo
+  const last = trip.planLog?.at(-1);
+  const previous = last && last.to === t.activeScenarioId && !last.label.startsWith('Annullato:') ? scenarios.find((s) => s.id === last.from) : undefined;
 
   // Il migliore si indica solo se la riga è confrontabile con i dati di tutti gli scenari
   const best = (row: Row): number | undefined => {
@@ -100,14 +105,31 @@ export function ScenariosView() {
       {applying && <ApplyVersionDialog scenario={applying} onClose={() => setApplying(null)} />}
       {clearing && <ClearScenarioDialog scenario={clearing} onClose={() => setClearing(null)} />}
       {planB && <PlanBDialog onClose={() => setPlanB(false)} />}
+      <section className="versions-now" aria-label="Versione attiva">
+        <div>
+          <p className="small muted">Versione attiva: è quella che modifichi nell'Itinerario</p>
+          <h2>{active?.name ?? 'Scenario principale'}</h2>
+        </div>
+        {previous && (
+          <button
+            className="btn"
+            onClick={() => {
+              update((cur) => undoVersion(cur, previous.id, last!.label));
+              toast(`Tornato a «${previous.name}»`);
+            }}
+          >
+            Torna a «{previous.name}»
+          </button>
+        )}
+      </section>
       <div className="note-info">
-        Ogni scenario è un percorso completo (tappe, tratti, giornate, voli e voci di budget). Alloggi e opzioni di crociera sono condivisi. Confrontare gli scenari
-        non modifica il percorso attivo: cambia solo con «Applica piano», dopo il confronto.
+        Ogni versione è un percorso completo (tappe, tratti, giornate, voli e voci di budget); alloggi e opzioni di crociera sono condivisi. Confrontare non cambia nulla: l'itinerario attivo cambia solo
+        con «Applica piano», dopo aver visto cosa cambia. Per modificare una versione salvata, applicala: quella attiva resta conservata qui.
       </div>
 
       <section className="panel">
         <header className="panel-head">
-          <h2>Nuovo scenario</h2>
+          <h2>Nuova versione</h2>
           <button className="btn" disabled={trip.stops.length === 0} onClick={() => setPlanB(true)}>
             Prepara un piano B
           </button>
@@ -143,10 +165,10 @@ export function ScenariosView() {
                 onClick={() => {
                   update((cur) => addScenario(cur, name, kind, from));
                   setName('');
-                  toast('Scenario creato: applicalo per modificarlo');
+                  toast('Versione salvata, non attiva: applicala per modificarla');
                 }}
               >
-                Crea scenario
+                Crea la versione
               </button>
             </div>
           </div>
@@ -155,18 +177,18 @@ export function ScenariosView() {
 
       <div className="scenario-grid">
         {metrics.map(({ s, m }) => {
-          const active = s.id === t.activeScenarioId;
+          const isActive = s.id === t.activeScenarioId;
           const kindNotes = scenarioKindNotes(s.kind, m);
           const lv = LEVEL[m.completeness.level];
           return (
-            <article key={s.id} className={`card scenario-card ${active ? 'active' : ''}`}>
+            <article key={s.id} className={`card scenario-card ${isActive ? 'active' : ''}`}>
               <header>
                 <div>
                   <h3>{s.name}</h3>
                   <span className="muted small">{SCENARIO_KIND_LABEL[s.kind]}</span>
                 </div>
                 <span className="row tight wrap">
-                  {active && <Badge tone="ok">in modifica</Badge>}
+                  {isActive ? <Badge tone="ok">Attiva</Badge> : <Badge>Salvata, non attiva</Badge>}
                   <Badge tone={lv.tone}>{lv.label}</Badge>
                 </span>
               </header>
@@ -236,8 +258,8 @@ export function ScenariosView() {
                 <div className="sc-block">
                   <h4>Costi senza importo (esclusi dal totale)</h4>
                   <ul className="mini">
-                    {m.missingCosts.slice(0, 3).map((n) => (
-                      <li key={n}>{n}</li>
+                    {m.missingCosts.slice(0, 3).map((n, k) => (
+                      <li key={`${n}-${k}`}>{n}</li>
                     ))}
                     {m.missingCosts.length > 3 && <li>e altri {m.missingCosts.length - 3}</li>}
                   </ul>
@@ -276,7 +298,7 @@ export function ScenariosView() {
                 </Field>
               </details>
               <footer>
-                {!active && (
+                {!isActive && (
                   <button
                     className="btn btn-small btn-primary"
                     onClick={() => setApplying(s)}
@@ -284,9 +306,9 @@ export function ScenariosView() {
                     Vedi cosa cambia e applica
                   </button>
                 )}
-                {!active && (
+                {!isActive && (
                   <p className="muted small sc-open-note">
-                    Prima di applicare vedi il confronto. Lo scenario attuale resta salvato con tutte le sue modifiche. Cambiano data di partenza, tappe, tratti, giornate,
+                    Prima di applicare vedi il confronto. La versione attiva resta salvata con tutte le sue modifiche. Cambiano data di partenza, tappe, tratti, giornate,
                     voli, voci di budget e navi incluse; restano condivisi alloggi, opzioni di crociera e impostazioni. Diario e stati di visita non cambiano.
                   </p>
                 )}
@@ -295,7 +317,7 @@ export function ScenariosView() {
                     Svuota
                   </button>
                 )}
-                {!active &&
+                {!isActive &&
                   (confirmDelete === s.id ? (
                     <span className="row tight">
                       <button

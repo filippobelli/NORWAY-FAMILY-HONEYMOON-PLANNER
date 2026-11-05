@@ -1,8 +1,9 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { formatEur } from '../domain/budget';
 import { formatDateIt } from '../domain/itinerary';
 import { tripOverview, type NextAction, type StepState } from '../domain/overview';
 import type { AccommodationStatus } from '../domain/types';
+import { buildHash, parseRoute, placeOf } from '../state/route';
 import { useTrip } from '../state/store';
 import { Badge, Field, NumberInput } from './common';
 import { Icon, type IconName } from './icons';
@@ -44,6 +45,30 @@ export function OverviewView() {
   const done = o.steps.filter((s) => s.state === 'fatto').length;
   const [top, ...rest] = o.actions;
   const budgetPartial = o.budget.missingPrices.length > 0 || o.budget.emptyCategories > 0;
+  const empty = trip.stops.length === 0;
+  const activeVersion = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
+  // Date e partecipanti: chiusi per non competere con il prossimo passo; si aprono da «Modifica» o da un'azione sulle date
+  const [formOpen, setFormOpen] = useState(false);
+  const formRef = useRef<HTMLDetailsElement>(null);
+  const openForm = () => {
+    setFormOpen(true);
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      formRef.current?.querySelector<HTMLInputElement>('input[type="date"]')?.focus();
+    });
+  };
+  useEffect(() => {
+    const follow = () => {
+      const r = parseRoute(window.location.hash);
+      if (r.view === 'panoramica' && r.params.sezione === 'date') {
+        window.history.replaceState(null, '', buildHash('panoramica'));
+        openForm();
+      }
+    };
+    follow();
+    window.addEventListener('hashchange', follow);
+    return () => window.removeEventListener('hashchange', follow);
+  }, []);
   const family = `${trip.participants.adults} adulti, ${trip.participants.childrenAges.length} bambini${trip.participants.childrenAges.length ? ` (${trip.participants.childrenAges.join(' e ')} anni)` : ''}`;
 
   return (
@@ -63,7 +88,18 @@ export function OverviewView() {
           ) : (
             <p className="ov-period">Periodo da definire: l'itinerario è ancora vuoto</p>
           )}
-          <p className="ov-sub">{family}</p>
+          <p className="ov-sub">
+            {family}
+            {activeVersion && (
+              <>
+                {' · '}versione attiva: <a href="#/scenari">{activeVersion}</a>
+              </>
+            )}
+            {' · '}
+            <button type="button" className="link-btn" onClick={openForm}>
+              Modifica date e partecipanti
+            </button>
+          </p>
         </div>
         <dl className="ov-facts">
           <div>
@@ -81,29 +117,54 @@ export function OverviewView() {
         </dl>
       </section>
 
-      {top && (
-        <section className={`ov-next prio-${top.priority}`} aria-labelledby="ov-next-title">
-          <div>
-            <h2 id="ov-next-title" className="ov-prio">
-              Prossimo passo · {PRIORITY_TEXT[top.priority]}
-            </h2>
-            <p>{top.text}</p>
-          </div>
-          <span className="row wrap">
-            <a className="btn btn-primary" href={top.href}>
-              {top.cta}
-            </a>
-            {top.secondary && (
-              <a className="btn" href={top.secondary.href}>
-                {top.secondary.cta}
+      {empty ? (
+        <section className="ov-start" aria-labelledby="ov-start-title">
+          <h2 id="ov-start-title">Da dove vuoi cominciare?</h2>
+          <div className="ov-start-grid">
+            <article className="ov-start-card is-recommended">
+              <p className="ov-eyebrow">Consigliato</p>
+              <h3>Fatti proporre un percorso</h3>
+              <p>Scegli giorni, aeroporti, ritmo e regioni: l'app prepara una proposta che controlli e modifichi prima di attivarla.</p>
+              <a className="btn btn-primary" href="#/configuratore">
+                Crea una proposta automatica
               </a>
-            )}
-          </span>
+            </article>
+            <article className="ov-start-card">
+              <p className="ov-eyebrow">In alternativa</p>
+              <h3>Costruiscilo tu, tappa per tappa</h3>
+              <p>Se sai già dove vuoi andare, aggiungi le località dal catalogo o dalla mappa nell'ordine che preferisci.</p>
+              <a className="btn" href="#/pianifica">
+                Aggiungi le tappe a mano
+              </a>
+            </article>
+          </div>
         </section>
+      ) : (
+        top && (
+          <section className={`ov-next prio-${top.priority}`} aria-labelledby="ov-next-title">
+            <div>
+              <h2 id="ov-next-title" className="ov-prio">
+                Prossimo passo · {PRIORITY_TEXT[top.priority]}
+              </h2>
+              <p>{top.text}</p>
+              <p className="small ov-where">Si apre in: {placeOf(top.href)}</p>
+            </div>
+            <span className="row wrap">
+              <a className="btn btn-primary" href={top.href}>
+                {top.cta}
+              </a>
+              {top.secondary && (
+                <a className="btn btn-ghost" href={top.secondary.href}>
+                  {top.secondary.cta}
+                </a>
+              )}
+            </span>
+          </section>
+        )
       )}
 
-      <details className="panel ov-trip-form" open={trip.dateTentative}>
-        <summary>Date e partecipanti</summary>
+      <details className="panel ov-trip-form" ref={formRef} open={formOpen} onToggle={(e) => setFormOpen(e.currentTarget.open)}>
+        <summary>Date e partecipanti{trip.dateTentative ? ' · date provvisorie' : ' · date decise'}</summary>
         <div className="grid-4">
           <Field label="Titolo">{(id) => <input id={id} value={trip.title} onChange={(e) => update((t) => ({ ...t, title: e.target.value }))} />}</Field>
           <Field label="Data di partenza" hint={trip.dateTentative ? 'Provvisoria' : 'Confermata'}>
@@ -149,11 +210,12 @@ export function OverviewView() {
         </div>
       </details>
 
+      {!empty && (
       <section className="panel" aria-labelledby="ov-steps">
         <header className="panel-head">
-          <h2 id="ov-steps">Decisioni da prendere</h2>
+          <h2 id="ov-steps">Decisioni del viaggio</h2>
           <span className="muted small">
-            {done} di {o.steps.length} completate · ordine indicativo, puoi procedere come preferisci
+            {done} di {o.steps.length} completate · ordine consigliato, puoi procedere come preferisci
           </span>
         </header>
         <ol className="ov-steps">
@@ -168,8 +230,7 @@ export function OverviewView() {
                     <span className="ov-step-n">{i + 1}.</span> {s.label}
                   </strong>
                   <span className="small">
-                    <span className="sr-only">{STEP_TEXT[s.state]}: </span>
-                    {s.detail}
+                    {STEP_TEXT[s.state]} · {s.detail}
                   </span>
                   {s.waitsFor.length > 0 && <span className="ov-step-dep small">Dipende da: {s.waitsFor.join(', ')}</span>}
                 </span>
@@ -178,9 +239,11 @@ export function OverviewView() {
           ))}
         </ol>
       </section>
+      )}
 
+      {!empty && (
       <details className="ov-more">
-        <summary>Riepilogo: altre azioni, alloggi, giornate, budget e trasferimenti</summary>
+        <summary>Altre azioni e dettagli: alloggi, giornate, budget, trasferimenti</summary>
       <div className="ov-grid">
         <div className="ov-col">
           <section className="panel ov-actions" aria-labelledby="ov-more">
@@ -216,8 +279,8 @@ export function OverviewView() {
           <section className="panel" aria-labelledby="ov-lodging">
             <header className="panel-head">
               <h2 id="ov-lodging">Alloggi</h2>
-              <a href="#/hytte" className="small">
-                Cerca e confronta
+              <a href="#/prenotazioni" className="small">
+                Apri le prenotazioni
               </a>
             </header>
             {o.lodging.length === 0 ? (
@@ -251,7 +314,7 @@ export function OverviewView() {
             <header className="panel-head">
               <h2 id="ov-days">Giornate impegnative</h2>
               <a href="#/giornate" className="small">
-                Giorno per giorno
+                Apri le giornate
               </a>
             </header>
             {o.days === 0 ? (
@@ -325,15 +388,15 @@ export function OverviewView() {
             {o.budget.missingPrices.length > 0 && (
               <div className="ov-missing">
                 <h3 className="small">Costi non ancora quantificati (esclusi dal totale)</h3>
-                <Clipped items={o.budget.missingPrices} max={3} render={(m) => <li key={m}>{m}</li>} />
+                <Clipped items={o.budget.missingPrices} max={3} render={(m, i) => <li key={`${m}-${i}`}>{m}</li>} />
               </div>
             )}
           </section>
           <section className="panel" aria-labelledby="ov-legs">
             <header className="panel-head">
               <h2 id="ov-legs">Trasferimenti</h2>
-              <a href="#/itinerario" className="small">
-                Percorso
+              <a href="#/pianifica" className="small">
+                Apri l'itinerario
               </a>
             </header>
             {o.uncalculatedLegs.length + o.shipLegsMissing.length === 0 ? (
@@ -376,6 +439,7 @@ export function OverviewView() {
         </div>
       </div>
       </details>
+      )}
     </div>
   );
 }

@@ -56,7 +56,7 @@ test('Panoramica: alloggio mancante e costo non quantificato → una sola azione
   const beds = action(t, 'beds')!;
   assert.match(beds.text, /Scegli l'alloggio per 1 tappa/);
   assert.match(beds.text, /Costo da quantificare/);
-  assert.equal(beds.href, '#/hytte');
+  assert.match(beds.href, /^#\/hytte\?tappa=/);
   assert.deepEqual(beds.secondary, { href: '#/budget', cta: 'Stima nel budget' });
   assert.equal(action(t, 'prices'), undefined, 'lo stesso costo non viene ripetuto in un secondo avviso');
   // L'informazione economica resta nel budget della panoramica

@@ -3,10 +3,10 @@
 export const VIEWS = [
   'panoramica',
   'pianifica',
-  'itinerario',
   'configuratore',
   'catalogo',
   'scenari',
+  'prenotazioni',
   'voli',
   'crociere',
   'hytte',
@@ -22,13 +22,43 @@ export const VIEWS = [
 ] as const;
 export type ViewId = (typeof VIEWS)[number];
 
-/** Vecchi nomi e voci di menù: «viaggio» erano le impostazioni, «costiera» le crociere. */
+/**
+ * Vecchi nomi e voci di menù: «viaggio» erano le impostazioni, «costiera» le crociere.
+ * «itinerario» era la vista «Tappe e mappa», ora unita all'area di lavoro dell'itinerario: i link salvati continuano a funzionare.
+ */
 export const ALIASES: Record<string, ViewId> = {
   viaggio: 'impostazioni',
   costiera: 'crociere',
   percorso: 'pianifica',
   trasporti: 'voli',
+  itinerario: 'pianifica',
+  alloggi: 'hytte',
+  giorni: 'giornate',
 };
+
+/** Dove porta ogni vista, detto con le parole del menù: serve a dichiarare la destinazione di un'azione. */
+export const VIEW_PLACE: Record<ViewId, string> = {
+  panoramica: 'Viaggio',
+  pianifica: 'Itinerario',
+  configuratore: 'Itinerario › Proposta automatica',
+  catalogo: 'Itinerario › Catalogo dei luoghi',
+  scenari: 'Itinerario › Versioni del percorso',
+  prenotazioni: 'Prenotazioni',
+  voli: 'Prenotazioni › Voli',
+  crociere: 'Prenotazioni › Crociere',
+  hytte: 'Prenotazioni › Alloggi',
+  giornate: 'Giornate',
+  budget: 'Budget',
+  impostazioni: 'Impostazioni',
+  't/oggi': 'Modalità viaggio › Oggi',
+  't/itinerario': 'Modalità viaggio › Itinerario',
+  't/mappa': 'Modalità viaggio › Mappa',
+  't/diario': 'Modalità viaggio › Diario',
+  't/altro': 'Modalità viaggio › Altro',
+};
+
+/** Nome della destinazione di un link interno, es. `#/hytte?tappa=x` → «Prenotazioni › Alloggi». */
+export const placeOf = (href: string): string => VIEW_PLACE[parseRoute(href).view];
 
 export interface Route {
   view: ViewId;

@@ -2,31 +2,36 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEve
 import { restorePlanOnly, stopState, STOP_STATE_LABEL } from '../domain/actuals';
 import { BUDGET_CATEGORIES, computeBudget, formatEur, ORIGIN_NAME } from '../domain/budget';
 import { computeDayLoads, suggestAlternatives, applySuggestion, type Suggestion } from '../domain/dayLoad';
+import { planStep, tripOverview } from '../domain/overview';
+import { undoVersion } from '../domain/planImpact';
 import { newId } from '../domain/ids';
 import { findDestination } from '../data/destinations';
 import { googlePlaceUrl } from '../domain/googleMaps';
-import { addDays, computeDays, formatDateIt, formatDuration, legTotals, moveStopTo, TRIP_MAX_DAYS, TRIP_MIN_DAYS, totalDays, type DayInfo } from '../domain/itinerary';
-import { upsertAccommodation } from '../domain/lodging';
+import { addDays, computeDays, formatDateIt, formatDuration, legTotals, moveStopTo, TRIP_MAX_DAYS, TRIP_MIN_DAYS, totalDays, tripWarnings, type DayInfo } from '../domain/itinerary';
 import { planImpact } from '../domain/planImpact';
 import { defaultInsertIndex, insertStop } from '../domain/placement';
 import { formatSelection, parseSelection, selectionCosts, selectionExists, selectionStopId, type Selection } from '../domain/selection';
-import type { Accommodation, BudgetCategory, BudgetItem, DataStatus, Leg, Money, Stop, Trip } from '../domain/types';
+import type { BudgetCategory, BudgetItem, DataStatus, Leg, Money, Stop, Trip } from '../domain/types';
 import { buildHash, parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
-import { Empty, Field, MoneyInput, ModeIcon, StatusBadge, StatusSelect } from './common';
+import { loadNotice, saveNotice, useMediaQuery } from '../state/uiContext';
+import { Badge, Empty, Field, MoneyInput, ModeIcon, StatusBadge, StatusSelect } from './common';
+import { CatalogView } from './CatalogView';
+import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 import { Icon } from './icons';
 import { DayCard } from './DaysView';
-import { AccommodationForm, blankAccommodation } from './HytteView';
-import { LegCard, shortDate, StopCard, StopLodgingSelect, StopPicker, useLegRouting } from './ItineraryView';
+import { LegCard, shortDate, StopCard, StopLodgingSelect, StopPicker, stopFromDestination, useLegRouting } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
 import { MapView } from './MapView';
-import { PendingPanel } from './PlacementDialog';
-import { PlanBDialog, RemoveStopsDialog } from './PlanBDialog';
+import { Modal, PendingPanel } from './PlacementDialog';
+import { RemoveStopsDialog } from './PlanBDialog';
 import { useStopDrag } from './useStopDrag';
+import { VersionsControl } from './VersionsControl';
 
-// Percorso: in alto la linea del viaggio (tutte le tappe e i tratti), sotto l'elenco con il dettaglio
-// della selezione aperto in linea e, a destra, la mappa (o la timeline dei giorni) che resta ferma.
+// Itinerario: unico spazio di lavoro per modificare il percorso. In alto il prossimo passo e la linea del viaggio,
+// sotto l'elenco con il dettaglio della selezione aperto in linea e, a destra, la mappa o i giorni, che restano fermi.
 // Selezione, filtro e posizione si conservano quando si apre una vista completa e si torna qui.
+// Su un telefono si vede una cosa alla volta: elenco, mappa o giorni.
 
 type Center = 'mappa' | 'timeline';
 const UI_KEY = 'nfhp.planner.ui';
@@ -63,7 +68,11 @@ export function PlannerView() {
   const [filter, setFilter] = useState(ui.filter ?? '');
   const outlineRef = useRef<HTMLElement>(null);
   const routing = useLegRouting();
-  const [planB, setPlanB] = useState(false);
+  const [catalog, setCatalog] = useState(false);
+  const narrow = useMediaQuery('(max-width: 860px)');
+  const [showList, setShowList] = useState(true);
+  const toList = () => setShowList(true);
+  const warnings = useMemo(() => tripWarnings(trip), [trip]);
 
   // Una selezione rimasta su un elemento rimosso si azzera, senza errori
   const current = sel && selectionExists(trip, days, sel) ? sel : undefined;
@@ -80,6 +89,40 @@ export function PlannerView() {
   useLayoutEffect(() => {
     if (outlineRef.current && ui.scroll) outlineRef.current.scrollTop = ui.scroll;
   }, [ui.scroll]);
+
+  // I link del prossimo passo portano qui con una tappa o un tratto scelti, o chiedono di calcolare i tratti
+  const calcAll = useRef(routing.calcAll);
+  calcAll.current = routing.calcAll;
+  useEffect(() => {
+    const follow = () => {
+      const r = parseRoute(window.location.hash);
+      if (r.view !== 'pianifica') return;
+      const s = parseSelection(r.params.sel);
+      if (s) {
+        setSel(s);
+        setShowList(true);
+      }
+      if (r.params.azione === 'calcola') {
+        window.history.replaceState(null, '', buildHash('pianifica', { sel: r.params.sel, centro: r.params.centro }));
+        void calcAll.current();
+      }
+    };
+    follow();
+    window.addEventListener('hashchange', follow);
+    return () => window.removeEventListener('hashchange', follow);
+  }, []);
+
+  // Dopo una proposta attivata o una nave aggiunta: calcola i tratti che mancano, una sola volta
+  useEffect(() => {
+    let pending = false;
+    try {
+      pending = sessionStorage.getItem(AUTO_ROUTE_KEY) === '1';
+      if (pending) sessionStorage.removeItem(AUTO_ROUTE_KEY);
+    } catch {
+      pending = false;
+    }
+    if (pending) void calcAll.current();
+  }, []);
 
   const addStop = (s: Stop | undefined) => {
     if (!s) return;
@@ -110,58 +153,214 @@ export function PlannerView() {
   const n = totalDays(trip.stops);
   const inspector = <Inspector sel={current} onSelect={setSel} onClear={() => setSel(undefined)} routing={routing} />;
 
+  const hasStops = trip.stops.length > 0;
+  const selectFromSide = (x: Selection) => {
+    setSel(x);
+    if (narrow) toList();
+  };
+  const list = (
+    <Outline
+      onMove={moveStop}
+      trip={trip}
+      days={days}
+      sel={current}
+      onSelect={setSel}
+      filter={filter}
+      setFilter={setFilter}
+      refEl={outlineRef}
+      onAddStop={addStop}
+      onBrowse={() => setCatalog(true)}
+      onScroll={() => saveUi({ sel: formatSelection(current), center, filter, scroll: outlineRef.current?.scrollTop })}
+      detail={current ? inspector : undefined}
+      summary={current ? undefined : inspector}
+    />
+  );
+  const side = (
+    <section className="planner-center" aria-label="Mappa e giorni">
+      {!narrow && <CenterSwitch center={center} setCenter={setCenter} />}
+      {center === 'mappa' ? (
+        <>
+          <MapView trip={trip} selectedStopId={selectionStopId(trip, days, current)} onSelectStop={(id) => selectFromSide({ kind: 'stop', id })} onAddDestination={(id) => addStop(stopFromDestination(id))} />
+          <p className="muted small map-credits">
+            Mappa: OpenFreeMap, © OpenMapTiles e contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM. Coordinate del catalogo approssimative. Le linee tratteggiate sottili indicano
+            collegamenti senza tracciato e non rappresentano distanze.
+          </p>
+        </>
+      ) : (
+        <Timeline days={days} sel={current} onSelect={selectFromSide} />
+      )}
+    </section>
+  );
+
   return (
     <div className="planner planner-b">
-      {planB && <PlanBDialog onClose={() => setPlanB(false)} />}
+      {catalog && <CatalogDrawer onClose={() => setCatalog(false)} />}
+      <PlanStatus routing={routing} />
       <section className="planner-top" aria-label="Linea del percorso">
         <div className="planner-toolbar">
-          <p className="small muted">
-            {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
-          </p>
+          <div className="planner-toolbar-info">
+            <VersionsControl />
+            <p className="small muted">
+              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
+            </p>
+          </div>
           <div className="row wrap">
-            {trip.stops.length > 0 && (
-              <button className="btn btn-small planb-open" onClick={() => setPlanB(true)}>
-                Prepara un piano B
+            <a className="btn btn-small" href="#/configuratore">
+              {hasStops ? 'Nuova proposta automatica' : 'Crea una proposta automatica'}
+            </a>
+            {routing.busy ? (
+              <button className="btn btn-small" onClick={() => routing.abort.current?.abort()}>
+                Interrompi il calcolo
               </button>
+            ) : (
+              trip.legs.some((l) => legTotals(l, trip.settings).hasUncalculated) && (
+                <button className="btn btn-small" onClick={routing.calcAll}>
+                  Calcola tratti mancanti
+                </button>
+              )
             )}
-            <button className="btn btn-small btn-primary" onClick={routing.calcAll} disabled={trip.legs.length === 0 || Boolean(routing.busy)}>
-              {routing.busy ? 'Calcolo…' : 'Calcola tratti mancanti'}
-            </button>
           </div>
         </div>
-        {trip.stops.length > 0 && <RouteLine trip={trip} days={days} sel={current} onSelect={setSel} onMove={moveStop} />}
+        {/* Sul telefono l'ordine è già nell'elenco: una cosa alla volta */}
+        {hasStops && !narrow && <RouteLine trip={trip} days={days} sel={current} onSelect={setSel} onMove={moveStop} />}
+        {warnings.length > 0 && (
+          <details className="planner-warnings">
+            <summary>
+              <Icon name="warning" /> Avvisi sul percorso ({warnings.length})
+            </summary>
+            <ul className="warnings">
+              {warnings.map((w) => (
+                <li key={w.text} className={`warn-${w.level}`}>
+                  {w.text}
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </section>
-      <div className="planner-cols">
-        <Outline
-          onMove={moveStop}
-          trip={trip}
-          days={days}
-          sel={current}
-          onSelect={setSel}
-          filter={filter}
-          setFilter={setFilter}
-          refEl={outlineRef}
-          onAddStop={addStop}
-          onScroll={() => saveUi({ sel: formatSelection(current), center, filter, scroll: outlineRef.current?.scrollTop })}
-          detail={current ? inspector : undefined}
-          summary={current ? undefined : inspector}
-        />
-        <section className="planner-center" aria-label="Mappa e timeline">
-          <div className="segmented" role="group" aria-label="Vista a destra">
-            {(['mappa', 'timeline'] as const).map((c) => (
-              <button key={c} className={center === c ? 'active' : ''} aria-pressed={center === c} onClick={() => setCenter(c)}>
-                {c === 'mappa' ? 'Mappa' : 'Giorni'}
-              </button>
-            ))}
+      {narrow ? (
+        <>
+          <div className="segmented planner-panes" role="group" aria-label="Che cosa vedere">
+            <button className={showList ? 'active' : ''} aria-pressed={showList} onClick={toList}>
+              Elenco
+            </button>
+            <button
+              className={!showList && center === 'mappa' ? 'active' : ''}
+              aria-pressed={!showList && center === 'mappa'}
+              onClick={() => {
+                setCenter('mappa');
+                setShowList(false);
+              }}
+            >
+              Mappa
+            </button>
+            <button
+              className={!showList && center === 'timeline' ? 'active' : ''}
+              aria-pressed={!showList && center === 'timeline'}
+              onClick={() => {
+                setCenter('timeline');
+                setShowList(false);
+              }}
+            >
+              Giorni
+            </button>
           </div>
-          {center === 'mappa' ? (
-            <MapView trip={trip} selectedStopId={selectionStopId(trip, days, current)} onSelectStop={(id) => setSel({ kind: 'stop', id })} />
-          ) : (
-            <Timeline days={days} sel={current} onSelect={setSel} />
-          )}
-        </section>
-      </div>
+          {showList ? list : side}
+        </>
+      ) : (
+        <div className="planner-cols">
+          {list}
+          {side}
+        </div>
+      )}
     </div>
+  );
+}
+
+function CenterSwitch({ center, setCenter }: { center: Center; setCenter: (c: Center) => void }) {
+  return (
+    <div className="segmented" role="group" aria-label="Vista a destra">
+      {(['mappa', 'timeline'] as const).map((c) => (
+        <button key={c} className={center === c ? 'active' : ''} aria-pressed={center === c} onClick={() => setCenter(c)}>
+          {c === 'mappa' ? 'Mappa' : 'Giorni'}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Dove si è e che cosa fare adesso: un solo passo, generato dai dati del viaggio. */
+function PlanStatus({ routing }: { routing: ReturnType<typeof useLegRouting> }) {
+  const { trip, update, toast } = useTrip();
+  const o = useMemo(() => tripOverview(trip), [trip]);
+  const { main, then } = planStep(o);
+  const [notice, setNotice] = useState(loadNotice);
+  const justActivated = notice && notice.scenarioId === trip.activeScenarioId ? notice : undefined;
+  const clear = () => {
+    saveNotice(undefined);
+    setNotice(undefined);
+  };
+  if (trip.stops.length === 0 && !justActivated) return null;
+  const undo = () => {
+    if (!justActivated) return;
+    update((t) => ({ ...undoVersion(t, justActivated.fromId, justActivated.name), settings: { ...t.settings, maxTravelMinPerDay: justActivated.prevLimit } }));
+    toast(`Tornato a «${justActivated.fromName}». «${justActivated.name}» resta tra le versioni del percorso`);
+    clear();
+  };
+  const calculating = main?.id === 'legs' && Boolean(routing.busy);
+  return (
+    <section className={`plan-status ${justActivated ? 'is-activated' : ''}`} aria-label="Stato dell'itinerario e prossimo passo">
+      <div className="plan-status-body">
+        {justActivated && (
+          <p>
+            <Icon name="check" /> <strong>Itinerario attivo: «{justActivated.name}».</strong>{' '}
+            {justActivated.fromEmpty ? "L'itinerario precedente era vuoto." : <>La versione precedente, «{justActivated.fromName}», è conservata tra le <a href="#/scenari">versioni del percorso</a>.</>}
+          </p>
+        )}
+        {main && main.id !== 'start' ? (
+          <p>
+            <strong>{justActivated ? 'Prima di proseguire:' : 'Prossimo passo:'}</strong> {calculating ? 'calcolo dei tratti in corso; km e tempi si aggiornano man mano.' : main.text}
+            {!calculating && then && <span className="plan-status-then"> Poi: {then}.</span>}
+          </p>
+        ) : (
+          !main && <p>I controlli automatici non segnalano nulla da sistemare. Puoi rifinire le giornate o passare alla modalità viaggio.</p>
+        )}
+      </div>
+      <div className="plan-status-actions">
+        {main && main.id !== 'start' && !calculating && (
+          <a className="btn btn-primary btn-small" href={main.href}>
+            {main.cta}
+          </a>
+        )}
+        {justActivated && (
+          <>
+            <button className="btn btn-small" onClick={undo}>
+              Torna alla versione precedente
+            </button>
+            <button className="btn btn-small btn-ghost" onClick={clear}>
+              Nascondi il messaggio
+            </button>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** Catalogo nel contesto in cui si aggiungono le tappe: pannello laterale; la vista completa resta raggiungibile. */
+function CatalogDrawer({ onClose }: { onClose: () => void }) {
+  return (
+    <Modal title="Aggiungi una tappa dal catalogo" className="drawer" onClose={onClose}>
+      <div className="drawer-actions">
+        <a className="btn btn-small" href="#/catalogo" onClick={onClose}>
+          Apri a tutta pagina
+        </a>
+        <button className="btn btn-small" onClick={onClose}>
+          Chiudi
+        </button>
+      </div>
+      <CatalogView />
+    </Modal>
   );
 }
 
@@ -244,6 +443,7 @@ function Outline({
   setFilter,
   refEl,
   onAddStop,
+  onBrowse,
   onScroll,
   detail,
   summary,
@@ -257,6 +457,7 @@ function Outline({
   setFilter: (v: string) => void;
   refEl: RefObject<HTMLElement | null>;
   onAddStop: (s: Stop | undefined) => void;
+  onBrowse: () => void;
   onScroll: () => void;
   /** Dettaglio della selezione, aperto subito sotto la voce scelta */
   detail?: ReactNode;
@@ -294,7 +495,7 @@ function Outline({
 
   return (
     <aside className="planner-outline" aria-label="Giorni e tappe" ref={refEl} onScroll={onScroll}>
-      <StopPicker onAdd={onAddStop} />
+      <StopPicker onAdd={onAddStop} onBrowse={onBrowse} />
       <PendingPanel />
       {trip.stops.length > 3 && <input className="ol-filter" type="search" placeholder="Filtra le tappe" aria-label="Filtra le tappe" value={filter} onChange={(e) => setFilter(e.target.value)} />}
       {trip.stops.length > 0 && !readOnly &&
@@ -322,7 +523,9 @@ function Outline({
       {drag.ghost}
       <div className="ol-scroll" onKeyDown={onKey}>
         {trip.stops.length === 0 ? (
-          <Empty title="Inizia dall'arrivo">Aggiungi come prima tappa l'aeroporto o la città di arrivo, poi le località dove dormire.</Empty>
+          <Empty title="Inizia dall'arrivo">
+            Cerca qui sopra l'aeroporto o la città di arrivo, poi le località dove dormire. Se preferisci partire da un percorso già pronto, <a href="#/configuratore">crea una proposta automatica</a>.
+          </Empty>
         ) : shown.length === 0 ? (
           <p className="muted small">Nessuna tappa corrisponde al filtro.</p>
         ) : picking ? (
@@ -397,7 +600,13 @@ function Outline({
 function Timeline({ days, sel, onSelect }: { days: ReturnType<typeof computeDays>; sel?: Selection; onSelect: (s: Selection) => void }) {
   const { trip } = useTrip();
   if (days.length === 0) return <Empty title="Nessuna giornata">Le giornate si generano dalle notti delle tappe.</Empty>;
+  const openDay = sel?.kind === 'day' ? sel.id : undefined;
   return (
+    <>
+    <p className="small muted timeline-note">
+      Vista compatta dei giorni. Attività, carico e proposte per alleggerire si modificano in{' '}
+      <a href={buildHash('giornate', { giorno: openDay })}>Giornate</a>.
+    </p>
     <ol className="timeline">
       {days.map((d) => {
         const acts = trip.days[d.key]?.activities ?? [];
@@ -417,6 +626,7 @@ function Timeline({ days, sel, onSelect }: { days: ReturnType<typeof computeDays
         );
       })}
     </ol>
+    </>
   );
 }
 
@@ -427,7 +637,6 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
   const days = useMemo(() => computeDays(trip), [trip]);
   const loads = useMemo(() => computeDayLoads(trip, days), [trip, days]);
   const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
-  const [draftAcc, setDraftAcc] = useState<Accommodation | null>(null);
   const [tab, setTab] = useState<StopTab>('panoramica');
 
   const applySg = (sg: Suggestion) => {
@@ -536,26 +745,7 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
                 })}
               </ul>
             ))}
-          {cur === 'alloggio' && hasLodging && (
-            <>
-              <StopLodgingSelect stop={stop} />
-              {draftAcc ? (
-                <AccommodationForm
-                  value={draftAcc}
-                  onSave={(a) => {
-                    update((t) => upsertAccommodation(t, a));
-                    setDraftAcc(null);
-                    toast('Sistemazione salvata (non è una prenotazione)');
-                  }}
-                  onCancel={() => setDraftAcc(null)}
-                />
-              ) : (
-                <button className="btn btn-small" onClick={() => setDraftAcc(blankAccommodation({ stopId: stop.id, locality: stop.name }))}>
-                  + Nuova sistemazione per {stop.name}
-                </button>
-              )}
-            </>
-          )}
+          {cur === 'alloggio' && hasLodging && <StopLodging stop={stop} />}
           {cur === 'costi' && <CostPanel sel={sel} bare />}
           {cur === 'note' && (
             <div className="grid-2">
@@ -596,6 +786,31 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
         </button>
       </div>
       {body}
+    </div>
+  );
+}
+
+const LODGING_STATE = { individuata: 'Individuata, da verificare', disponibile: 'Disponibile', opzionata: 'Opzionata', prenotata: 'Prenotata' } as const;
+
+/** Riepilogo dell'alloggio della tappa. Cercare, confrontare e inserire si fa in un posto solo: Prenotazioni › Alloggi. */
+function StopLodging({ stop }: { stop: Stop }) {
+  const { trip } = useTrip();
+  const acc = trip.accommodations.find((a) => a.id === stop.accommodationId);
+  const others = trip.accommodations.filter((a) => a.stopId === stop.id && a.id !== stop.accommodationId).length;
+  return (
+    <div className="stop-lodging">
+      {acc ? (
+        <p>
+          <strong>{acc.name}</strong> <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>{LODGING_STATE[acc.status]}</Badge>
+          {!acc.pricePerNight && <span className="small muted block">Prezzo da inserire</span>}
+        </p>
+      ) : (
+        <p className="small">Nessun alloggio scelto{others > 0 ? ` · ${others} ${others === 1 ? 'candidata' : 'candidate'} salvate` : ''}.</p>
+      )}
+      <StopLodgingSelect stop={stop} />
+      <a className="btn btn-small btn-primary" href={buildHash('hytte', { tappa: stop.id })}>
+        {acc ? 'Gestisci in Prenotazioni' : 'Cerca e confronta in Prenotazioni'}
+      </a>
     </div>
   );
 }

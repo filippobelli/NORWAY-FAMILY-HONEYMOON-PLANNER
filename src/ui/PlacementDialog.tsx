@@ -21,7 +21,7 @@ import { Field, NumberInput } from './common';
 import { Icon } from './icons';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 
-export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export function Modal({ title, onClose, children, className }: { title: string; onClose: () => void; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -29,7 +29,7 @@ export function Modal({ title, onClose, children }: { title: string; onClose: ()
     return () => d?.close();
   }, []);
   return (
-    <dialog ref={ref} className="place-dialog" aria-label={title} onCancel={onClose}>
+    <dialog ref={ref} className={`place-dialog ${className ?? ''}`} aria-label={title} onCancel={onClose}>
       <h2>{title}</h2>
       {children}
     </dialog>
@@ -90,7 +90,7 @@ function useApply(onClose: () => void, stayHere: boolean) {
     } catch {
       /* senza sessionStorage il calcolo dei tratti resta manuale */
     }
-    window.location.hash = '#/itinerario';
+    window.location.hash = '#/pianifica';
   };
 }
 
@@ -120,7 +120,7 @@ export function CruiseDialog({ option, onClose, stayHere = false }: { option: Co
   return (
     <Modal title={`Aggiungi al percorso: ${title}`} onClose={onClose}>
       {!cruisePortsKnown(option) ? (
-        <p className="note-warn">Non ho le coordinate di uno dei due porti: aggiungi le tappe a mano in «Tappe e mappa».</p>
+        <p className="note-warn">Non ho le coordinate di uno dei due porti: aggiungi le tappe a mano nell'Itinerario.</p>
       ) : (
         <>
           <div className="grid-2">
@@ -264,7 +264,7 @@ export function StopDialog({ stop, onClose }: { stop: Stop; onClose: () => void 
   );
 }
 
-/** Riquadro in «Tappe e mappa»: ciò che è stato scelto ma non è ancora nel percorso. */
+/** Riquadro nell'Itinerario: ciò che è stato scelto ma non è ancora nel percorso. */
 export function PendingPanel() {
   const { trip } = useTrip();
   const p = useMemo(() => pendingPlacements(trip), [trip]);

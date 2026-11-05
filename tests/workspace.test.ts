@@ -14,7 +14,7 @@ import { buildHash, parseRoute, startView } from '../src/state/route';
 const stop = (id: string, name: string, nights: number): Stop => ({ id, kind: 'luogo', name, lat: 60, lng: 7, nights, notes: '', weatherPlanB: '' });
 
 test('Indirizzi: viste attuali, alias legacy, parametri e indirizzi sconosciuti', () => {
-  for (const v of ['panoramica', 'itinerario', 'configuratore', 'catalogo', 'scenari', 'voli', 'crociere', 'hytte', 'giornate', 'budget', 'impostazioni']) {
+  for (const v of ['panoramica', 'pianifica', 'configuratore', 'catalogo', 'scenari', 'prenotazioni', 'voli', 'crociere', 'hytte', 'giornate', 'budget', 'impostazioni']) {
     assert.equal(parseRoute(`#/${v}`).view, v);
   }
   assert.equal(parseRoute('#/viaggio').view, 'impostazioni');
@@ -23,7 +23,11 @@ test('Indirizzi: viste attuali, alias legacy, parametri e indirizzi sconosciuti'
   assert.equal(parseRoute('#/trasporti').view, 'voli');
   assert.equal(parseRoute('').view, 'panoramica');
   assert.equal(parseRoute('#/nonesiste').view, 'panoramica');
-  assert.equal(parseRoute('#itinerario').view, 'itinerario');
+  // Tappe e mappa è confluita nello spazio di lavoro dell'itinerario: i link salvati continuano a funzionare
+  assert.equal(parseRoute('#itinerario').view, 'pianifica');
+  assert.equal(parseRoute('#/itinerario').view, 'pianifica');
+  assert.equal(parseRoute('#/alloggi').view, 'hytte');
+  assert.equal(parseRoute('#/giorni').view, 'giornate');
   const r = parseRoute('#/pianifica?sel=stop%3Aabc&centro=timeline');
   assert.equal(r.view, 'pianifica');
   assert.deepEqual(r.params, { sel: 'stop:abc', centro: 'timeline' });

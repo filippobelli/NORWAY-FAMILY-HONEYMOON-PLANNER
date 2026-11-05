@@ -42,7 +42,7 @@ export function CatalogView() {
       {placing && <StopDialog stop={placing} onClose={() => setPlacing(null)} />}
       <div className="note-info">
         {DESTINATIONS.length} luoghi. Coordinate verificate su OpenStreetMap per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length}{' '}
-        schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>
+        schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>{' '}
         sulle fonti ufficiali; prezzi e orari non sono inseriti di proposito.
       </div>
       <div className="filters">

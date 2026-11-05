@@ -1,6 +1,6 @@
 import { computeBudget } from './budget';
 import { computeDayLoads } from './dayLoad';
-import { addDays, computeDays, formatDateIt, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
+import { addDays, computeDays, formatDateIt, formatDuration, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
 import type { AccommodationStatus, Trip } from './types';
 
 // Panoramica del viaggio: tutto è derivato dal documento Trip, nessun valore dimostrativo.
@@ -40,6 +40,8 @@ export interface NextAction {
   cta: string;
   /** Seconda azione, quando la stessa situazione riguarda anche un'altra sezione (es. alloggio e budget) */
   secondary?: { href: string; cta: string };
+  /** La stessa cosa in poche parole, per dire che cosa viene dopo il prossimo passo */
+  brief?: string;
 }
 
 export interface LegRef {
@@ -175,7 +177,7 @@ export function tripOverview(trip: Trip): TripOverview {
       label: 'Tappe e notti',
       state: n === 0 ? 'da_fare' : inTarget ? 'fatto' : 'in_corso',
       detail: n === 0 ? 'Itinerario vuoto' : `${n} giorni su ${TRIP_MIN_DAYS}–${TRIP_MAX_DAYS} previsti`,
-      href: '#/itinerario',
+      href: '#/pianifica',
     },
     {
       id: 'collegamenti',
@@ -187,7 +189,7 @@ export function tripOverview(trip: Trip): TripOverview {
           : `${trip.legs.length - uncalculatedLegs.length - shipLegsMissing.length - legsMissingDuration} di ${trip.legs.length} tratti completi${
               legsMissingDuration > 0 ? ` · ${legsMissingDuration} senza durata` : ''
             }`,
-      href: '#/itinerario',
+      href: '#/pianifica',
     },
     {
       id: 'alloggi',
@@ -222,14 +224,14 @@ export function tripOverview(trip: Trip): TripOverview {
             : lodgingAssigned < lodging.length
               ? `${lodging.length - lodgingAssigned} ${lodging.length - lodgingAssigned === 1 ? 'alloggio' : 'alloggi'} ancora da scegliere e verificare`
               : 'Nessuna verifica aperta',
-      href: unverifiedCrossings.length > 0 ? '#/itinerario' : '#/hytte',
+      href: '#/prenotazioni',
     },
     {
       id: 'prenotazioni',
       label: 'Alloggi prenotati',
       state: lodging.length === 0 ? 'da_fare' : lodgingBooked === lodging.length ? 'fatto' : lodgingBooked > 0 ? 'in_corso' : 'da_fare',
       detail: lodging.length === 0 ? '—' : `${lodgingBooked} di ${lodging.length} tappe`,
-      href: '#/hytte',
+      href: '#/prenotazioni',
     },
   ];
   const stateOf = new Map(raw.map((r) => [r.id, r]));
@@ -241,14 +243,15 @@ export function tripOverview(trip: Trip): TripOverview {
   const actions: NextAction[] = [];
   const plural = (k: number, one: string, many: string) => (k === 1 ? one : many);
   if (trip.stops.length === 0) {
-    actions.push({ id: 'start', priority: 'alta', text: 'Costruisci l\'itinerario: aggiungi le tappe o usa il Pianificatore automatico.', href: '#/configuratore', cta: 'Pianificatore automatico' });
+    actions.push({ id: 'start', priority: 'alta', text: "Costruisci l'itinerario: fatti proporre un percorso da rivedere, oppure aggiungi le tappe a mano.", href: '#/configuratore', cta: 'Crea una proposta automatica', secondary: { href: '#/pianifica', cta: 'Aggiungi le tappe a mano' } });
   } else if (!inTarget) {
     actions.push({
       id: 'length',
       priority: 'alta',
       text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}. Aggiungi o togli notti.`,
-      href: '#/itinerario',
+      href: '#/pianifica',
       cta: 'Modifica le notti',
+      brief: 'sistema la durata del viaggio',
     });
   }
   if (uncalculatedLegs.length > 0) {
@@ -256,8 +259,9 @@ export function tripOverview(trip: Trip): TripOverview {
       id: 'legs',
       priority: 'alta',
       text: `Calcola ${uncalculatedLegs.length} ${plural(uncalculatedLegs.length, 'collegamento', 'collegamenti')}: senza, tempi e carico delle giornate sono incompleti.`,
-      href: '#/itinerario',
+      href: '#/pianifica?azione=calcola',
       cta: 'Calcola i tratti',
+      brief: `calcola ${uncalculatedLegs.length} ${plural(uncalculatedLegs.length, 'tratto', 'tratti')}`,
     });
   }
   if (shipLegsMissing.length > 0) {
@@ -266,7 +270,22 @@ export function tripOverview(trip: Trip): TripOverview {
       priority: 'alta',
       text: `Collega la nave a ${shipLegsMissing.length} ${plural(shipLegsMissing.length, 'tratto', 'tratti')} con notte a bordo.`,
       href: '#/crociere',
-      cta: 'Apri Crociere',
+      cta: 'Apri le crociere',
+      brief: 'collega la nave ai tratti con notte a bordo',
+    });
+  }
+  // Trasferimenti oltre il limite impostato: tempi realistici dei tratti calcolati
+  const limit = trip.settings.maxTravelMinPerDay;
+  const overLimit = days.filter((d) => d.legs.length > 0 && d.realisticTravelMin > limit);
+  const firstOverLeg = overLimit[0]?.legs[0];
+  if (firstOverLeg) {
+    actions.push({
+      id: 'over-limit',
+      priority: 'alta',
+      text: `${overLimit.length} ${plural(overLimit.length, 'giornata di trasferimento supera', 'giornate di trasferimento superano')} il limite di ${formatDuration(limit)} al giorno che hai impostato. Controlla ${plural(overLimit.length, 'il tratto', 'i tratti')} o aggiungi una tappa intermedia.`,
+      href: `#/pianifica?sel=leg%3A${encodeURIComponent(firstOverLeg.id)}`,
+      cta: plural(overLimit.length, 'Controlla il trasferimento', 'Controlla i trasferimenti'),
+      brief: `controlla ${overLimit.length} ${plural(overLimit.length, 'trasferimento oltre il limite', 'trasferimenti oltre il limite')}`,
     });
   }
   const over = heavyDays.filter((h) => h.level === 'eccessiva');
@@ -277,6 +296,7 @@ export function tripOverview(trip: Trip): TripOverview {
       text: `${over.length} ${plural(over.length, 'giornata troppo carica', 'giornate troppo cariche')} per due bambini: guarda le proposte per alleggerire.`,
       href: '#/giornate',
       cta: 'Vedi le giornate',
+      brief: 'alleggerisci le giornate troppo cariche',
     });
   }
   const noBed = lodging.filter((l) => !l.accommodation).length;
@@ -293,8 +313,9 @@ export function tripOverview(trip: Trip): TripOverview {
           : cov === 'stima'
             ? `Scegli l'alloggio per ${tappe}. Nel budget per ora c'è la tua stima per notte.`
             : `Scegli l'alloggio per ${tappe}. Nel budget ci sono voci manuali di alloggio: controlla che coprano queste tappe.`,
-      href: '#/hytte',
-      cta: 'Cerca hytte',
+      href: `#/hytte?tappa=${encodeURIComponent(lodging.find((l) => !l.accommodation)!.stopId)}`,
+      cta: 'Cerca gli alloggi',
+      brief: 'completa gli alloggi delle tappe',
       secondary: cov === 'stima' ? undefined : { href: '#/budget', cta: cov === 'nessuna' ? 'Stima nel budget' : 'Controlla il budget' },
     });
   }
@@ -304,8 +325,9 @@ export function tripOverview(trip: Trip): TripOverview {
       id: 'booked-tentative',
       priority: 'alta',
       text: `${bookedWithTentative} ${plural(bookedWithTentative, 'alloggio risulta prenotato', 'alloggi risultano prenotati')} ma le date del viaggio sono ancora provvisorie: controlla che coincidano.`,
-      href: '#/panoramica',
+      href: '#/panoramica?sezione=date',
       cta: 'Controlla le date',
+      brief: 'controlla le date delle prenotazioni',
     });
   }
   if (lodgingUnchecked > 0) {
@@ -315,6 +337,7 @@ export function tripOverview(trip: Trip): TripOverview {
       text: `Verifica la disponibilità di ${lodgingUnchecked} ${plural(lodgingUnchecked, 'alloggio scelto', 'alloggi scelti')} sul sito del fornitore: scelto non vuol dire prenotato.`,
       href: '#/hytte',
       cta: 'Apri gli alloggi',
+      brief: 'verifica la disponibilità degli alloggi scelti',
     });
   }
   if (unverifiedCrossings.length > 0) {
@@ -322,8 +345,9 @@ export function tripOverview(trip: Trip): TripOverview {
       id: 'crossings',
       priority: 'media',
       text: `Verifica orari e stato di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto, nave o mezzo pubblico', 'traghetti, navi o mezzi pubblici')} sul sito dell'operatore.`,
-      href: '#/itinerario',
-      cta: 'Apri i tratti',
+      href: '#/prenotazioni',
+      cta: 'Apri le prenotazioni',
+      brief: 'verifica orari di traghetti e altri mezzi',
     });
   }
   // Costi senza prezzo diversi dagli alloggi non scelti (già nell'azione sopra): es. alloggio scelto senza prezzo, traghetto
@@ -335,6 +359,7 @@ export function tripOverview(trip: Trip): TripOverview {
       text: `${otherMissing} ${plural(otherMissing, 'costo noto non ha', 'costi noti non hanno')} ancora un prezzo: il totale li esclude.`,
       href: '#/budget',
       cta: 'Apri il budget',
+      brief: 'inserisci i prezzi mancanti',
     });
   }
   const full = heavyDays.length - over.length;
@@ -345,10 +370,11 @@ export function tripOverview(trip: Trip): TripOverview {
       text: `${full} ${plural(full, 'giornata piena', 'giornate piene')}: tieni un piano B leggero.`,
       href: '#/giornate',
       cta: 'Vedi le giornate',
+      brief: 'tieni un piano B per le giornate piene',
     });
   }
   if (trip.dateTentative) {
-    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/panoramica', cta: 'Imposta le date' });
+    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/panoramica?sezione=date', cta: 'Imposta le date', brief: 'fissa le date quando i voli sono decisi' });
   }
 
   // Prima le priorità alte; a parità di priorità resta l'ordine logico delle decisioni (sort stabile)
@@ -378,4 +404,15 @@ export function tripOverview(trip: Trip): TripOverview {
     heavyDays,
     actions,
   };
+}
+
+/**
+ * Prossimo passo unico per l'itinerario: una sola azione principale e, se c'è, che cosa viene dopo.
+ * Non ripete la stessa questione: dopo i trasferimenti oltre il limite non propone le giornate troppo cariche che ne derivano.
+ */
+export function planStep(o: Pick<TripOverview, 'actions'>): { main?: NextAction; then?: string } {
+  const [main, ...rest] = o.actions;
+  if (!main) return {};
+  const after = rest.find((a) => a.brief && !(main.id === 'over-limit' && a.id === 'heavy'));
+  return { main, then: after?.brief };
 }

@@ -20,7 +20,7 @@ function ImpactRow({ label, before, after }: { label: string; before: string; af
 }
 
 // Confronto prima/dopo. Tutto ciò che qui è mostrato viene dalle funzioni di dominio: nessun dato stimato in più.
-function ImpactView({ i }: { i: PlanImpact }) {
+export function ImpactView({ i }: { i: PlanImpact }) {
   return (
     <section className="impact" aria-label="Cosa cambia">
       <h3>Cosa cambia</h3>
@@ -90,7 +90,7 @@ function ImpactView({ i }: { i: PlanImpact }) {
       ))}
       {i.booked.length > 0 && (
         <div className="impact-booked" role="alert">
-          <strong>Elementi prenotati o pagati coinvolti</strong>
+          <strong>Elementi prenotati, pagati o già completati coinvolti</strong>
           <ul className="small">
             {i.booked.map((b, k) => (
               <li key={k}>
@@ -105,11 +105,11 @@ function ImpactView({ i }: { i: PlanImpact }) {
   );
 }
 
-function BookingConfirm({ i, ok, setOk }: { i: PlanImpact; ok: boolean; setOk: (v: boolean) => void }) {
+export function BookingConfirm({ i, ok, setOk }: { i: PlanImpact; ok: boolean; setOk: (v: boolean) => void }) {
   if (!i.needsBookingConfirm) return null;
   return (
     <label className="check impact-confirm">
-      <input type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} /> Ho capito: l'app non annulla né modifica prenotazioni. Se serve, devo farlo io con il fornitore.
+      <input type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} /> Ho capito: l'app non annulla né modifica prenotazioni, e diario e stati di visita restano registrati. Se serve, con i fornitori devo occuparmene io.
     </label>
   );
 }
@@ -140,7 +140,7 @@ export function PlanBDialog({ onClose }: { onClose: () => void }) {
   };
   return (
     <Modal title="Prepara un piano B" onClose={onClose}>
-      <p className="muted small">È una proposta: il percorso attuale non cambia finché non scegli «Applica piano».</p>
+      <p className="muted small">È una bozza: l'itinerario attivo non cambia finché non scegli «Applica piano». Con «Salva alternativa» la ritrovi tra le versioni del percorso.</p>
       <ol className="planb-stops">
         {draft.stops.map((s, i) => (
           <li key={s.id}>
@@ -207,10 +207,13 @@ export function ApplyVersionDialog({ scenario, onClose }: { scenario: Scenario; 
   const impact = useMemo(() => planImpact(trip, previewVersion(trip, scenario.id)), [trip, scenario.id]);
   const [ok, setOk] = useState(false);
   const apply = useApplyVersion();
+  const activeName = trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name;
   return (
     <Modal title={`Applica «${scenario.name}»`} onClose={onClose}>
       <ImpactView i={impact} />
-      <p className="muted small">Il percorso attuale resta salvato tra gli scenari.</p>
+      <p className="small">
+        L'itinerario attivo diventa «{scenario.name}». Quello attuale{activeName ? ` («${activeName}»)` : ''} resta tra le versioni del percorso e puoi tornarci.
+      </p>
       <BookingConfirm i={impact} ok={ok} setOk={setOk} />
       <div className="row wrap place-actions">
         <button

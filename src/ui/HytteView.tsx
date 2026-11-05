@@ -1,10 +1,11 @@
 import { restorePlanOnly } from '../domain/actuals';
-import { useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { toEur } from '../domain/coastal';
 import { newId } from '../domain/ids';
 import { computeDays, formatDateIt } from '../domain/itinerary';
 import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
+import { parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
 import { formatEur } from '../domain/budget';
 import { upsertAccommodation, externalHref, lodgingComparison, type LodgingDecision, type StopLodging } from '../domain/lodging';
@@ -39,7 +40,9 @@ export function blank(partial: Partial<Accommodation> = {}): Accommodation {
 export function HytteView() {
   const { trip, update, toast } = useTrip();
   const [draft, setDraft] = useState<Accommodation | null>(null);
-  const [stopId, setStopId] = useState<string>(trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
+  // Da un link «Cerca alloggio» di una tappa si arriva già su quella tappa
+  const wanted = parseRoute(window.location.hash).params.tappa;
+  const [stopId, setStopId] = useState<string>((wanted && trip.stops.some((s) => s.id === wanted) ? wanted : undefined) ?? trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
   const [radius, setRadius] = useState(15);
   const [results, setResults] = useState<NearbyPlace[] | null>(null);
   const [via, setVia] = useState<NearbySource>('Overpass');
@@ -77,6 +80,12 @@ export function HytteView() {
     toast('Sistemazione salvata');
   };
 
+  useEffect(() => {
+    if (wanted) document.getElementById(`lodging-${wanted}`)?.scrollIntoView({ block: 'center' });
+    // Solo all'arrivo: dopo si scorre liberamente
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const comparison = useMemo(() => lodgingComparison(trip), [trip]);
   const choose = (stopId: string, accId: string) => {
     const before = trip;
@@ -100,7 +109,7 @@ export function HytteView() {
       <section className="panel" id="hytte-search">
         <h2>Cerca vicino a una tappa</h2>
         {sleepStops.length === 0 ? (
-          <Empty title="Nessuna tappa con pernottamento">Aggiungi tappe con almeno una notte nell'itinerario.</Empty>
+          <Empty title="Nessuna tappa con pernottamento">Aggiungi tappe con almeno una notte <a href="#/pianifica">nell'itinerario</a>.</Empty>
         ) : (
           <>
             <div className="row wrap">
@@ -354,7 +363,7 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
         {rows.map((r) => {
           const chosen = r.options.find((o) => o.chosen);
           return (
-            <article key={r.stop.id} className="lodging-stop">
+            <article key={r.stop.id} id={`lodging-${r.stop.id}`} className="lodging-stop">
               <header>
                 <h3>
                   {r.stop.name}{' '}

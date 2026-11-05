@@ -8,12 +8,14 @@ import { defaultDayIndex, phaseNote, todayView, type BookingInfo } from '../doma
 import type { DiaryAttachment, DiaryEntry, StopVisitState } from '../domain/types';
 import { deleteBlob, getBlob, putBlob } from '../services/storage/blobs';
 import { useAppMode } from '../state/mode';
-import { isTravelView, type ViewId } from '../state/route';
+import { isTravelView, parseRoute, type ViewId } from '../state/route';
 import { useTrip } from '../state/store';
+import { loadLastPlanning, loadTravelContext, saveTravelContext } from '../state/uiContext';
 import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
 import { FlagMark, Icon, type IconName } from './icons';
 import { MapView } from './MapView';
 import { PlanBDialog } from './PlanBDialog';
+import { DataStatusCard } from './SyncStatus';
 
 // Travel Mode: stesso viaggio e stessi dati del Planning Mode, pensato per il telefono.
 
@@ -30,7 +32,7 @@ const localToday = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-export function TravelShell({ tab, status, children }: { tab: ViewId; status: ReactNode; children: ReactNode }) {
+export function TravelShell({ tab, status, online, children }: { tab: ViewId; status: ReactNode; online: boolean; children: ReactNode }) {
   const { trip } = useTrip();
   const active = BAR.some((b) => b.id === tab) ? tab : 't/altro';
   const { setMode } = useAppMode();
@@ -52,15 +54,22 @@ export function TravelShell({ tab, status, children }: { tab: ViewId; status: Re
             className="mode-link"
             onClick={() => {
               setMode('planning');
-              // Una vista completa resta aperta; dalle schermate di viaggio si va all'area di lavoro
-              if (isTravelView(tab)) window.location.hash = '#/pianifica';
+              // Una vista completa resta aperta; dalle schermate di viaggio si torna dove si stava pianificando
+              if (isTravelView(tab)) window.location.hash = loadLastPlanning();
             }}
           >
             <Icon name="gear" /> Pianificazione
           </button>
         </div>
       </header>
-      <main className="travel-main">{children}</main>
+      <main className="travel-main">
+        {!online && (
+          <p className="note-info small travel-offline" role="status">
+            <strong>Sei senza rete.</strong> Oggi, elenco delle tappe, diario e stati funzionano e si salvano qui. Sfondo della mappa e calcolo dei percorsi tornano con la rete.
+          </p>
+        )}
+        {children}
+      </main>
       <nav className="travel-bar" aria-label="Modalità viaggio">
         {BAR.map((b) => (
           <a key={b.id} href={`#/${b.id}`} className={active === b.id ? 'active' : ''} aria-current={active === b.id ? 'page' : undefined}>
@@ -91,11 +100,28 @@ const bookingLabel = (s: BookingInfo['status']) => ACC_LABEL[s] ?? STATUS_LABEL[
 export function TodayScreen() {
   const { trip, update, toast } = useTrip();
   const today = localToday();
-  const [index, setIndex] = useState(() => defaultDayIndex(trip, today));
+  // Si apre sulla tappa richiesta o sulla giornata che si stava guardando; altrimenti su quella di oggi
+  const [index, setIndex] = useState(() => {
+    const wanted = parseRoute(window.location.hash).params.tappa;
+    if (wanted) {
+      const i = computeDays(trip).findIndex((d) => d.sleepStop?.id === wanted || d.wakeStop?.id === wanted);
+      if (i >= 0) return i;
+    }
+    return loadTravelContext(today).dayIndex ?? defaultDayIndex(trip, today);
+  });
   const [noting, setNoting] = useState(false);
   const [planB, setPlanB] = useState(false);
   const v = useMemo(() => todayView(trip, index), [trip, index]);
-  if (!v) return <Empty title="Il percorso è vuoto">Aggiungi le tappe dal Pianificatore su computer, o da Altro → Tappe e mappa.</Empty>;
+  const placeId = v?.place?.id;
+  useEffect(() => {
+    saveTravelContext({ on: today, dayIndex: index, stopId: placeId });
+  }, [today, index, placeId]);
+  if (!v)
+    return (
+      <Empty title="Il percorso è vuoto">
+        Aggiungi le tappe nell'<a href="#/pianifica">Itinerario</a>: da computer è più comodo, ma funziona anche qui.
+      </Empty>
+    );
   const note = phaseNote(trip, today);
 
   const markStop = (id: string, name: string, state: StopVisitState) => {
@@ -133,6 +159,10 @@ export function TodayScreen() {
           <h2>Tappa</h2>
           <p className="t-today-place">
             {v.place.name} <StateChip state={stopState(trip, v.place.id)} />
+          </p>
+          <p className="t-links small">
+            <a href={`#/t/mappa?tappa=${encodeURIComponent(v.place.id)}`}>Sulla mappa</a>
+            <a href={`#/t/itinerario?tappa=${encodeURIComponent(v.place.id)}`}>Nell'elenco</a>
           </p>
         </section>
       )}
@@ -275,10 +305,21 @@ export function TodayScreen() {
   );
 }
 
-export function TravelItinerary() {
+export function TravelItinerary({ selected, onShowOnMap }: { selected?: string; onShowOnMap?: (id: string) => void }) {
   const { trip, update, toast } = useTrip();
   const days = useMemo(() => computeDays(trip), [trip]);
-  if (trip.stops.length === 0) return <Empty title="Il percorso è vuoto" />;
+  // La tappa arriva da Oggi o dalla Mappa: resta evidenziata e in vista
+  const [own] = useState(() => parseRoute(window.location.hash).params.tappa ?? loadTravelContext(localToday()).stopId);
+  const current = selected ?? own;
+  useEffect(() => {
+    if (current) document.getElementById(`t-stop-${current}`)?.scrollIntoView({ block: 'nearest' });
+  }, [current]);
+  if (trip.stops.length === 0)
+    return (
+      <Empty title="Il percorso è vuoto">
+        Aggiungi le tappe nell'<a href="#/pianifica">Itinerario</a>.
+      </Empty>
+    );
   const mark = (id: string, name: string, state: StopVisitState | undefined) => {
     const prev = stopState(trip, id);
     update((t) => setStopState(t, id, state), { immediate: true });
@@ -290,7 +331,7 @@ export function TravelItinerary() {
         const st = stopState(trip, s.id);
         const d = days.find((x) => x.sleepStop?.id === s.id);
         return (
-          <li key={s.id} className={`t-card t-stop is-${st}`}>
+          <li key={s.id} id={`t-stop-${s.id}`} className={`t-card t-stop is-${st} ${current === s.id ? 'is-current' : ''}`} aria-current={current === s.id ? 'true' : undefined}>
             <div>
               <strong>
                 {i + 1}. {s.kind === 'a_bordo' && <Icon name="ship" />}{' '}
@@ -300,6 +341,17 @@ export function TravelItinerary() {
                 {d ? `${formatDateIt(d.date)} → ${formatDateIt(addDays(d.date, s.nights))} · ${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}` : 'Di passaggio, senza notti'}
               </p>
               <StateChip state={st} />
+              <p className="t-links small">
+                {d && <a href={`#/t/oggi?tappa=${encodeURIComponent(s.id)}`}>Apri in Oggi</a>}
+                {onShowOnMap ? (
+                  <button type="button" className="link-btn" onClick={() => onShowOnMap(s.id)}>
+                    Sulla mappa
+                  </button>
+                ) : (
+                  <a href={`#/t/mappa?tappa=${encodeURIComponent(s.id)}`}>Sulla mappa</a>
+                )}
+                <a href={`#/t/diario?tappa=${encodeURIComponent(s.id)}`}>Annota</a>
+              </p>
             </div>
             <div className="t-actions">
               {st !== 'visitata' && (
@@ -334,7 +386,12 @@ export function TravelMap() {
   const { trip } = useTrip();
   const [near, setNear] = useState<string>();
   const [busy, setBusy] = useState(false);
-  const [selected, setSelected] = useState<string>();
+  const [selected, setSelectedState] = useState<string | undefined>(() => parseRoute(window.location.hash).params.tappa ?? loadTravelContext(localToday()).stopId);
+  const mapBox = useRef<HTMLDivElement>(null);
+  const setSelected = (id: string) => {
+    setSelectedState(id);
+    saveTravelContext({ ...loadTravelContext(localToday()), stopId: id });
+  };
   // Il permesso GPS si chiede solo qui, quando lo si richiede con il pulsante
   const locate = () => {
     if (!navigator.geolocation) {
@@ -359,7 +416,9 @@ export function TravelMap() {
   };
   return (
     <div className="t-map">
-      <MapView trip={{ ...trip, settings: { ...trip.settings, showCatalogOnMap: false } }} height={320} selectedStopId={selected} onSelectStop={setSelected} />
+      <div ref={mapBox}>
+        <MapView trip={{ ...trip, settings: { ...trip.settings, showCatalogOnMap: false } }} height={320} selectedStopId={selected} onSelectStop={setSelected} />
+      </div>
       <div className="t-actions">
         <button className="btn" disabled={busy} onClick={locate}>
           <Icon name="pin" /> {busy ? 'Cerco la posizione…' : 'Trova la tappa più vicina'}
@@ -368,7 +427,13 @@ export function TravelMap() {
       {near && <p className="small" role="status">{near}</p>}
       <h2>Le tappe in elenco</h2>
       <p className="muted small">L'elenco funziona anche senza mappa o senza rete.</p>
-      <TravelItinerary />
+      <TravelItinerary
+        selected={selected}
+        onShowOnMap={(id) => {
+          setSelected(id);
+          mapBox.current?.scrollIntoView({ block: 'nearest' });
+        }}
+      />
     </div>
   );
 }
@@ -397,7 +462,7 @@ function DiaryComposer({ dayDate, stop, onDone }: { dayDate?: string; stop?: { i
     setText('');
     setFiles([]);
     if (fileRef.current) fileRef.current.value = '';
-    toast(attachments.some((a) => a.state === 'errore') ? 'Voce salvata, ma un allegato non è stato salvato: puoi riprovare' : 'Voce salvata nel diario', attachments.some((a) => a.state === 'errore') ? 'errore' : 'ok');
+    toast(attachments.some((a) => a.state === 'errore') ? 'Voce salvata, ma un allegato non è stato salvato: puoi riprovare' : 'Voce salvata su questo dispositivo', attachments.some((a) => a.state === 'errore') ? 'errore' : 'ok');
     onDone?.();
   };
 
@@ -512,6 +577,12 @@ function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
 export function DiaryScreen() {
   const { trip, update, toast } = useTrip();
   const [filter, setFilter] = useState('');
+  // «Annota» da una tappa: il diario si apre già su quella tappa
+  const [fromStop] = useState(() => {
+    const id = parseRoute(window.location.hash).params.tappa;
+    const s = trip.stops.find((x) => x.id === id);
+    return s ? { id: s.id, name: s.name } : undefined;
+  });
   const entries = useMemo(() => visibleDiary(trip, { stopId: filter || undefined }), [trip, filter]);
   const [editing, setEditing] = useState<string>();
   const [draft, setDraft] = useState('');
@@ -524,7 +595,7 @@ export function DiaryScreen() {
     <div className="diary">
       <section className="t-card">
         <h1>Diario</h1>
-        <DiaryComposer />
+        <DiaryComposer stop={fromStop} />
       </section>
       {stopsWithEntries.length > 0 && (
         <Field label="Mostra">
@@ -613,14 +684,12 @@ export function DiaryScreen() {
 }
 
 const MORE_LINKS: [string, IconName, string][] = [
-  ['#/panoramica', 'mountain', 'Il viaggio'],
-  ['#/itinerario', 'route', 'Tappe e mappa'],
-  ['#/giornate', 'calendar', 'Giorno per giorno'],
-  ['#/voli', 'plane', 'Voli'],
-  ['#/crociere', 'ship', 'Crociere'],
-  ['#/hytte', 'bed', 'Alloggi'],
+  ['#/panoramica', 'mountain', 'Viaggio'],
+  ['#/pianifica', 'route', 'Modifica l\'itinerario'],
+  ['#/giornate', 'calendar', 'Giornate'],
+  ['#/prenotazioni', 'bed', 'Prenotazioni: voli, crociere, alloggi'],
   ['#/budget', 'wallet', 'Budget'],
-  ['#/scenari', 'scale', 'Scenari e piano B'],
+  ['#/scenari', 'scale', 'Versioni del percorso e piano B'],
   ['#/impostazioni', 'gear', 'Impostazioni, salvataggio e backup'],
 ];
 
@@ -629,6 +698,7 @@ export function MoreScreen() {
   return (
     <div className="more">
       <h1>Altro</h1>
+      <DataStatusCard />
       <ul className="more-links">
         {MORE_LINKS.map(([href, icon, label]) => (
           <li key={href}>
@@ -642,7 +712,7 @@ export function MoreScreen() {
         className="btn"
         onClick={() => {
           setMode('planning');
-          window.location.hash = '#/pianifica';
+          window.location.hash = loadLastPlanning();
         }}
       >
         Passa alla pianificazione

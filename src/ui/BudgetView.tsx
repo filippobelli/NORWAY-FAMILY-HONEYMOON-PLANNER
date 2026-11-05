@@ -215,8 +215,8 @@ export function BudgetView() {
             <p>Tutte le categorie hanno almeno una voce.</p>
           ) : (
             <ul className="facts-list">
-              {b.missing.map((m) => (
-                <li key={m}>{m}</li>
+              {b.missing.map((m, k) => (
+                <li key={`${m}-${k}`}>{m}</li>
               ))}
             </ul>
           )}
