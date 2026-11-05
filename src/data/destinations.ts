@@ -100,7 +100,7 @@ const SEEDS: Seed[] = [
   ['fram', 'Museo Fram', 'musei', 'Oslo e Østlandet', 59.903, 10.699, 3, 'facile', [2, 3], 'La nave polare Fram, si sale a bordo.', 'Bygdøy, Oslo.', undefined, undefined, 'Frammuseet'],
   ['bergen-aquarium', 'Acquario di Bergen', 'musei', 'Fiordi occidentali', 60.4, 5.304, 3, 'facile', [2, 3], 'Pinguini, foche e vasche dell\'Atlantico.', 'Nordnes, Bergen.', undefined, undefined, 'Akvariet i Bergen'],
   ['atlanterhavsparken', 'Atlanterhavsparken', 'musei', 'Fiordi occidentali', 62.469, 6.072, 3, 'facile', [2, 3], 'Acquario sul mare di Ålesund.', 'Ålesund.'],
-  ['polaria', 'Polaria', 'musei', 'Troms e Finnmark', 69.643, 18.949, 3, 'facile', [1, 2], 'Centro artico con foche barbate.', 'Tromsø.'],
+  ['polaria', 'Polaria – acquario artico', 'musei', 'Troms e Finnmark', 69.643, 18.949, 3, 'facile', [1, 2], 'Acquario artico di Tromsø con foche barbate.', 'Tromsø.'],
   ['glacier-museum', 'Museo dei ghiacciai', 'musei', 'Fiordi occidentali', 61.418, 6.762, 3, 'facile', [2, 3], 'Museo interattivo sui ghiacciai a Fjærland.', 'Strada 5.', undefined, undefined, 'Norsk Bremuseum'],
   ['lofotr', 'Museo vichingo Lofotr', 'musei', 'Nordland e Lofoten', 68.25, 13.76, 3, 'facile', [3, 4], 'Ricostruzione di una casa lunga vichinga con attività.', 'Borg, Vestvågøy.'],
   ['fjellsenter', 'Centro della montagna di Lom', 'musei', 'Oslo e Østlandet', 61.838, 8.567, 2, 'facile', [1, 2], 'Museo sulla montagna e Jotunheimen.', 'Lom.', undefined, undefined, 'Norsk Fjellsenter'],
