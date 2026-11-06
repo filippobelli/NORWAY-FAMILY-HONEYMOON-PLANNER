@@ -12,7 +12,7 @@ import type { Accommodation, Currency, DataStatus, SourceRef, Stop, Trip } from 
  * - scelta: è l'alloggio associato alla tappa, ma non ancora prenotato;
  * - prenotata: stato «prenotata».
  */
-export type LodgingDecision = 'da_verificare' | 'valutata' | 'scelta' | 'prenotata';
+export type LodgingDecision = 'da_verificare' | 'valutata' | 'scelta' | 'prenotata' | 'annullata';
 
 export interface LodgingOption {
   acc: Accommodation;
@@ -70,6 +70,7 @@ function airKm(a: { lat: number; lng: number }, b: { lat: number; lng: number })
 
 export function decisionFor(a: Accommodation, chosen: boolean): LodgingDecision {
   if (a.status === 'prenotata') return 'prenotata';
+  if (a.status === 'annullata') return 'annullata';
   if (chosen) return 'scelta';
   return a.status === 'individuata' ? 'da_verificare' : 'valutata';
 }

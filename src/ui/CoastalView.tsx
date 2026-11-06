@@ -10,6 +10,8 @@ import type { CoastalOperator, CoastalOption } from '../domain/types';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { CruiseDialog } from './PlacementDialog';
+import { coastalInfo } from '../domain/verification';
+import { VerificationControl } from './Verification';
 
 const MEALS: Record<CoastalOption['meals'], string> = {
   nessuno: 'Nessun pasto',
@@ -471,6 +473,7 @@ function CoastalForm({ value, onSave, onCancel }: { value: CoastalOption; onSave
           {r.ports.some((p) => p.seasonal) && ' Include uno scalo stagionale: verificare sul piano di navigazione.'}
         </p>
       )}
+      <VerificationControl what="Orario e prezzo" info={coastalInfo(o)} value={o.verification} onChange={(v) => set({ verification: v })} />
       <div className="row">
         <button className="btn btn-primary" disabled={!r.valid} onClick={() => onSave(o)}>
           Salva opzione

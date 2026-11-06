@@ -447,7 +447,7 @@ function ProposalReviewPanel({
       </p>
 
       <h3>Da guardare prima di attivare</h3>
-      {review.violations.length + review.crossings.length + warnings.length + review.lodgingMissing.length === 0 ? (
+      {review.violations.length + review.unverifiable.length + review.crossings.length + warnings.length + review.lodgingMissing.length === 0 ? (
         <p className="muted small">Nessun avviso.</p>
       ) : (
         <ul className="review-alerts">
@@ -455,6 +455,12 @@ function ProposalReviewPanel({
             <li key={v.dayIndex} className="note-warn small">
               <Icon name="warning" /> <strong>Giorno {v.dayIndex + 1}:</strong> {v.from} → {v.to}, {v.kind === 'stimato' ? 'circa ' : ''}
               {formatDuration(v.minutes)} {v.kind === 'stimato' ? '(stima di massima)' : '(calcolato, con soste)'}: oltre il limite di {formatDuration(review.limitMin)}.
+            </li>
+          ))}
+          {review.unverifiable.map((u) => (
+            <li key={`u${u.dayIndex}`} className="note-info small">
+              <Icon name="question" /> <strong>Giorno {u.dayIndex + 1}: non verificabile.</strong> {u.from} → {u.to}: tempi noti {u.knownMin > 0 ? `circa ${formatDuration(u.knownMin)}` : 'nessuno'}, manca il tempo di{' '}
+              {u.missing.join(', ')}. Un tempo mancante non vale zero.
             </li>
           ))}
           {review.lodgingMissing.length > 0 && (

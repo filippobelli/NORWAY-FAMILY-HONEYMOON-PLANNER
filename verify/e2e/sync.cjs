@@ -1,14 +1,15 @@
-const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
-const http = require('http'); const fs = require('fs');
-const srv = http.createServer((q, r) => { r.setHeader('Content-Type','text/html; charset=utf-8'); r.end(fs.readFileSync(require('path').resolve(__dirname, '../../dist-local/index.html'))); }).listen(4175);
-const ok = (m) => console.log('OK:', m); const fail = (m) => { console.log('FAIL:', m); process.exitCode = 1; };
+// Sincronizzazione con un server Supabase FINTO, interamente simulato nel browser: nessun account e nessun dato reale.
+// Uso: npm run build && node verify/e2e/sync.cjs
+const { serve, launch, context, ok, fail } = require('./serve.cjs');
+const srv = serve(4175);
 // Server Supabase finto
 const db = new Map(); let clock = 1000; const ts = () => `2026-10-27T12:${String(clock++ % 60).padStart(2,'0')}:00.000000+00:00`;
 let patchCount = 0, postCount = 0;
 (async () => {
-  const b = await chromium.launch({ args: ['--no-sandbox'] }); const p = await b.newPage();
+  const b = await launch(); const ctx = await context(b, { viewport: { width: 1300, height: 900 } }); const p = await ctx.newPage();
+  await p.addInitScript(() => { if (!sessionStorage.getItem('e2e')) { localStorage.clear(); localStorage.setItem('nfhp.ui.mode', 'planning'); sessionStorage.setItem('e2e', '1'); } });
   p.on('pageerror', (e) => fail('pageerror ' + e.message));
-  await p.route('**/unpkg.com/**', (r) => r.abort());
+  await p.route(/unpkg\.com|openfreemap|openstreetmap\.org|routing\.openstreetmap/, (r) => r.abort());
   await p.route(/supabase\.co\//, async (r) => {
     const req = r.request(); const u = new URL(req.url()); const m = req.method();
     const json = (status, body) => r.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
@@ -28,17 +29,19 @@ let patchCount = 0, postCount = 0;
   });
   const label = () => p.textContent('.save-state');
   await p.goto('http://localhost:4175/#/viaggio'); await p.waitForSelector('text=Backup su file');
-  /accedi per il cloud/.test(await label()) ? ok('prima dell\'accesso: ' + await label()) : fail('label ' + await label());
+  /cloud non collegato/.test(await label()) ? ok('prima dell\'accesso: ' + await label()) : fail('label ' + await label());
   await p.fill('input[type=email]', 'f@x.it'); await p.fill('input[type=password]', 'segreta123'); await p.click('button[type=submit]');
   await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('dopo accesso: viaggio caricato nel cloud')).catch(async () => fail('dopo accesso ' + await label()));
-  db.size === 1 ? ok('1 viaggio nel cloud (POST)') : fail('db ' + db.size);
-  const id = [...db.keys()][0];
+  // Un viaggio vuoto non si carica: nulla da salvare finché non c'è una modifica
+  db.size === 0 ? ok('viaggio vuoto: nessun caricamento inutile') : fail('db ' + db.size);
 
   // Modifica → salvataggio automatico
-  await p.click('a[href="#/itinerario"]');
+  await p.goto('http://localhost:4175/#/pianifica');
   await p.fill('input[aria-label="Cerca località"]', 'Bergen'); await p.click('.suggestions button >> nth=0');
-  await p.waitForTimeout(500); /Salvataggio nel cloud/.test(await label()) ? ok('in attesa: ' + await label()) : fail('attesa ' + await label());
+  await p.waitForTimeout(500); /invio al cloud/.test(await label()) ? ok('in attesa: ' + await label()) : fail('attesa ' + await label());
   await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 });
+  db.size === 1 ? ok('1 viaggio nel cloud dopo la prima modifica (POST)') : fail('db ' + db.size);
+  const id = [...db.keys()][0];
   db.get(id).data.stops.length === 1 ? ok('modifica salvata in automatico (PATCH condizionato)') : fail('stops ' + db.get(id).data.stops.length);
 
   // Modifica da un altro dispositivo → ritorno in primo piano
@@ -47,26 +50,33 @@ let patchCount = 0, postCount = 0;
   await p.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true }); document.dispatchEvent(new Event('visibilitychange')); });
   await p.waitForSelector('text=Ålesund', { timeout: 5000 }).then(() => ok('modifiche dell\'altro dispositivo scaricate')).catch(() => fail('pull'));
 
-  // Conflitto: cloud cambia e qui si modifica prima di sincronizzare
-  const other2 = JSON.parse(JSON.stringify(db.get(id).data)); other2.title = 'Titolo da altro device';
+  // Conflitto: lo stesso dato (il piano) cambia nel cloud e qui prima della sincronizzazione.
+  // Modifiche indipendenti (es. solo il titolo) si uniscono da sole e non sono un conflitto.
+  const other2 = JSON.parse(JSON.stringify(db.get(id).data)); other2.title = 'Titolo da altro device'; other2.stops[0].nights = 5;
   Object.assign(db.get(id), { data: other2, updated_at: ts() });
-  await p.click('.stops > li:nth-child(1) [aria-label="Una notte in più"]');
+  const morePlus = async () => { if (!(await p.locator('.ol-detail [aria-label="Una notte in più"]').count())) await p.click('.ol-item.ol-stop >> nth=0'); await p.click('.ol-detail [aria-label="Una notte in più"]'); };
+  await morePlus();
   await p.waitForSelector('.conflict', { timeout: 8000 }).then(() => ok('conflitto rilevato, nessuna sovrascrittura')).catch(() => fail('conflitto'));
-  db.get(id).data.title === 'Titolo da altro device' ? ok('cloud non sovrascritto') : fail('sovrascritto!');
-  await p.click('text=Tieni questa versione');
-  await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('scelta "tieni questa versione" salvata')).catch(async () => fail('keep ' + await label()));
+  db.get(id).data.stops[0].nights === 5 ? ok('cloud non sovrascritto') : fail('sovrascritto!');
+  await p.click('.conflict button:has-text("Confronta e scegli")');
+  await p.click('dialog[open] button:has-text("Tutto da questo dispositivo")');
+  await p.click('dialog[open] button:has-text("Applica le scelte")');
+  await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('scelta «questo dispositivo» salvata')).catch(async () => fail('keep ' + await label()));
   db.get(id).data.stops[0].nights === 2 ? ok('cloud aggiornato con la versione locale') : fail('nights');
 
   // Offline
   await p.route(/supabase\.co\/rest\//, (r) => r.abort());
-  await p.click('.stops > li:nth-child(1) [aria-label="Una notte in più"]');
-  await p.waitForFunction(() => /non raggiungibile/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('offline segnalato, dati locali salvi')).catch(async () => fail('offline ' + await label()));
+  await morePlus();
+  await p.waitForFunction(() => /Senza rete|Cloud non raggiunto/.test(document.querySelector('.save-state').textContent), null, { timeout: 8000 }).then(() => ok('offline segnalato, dati locali salvi')).catch(async () => fail('offline ' + await label()));
   // Ricarica: sessione e dirty persistono → al ritorno online salva
   await p.unroute(/supabase\.co\/rest\//);
   await p.reload(); await p.waitForFunction(() => /Sincronizzato/.test(document.querySelector('.save-state').textContent), null, { timeout: 10000 }).then(() => ok('dopo ricarica: modifiche pendenti inviate')).catch(async () => fail('reload ' + await label()));
   db.get(id).data.stops[0].nights === 3 ? ok('modifica fatta offline arrivata nel cloud') : fail('offline nights ' + db.get(id).data.stops[0].nights);
   // Logout e nuovo accesso dopo una modifica fatta altrove: deve scaricarla, senza falso conflitto
-  await p.click('a[href="#/viaggio"]'); await p.click('text=esci');
+  await p.goto('http://localhost:4175/#/impostazioni'); await p.click('button.link-btn:has-text("esci")');
+  const confirmOut = p.locator('dialog[open] button:has-text("Esci")').last();
+  if (await confirmOut.isDisabled()) await p.locator('dialog[open] input[type=checkbox]').first().check();
+  await confirmOut.click();
   const other3 = JSON.parse(JSON.stringify(db.get(id).data)); other3.title = 'Rinominato altrove';
   Object.assign(db.get(id), { data: other3, updated_at: ts() });
   await p.fill('input[type=email]', 'f@x.it'); await p.fill('input[type=password]', 'segreta123'); await p.click('button[type=submit]');

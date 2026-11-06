@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
-import { restorePlanOnly, stopState, STOP_STATE_LABEL } from '../domain/actuals';
+import { stopState, STOP_STATE_LABEL } from '../domain/actuals';
 import { BUDGET_CATEGORIES, computeBudget, formatEur, ORIGIN_NAME } from '../domain/budget';
-import { computeDayLoads, suggestAlternatives, applySuggestion, type Suggestion } from '../domain/dayLoad';
-import { planStep, tripOverview } from '../domain/overview';
+import { computeDayLoads, suggestAlternatives, type Suggestion } from '../domain/dayLoad';
+import { nextStep } from '../domain/overview';
 import { undoVersion } from '../domain/planImpact';
 import { newId } from '../domain/ids';
 import { findDestination } from '../data/destinations';
@@ -26,6 +26,11 @@ import { MapView } from './MapView';
 import { Modal, PendingPanel } from './PlacementDialog';
 import { RemoveStopsDialog } from './PlanBDialog';
 import { useStopDrag } from './useStopDrag';
+import { NextStepCard } from './NextStep';
+import { SuggestionDialog } from './DraftDialogs';
+import { BookingConfirm, ImpactView } from './PlanBDialog';
+import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
+import { dayTransfer, DAY_STATE_LABEL } from '../domain/dayTransfer';
 import { VersionsControl } from './VersionsControl';
 
 // Itinerario: unico spazio di lavoro per modificare il percorso. In alto il prossimo passo e la linea del viaggio,
@@ -72,7 +77,8 @@ export function PlannerView() {
   const narrow = useMediaQuery('(max-width: 860px)');
   const [showList, setShowList] = useState(true);
   const toList = () => setShowList(true);
-  const warnings = useMemo(() => tripWarnings(trip), [trip]);
+  // Gli avvisi già detti dal prossimo passo (tratti da calcolare, durata del viaggio) non si ripetono qui
+  const warnings = useMemo(() => tripWarnings(trip).filter((w) => !/collegament[oi] non ancora calcolat|Il viaggio dura/.test(w.text)), [trip]);
 
   // Una selezione rimasta su un elemento rimosso si azzera, senza errori
   const current = sel && selectionExists(trip, days, sel) ? sel : undefined;
@@ -131,16 +137,17 @@ export function PlannerView() {
     toast(`Aggiunta tappa: ${s.name}`);
   };
 
-  const moveStop = (id: string, to: number) => {
+  // Spostamento di una tappa: se tocca prenotazioni, pagamenti o tappe già vissute si vede prima l'impatto e si conferma
+  const [pendingMove, setPendingMove] = useState<{ id: string; to: number } | null>(null);
+  const doMove = (id: string, to: number) => {
     const from = trip.stops.findIndex((s) => s.id === id);
     const name = trip.stops[from]?.name ?? 'Tappa';
-    // Le date di quello che segue cambiano: se tocca qualcosa di prenotato o pagato va detto subito
-    const booked = planImpact(trip, moveStopTo(trip, id, to)).booked.length;
     update((t) => moveStopTo(t, id, to));
-    toast(booked > 0 ? `${name} spostata. Controlla ${booked} ${booked === 1 ? 'voce prenotata o pagata' : 'voci prenotate o pagate'}: le date non coincidono più` : `${name} spostata`, 'ok', {
-      label: 'Annulla',
-      run: () => update((t) => moveStopTo(t, id, from)),
-    });
+    toast(`${name} spostata: le date delle tappe successive cambiano`, 'ok', { label: 'Annulla', run: () => update((t) => moveStopTo(t, id, from)) });
+  };
+  const moveStop = (id: string, to: number) => {
+    if (planImpact(trip, moveStopTo(trip, id, to)).needsBookingConfirm) setPendingMove({ id, to });
+    else doMove(id, to);
   };
 
   // Scelta dalla linea in alto o dalla mappa: porta in vista il dettaglio aperto nell'elenco
@@ -195,6 +202,17 @@ export function PlannerView() {
   return (
     <div className="planner planner-b">
       {catalog && <CatalogDrawer onClose={() => setCatalog(false)} />}
+      {pendingMove && (
+        <MoveConfirm
+          trip={trip}
+          move={pendingMove}
+          onCancel={() => setPendingMove(null)}
+          onConfirm={() => {
+            doMove(pendingMove.id, pendingMove.to);
+            setPendingMove(null);
+          }}
+        />
+      )}
       <PlanStatus routing={routing} />
       <section className="planner-top" aria-label="Linea del percorso">
         <div className="planner-toolbar">
@@ -277,6 +295,27 @@ export function PlannerView() {
   );
 }
 
+function MoveConfirm({ trip, move, onCancel, onConfirm }: { trip: Trip; move: { id: string; to: number }; onCancel: () => void; onConfirm: () => void }) {
+  const impact = useMemo(() => planImpact(trip, moveStopTo(trip, move.id, move.to)), [trip, move]);
+  const [ok, setOk] = useState(false);
+  const name = trip.stops.find((s) => s.id === move.id)?.name ?? 'la tappa';
+  return (
+    <Modal title={`Sposta ${name}`} onClose={onCancel}>
+      <p className="small">Lo spostamento cambia le date di tappe con elementi prenotati, pagati o già vissuti. Prima di confermare guarda cosa cambia.</p>
+      <ImpactView i={impact} />
+      <BookingConfirm i={impact} ok={ok} setOk={setOk} />
+      <div className="row wrap place-actions">
+        <button className="btn btn-primary" disabled={impact.needsBookingConfirm && !ok} onClick={onConfirm}>
+          Sposta la tappa
+        </button>
+        <button className="btn btn-ghost" onClick={onCancel}>
+          Non spostare
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 function CenterSwitch({ center, setCenter }: { center: Center; setCenter: (c: Center) => void }) {
   return (
     <div className="segmented" role="group" aria-label="Vista a destra">
@@ -292,8 +331,7 @@ function CenterSwitch({ center, setCenter }: { center: Center; setCenter: (c: Ce
 /** Dove si è e che cosa fare adesso: un solo passo, generato dai dati del viaggio. */
 function PlanStatus({ routing }: { routing: ReturnType<typeof useLegRouting> }) {
   const { trip, update, toast } = useTrip();
-  const o = useMemo(() => tripOverview(trip), [trip]);
-  const { main, then } = planStep(o);
+  const { main } = useMemo(() => nextStep(trip), [trip]);
   const [notice, setNotice] = useState(loadNotice);
   const justActivated = notice && notice.scenarioId === trip.activeScenarioId ? notice : undefined;
   const clear = () => {
@@ -317,21 +355,18 @@ function PlanStatus({ routing }: { routing: ReturnType<typeof useLegRouting> }) 
             {justActivated.fromEmpty ? "L'itinerario precedente era vuoto." : <>La versione precedente, «{justActivated.fromName}», è conservata tra le <a href="#/scenari">versioni del percorso</a>.</>}
           </p>
         )}
-        {main && main.id !== 'start' ? (
-          <p>
-            <strong>{justActivated ? 'Prima di proseguire:' : 'Prossimo passo:'}</strong> {calculating ? 'calcolo dei tratti in corso; km e tempi si aggiornano man mano.' : main.text}
-            {!calculating && then && <span className="plan-status-then"> Poi: {then}.</span>}
+        {calculating ? (
+          <p role="status">
+            <span className="spinner" aria-hidden /> <strong>Calcolo dei tratti in corso:</strong> km, tempi e prossimo passo si aggiornano man mano.{' '}
+            <button type="button" className="link-btn" onClick={() => routing.abort.current?.abort()}>
+              Interrompi
+            </button>
           </p>
         ) : (
-          !main && <p>I controlli automatici non segnalano nulla da sistemare. Puoi rifinire le giornate o passare alla modalità viaggio.</p>
+          <NextStepCard compact lead={justActivated ? 'Prima di proseguire' : undefined} />
         )}
       </div>
       <div className="plan-status-actions">
-        {main && main.id !== 'start' && !calculating && (
-          <a className="btn btn-primary btn-small" href={main.href}>
-            {main.cta}
-          </a>
-        )}
         {justActivated && (
           <>
             <button className="btn btn-small" onClick={undo}>
@@ -619,7 +654,7 @@ function Timeline({ days, sel, onSelect }: { days: ReturnType<typeof computeDays
                 Giorno {d.index + 1} · {formatDateIt(d.date)}
               </strong>
               <span className="small">{d.sleepStop ? `Notte a ${place}` : `Ultimo giorno${place ? `, da ${place}` : ''}`}</span>
-              {d.legs.length > 0 && <span className="small muted">{d.travelPartial ? 'Trasferimento: tempi incompleti' : `Trasferimento: circa ${formatDuration(d.realisticTravelMin)}`}</span>}
+              {d.legs.length > 0 && <TransferLine trip={trip} day={d} />}
               {acts.length > 0 && <span className="small muted">{acts.map((a) => a.title || 'attività').join(' · ')}</span>}
             </button>
           </li>
@@ -630,21 +665,28 @@ function Timeline({ days, sel, onSelect }: { days: ReturnType<typeof computeDays
   );
 }
 
+function TransferLine({ trip, day }: { trip: Trip; day: DayInfo }) {
+  const t = dayTransfer(trip, day);
+  return (
+    <span className={`small ${t.state === 'oltre' ? 'warn-text' : 'muted'}`}>
+      Trasferimento: {t.knownMin > 0 ? `circa ${formatDuration(t.knownMin)}` : 'tempo non disponibile'}
+      {t.state !== 'entro' && ` · ${DAY_STATE_LABEL[t.state].toLowerCase()}`}
+    </span>
+  );
+}
+
 type StopTab = 'panoramica' | 'giornate' | 'alloggio' | 'costi' | 'note';
 
 function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSelect: (s: Selection) => void; onClear: () => void; routing: ReturnType<typeof useLegRouting> }) {
-  const { trip, update, toast } = useTrip();
+  const { trip, update } = useTrip();
   const days = useMemo(() => computeDays(trip), [trip]);
   const loads = useMemo(() => computeDayLoads(trip, days), [trip, days]);
   const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
   const [tab, setTab] = useState<StopTab>('panoramica');
 
+  const [proposal, setProposal] = useState<Suggestion | null>(null);
   const applySg = (sg: Suggestion) => {
-    if (!sg.action) return;
-    const action = sg.action;
-    const before = trip;
-    update((t) => applySuggestion(t, action));
-    toast('Proposta applicata', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, before)) });
+    if (sg.action) setProposal(sg);
   };
 
   if (!sel) {
@@ -679,9 +721,21 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
     body = (
       <>
         <StopCard stop={stop} index={i} count={trip.stops.length} checkIn={stopDays[0]?.date} selected={false} onShowOnMap={() => undefined} expanded hideDetails />
-        <div className="stop-tabs" role="tablist" aria-label={`Dettagli di ${stop.name}`}>
+        <div
+          className="stop-tabs"
+          role="tablist"
+          aria-label={`Dettagli di ${stop.name}`}
+          onKeyDown={(e) => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            e.preventDefault();
+            const i = tabs.findIndex((t) => t.id === cur);
+            const n = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+            setTab(tabs[n]!.id);
+            requestAnimationFrame(() => document.getElementById(`${tid}-${tabs[n]!.id}`)?.focus());
+          }}
+        >
           {tabs.map((t) => (
-            <button key={t.id} type="button" role="tab" id={`${tid}-${t.id}`} aria-selected={cur === t.id} aria-controls={`${tid}-panel`} className={cur === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>
+            <button key={t.id} type="button" role="tab" id={`${tid}-${t.id}`} tabIndex={cur === t.id ? 0 : -1} aria-selected={cur === t.id} aria-controls={`${tid}-panel`} className={cur === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>
               {t.label}
             </button>
           ))}
@@ -779,6 +833,7 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
 
   return (
     <div className="ol-detail" role="region" aria-label="Dettagli della selezione" onKeyDown={(e) => e.key === 'Escape' && !(e.target as HTMLElement).closest('dialog') && onClear()}>
+      {proposal && <SuggestionDialog suggestion={proposal} onClose={() => setProposal(null)} />}
       <div className="insp-head">
         <h2>{sel.kind === 'stop' ? 'Tappa' : sel.kind === 'leg' ? 'Trasferimento' : 'Giornata'}</h2>
         <button className="btn btn-small" onClick={onClear}>
@@ -790,7 +845,6 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
   );
 }
 
-const LODGING_STATE = { individuata: 'Individuata, da verificare', disponibile: 'Disponibile', opzionata: 'Opzionata', prenotata: 'Prenotata' } as const;
 
 /** Riepilogo dell'alloggio della tappa. Cercare, confrontare e inserire si fa in un posto solo: Prenotazioni › Alloggi. */
 function StopLodging({ stop }: { stop: Stop }) {
@@ -801,15 +855,15 @@ function StopLodging({ stop }: { stop: Stop }) {
     <div className="stop-lodging">
       {acc ? (
         <p>
-          <strong>{acc.name}</strong> <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>{LODGING_STATE[acc.status]}</Badge>
+          <strong>{acc.name}</strong> <Badge tone={acc.status === 'prenotata' ? 'ok' : acc.status === 'annullata' ? 'warn' : 'neutral'}>{ACCOMMODATION_STATUS_LABEL[acc.status]}</Badge>
           {!acc.pricePerNight && <span className="small muted block">Prezzo da inserire</span>}
         </p>
       ) : (
         <p className="small">Nessun alloggio scelto{others > 0 ? ` · ${others} ${others === 1 ? 'candidata' : 'candidate'} salvate` : ''}.</p>
       )}
       <StopLodgingSelect stop={stop} />
-      <a className="btn btn-small btn-primary" href={buildHash('hytte', { tappa: stop.id })}>
-        {acc ? 'Gestisci in Prenotazioni' : 'Cerca e confronta in Prenotazioni'}
+      <a className="btn btn-small btn-primary" href={buildHash('hytte', { tappa: stop.id, cerca: acc && acc.status !== 'annullata' ? undefined : '1' })}>
+        {acc && acc.status !== 'annullata' ? 'Gestisci in Prenotazioni' : 'Cerca un alloggio'}
       </a>
     </div>
   );

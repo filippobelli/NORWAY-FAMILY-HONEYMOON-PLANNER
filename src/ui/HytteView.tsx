@@ -2,7 +2,10 @@ import { restorePlanOnly } from '../domain/actuals';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { toEur } from '../domain/coastal';
 import { newId } from '../domain/ids';
-import { computeDays, formatDateIt } from '../domain/itinerary';
+import { addDays, computeDays, formatDateIt } from '../domain/itinerary';
+import { accommodationInfo } from '../domain/verification';
+import { Modal } from './PlacementDialog';
+import { InfoBadge, VerificationControl } from './Verification';
 import type { Accommodation, AccommodationStatus } from '../domain/types';
 import { externalSearchLinks, searchNearbyOsm, type NearbyPlace, type NearbySource } from '../services/accommodation/search';
 import { parseRoute } from '../state/route';
@@ -12,11 +15,13 @@ import { upsertAccommodation, externalHref, lodgingComparison, type LodgingDecis
 import { Badge, Empty, Field, fmtDateTime, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { Icon } from './icons';
 
+// Stato di prenotazione. La disponibilità è un'informazione a parte (verifica), mostrata accanto
 const STATUS: Record<AccommodationStatus, { label: string; tone: 'neutral' | 'info' | 'ok' | 'warn' }> = {
-  individuata: { label: 'Individuata (non verificata)', tone: 'neutral' },
-  disponibile: { label: 'Disponibile per le date', tone: 'info' },
-  opzionata: { label: 'Opzionata', tone: 'warn' },
+  individuata: { label: 'Individuata, non prenotata', tone: 'neutral' },
+  disponibile: { label: 'Individuata, non prenotata', tone: 'neutral' },
+  opzionata: { label: 'Opzionata', tone: 'info' },
   prenotata: { label: 'Prenotata', tone: 'ok' },
+  annullata: { label: 'Annullata', tone: 'warn' },
 };
 
 export function blank(partial: Partial<Accommodation> = {}): Accommodation {
@@ -41,7 +46,8 @@ export function HytteView() {
   const { trip, update, toast } = useTrip();
   const [draft, setDraft] = useState<Accommodation | null>(null);
   // Da un link «Cerca alloggio» di una tappa si arriva già su quella tappa
-  const wanted = parseRoute(window.location.hash).params.tappa;
+  const route = parseRoute(window.location.hash);
+  const wanted = route.params.tappa;
   const [stopId, setStopId] = useState<string>((wanted && trip.stops.some((s) => s.id === wanted) ? wanted : undefined) ?? trip.stops.find((s) => s.kind === 'luogo' && s.nights > 0)?.id ?? '');
   const [radius, setRadius] = useState(15);
   const [results, setResults] = useState<NearbyPlace[] | null>(null);
@@ -80,8 +86,29 @@ export function HytteView() {
     toast('Sistemazione salvata');
   };
 
+  // «Cerca» da una tappa apre direttamente la ricerca impostata su quella tappa
+  const [searchOpen, setSearchOpen] = useState(route.params.cerca === '1' && Boolean(wanted));
+  const openSearch = (id?: string) => {
+    if (id) setStopId(id);
+    setResults(null);
+    setSearchState('idle');
+    setSearchOpen(true);
+  };
+  // Anche se Alloggi è già aperto, un link «Cerca» per un'altra tappa apre la ricerca su quella tappa
   useEffect(() => {
-    if (wanted) document.getElementById(`lodging-${wanted}`)?.scrollIntoView({ block: 'center' });
+    const follow = () => {
+      const r = parseRoute(window.location.hash);
+      if (r.view === 'hytte' && r.params.tappa && r.params.cerca === '1') {
+        setStopId(r.params.tappa);
+        setResults(null);
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('hashchange', follow);
+    return () => window.removeEventListener('hashchange', follow);
+  }, []);
+  useEffect(() => {
+    if (wanted && !searchOpen) document.getElementById(`lodging-${wanted}`)?.scrollIntoView({ block: 'center' });
     // Solo all'arrivo: dopo si scorre liberamente
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -97,125 +124,167 @@ export function HytteView() {
     }));
     toast('Alloggio scelto per la tappa (non è una prenotazione)', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, before)) });
   };
-  const searchFor = (id: string) => {
-    setStopId(id);
-    setResults(null);
-    document.getElementById('hytte-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <div className="hytte">
-      {comparison.length > 0 && <LodgingCompare rows={comparison} onChoose={choose} onSearch={searchFor} />}
-      <section className="panel" id="hytte-search">
-        <h2>Cerca vicino a una tappa</h2>
-        {sleepStops.length === 0 ? (
-          <Empty title="Nessuna tappa con pernottamento">Aggiungi tappe con almeno una notte <a href="#/pianifica">nell'itinerario</a>.</Empty>
-        ) : (
-          <>
-            <div className="row wrap">
-              <select value={stopId} onChange={(e) => setStopId(e.target.value)} aria-label="Tappa">
-                <option value="">Scegli la tappa…</option>
-                {sleepStops.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({s.nights} notti)
-                  </option>
-                ))}
-              </select>
-              <label className="check">
-                Raggio
-                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))}>
-                  {[5, 10, 15, 25, 40].map((r) => (
-                    <option key={r} value={r}>
-                      {r} km
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button className="btn btn-primary" disabled={!stop || searchState === 'loading'} onClick={runSearch}>
-                {searchState === 'loading' ? 'Ricerca…' : 'Cerca su OpenStreetMap'}
-              </button>
-            </div>
-            {stop && (
-              <div className="ext-links">
-                <span className="muted small">
-                  Ricerca esterna{checkIn ? ` dal ${formatDateIt(checkIn)} per ${stop.nights} notti` : ''}, {trip.participants.adults} adulti e{' '}
-                  {trip.participants.childrenAges.length} bambini — si apre il sito del fornitore, l'app non verifica la disponibilità:
-                </span>
-                {externalSearchLinks(stop.name, checkIn, stop.nights, trip.participants).map((l) => (
-                  <a key={l.provider} className="btn btn-small" href={l.url} target="_blank" rel="noreferrer" title={l.note}>
-                    {l.provider} ↗
-                  </a>
-                ))}
-              </div>
-            )}
-            {searchState === 'error' && (
-              <p className="error" role="alert">
-                {searchError}
-              </p>
-            )}
-            {results && results.length === 0 && <p className="muted">Nessuna struttura con nome trovata in OpenStreetMap: prova un raggio maggiore.</p>}
-            {results && results.length > 0 && (
-              <>
-                <p className="muted small">
-                  {results.length} strutture da OpenStreetMap (© contributori OSM)
-                  {via === 'Nominatim' ? ", trovate con la ricerca Nominatim perché Overpass non risponde: l'elenco può essere meno completo" : ''}. Distanze in linea d'aria dalla tappa. Prezzi e disponibilità non
-                  inclusi: una struttura presente su OpenStreetMap non è per questo disponibile, prenotabile o adatta a {trip.participants.adults + trip.participants.childrenAges.length}{' '}
-                  persone. Aggiunta all'elenco resta «da verificare».
-                </p>
-                <ul className="osm-results">
-                  {results.map((p) => (
-                    <li key={p.osmId}>
-                      <div>
-                        <strong>{p.name}</strong> <span className="muted small">{p.kind} · {p.distanceKm} km</span>
-                        {p.website && (
-                          <>
-                            {' '}
-                            <ExtLink url={p.website} className="small">
-                              sito ↗
-                            </ExtLink>
-                          </>
-                        )}
-                      </div>
-                      <button
-                        className="btn btn-small"
-                        onClick={() =>
-                          setDraft(
-                            blank({
-                              name: p.name,
-                              type: p.kind.startsWith('Chalet') ? 'hytte' : p.kind.startsWith('Campeggio') ? 'hytte_campeggio' : 'altro',
-                              locality: stop?.name ?? '',
-                              lat: p.lat,
-                              lng: p.lng,
-                              url: p.website,
-                              stopId: stop?.id,
-                              source: {
-                                label: `OpenStreetMap ${p.osmId}`,
-                                url: `https://www.openstreetmap.org/${p.osmId}`,
-                                checkedAt: new Date().toISOString(),
-                              },
-                            }),
-                          )
-                        }
+      {searchOpen && (
+        <Modal title="Cerca un alloggio" className="drawer" onClose={() => setSearchOpen(false)}>
+          {sleepStops.length === 0 ? (
+            <Empty title="Nessuna tappa con pernottamento">
+              Aggiungi tappe con almeno una notte <a href="#/pianifica">nell'itinerario</a>.
+            </Empty>
+          ) : (
+            <>
+              <div className="search-for" aria-live="polite">
+                <div className="grid-2">
+                  <Field label="Tappa">
+                    {(id) => (
+                      <select
+                        id={id}
+                        value={stopId}
+                        onChange={(e) => {
+                          setStopId(e.target.value);
+                          setResults(null);
+                        }}
                       >
-                        Aggiungi
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </>
-        )}
-      </section>
+                        {sleepStops.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name} ({s.nights} {s.nights === 1 ? 'notte' : 'notti'})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+                  <Field label="Raggio dalla tappa">
+                    {(id) => (
+                      <select id={id} value={radius} onChange={(e) => setRadius(Number(e.target.value))}>
+                        {[5, 10, 15, 25, 40].map((r) => (
+                          <option key={r} value={r}>
+                            {r} km
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+                </div>
+                {stop && (
+                  <p className="small search-summary">
+                    <strong>{stop.name}</strong> ·{' '}
+                    {checkIn ? `dal ${formatDateIt(checkIn)} al ${formatDateIt(addDays(checkIn, stop.nights))}` : 'date non disponibili'} · {stop.nights} {stop.nights === 1 ? 'notte' : 'notti'} ·{' '}
+                    {trip.participants.adults} adulti e {trip.participants.childrenAges.length} bambini
+                    {trip.participants.childrenAges.length ? ` (${trip.participants.childrenAges.join(' e ')} anni)` : ''} · raggio {radius} km
+                    {trip.dateTentative && <span className="block muted">Le date del viaggio sono provvisorie.</span>}
+                  </p>
+                )}
+              </div>
+
+              <h3>Strutture vicine da OpenStreetMap</h3>
+              <p className="small muted">Nomi e posizioni dalla mappa libera: nessun prezzo e nessuna disponibilità. Richiede la rete.</p>
+              <button className="btn btn-primary" disabled={!stop || searchState === 'loading'} onClick={runSearch}>
+                {searchState === 'loading' ? 'Ricerca in corso…' : `Cerca entro ${radius} km`}
+              </button>
+              {searchState === 'loading' && (
+                <p className="small" role="status">
+                  <span className="spinner" aria-hidden /> Ricerca su OpenStreetMap…
+                </p>
+              )}
+              {searchState === 'error' && (
+                <p className="error" role="alert">
+                  {searchError}{' '}
+                  <button className="link-btn" onClick={runSearch}>
+                    Riprova
+                  </button>
+                </p>
+              )}
+              {results && results.length === 0 && <p className="muted" role="status">Nessuna struttura con nome trovata: prova un raggio maggiore.</p>}
+              {results && results.length > 0 && (
+                <>
+                  <p className="muted small" role="status">
+                    {results.length} strutture da OpenStreetMap (© contributori OSM)
+                    {via === 'Nominatim' ? ", trovate con Nominatim perché Overpass non risponde: l'elenco può essere meno completo" : ''}. Distanze in linea d'aria dalla tappa. Una struttura presente sulla mappa non è
+                    per questo disponibile o adatta a {trip.participants.adults + trip.participants.childrenAges.length} persone: aggiunta all'elenco resta da verificare.
+                  </p>
+                  <ul className="osm-results">
+                    {results.map((p) => (
+                      <li key={p.osmId}>
+                        <div>
+                          <strong>{p.name}</strong> <span className="muted small">{p.kind} · {p.distanceKm} km</span>
+                          {p.website && (
+                            <>
+                              {' '}
+                              <ExtLink url={p.website} className="small">
+                                sito ↗
+                              </ExtLink>
+                            </>
+                          )}
+                        </div>
+                        <button
+                          className="btn btn-small"
+                          onClick={() =>
+                            setDraft(
+                              blank({
+                                name: p.name,
+                                type: p.kind.startsWith('Chalet') ? 'hytte' : p.kind.startsWith('Campeggio') ? 'hytte_campeggio' : 'altro',
+                                locality: stop?.name ?? '',
+                                lat: p.lat,
+                                lng: p.lng,
+                                url: p.website,
+                                stopId: stop?.id,
+                                source: { label: `OpenStreetMap ${p.osmId}`, url: `https://www.openstreetmap.org/${p.osmId}`, checkedAt: new Date().toISOString() },
+                              }),
+                            )
+                          }
+                        >
+                          Aggiungi come candidata
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {stop && (
+                <>
+                  <h3>Ricerche esterne</h3>
+                  <p className="small muted">
+                    Aprono il sito del fornitore con tappa, date e persone già inseriti. Sono ricerche: non confermano la disponibilità e non sono prenotazioni.
+                  </p>
+                  <div className="ext-links">
+                    {externalSearchLinks(stop.name, checkIn, stop.nights, trip.participants).map((l) => (
+                      <a key={l.provider} className="btn btn-small" href={l.url} target="_blank" rel="noreferrer" title={l.note}>
+                        Cerca su {l.provider} ↗
+                      </a>
+                    ))}
+                  </div>
+                </>
+              )}
+              <h3>L'hai trovata altrove?</h3>
+              <button className="btn" onClick={() => setDraft(blank({ stopId: stop?.id, locality: stop?.name ?? '' }))}>
+                Inserisci a mano per {stop?.name ?? 'la tappa'}
+              </button>
+              {draft && <AccommodationForm value={draft} onSave={save} onCancel={() => setDraft(null)} />}
+            </>
+          )}
+        </Modal>
+      )}
+      <div className="hytte-head">
+        <p className="small muted">Una ricerca per tappa: si apre già impostata su date, persone e raggio. Prenotazione e verifica della disponibilità sono indicate separatamente.</p>
+        <span className="row wrap">
+          <button className="btn btn-primary" disabled={sleepStops.length === 0} onClick={() => openSearch(stopId || sleepStops[0]?.id)}>
+            Cerca un alloggio
+          </button>
+          <button className="btn" onClick={() => setDraft(blank({ stopId: stop?.id, locality: stop?.name ?? '' }))}>
+            + Inserisci a mano
+          </button>
+        </span>
+      </div>
+      {draft && !searchOpen && <AccommodationForm value={draft} onSave={save} onCancel={() => setDraft(null)} />}
+      {comparison.length > 0 && <LodgingCompare rows={comparison} onChoose={choose} onSearch={openSearch} />}
 
       <section className="panel">
         <header className="panel-head">
-          <h2>Sistemazioni ({trip.accommodations.length})</h2>
-          <button className="btn btn-primary" onClick={() => setDraft(blank({ stopId: stop?.id, locality: stop?.name ?? '' }))}>
-            + Inserisci a mano
-          </button>
+          <h2>Sistemazioni salvate ({trip.accommodations.length})</h2>
         </header>
-        {draft && <AccommodationForm value={draft} onSave={save} onCancel={() => setDraft(null)} />}
         {trip.accommodations.length === 0 ? (
           <Empty title="Nessuna sistemazione">Cerca vicino a una tappa o inserisci una hytte trovata altrove.</Empty>
         ) : (
@@ -232,7 +301,10 @@ export function HytteView() {
                         {a.locality} · {a.type.replace('_', ' ')}
                       </span>
                     </div>
-                    <Badge tone={STATUS[a.status].tone}>{STATUS[a.status].label}</Badge>
+                    <span className="row tight wrap">
+                      <Badge tone={STATUS[a.status].tone}>{STATUS[a.status].label}</Badge>
+                      {a.status !== 'annullata' && <InfoBadge info={accommodationInfo(a, trip.settings)} what="Disponibilità" />}
+                    </span>
                   </header>
                   <dl className="facts">
                     <dt>Tappa</dt>
@@ -254,6 +326,20 @@ export function HytteView() {
                     <dd>
                       {a.capacity ?? '—'} · {a.beds || '—'}
                     </dd>
+                    {a.address && (
+                      <>
+                        <dt>Indirizzo</dt>
+                        <dd>{a.address}</dd>
+                      </>
+                    )}
+                    {a.phone && (
+                      <>
+                        <dt>Telefono</dt>
+                        <dd>
+                          <a href={`tel:${a.phone.replace(/[^+\d]/g, '')}`}>{a.phone}</a>
+                        </dd>
+                      </>
+                    )}
                     <dt>Servizi</dt>
                     <dd>
                       {servicesText(a)}
@@ -337,10 +423,11 @@ function servicesText(a: Accommodation): string {
 }
 
 const DECISION: Record<LodgingDecision, string> = {
-  da_verificare: 'Da verificare',
+  da_verificare: 'Candidata',
   valutata: 'Valutata',
   scelta: 'Scelta, non prenotata',
   prenotata: '✓ Prenotata',
+  annullata: 'Annullata',
 };
 
 function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onChoose: (stopId: string, accId: string) => void; onSearch: (stopId: string) => void }) {
@@ -372,7 +459,10 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
                     {r.checkIn ? ` · dal ${formatDateIt(r.checkIn)}` : ''}
                   </span>
                 </h3>
-                <span className="small">
+                <span className="small row tight wrap">
+                  <button className="btn btn-small" onClick={() => onSearch(r.stop.id)} aria-label={`Cerca un alloggio a ${r.stop.name}`}>
+                    Cerca
+                  </button>
                   {r.toSearch ? (
                     <Badge tone="warn">Da cercare</Badge>
                   ) : chosen ? (
@@ -384,10 +474,7 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
               </header>
               {r.toSearch ? (
                 <p className="small">
-                  Nessuna sistemazione candidata.{' '}
-                  <button className="link-btn" onClick={() => onSearch(r.stop.id)}>
-                    Cerca vicino a {r.stop.name}
-                  </button>
+                  Nessuna sistemazione candidata: usa «Cerca» per aprire la ricerca su questa tappa.
                 </p>
               ) : (
                 <ul className="lodging-options">
@@ -396,6 +483,7 @@ function LodgingCompare({ rows, onChoose, onSearch }: { rows: StopLodging[]; onC
                       <div className="lo-name">
                         <strong>{o.acc.name}</strong>
                         <span className="small">{o.chosen ? '★ Scelta per la tappa' : `Alternativa · ${DECISION[o.decision].toLowerCase()}`}</span>
+                        {o.acc.status !== 'annullata' && <InfoBadge info={accommodationInfo(o.acc, trip.settings)} what="Disponibilità" />}
                       </div>
                       <div className="lo-price">
                         {o.stayEur !== undefined ? (
@@ -493,14 +581,15 @@ export function AccommodationForm({ value, onSave, onCancel }: { value: Accommod
           )}
         </Field>
         <Field label="Link prenotazione / ufficiale">{(id) => <input id={id} type="url" value={a.url ?? ''} onChange={(e) => set({ url: e.target.value || undefined })} />}</Field>
-        <Field label="Stato">
+        <Field label="Stato prenotazione" hint="«Prenotata» solo con la conferma del fornitore">
           {(id) => (
             <select id={id} value={a.status} onChange={(e) => set({ status: e.target.value as AccommodationStatus })}>
-              {Object.entries(STATUS).map(([k, v]) => (
+              {(['individuata', 'opzionata', 'prenotata', 'annullata'] as const).map((k) => (
                 <option key={k} value={k}>
-                  {v.label}
+                  {STATUS[k].label}
                 </option>
               ))}
+              {a.status === 'disponibile' && <option value="disponibile">Individuata, disponibilità controllata (dato precedente)</option>}
             </select>
           )}
         </Field>
@@ -512,6 +601,8 @@ export function AccommodationForm({ value, onSave, onCancel }: { value: Accommod
         <summary>Altri dettagli</summary>
         <div className="grid-4">
         <Field label="Località">{(id) => <input id={id} value={a.locality} onChange={(e) => set({ locality: e.target.value })} />}</Field>
+        <Field label="Indirizzo">{(id) => <input id={id} value={a.address ?? ''} onChange={(e) => set({ address: e.target.value || undefined })} />}</Field>
+        <Field label="Telefono">{(id) => <input id={id} type="tel" value={a.phone ?? ''} onChange={(e) => set({ phone: e.target.value || undefined })} />}</Field>
         <Field label="Latitudine">{(id) => <NumberInput id={id} value={a.lat} onChange={(v) => set({ lat: v })} />}</Field>
         <Field label="Longitudine">{(id) => <NumberInput id={id} value={a.lng} onChange={(v) => set({ lng: v })} />}</Field>
         <Field label="Pulizia finale">{(id) => <MoneyInput id={id} value={a.cleaningFee} onChange={(m) => set({ cleaningFee: m })} />}</Field>
@@ -536,6 +627,9 @@ export function AccommodationForm({ value, onSave, onCancel }: { value: Accommod
       </details>
       {a.capacity !== undefined && a.capacity < trip.participants.adults + trip.participants.childrenAges.length && (
         <p className="note-warn small"><Icon name="warning" /> Posti letto insufficienti per la famiglia.</p>
+      )}
+      {a.status !== 'annullata' && (
+        <VerificationControl what="Disponibilità" info={accommodationInfo(a, trip.settings)} value={a.verification} onChange={(v) => set({ verification: v })} />
       )}
       <div className="row">
         <button className="btn btn-primary" disabled={!a.name.trim()} onClick={() => onSave({ ...a, name: a.name.trim() })}>

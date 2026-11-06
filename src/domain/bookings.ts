@@ -1,17 +1,30 @@
 import { computeDays, formatDateIt } from './itinerary';
 import { pendingPlacements } from './placement';
-import type { DataStatus, ID, Trip } from './types';
+import type { AccommodationStatus, DataStatus, ID, Trip } from './types';
+import { accommodationInfo, coastalInfo, flightInfo, segmentInfo, type InfoState, type InfoStatus } from './verification';
 
-// Prenotazioni: un solo elenco di voli, trasporti e alloggi, con uno stato leggibile per ogni elemento.
-// Tutto è derivato dal documento Trip: lo stato dice che cosa risulta inserito, mai che cosa è davvero disponibile.
+// Prenotazioni: un solo elenco di voli, trasporti e alloggi con due informazioni distinte per ogni elemento:
+// - stato di prenotazione: che cosa risulta prenotato (lo dice l'utente, l'app non prenota);
+// - verifica dell'informazione: orari e disponibilità controllati sulla fonte, con data. Verificato non è prenotato.
 
-export type BookingState = 'prenotato' | 'opzionato' | 'da_verificare' | 'da_completare';
+export type BookingState = 'da_cercare' | 'individuato' | 'opzionato' | 'prenotato' | 'annullato' | 'non_prenotato';
 
 export const BOOKING_STATE_LABEL: Record<BookingState, string> = {
+  da_cercare: 'Da cercare',
+  individuato: 'Individuato, non prenotato',
+  opzionato: 'Opzionato',
   prenotato: 'Prenotato',
-  opzionato: 'Opzionato o individuato',
-  da_verificare: 'Da verificare',
-  da_completare: 'Da completare',
+  annullato: 'Annullato',
+  non_prenotato: 'Non prenotato',
+};
+
+/** Etichette dello stato di prenotazione degli alloggi, uguali in tutte le schermate. */
+export const ACCOMMODATION_STATUS_LABEL: Record<AccommodationStatus, string> = {
+  individuata: 'Individuata, non prenotata',
+  disponibile: 'Individuata, non prenotata',
+  opzionata: 'Opzionata',
+  prenotata: 'Prenotata',
+  annullata: 'Annullata',
 };
 
 export type BookingGroup = 'voli' | 'trasporti' | 'alloggi';
@@ -27,8 +40,10 @@ export interface BookingRow {
   group: BookingGroup;
   title: string;
   detail: string;
-  state: BookingState;
-  /** Che cosa fare o sapere, se c'è qualcosa da fare */
+  booking: BookingState;
+  /** Verifica dell'informazione, se l'elemento ha informazioni che cambiano */
+  info?: InfoStatus;
+  /** Che cosa fare, se c'è qualcosa da fare */
   todo?: string;
   /** Dove si gestisce l'elemento */
   href: string;
@@ -37,22 +52,23 @@ export interface BookingRow {
 
 export interface BookingsOverview {
   rows: BookingRow[];
-  counts: Record<BookingState, number>;
-  /** Prima cosa da sistemare, nell'ordine in cui conviene farlo */
-  first?: BookingRow;
+  bookingCounts: Record<BookingState, number>;
+  infoCounts: Record<InfoState, number>;
 }
 
-/** Stato di un dato inserito: «confermato» vuol dire verificato sulla fonte, non prenotato. */
-function fromDataStatus(s: DataStatus): BookingState {
-  if (s === 'prenotato' || s === 'pagato') return 'prenotato';
-  return s === 'confermato' ? 'opzionato' : 'da_verificare';
+const isPaid = (s: DataStatus) => s === 'prenotato' || s === 'pagato';
+
+export function accommodationBooking(status: AccommodationStatus): BookingState {
+  if (status === 'prenotata') return 'prenotato';
+  if (status === 'opzionata') return 'opzionato';
+  if (status === 'annullata') return 'annullato';
+  return 'individuato';
 }
 
-const STATE_ORDER: BookingState[] = ['da_completare', 'da_verificare', 'opzionato', 'prenotato'];
-
-export function bookingsOverview(trip: Trip): BookingsOverview {
+export function bookingsOverview(trip: Trip, now = new Date()): BookingsOverview {
   const rows: BookingRow[] = [];
   const nameOf = (id: ID) => trip.stops.find((s) => s.id === id)?.name ?? '—';
+  const st = trip.settings;
 
   // Voli: quelli scelti contano, le alternative no. Andata e ritorno mancanti si dicono solo se c'è un percorso
   const flights = trip.flights ?? [];
@@ -66,7 +82,7 @@ export function bookingsOverview(trip: Trip): BookingsOverview {
         group: 'voli',
         title: `Volo di ${direction}`,
         detail: alternatives > 0 ? `${alternatives} ${alternatives === 1 ? 'alternativa salvata' : 'alternative salvate'}, nessuna scelta` : 'Nessun volo inserito',
-        state: 'da_completare',
+        booking: 'da_cercare',
         todo: alternatives > 0 ? 'Scegli quale volo tenere' : 'Cerca e inserisci il volo',
         href: '#/voli',
         cta: 'Apri i voli',
@@ -74,14 +90,16 @@ export function bookingsOverview(trip: Trip): BookingsOverview {
     }
   }
   for (const f of flights) {
-    const state = f.selected ? fromDataStatus(f.priceStatus) : 'opzionato';
+    const booking: BookingState = f.selected && isPaid(f.priceStatus) ? 'prenotato' : 'individuato';
+    const info = flightInfo(f, st, now);
     rows.push({
       id: `volo-${f.id}`,
       group: 'voli',
       title: `${f.fromAirport || '—'} → ${f.toAirport || '—'}`,
-      detail: [f.date ? formatDateIt(f.date) : 'data da inserire', f.airline, f.selected ? '' : 'alternativa'].filter(Boolean).join(' · '),
-      state,
-      todo: state === 'da_verificare' ? 'Verifica orario e prezzo sul sito della compagnia' : undefined,
+      detail: [f.date ? formatDateIt(f.date) : 'data da inserire', f.airline, f.selected ? 'scelto' : 'alternativa'].filter(Boolean).join(' · '),
+      booking,
+      info,
+      todo: booking === 'prenotato' ? undefined : info.state !== 'verificata' ? 'Verifica orario e prezzo sul sito della compagnia' : f.selected ? 'Da prenotare con la compagnia' : undefined,
       href: '#/voli',
       cta: 'Apri i voli',
     });
@@ -95,7 +113,8 @@ export function bookingsOverview(trip: Trip): BookingsOverview {
       group: 'trasporti',
       title: `${o.operator} ${o.fromPort} → ${o.toPort}`,
       detail: 'Scelta ma non ancora nel percorso',
-      state: 'da_completare',
+      booking: isPaid(o.priceStatus) ? 'prenotato' : 'individuato',
+      info: coastalInfo(o, st, now),
       todo: 'Aggiungila al percorso',
       href: '#/crociere',
       cta: 'Apri le crociere',
@@ -105,18 +124,21 @@ export function bookingsOverview(trip: Trip): BookingsOverview {
     const route = `${nameOf(leg.fromStopId)} → ${nameOf(leg.toStopId)}`;
     const touchesShip = trip.stops.some((s) => s.kind === 'a_bordo' && (s.id === leg.fromStopId || s.id === leg.toStopId));
     if (touchesShip && leg.segments.every((s) => s.mode === 'non_calcolato')) {
-      rows.push({ id: `nave-${leg.id}`, group: 'trasporti', title: route, detail: 'Tratto con notte a bordo, senza nave collegata', state: 'da_completare', todo: 'Scegli la nave e collegala al percorso', href: '#/crociere', cta: 'Apri le crociere' });
+      rows.push({ id: `nave-${leg.id}`, group: 'trasporti', title: route, detail: 'Tratto con notte a bordo, senza nave collegata', booking: 'da_cercare', todo: 'Scegli la nave e collegala al percorso', href: '#/crociere', cta: 'Apri le crociere' });
     }
     for (const s of leg.segments) {
-      if (s.mode === 'strada' || s.mode === 'non_calcolato' || s.flightId) continue;
-      const state = fromDataStatus(s.status);
+      if (s.flightId) continue;
+      const info = segmentInfo(s, st, now);
+      if (!info) continue;
+      const booking: BookingState = isPaid(s.costStatus) || isPaid(s.status) ? 'prenotato' : 'non_prenotato';
       rows.push({
         id: `tratto-${s.id}`,
         group: 'trasporti',
         title: s.label,
         detail: `${route}${s.departureTime ? ` · ore ${s.departureTime}` : ''}`,
-        state,
-        todo: state === 'da_verificare' ? "Verifica orario e stato sul sito dell'operatore" : undefined,
+        booking,
+        info,
+        todo: info.state === 'da_verificare' ? "Verifica l'orario sul sito dell'operatore" : info.state === 'da_ricontrollare' ? "Ricontrolla l'orario: la verifica è vecchia" : undefined,
         href: `#/pianifica?sel=leg%3A${encodeURIComponent(leg.id)}`,
         cta: 'Apri il tratto',
       });
@@ -131,37 +153,47 @@ export function bookingsOverview(trip: Trip): BookingsOverview {
     const checkIn = days.find((d) => d.sleepStop?.id === s.id)?.date;
     const when = `${checkIn ? `Dal ${formatDateIt(checkIn)} · ` : ''}${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}`;
     const href = `#/hytte?tappa=${encodeURIComponent(s.id)}`;
-    if (!a) {
+    if (!a || a.status === 'annullata') {
       const candidates = trip.accommodations.filter((x) => x.stopId === s.id).length;
       rows.push({
         id: `alloggio-${s.id}`,
         group: 'alloggi',
         title: s.name,
-        detail: candidates > 0 ? `${when} · ${candidates} ${candidates === 1 ? 'candidata' : 'candidate'}, nessuna scelta` : when,
-        state: 'da_completare',
-        todo: candidates > 0 ? 'Confronta e scegli' : 'Cerca un alloggio',
-        href,
-        cta: candidates > 0 ? 'Confronta' : 'Cerca',
+        detail: a ? `${when} · ${a.name}` : candidates > 0 ? `${when} · ${candidates} ${candidates === 1 ? 'candidata' : 'candidate'}, nessuna scelta` : when,
+        booking: a ? 'annullato' : 'da_cercare',
+        todo: a ? 'Prenotazione annullata: cerca un altro alloggio' : candidates > 0 ? 'Confronta e scegli' : 'Cerca un alloggio',
+        href: candidates > 0 && !a ? href : `${href}&cerca=1`,
+        cta: candidates > 0 && !a ? 'Confronta' : 'Cerca',
       });
       continue;
     }
-    const state: BookingState = a.status === 'prenotata' ? 'prenotato' : a.status === 'individuata' ? 'da_verificare' : 'opzionato';
+    const booking = accommodationBooking(a.status);
+    const info = accommodationInfo(a, st, now);
     rows.push({
       id: `alloggio-${s.id}`,
       group: 'alloggi',
       title: s.name,
       detail: `${when} · ${a.name}`,
-      state,
-      todo: state === 'da_verificare' ? 'Verifica la disponibilità sul sito del fornitore' : a.pricePerNight ? undefined : 'Prezzo da inserire',
+      booking,
+      info,
+      todo:
+        booking === 'prenotato'
+            ? a.pricePerNight
+              ? undefined
+              : 'Prezzo da inserire'
+            : info.state !== 'verificata'
+              ? 'Verifica la disponibilità sul sito del fornitore'
+              : 'Disponibilità verificata: da prenotare con il fornitore',
       href,
       cta: 'Apri',
     });
   }
 
-  const counts: Record<BookingState, number> = { prenotato: 0, opzionato: 0, da_verificare: 0, da_completare: 0 };
-  for (const r of rows) counts[r.state] += 1;
-  const first = STATE_ORDER.slice(0, 2)
-    .map((st) => rows.find((r) => r.state === st))
-    .find(Boolean);
-  return { rows, counts, first };
+  const bookingCounts: Record<BookingState, number> = { da_cercare: 0, individuato: 0, opzionato: 0, prenotato: 0, annullato: 0, non_prenotato: 0 };
+  const infoCounts: Record<InfoState, number> = { da_verificare: 0, verificata: 0, da_ricontrollare: 0 };
+  for (const r of rows) {
+    bookingCounts[r.booking] += 1;
+    if (r.info) infoCounts[r.info.state] += 1;
+  }
+  return { rows, bookingCounts, infoCounts };
 }

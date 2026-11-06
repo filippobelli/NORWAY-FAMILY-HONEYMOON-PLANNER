@@ -18,6 +18,19 @@ export interface SourceRef {
   checkedAt?: string;
 }
 
+/**
+ * Verifica di un'informazione che può cambiare (orari, disponibilità, durate). È distinta dalla prenotazione:
+ * «verificata» vuol dire controllata sulla fonte, non prenotata. Facoltativa: assente nei viaggi salvati prima,
+ * dove lo stato si ricava dai campi precedenti senza modificarli.
+ */
+export interface Verification {
+  state: 'da_verificare' | 'verificata';
+  /** ISO date-time dell'ultimo controllo */
+  checkedAt?: string;
+  source?: SourceRef;
+  note?: string;
+}
+
 // ---------- Catalogo ----------
 
 export type Category =
@@ -105,6 +118,8 @@ export interface Segment {
   /** [lat, lng] */
   geometry?: [number, number][];
   note?: string;
+  /** Verifica di orario e durata sulla fonte dell'operatore */
+  verification?: Verification;
 }
 
 export interface Leg {
@@ -123,6 +138,8 @@ export interface Activity {
   durationMin?: number;
   cost?: Money;
   costStatus: DataStatus;
+  /** Verifica di orari, apertura e prezzo */
+  verification?: Verification;
 }
 
 export interface DayPlan {
@@ -156,6 +173,8 @@ export interface CoastalOption {
   changePolicy: string;
   notes: string;
   source?: SourceRef;
+  /** Verifica di orario e prezzo sul sito dell'operatore */
+  verification?: Verification;
   /** Inclusa nel budget/itinerario */
   selected: boolean;
   /** Proposta del catalogo da cui è stata creata (facoltativo: le opzioni inserite a mano non lo hanno) */
@@ -164,7 +183,11 @@ export interface CoastalOption {
 
 // ---------- Sistemazioni ----------
 
-export type AccommodationStatus = 'individuata' | 'disponibile' | 'opzionata' | 'prenotata';
+/**
+ * Stato di prenotazione. «disponibile» è un valore dei viaggi salvati prima: indica una disponibilità controllata,
+ * non una prenotazione, e resta leggibile. «annullata» è una prenotazione disdetta.
+ */
+export type AccommodationStatus = 'individuata' | 'disponibile' | 'opzionata' | 'prenotata' | 'annullata';
 
 export interface Accommodation {
   id: ID;
@@ -188,6 +211,11 @@ export interface Accommodation {
   stopId?: ID;
   source?: SourceRef;
   notes: string;
+  /** Verifica di disponibilità e prezzo per le date */
+  verification?: Verification;
+  /** Indirizzo e telefono, se noti: finiscono nel pacchetto offline */
+  address?: string;
+  phone?: string;
 }
 
 // ---------- Voli ----------
@@ -220,6 +248,8 @@ export interface Flight {
   notes: string;
   /** Differenze con il percorso che l'utente ha deciso di lasciare così: non vengono richieste */
   keptIssues?: string[];
+  /** Verifica di orari e prezzo */
+  verification?: Verification;
 }
 
 // ---------- Budget ----------
@@ -289,6 +319,8 @@ export interface TripSettings {
   marginPct?: number;
   /** Aeroporti di partenza dall'Italia in ordine di preferenza (codici IATA); assente = predefiniti della sezione Voli */
   homeAirports?: string[];
+  /** Dopo quanti giorni una verifica va ricontrollata (assente = 30) */
+  recheckAfterDays?: number;
 }
 
 export type FuelType = 'benzina' | 'diesel' | 'elettrica';
@@ -409,6 +441,8 @@ export interface Trip {
   accommodations: Accommodation[];
   budgetItems: BudgetItem[];
   favorites: ID[];
+  /** Numeri utili e note di viaggio scritte dall'utente: vanno nel pacchetto offline */
+  usefulInfo?: string;
   actuals?: Actuals;
   diary?: DiaryEntry[];
   /** Registro delle versioni applicate, per rivedere e annullare */

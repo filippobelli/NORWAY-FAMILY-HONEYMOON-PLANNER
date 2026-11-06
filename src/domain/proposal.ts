@@ -36,6 +36,15 @@ export interface LimitViolation {
   kind: 'calcolato' | 'stimato';
 }
 
+/** Giornata con tratti senza tempo: i tempi noti non superano il limite, ma non si può dire che lo rispetti */
+export interface UnverifiableDay {
+  dayIndex: number;
+  from: string;
+  to: string;
+  knownMin: number;
+  missing: string[];
+}
+
 export interface ProposalCrossing {
   legId: string;
   label: string;
@@ -56,6 +65,7 @@ export interface ProposalReview {
   /** Limite con cui sono state controllate le giornate, in minuti */
   limitMin: number;
   violations: LimitViolation[];
+  unverifiable: UnverifiableDay[];
   /** Tappe con pernottamento senza alloggio scelto */
   lodgingMissing: string[];
   crossings: ProposalCrossing[];
@@ -106,12 +116,17 @@ export function reviewProposal(trip: Trip, limitMin = trip.settings.maxTravelMin
   // Il limite vale per la giornata: più tratti nello stesso giorno si sommano. I tempi non noti non si contano
   const byLeg = new Map(transfers.map((t) => [t.legId, t]));
   const violations: LimitViolation[] = [];
+  const unverifiable: UnverifiableDay[] = [];
   for (const d of days) {
     const list = d.legs.map((l) => byLeg.get(l.id)).filter((t): t is ProposalTransfer => Boolean(t));
+    if (list.length === 0) continue;
+    // I tempi non noti non valgono zero: oltre il limite se i noti lo superano già, altrimenti non verificabile
     const minutes = list.reduce((sum, t) => sum + (t.minutes ?? 0), 0);
-    if (list.length > 0 && minutes > limitMin) {
-      violations.push({ dayIndex: d.index, from: list[0]!.from, to: list[list.length - 1]!.to, minutes, kind: list.every((t) => t.kind === 'calcolato') ? 'calcolato' : 'stimato' });
-    }
+    const unknown = list.filter((t) => t.minutes === undefined);
+    const from = list[0]!.from;
+    const to = list[list.length - 1]!.to;
+    if (minutes > limitMin) violations.push({ dayIndex: d.index, from, to, minutes, kind: list.every((t) => t.kind === 'calcolato') ? 'calcolato' : 'stimato' });
+    else if (unknown.length > 0) unverifiable.push({ dayIndex: d.index, from, to, knownMin: minutes, missing: unknown.map((t) => `${t.from} → ${t.to}${t.labels.length ? ` (${t.labels.join(' + ')})` : ''}`) });
   }
 
   const lodgingMissing = trip.stops.filter((s) => s.kind === 'luogo' && s.nights > 0 && !s.accommodationId).map((s) => s.name);
@@ -142,6 +157,7 @@ export function reviewProposal(trip: Trip, limitMin = trip.settings.maxTravelMin
     counts,
     limitMin,
     violations,
+    unverifiable,
     lodgingMissing,
     crossings,
     activities,

@@ -16,6 +16,8 @@ import { FlagMark, Icon, type IconName } from './icons';
 import { MapView } from './MapView';
 import { PlanBDialog } from './PlanBDialog';
 import { DataStatusCard } from './SyncStatus';
+import { ExportsPanel } from './ExportsPanel';
+import { WeatherCard } from './WeatherCard';
 
 // Travel Mode: stesso viaggio e stessi dati del Planning Mode, pensato per il telefono.
 
@@ -240,6 +242,8 @@ export function TodayScreen() {
         )}
       </section>
       </div>
+
+      {(v.sleep ?? v.place) && <WeatherCard date={v.day.date} place={(v.sleep ?? v.place)!} today={today} />}
 
       {v.activities.length > 0 && (
         <section className="t-card" aria-label="Attività">
@@ -699,6 +703,7 @@ export function MoreScreen() {
     <div className="more">
       <h1>Altro</h1>
       <DataStatusCard />
+      <ExportsPanel compact />
       <ul className="more-links">
         {MORE_LINKS.map(([href, icon, label]) => (
           <li key={href}>

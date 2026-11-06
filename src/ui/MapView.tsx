@@ -30,6 +30,8 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
   const mapRef = useRef<{ L: LeafletApi; map: LMap; layer: LLayerGroup } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
   const [error, setError] = useState('');
+  // Ogni «Riprova» rifà il caricamento da capo
+  const [attempt, setAttempt] = useState(0);
   const fitted = useRef(false);
   const addRef = useRef(onAddDestination);
   addRef.current = onAddDestination;
@@ -38,6 +40,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
 
   useEffect(() => {
     let cancelled = false;
+    setState('caricamento');
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
@@ -60,7 +63,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       mapRef.current?.map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [attempt]);
 
   useEffect(() => {
     const m = mapRef.current;
@@ -186,12 +189,19 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
     <div className="map-wrap">
       <div className="map-box">
         <div ref={el} className={height ? 'map' : 'map map-tall'} style={height ? { height } : undefined} role="region" aria-label="Mappa del viaggio" />
-        {state === 'caricamento' && <div className="map-overlay">Caricamento mappa…</div>}
+        {state === 'caricamento' && (
+          <div className="map-overlay" role="status">
+            <span className="spinner" aria-hidden /> Caricamento della mappa…
+          </div>
+        )}
         {state === 'errore' && (
           <div className="map-overlay map-error" role="alert">
             <strong>Mappa non disponibile</strong>
             <span>{error}</span>
-            <span>Il resto dell'app funziona: tappe, tratti e budget restano modificabili.</span>
+            <span>Elenco e dettagli delle tappe restano utilizzabili; senza rete la mappa non si carica.</span>
+            <button type="button" className="btn btn-small" onClick={() => setAttempt((n) => n + 1)}>
+              Riprova
+            </button>
           </div>
         )}
       </div>

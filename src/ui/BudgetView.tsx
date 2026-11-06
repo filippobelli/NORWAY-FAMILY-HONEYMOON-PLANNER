@@ -84,7 +84,7 @@ export function BudgetView() {
         <div className="kpi">
           <span>Già certo</span>
           <strong>{formatEur(firm)}</strong>
-          <small>confermato da fonte, prenotato o pagato</small>
+          <small>verificato sulla fonte, prenotato o pagato</small>
         </div>
         <div className={`kpi ${missingPrices > 0 ? 'kpi-warn' : ''}`}>
           <span>Da quantificare</span>

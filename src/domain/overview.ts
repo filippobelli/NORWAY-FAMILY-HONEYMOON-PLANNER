@@ -1,7 +1,9 @@
 import { computeBudget } from './budget';
 import { computeDayLoads } from './dayLoad';
 import { addDays, computeDays, formatDateIt, formatDuration, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
+import { dayTransfers } from './dayTransfer';
 import type { AccommodationStatus, Trip } from './types';
+import { accommodationInfo, segmentInfo, type InfoState } from './verification';
 
 // Panoramica del viaggio: tutto è derivato dal documento Trip, nessun valore dimostrativo.
 
@@ -33,9 +35,16 @@ const DEPENDS_ON: Record<StepId, StepId[]> = {
 
 export interface NextAction {
   id: string;
-  /** alta = può far saltare o rendere faticoso il viaggio; media = da sistemare; bassa = rifinitura */
+  /**
+   * Livello di priorità: 1 trasferimenti oltre il limite o non verificabili, 2 informazioni da confermare prima della
+   * partenza, 3 prenotazioni necessarie mancanti, 4 verifiche e rifiniture non urgenti.
+   */
+  tier: 1 | 2 | 3 | 4;
+  /** Derivata dal livello: alta (1–2), media (3), bassa (4) */
   priority: 'alta' | 'media' | 'bassa';
   text: string;
+  /** Perché conta adesso, in una frase */
+  why: string;
   href: string;
   cta: string;
   /** Seconda azione, quando la stessa situazione riguarda anche un'altra sezione (es. alloggio e budget) */
@@ -53,6 +62,7 @@ export interface LegRef {
 export interface CrossingRef extends LegRef {
   label: string;
   departureTime?: string;
+  state: InfoState;
 }
 
 export interface LodgingRow {
@@ -63,6 +73,8 @@ export interface LodgingRow {
   accommodation?: string;
   status?: AccommodationStatus;
   hasPrice: boolean;
+  /** Disponibilità controllata e non scaduta */
+  checked: boolean;
 }
 
 export interface HeavyDay {
@@ -104,8 +116,6 @@ export interface TripOverview {
   actions: NextAction[];
 }
 
-const FIRM = ['confermato', 'prenotato', 'pagato'];
-
 export function tripOverview(trip: Trip): TripOverview {
   const n = totalDays(trip.stops);
   const nights = totalNights(trip.stops);
@@ -125,9 +135,8 @@ export function tripOverview(trip: Trip): TripOverview {
     if (t.hasUncalculated) (isRoutableLeg(leg, trip.stops) ? uncalculatedLegs : shipLegsMissing).push(ref);
     else if (t.partial) legsMissingDuration += 1;
     for (const s of leg.segments) {
-      if (s.mode !== 'strada' && s.mode !== 'non_calcolato' && !FIRM.includes(s.status)) {
-        unverifiedCrossings.push({ ...ref, label: s.label, departureTime: s.departureTime });
-      }
+      const info = segmentInfo(s, trip.settings);
+      if (info && info.state !== 'verificata') unverifiedCrossings.push({ ...ref, label: s.label, departureTime: s.departureTime, state: info.state });
     }
   }
 
@@ -135,9 +144,9 @@ export function tripOverview(trip: Trip): TripOverview {
     .filter((s) => s.kind === 'luogo' && s.nights > 0)
     .map((s) => {
       const a = trip.accommodations.find((x) => x.id === s.accommodationId);
-      return { stopId: s.id, stopName: s.name, nights: s.nights, accommodation: a?.name, status: a?.status, hasPrice: Boolean(a?.pricePerNight) };
+      return { stopId: s.id, stopName: s.name, nights: s.nights, accommodation: a?.name, status: a?.status, hasPrice: Boolean(a?.pricePerNight), checked: a ? accommodationInfo(a, trip.settings).state === 'verificata' : false };
     });
-  const lodgingAssigned = lodging.filter((l) => l.accommodation).length;
+  const lodgingAssigned = lodging.filter((l) => l.accommodation && l.status !== 'annullata').length;
   const lodgingBooked = lodging.filter((l) => l.status === 'prenotata').length;
 
   const heavyDays: HeavyDay[] = loads
@@ -160,8 +169,8 @@ export function tripOverview(trip: Trip): TripOverview {
   const firm = budget.byStatus.confermato + budget.byStatus.prenotato + budget.byStatus.pagato;
   const inTarget = n >= TRIP_MIN_DAYS && n <= TRIP_MAX_DAYS;
 
-  // Alloggi scelti di cui non si è ancora verificata la disponibilità (stato «individuata»)
-  const lodgingUnchecked = lodging.filter((l) => l.accommodation && l.status === 'individuata').length;
+  // Alloggi scelti, non prenotati, di cui la disponibilità non è controllata (o il controllo è vecchio)
+  const lodgingUnchecked = lodging.filter((l) => l.accommodation && l.status !== 'prenotata' && l.status !== 'annullata' && !l.checked).length;
   const toCheck = unverifiedCrossings.length + lodgingUnchecked;
 
   const raw: Omit<PlanningStep, 'waitsFor'>[] = [
@@ -240,146 +249,210 @@ export function tripOverview(trip: Trip): TripOverview {
     waitsFor: r.state === 'fatto' ? [] : DEPENDS_ON[r.id].filter((d) => stateOf.get(d)?.state !== 'fatto').map((d) => stateOf.get(d)!.label),
   }));
 
+  // Prossimi passi: un'unica fonte per Panoramica, Itinerario, Prenotazioni e attivazione di una proposta.
+  // Ordine: 1) trasferimenti oltre il limite o non verificabili; 2) informazioni essenziali da confermare prima della
+  // partenza; 3) prenotazioni necessarie ancora mancanti; 4) verifiche e rifiniture non urgenti.
   const actions: NextAction[] = [];
   const plural = (k: number, one: string, many: string) => (k === 1 ? one : many);
+  const push = (a: Omit<NextAction, 'priority'>) => actions.push({ ...a, priority: a.tier <= 2 ? 'alta' : a.tier === 3 ? 'media' : 'bassa' });
   if (trip.stops.length === 0) {
-    actions.push({ id: 'start', priority: 'alta', text: "Costruisci l'itinerario: fatti proporre un percorso da rivedere, oppure aggiungi le tappe a mano.", href: '#/configuratore', cta: 'Crea una proposta automatica', secondary: { href: '#/pianifica', cta: 'Aggiungi le tappe a mano' } });
-  } else if (!inTarget) {
-    actions.push({
-      id: 'length',
-      priority: 'alta',
-      text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}. Aggiungi o togli notti.`,
-      href: '#/pianifica',
-      cta: 'Modifica le notti',
-      brief: 'sistema la durata del viaggio',
+    push({
+      id: 'start',
+      tier: 1,
+      text: "Costruisci l'itinerario: fatti proporre un percorso da rivedere, oppure aggiungi le tappe a mano.",
+      why: 'Senza tappe non si possono calcolare tempi, alloggi e costi.',
+      href: '#/configuratore',
+      cta: 'Crea una proposta automatica',
+      secondary: { href: '#/pianifica', cta: 'Aggiungi le tappe a mano' },
     });
   }
+
+  // 1. Trasferimenti
+  const transfers = dayTransfers(trip, days);
+  const limit = trip.settings.maxTravelMinPerDay;
+  const over = transfers.filter((d) => d.state === 'oltre');
+  const firstOverLeg = over[0]?.legs[0];
+  if (firstOverLeg) {
+    push({
+      id: 'over-limit',
+      tier: 1,
+      text: `${over.length} ${plural(over.length, 'giornata di trasferimento supera', 'giornate di trasferimento superano')} il limite di ${formatDuration(limit)} al giorno che hai impostato. Controlla ${plural(over.length, 'il tratto', 'i tratti')} o aggiungi una tappa intermedia.`,
+      why: 'Una giornata così lunga in viaggio con due bambini rischia di far saltare il resto del programma.',
+      href: `#/pianifica?sel=leg%3A${encodeURIComponent(firstOverLeg.legId)}`,
+      cta: plural(over.length, 'Controlla il trasferimento', 'Controlla i trasferimenti'),
+      brief: `controlla ${over.length} ${plural(over.length, 'trasferimento oltre il limite', 'trasferimenti oltre il limite')}`,
+    });
+  }
+  const unknown = transfers.filter((d) => d.state === 'non_verificabile');
   if (uncalculatedLegs.length > 0) {
-    actions.push({
+    push({
       id: 'legs',
-      priority: 'alta',
-      text: `Calcola ${uncalculatedLegs.length} ${plural(uncalculatedLegs.length, 'collegamento', 'collegamenti')}: senza, tempi e carico delle giornate sono incompleti.`,
+      tier: 1,
+      text: `Calcola ${uncalculatedLegs.length} ${plural(uncalculatedLegs.length, 'collegamento', 'collegamenti')}${unknown.length > 0 ? `: ${unknown.length} ${plural(unknown.length, 'giornata non è verificabile', 'giornate non sono verificabili')} rispetto al limite` : ''}.`,
+      why: 'Senza i tempi non si può dire se le giornate restano entro il limite, e il carico dei giorni è incompleto.',
       href: '#/pianifica?azione=calcola',
       cta: 'Calcola i tratti',
       brief: `calcola ${uncalculatedLegs.length} ${plural(uncalculatedLegs.length, 'tratto', 'tratti')}`,
     });
   }
   if (shipLegsMissing.length > 0) {
-    actions.push({
+    push({
       id: 'ship',
-      priority: 'alta',
+      tier: 1,
       text: `Collega la nave a ${shipLegsMissing.length} ${plural(shipLegsMissing.length, 'tratto', 'tratti')} con notte a bordo.`,
+      why: 'Senza la nave quei tratti non hanno orari né tempi: le giornate collegate non sono verificabili.',
       href: '#/crociere',
       cta: 'Apri le crociere',
       brief: 'collega la nave ai tratti con notte a bordo',
     });
   }
-  // Trasferimenti oltre il limite impostato: tempi realistici dei tratti calcolati
-  const limit = trip.settings.maxTravelMinPerDay;
-  const overLimit = days.filter((d) => d.legs.length > 0 && d.realisticTravelMin > limit);
-  const firstOverLeg = overLimit[0]?.legs[0];
-  if (firstOverLeg) {
-    actions.push({
-      id: 'over-limit',
-      priority: 'alta',
-      text: `${overLimit.length} ${plural(overLimit.length, 'giornata di trasferimento supera', 'giornate di trasferimento superano')} il limite di ${formatDuration(limit)} al giorno che hai impostato. Controlla ${plural(overLimit.length, 'il tratto', 'i tratti')} o aggiungi una tappa intermedia.`,
-      href: `#/pianifica?sel=leg%3A${encodeURIComponent(firstOverLeg.id)}`,
-      cta: plural(overLimit.length, 'Controlla il trasferimento', 'Controlla i trasferimenti'),
-      brief: `controlla ${overLimit.length} ${plural(overLimit.length, 'trasferimento oltre il limite', 'trasferimenti oltre il limite')}`,
+  const noDuration = unknown.flatMap((d) => d.missing).filter((m) => m.reason === 'durata di un mezzo non inserita');
+  if (noDuration[0]) {
+    push({
+      id: 'durations',
+      tier: 1,
+      text: `Inserisci la durata di ${noDuration.length} ${plural(noDuration.length, 'tratto', 'tratti')} con treno, nave o altri mezzi (${noDuration[0].from} → ${noDuration[0].to}${noDuration.length > 1 ? ' e altri' : ''}).`,
+      why: 'Un tempo mancante non vale zero: finché manca, la giornata non è verificabile.',
+      href: `#/pianifica?sel=leg%3A${encodeURIComponent(noDuration[0].legId)}`,
+      cta: 'Apri il tratto',
+      brief: 'inserisci le durate mancanti',
     });
   }
-  const over = heavyDays.filter((h) => h.level === 'eccessiva');
-  if (over.length > 0) {
-    actions.push({
-      id: 'heavy',
-      priority: 'alta',
-      text: `${over.length} ${plural(over.length, 'giornata troppo carica', 'giornate troppo cariche')} per due bambini: guarda le proposte per alleggerire.`,
-      href: '#/giornate',
-      cta: 'Vedi le giornate',
-      brief: 'alleggerisci le giornate troppo cariche',
+  if (trip.stops.length > 0 && !inTarget) {
+    push({
+      id: 'length',
+      tier: 1,
+      text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}. Aggiungi o togli notti.`,
+      why: 'Le date di voli e alloggi dipendono dalla durata: conviene fissarla prima di prenotare.',
+      href: '#/pianifica',
+      cta: 'Modifica le notti',
+      brief: 'sistema la durata del viaggio',
     });
   }
-  const noBed = lodging.filter((l) => !l.accommodation).length;
-  // Tappe senza alloggio: una sola azione che distingue la scelta (pianificazione) dal costo (budget)
-  if (noBed > 0) {
-    const tappe = `${noBed} ${plural(noBed, 'tappa', 'tappe')} con pernottamento`;
+
+  // 2. Informazioni essenziali da confermare prima della partenza
+  if (unverifiedCrossings.length > 0) {
+    const stale = unverifiedCrossings.filter((c) => c.state === 'da_ricontrollare').length;
+    push({
+      id: 'crossings',
+      tier: 2,
+      text: `Verifica orari di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto, nave o mezzo pubblico', 'traghetti, navi o mezzi pubblici')} sul sito dell'operatore${stale > 0 ? ` (${stale} da ricontrollare)` : ''}.`,
+      why: 'Un orario sbagliato fa perdere la coincidenza: verificato non vuol dire prenotato, ma serve saperlo prima di partire.',
+      href: '#/prenotazioni?verifica=da_fare',
+      cta: 'Apri le verifiche',
+      brief: 'verifica orari di traghetti e altri mezzi',
+    });
+  }
+  const bookedWithTentative = lodging.filter((l) => l.status === 'prenotata').length;
+  if (trip.dateTentative && bookedWithTentative > 0) {
+    push({
+      id: 'booked-tentative',
+      tier: 2,
+      text: `${bookedWithTentative} ${plural(bookedWithTentative, 'alloggio risulta prenotato', 'alloggi risultano prenotati')} ma le date del viaggio sono ancora provvisorie: controlla che coincidano.`,
+      why: 'Una prenotazione con date diverse dal viaggio va corretta con il fornitore.',
+      href: '#/panoramica?sezione=date',
+      cta: 'Controlla le date',
+      brief: 'controlla le date delle prenotazioni',
+    });
+  }
+
+  // 3. Prenotazioni necessarie ancora mancanti
+  const flights = trip.flights ?? [];
+  const missingFlights = trip.stops.length > 0 ? (['andata', 'ritorno'] as const).filter((d) => !flights.some((f) => f.selected && f.direction === d)) : [];
+  if (missingFlights.length > 0) {
+    push({
+      id: 'flights',
+      tier: 3,
+      text: missingFlights.length === 2 ? 'Scegli i voli di andata e ritorno.' : `Scegli il volo di ${missingFlights[0]}.`,
+      why: 'I voli fissano le date del viaggio: alloggi e traghetti dipendono da loro.',
+      href: '#/voli',
+      cta: 'Apri i voli',
+      brief: 'scegli i voli',
+    });
+  }
+  const noBed = lodging.filter((l) => !l.accommodation || l.status === 'annullata');
+  if (noBed.length > 0) {
+    const tappe = `${noBed.length} ${plural(noBed.length, 'tappa', 'tappe')} con pernottamento`;
     const cov = budget.unchosenLodgingCoverage;
-    actions.push({
+    push({
       id: 'beds',
-      priority: 'media',
+      tier: 3,
       text:
         cov === 'nessuna'
           ? `Scegli l'alloggio per ${tappe}. Costo da quantificare: non è ancora nel budget.`
           : cov === 'stima'
             ? `Scegli l'alloggio per ${tappe}. Nel budget per ora c'è la tua stima per notte.`
             : `Scegli l'alloggio per ${tappe}. Nel budget ci sono voci manuali di alloggio: controlla che coprano queste tappe.`,
-      href: `#/hytte?tappa=${encodeURIComponent(lodging.find((l) => !l.accommodation)!.stopId)}`,
+      why: 'In agosto gli alloggi per quattro persone si esauriscono presto.',
+      href: `#/hytte?tappa=${encodeURIComponent(noBed[0]!.stopId)}&cerca=1`,
       cta: 'Cerca gli alloggi',
       brief: 'completa gli alloggi delle tappe',
       secondary: cov === 'stima' ? undefined : { href: '#/budget', cta: cov === 'nessuna' ? 'Stima nel budget' : 'Controlla il budget' },
     });
   }
-  const bookedWithTentative = lodging.filter((l) => l.status === 'prenotata').length;
-  if (trip.dateTentative && bookedWithTentative > 0) {
-    actions.push({
-      id: 'booked-tentative',
-      priority: 'alta',
-      text: `${bookedWithTentative} ${plural(bookedWithTentative, 'alloggio risulta prenotato', 'alloggi risultano prenotati')} ma le date del viaggio sono ancora provvisorie: controlla che coincidano.`,
-      href: '#/panoramica?sezione=date',
-      cta: 'Controlla le date',
-      brief: 'controlla le date delle prenotazioni',
+
+  // 4. Verifiche e rifiniture non urgenti
+  const overLoad = heavyDays.filter((h) => h.level === 'eccessiva');
+  if (overLoad.length > 0) {
+    push({
+      id: 'heavy',
+      tier: 4,
+      text: `${overLoad.length} ${plural(overLoad.length, 'giornata troppo carica', 'giornate troppo cariche')} per due bambini: guarda le proposte per alleggerire.`,
+      why: 'Attività e trasferimenti insieme superano il tempo attivo di una giornata con i bambini.',
+      href: '#/giornate',
+      cta: 'Vedi le giornate',
+      brief: 'alleggerisci le giornate troppo cariche',
     });
   }
   if (lodgingUnchecked > 0) {
-    actions.push({
+    push({
       id: 'availability',
-      priority: 'media',
-      text: `Verifica la disponibilità di ${lodgingUnchecked} ${plural(lodgingUnchecked, 'alloggio scelto', 'alloggi scelti')} sul sito del fornitore: scelto non vuol dire prenotato.`,
-      href: '#/hytte',
-      cta: 'Apri gli alloggi',
+      tier: 4,
+      text: `Verifica la disponibilità di ${lodgingUnchecked} ${plural(lodgingUnchecked, 'alloggio scelto', 'alloggi scelti')} sul sito del fornitore: individuato non vuol dire disponibile né prenotato.`,
+      why: 'Finché non è controllata, la disponibilità per le vostre date è solo un\'ipotesi.',
+      href: '#/prenotazioni?verifica=da_fare',
+      cta: 'Apri le verifiche',
       brief: 'verifica la disponibilità degli alloggi scelti',
     });
   }
-  if (unverifiedCrossings.length > 0) {
-    actions.push({
-      id: 'crossings',
-      priority: 'media',
-      text: `Verifica orari e stato di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto, nave o mezzo pubblico', 'traghetti, navi o mezzi pubblici')} sul sito dell'operatore.`,
-      href: '#/prenotazioni',
-      cta: 'Apri le prenotazioni',
-      brief: 'verifica orari di traghetti e altri mezzi',
-    });
-  }
-  // Costi senza prezzo diversi dagli alloggi non scelti (già nell'azione sopra): es. alloggio scelto senza prezzo, traghetto
   const otherMissing = missingPrices.length - (budget.unchosenLodgingCoverage === 'nessuna' ? budget.unchosenLodging.length : 0);
   if (otherMissing > 0) {
-    actions.push({
+    push({
       id: 'prices',
-      priority: 'media',
+      tier: 4,
       text: `${otherMissing} ${plural(otherMissing, 'costo noto non ha', 'costi noti non hanno')} ancora un prezzo: il totale li esclude.`,
+      why: 'Un prezzo mancante non vale zero: il totale del budget è parziale.',
       href: '#/budget',
       cta: 'Apri il budget',
       brief: 'inserisci i prezzi mancanti',
     });
   }
-  const full = heavyDays.length - over.length;
+  const full = heavyDays.length - overLoad.length;
   if (full > 0) {
-    actions.push({
+    push({
       id: 'full',
-      priority: 'bassa',
+      tier: 4,
       text: `${full} ${plural(full, 'giornata piena', 'giornate piene')}: tieni un piano B leggero.`,
+      why: 'Con i bambini serve un margine per stanchezza e maltempo.',
       href: '#/giornate',
       cta: 'Vedi le giornate',
       brief: 'tieni un piano B per le giornate piene',
     });
   }
   if (trip.dateTentative) {
-    actions.push({ id: 'dates', priority: 'bassa', text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`, href: '#/panoramica?sezione=date', cta: 'Imposta le date', brief: 'fissa le date quando i voli sono decisi' });
+    push({
+      id: 'dates',
+      tier: 4,
+      text: `Le date sono provvisorie (partenza ipotizzata ${formatDateIt(trip.startDate)}): fissale quando i voli sono decisi.`,
+      why: 'Le date provvisorie spostano tutte le giornate se cambiano.',
+      href: '#/panoramica?sezione=date',
+      cta: 'Imposta le date',
+      brief: 'fissa le date quando i voli sono decisi',
+    });
   }
 
-  // Prima le priorità alte; a parità di priorità resta l'ordine logico delle decisioni (sort stabile)
-  const rank = { alta: 0, media: 1, bassa: 2 } as const;
-  actions.sort((a, b) => rank[a.priority] - rank[b.priority]);
+  // Ordine per livello; a parità di livello resta l'ordine logico (sort stabile)
+  actions.sort((a, b) => a.tier - b.tier);
 
   return {
     period: n > 0 ? { start: trip.startDate, end: addDays(trip.startDate, n - 1), tentative: trip.dateTentative } : undefined,
@@ -411,8 +484,12 @@ export function tripOverview(trip: Trip): TripOverview {
  * Non ripete la stessa questione: dopo i trasferimenti oltre il limite non propone le giornate troppo cariche che ne derivano.
  */
 export function planStep(o: Pick<TripOverview, 'actions'>): { main?: NextAction; then?: string } {
+  // Il prossimo passo per chi ha già tappe non è «inizia»: quello lo mostra la panoramica vuota
   const [main, ...rest] = o.actions;
   if (!main) return {};
   const after = rest.find((a) => a.brief && !(main.id === 'over-limit' && a.id === 'heavy'));
   return { main, then: after?.brief };
 }
+
+/** Prossimo passo del viaggio: la stessa risposta in ogni schermata. */
+export const nextStep = (trip: Trip) => planStep(tripOverview(trip));

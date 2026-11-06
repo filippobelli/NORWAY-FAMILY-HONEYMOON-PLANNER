@@ -40,8 +40,8 @@ test('Prossimo passo: i trasferimenti oltre il limite vengono prima degli allogg
   assert.match(main!.text, /2 giornate di trasferimento superano il limite di 2 h/);
   assert.equal(parseRoute(main!.href).view, 'pianifica');
   assert.equal(parseRoute(main!.href).params.sel, `leg:${t.legs[0]!.id}`);
-  // Dopo non torna sulla stessa questione: va agli alloggi
-  assert.equal(then, 'completa gli alloggi delle tappe');
+  // Dopo non torna sulla stessa questione: passa alle prenotazioni mancanti (prima i voli, che fissano le date)
+  assert.equal(then, 'scegli i voli');
 });
 
 test('Prossimo passo: ogni azione porta alla schermata dove si completa, senza indirizzi vecchi', () => {
@@ -62,9 +62,12 @@ test('Prenotazioni: ogni elemento ha uno stato e una destinazione; gli alloggi d
   });
   const withAcc = { ...t, stops: t.stops.map((s, i) => ({ ...s, accommodationId: ['h1', 'h2', 'h3', undefined][i] })) };
   const rows = bookingsOverview(withAcc).rows.filter((r) => r.group === 'alloggi');
-  assert.deepEqual(rows.map((r) => r.state), ['prenotato', 'opzionato', 'da_verificare', 'da_completare']);
+  assert.deepEqual(rows.map((r) => r.booking), ['prenotato', 'opzionato', 'individuato', 'da_cercare']);
+  // Individuata: non prenotata e disponibilità da verificare, due informazioni distinte
+  assert.equal(rows[2]!.info?.state, 'da_verificare');
   assert.equal(parseRoute(rows[3]!.href).view, 'hytte');
   assert.equal(parseRoute(rows[3]!.href).params.tappa, 'd');
+  assert.equal(parseRoute(rows[3]!.href).params.cerca, '1');
 });
 
 test('Prenotazioni: voli mancanti da completare, alternative non contate come scelte, nessun volo richiesto a viaggio vuoto', () => {
@@ -72,21 +75,22 @@ test('Prenotazioni: voli mancanti da completare, alternative non contate come sc
   const t = tripWith([stop('a', 'Bergen', 2), stop('b', 'Oslo', 0)], { flights: [flight({ id: 'f1', priceStatus: 'pagato' }), flight({ id: 'f2', direction: 'ritorno', selected: false })] });
   const o = bookingsOverview(t);
   const fl = o.rows.filter((r) => r.group === 'voli');
-  assert.equal(fl.find((r) => r.id === 'volo-f1')?.state, 'prenotato');
-  assert.equal(fl.find((r) => r.id === 'volo-f2')?.state, 'opzionato');
-  assert.equal(fl.find((r) => r.id === 'volo-mancante-ritorno')?.state, 'da_completare');
+  assert.equal(fl.find((r) => r.id === 'volo-f1')?.booking, 'prenotato');
+  assert.equal(fl.find((r) => r.id === 'volo-f2')?.booking, 'individuato');
+  assert.equal(fl.find((r) => r.id === 'volo-mancante-ritorno')?.booking, 'da_cercare');
   assert.equal(fl.find((r) => r.id === 'volo-mancante-andata'), undefined);
-  assert.equal(o.counts.da_completare, o.rows.filter((r) => r.state === 'da_completare').length);
-  assert.equal(o.first?.state, 'da_completare');
+  assert.equal(o.bookingCounts.da_cercare, o.rows.filter((r) => r.booking === 'da_cercare').length);
 });
 
-test('Prenotazioni: un traghetto stimato è da verificare, uno confermato non risulta prenotato', () => {
+test('Prenotazioni: un traghetto con orario verificato non risulta prenotato', () => {
   const t0 = tripWith([stop('a', 'Bergen', 2), stop('b', 'Flåm', 2)]);
   const ferry = (status: 'stimato' | 'confermato' | 'pagato'): Leg['segments'][number] => ({ id: `s-${status}`, mode: 'traghetto', label: 'Traghetto X', status, costStatus: 'da_verificare' });
-  const run = (status: 'stimato' | 'confermato' | 'pagato') => bookingsOverview({ ...t0, legs: t0.legs.map((l) => ({ ...l, segments: [ferry(status)] })) }).rows.find((r) => r.group === 'trasporti')?.state;
-  assert.equal(run('stimato'), 'da_verificare');
-  assert.equal(run('confermato'), 'opzionato');
-  assert.equal(run('pagato'), 'prenotato');
+  const run = (status: 'stimato' | 'confermato' | 'pagato') => bookingsOverview({ ...t0, legs: t0.legs.map((l) => ({ ...l, segments: [ferry(status)] })) }).rows.find((r) => r.group === 'trasporti');
+  assert.equal(run('stimato')?.booking, 'non_prenotato');
+  assert.equal(run('stimato')?.info?.state, 'da_verificare');
+  assert.equal(run('confermato')?.booking, 'non_prenotato');
+  assert.equal(run('confermato')?.info?.state, 'verificata');
+  assert.equal(run('pagato')?.booking, 'prenotato');
 });
 
 // ---------- Revisione della proposta ----------

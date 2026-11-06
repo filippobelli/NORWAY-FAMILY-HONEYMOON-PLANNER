@@ -11,6 +11,8 @@ import { flightPending, removeFlightFromRoute } from '../domain/placement';
 import { useTrip } from '../state/store';
 import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { FlightDialog } from './PlacementDialog';
+import { flightInfo } from '../domain/verification';
+import { InfoBadge, VerificationControl } from './Verification';
 
 const DIRECTION: Record<FlightDirection, string> = { andata: 'Andata', ritorno: 'Ritorno', interno: 'Volo interno' };
 
@@ -266,7 +268,7 @@ export function FlightsView() {
                       ) : (
                         <span className="warn-text small">Prezzo mancante</span>
                       )}{' '}
-                      <StatusBadge status={f.priceStatus} />
+                      <StatusBadge status={f.priceStatus} /> <InfoBadge info={flightInfo(f, trip.settings)} what="Orario" />
                     </div>
                     <div className="fl-row">
                       {(!f.selected || flightPending(trip, f)) && (
@@ -454,6 +456,7 @@ function FlightForm({ value, onSave, onCancel }: { value: Flight; onSave: (f: Fl
         </div>
 <Field label="Note">{(id) => <textarea id={id} rows={2} value={f.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
       </details>
+      <VerificationControl what="Orario e prezzo" info={flightInfo(f)} value={f.verification} onChange={(v) => set({ verification: v })} />
       <div className="row">
         <button className="btn btn-primary" disabled={!ok} onClick={() => onSave({ ...f, fromAirport: f.fromAirport.trim(), toAirport: f.toAirport.trim() })}>
           Salva volo

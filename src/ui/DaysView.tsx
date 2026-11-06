@@ -1,7 +1,6 @@
-import { restorePlanOnly } from '../domain/actuals';
 import { useEffect, useMemo, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
-import { applySuggestion, computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
+import { computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
 import { assumptions, computeDays, formatDateIt, formatDuration, legSummary, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
@@ -11,6 +10,10 @@ import { useTrip } from '../state/store';
 import { OfficialLink } from './OfficialLink';
 import { Badge, Empty, Field, fmtMoney, ModeIcon, MoneyInput, NumberInput, StatusSelect } from './common';
 import { Icon } from './icons';
+import { SuggestionDialog } from './DraftDialogs';
+import { dayTransfer, DAY_STATE_LABEL, missingText } from '../domain/dayTransfer';
+import { activityInfo } from '../domain/verification';
+import { VerificationControl } from './Verification';
 
 const emptyDay = (): DayPlan => ({ activities: [], notes: '', planB: '' });
 
@@ -22,12 +25,14 @@ const LEVEL_LABEL: Record<DayLoad['level'], { label: string; tone: 'ok' | 'info'
 };
 
 export function DaysView() {
-  const { trip, update, toast } = useTrip();
+  const { trip } = useTrip();
   const days = useMemo(() => computeDays(trip), [trip]);
   const loads = useMemo(() => computeDayLoads(trip, days), [trip, days]);
   const suggestions = useMemo(() => suggestAlternatives(trip), [trip]);
   const orphans = useMemo(() => orphanDayKeys(trip), [trip]);
   const a = assumptions(trip.settings);
+  // Le proposte sono bozze: si applicano solo dopo aver visto l'impatto
+  const [proposal, setProposal] = useState<Suggestion | null>(null);
   // Dall'Itinerario si arriva sulla giornata che si stava guardando
   useEffect(() => {
     const wanted = parseRoute(window.location.hash).params.giorno;
@@ -42,17 +47,14 @@ export function DaysView() {
     );
 
   const apply = (sg: Suggestion) => {
-    if (!sg.action) return;
-    const action = sg.action;
-    const before = trip;
-    update((t) => applySuggestion(t, action));
-    toast('Proposta applicata', 'ok', { label: 'Annulla', run: () => update((cur) => restorePlanOnly(cur, before)) });
+    if (sg.action) setProposal(sg);
   };
 
   const counts = loads.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.level]: (acc[l.level] ?? 0) + 1 }), {});
 
   return (
     <div className="days">
+      {proposal && <SuggestionDialog suggestion={proposal} onClose={() => setProposal(null)} />}
       <p className="muted small">
         Qui organizzi attività, carico e proposte per alleggerire. Tappe, notti e trasferimenti si cambiano nell'<a href="#/pianifica">Itinerario</a>, che mostra gli stessi giorni in forma compatta.
       </p>
@@ -192,6 +194,7 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
 
   const from = day.legs[0] ? trip.stops.find((s) => s.id === day.legs[0]!.fromStopId) : undefined;
   const lv = LEVEL_LABEL[load.level];
+  const transfer = dayTransfer(trip, day);
   const factors = loadFactors(trip, day, load);
   const heavy = load.level === 'piena' || load.level === 'eccessiva';
   // Il riquadro compare se la giornata è piena o se un fattore da solo la rende faticosa (es. tratto non calcolato)
@@ -220,6 +223,13 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
         </div>
       </header>
 
+      {transfer.state !== 'nessuno' && (
+        <p className={`small day-transfer is-${transfer.state}`}>
+          <strong>Trasferimenti: {DAY_STATE_LABEL[transfer.state].toLowerCase()}</strong>
+          {transfer.knownMin > 0 && ` · tempi noti circa ${formatDuration(transfer.knownMin)} su ${formatDuration(transfer.limitMin)}`}
+          {transfer.missing.length > 0 && ` · manca: ${missingText(transfer.missing)}`}
+        </p>
+      )}
       <div className="load-bar" aria-label={`Carico: ${lv.label}, ${describeLoad(load)}`}>
         <span className={`load-fill load-${load.level}`} style={{ width: `${Math.min(100, Math.round(load.ratio * 100))}%` }} />
       </div>
@@ -350,6 +360,9 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
               </button>
               {dest?.officialUrl && <OfficialLink id={dest.id} />}
               {dest?.augustNote && <span className="note-warn small"><Icon name="warning" /> {dest.augustNote}</span>}
+              <div className="activity-verify">
+                <VerificationControl what="Orari e apertura" info={activityInfo(a, trip.settings)} value={a.verification} onChange={(v) => setAct(a.id, { verification: v })} />
+              </div>
             </li>
           );
         })}

@@ -72,6 +72,54 @@ function readHash(): ViewId {
   return parseRoute(window.location.hash).view;
 }
 
+/** Sul telefono la barra in basso tiene quattro aree; Budget, Modalità viaggio e Impostazioni stanno in «Altro». */
+function PhoneMore({ current, onTravel }: { current?: string; onTravel: () => void }) {
+  const ref = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const close = (e: Event) => {
+      const d = ref.current;
+      if (!d?.open) return;
+      if (e instanceof KeyboardEvent ? e.key === 'Escape' : !d.contains(e.target as Node)) {
+        d.open = false;
+        if (e instanceof KeyboardEvent) d.querySelector<HTMLElement>('summary')?.focus();
+      }
+    };
+    const onHash = () => {
+      if (ref.current) ref.current.open = false;
+    };
+    document.addEventListener('pointerdown', close);
+    document.addEventListener('keydown', close);
+    window.addEventListener('hashchange', onHash);
+    return () => {
+      document.removeEventListener('pointerdown', close);
+      document.removeEventListener('keydown', close);
+      window.removeEventListener('hashchange', onHash);
+    };
+  }, []);
+  const active = current === 'budget' || current === undefined;
+  return (
+    <details className={`tab-more ${active ? 'active' : ''}`} ref={ref}>
+      <summary aria-label="Altre sezioni">
+        <span className="tab-icon">
+          <Icon name="menu" />
+        </span>
+        <span className="tab-label">Altro</span>
+      </summary>
+      <div className="tab-more-menu">
+        <a href="#/budget" aria-current={current === 'budget' ? 'page' : undefined}>
+          <Icon name="wallet" /> Budget
+        </a>
+        <a href="#/t/oggi" onClick={onTravel}>
+          <Icon name="phone" /> Modalità viaggio
+        </a>
+        <a href="#/impostazioni" aria-current={current === undefined ? 'page' : undefined}>
+          <Icon name="gear" /> Impostazioni ed esportazioni
+        </a>
+      </div>
+    </details>
+  );
+}
+
 export default function App() {
   return (
     <TripProvider>
@@ -259,7 +307,7 @@ function Shell() {
           <FlagMark />
         </span>
         {SECTIONS.map((s) => (
-          <a key={s.id} href={`#/${s.home}`} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
+          <a key={s.id} href={`#/${s.home}`} data-section={s.id} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>
             <span className="tab-icon">
               <Icon name={s.icon} />
             </span>
@@ -272,6 +320,7 @@ function Shell() {
           </span>
           <span className="tab-label">Modalità viaggio</span>
         </a>
+        <PhoneMore current={section?.id} onTravel={() => setMode('travel')} />
       </nav>
       {section?.subnav && (
         <nav className="subtabs" aria-label={`Viste di ${section.label}`}>

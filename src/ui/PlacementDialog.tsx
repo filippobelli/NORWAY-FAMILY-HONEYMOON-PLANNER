@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { restorePlanOnly } from '../domain/actuals';
 import { formatDateIt, totalNights } from '../domain/itinerary';
 import {
@@ -21,17 +21,34 @@ import { Field, NumberInput } from './common';
 import { Icon } from './icons';
 import { AUTO_ROUTE_KEY } from './ConfiguratorView';
 
+/**
+ * Dialogo modale nativo: lo sfondo diventa inerte (il focus resta nel dialogo), Esc chiude, il focus va al primo
+ * controllo e alla chiusura torna dove era prima.
+ */
 export function Modal({ title, onClose, children, className }: { title: string; onClose: () => void; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
     const d = ref.current;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (d && !d.open) d.showModal();
-    return () => d?.close();
+    // Primo controllo del contenuto, non il pulsante di chiusura: è quello che serve per proseguire
+    const first = d?.querySelector<HTMLElement>('.dialog-body input, .dialog-body select, .dialog-body textarea, .dialog-body button, .dialog-body a[href]');
+    (first ?? d?.querySelector<HTMLElement>('.dialog-close'))?.focus();
+    return () => {
+      d?.close();
+      if (opener?.isConnected) opener.focus();
+    };
   }, []);
   return (
-    <dialog ref={ref} className={`place-dialog ${className ?? ''}`} aria-label={title} onCancel={onClose}>
-      <h2>{title}</h2>
-      {children}
+    <dialog ref={ref} className={`place-dialog ${className ?? ''}`} aria-labelledby={titleId} onCancel={(e) => { e.preventDefault(); onClose(); }}>
+      <div className="dialog-head">
+        <h2 id={titleId}>{title}</h2>
+        <button type="button" className="icon-btn dialog-close" aria-label="Chiudi" onClick={onClose}>
+          <Icon name="close" />
+        </button>
+      </div>
+      <div className="dialog-body">{children}</div>
     </dialog>
   );
 }

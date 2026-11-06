@@ -2962,9 +2962,10 @@ details summary {
   position: absolute;
   left: 8px;
   top: 8px;
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: #fff;
-  background: rgb(0 0 0 / 45%);
+  /* Leggibile anche su foto chiare: con il 75% di nero il bianco resta sopra 4,5:1 */
+  background: rgb(0 0 0 / 75%);
   padding: 1px 6px;
   border-radius: 4px;
   pointer-events: none;
@@ -4187,7 +4188,12 @@ h2[tabindex='-1']:focus-visible {
     min-width: 0;
   }
   .tabs .tab-label {
-    font-size: 0.68rem;
+    font-size: 0.78rem;
+  }
+  /* Quattro aree più «Altro»: etichette leggibili, nessuna compressa */
+  .tabs a[data-section='budget'],
+  .tabs a.tab-travel {
+    display: none;
   }
   .versions-menu {
     position: fixed;
@@ -4202,4 +4208,306 @@ h2[tabindex='-1']:focus-visible {
   .versions-label strong {
     max-width: 180px;
   }
+}
+
+/* ---------- Prossimo passo condiviso ---------- */
+.next-step {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blu);
+  border-radius: var(--radius);
+}
+.next-step > div {
+  flex: 1 1 360px;
+  min-width: 0;
+}
+.next-step p {
+  margin: 0;
+}
+.next-step.tier-1,
+.next-step.tier-2 {
+  border-left-color: var(--rosso);
+}
+.next-step.is-ok {
+  border-left-color: var(--blu);
+  background: var(--regione);
+}
+.next-step-kicker {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondario);
+}
+.next-step.tier-1 .next-step-kicker,
+.next-step.tier-2 .next-step-kicker {
+  color: var(--rosso-testo);
+}
+.next-step-text {
+  font-weight: 600;
+  margin-top: 4px !important;
+}
+.next-step-why,
+.next-step-where {
+  margin-top: 4px !important;
+  color: var(--ink-2);
+}
+.next-step.is-compact {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  flex: 1 1 auto;
+}
+.plan-status .next-step.is-compact {
+  width: 100%;
+}
+
+/* ---------- Verifica, separata dalla prenotazione ---------- */
+.info-badge .badge {
+  white-space: normal;
+}
+.verification {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--linea-forte);
+  border-radius: 8px;
+}
+.verification .more-fields summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.activity-verify {
+  flex-basis: 100%;
+}
+.bk-legend {
+  display: grid;
+  gap: 4px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-radius: 8px;
+}
+.bk-legend p {
+  margin: 0;
+}
+.bk-filter-label {
+  align-self: center;
+  min-width: 92px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.bk-todo {
+  margin-top: 2px;
+}
+.bk-annullato,
+.bk-da_cercare {
+  border-left-color: var(--rosso);
+}
+
+/* ---------- Dialoghi ---------- */
+.dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  position: sticky;
+  top: -18px;
+  z-index: 6;
+  margin: -18px -18px 8px;
+  padding: 14px 18px 8px;
+  background: var(--surface);
+}
+.dialog-head h2 {
+  margin: 0;
+}
+.dialog-close {
+  flex: none;
+}
+.place-dialog.drawer .drawer-actions {
+  top: 40px;
+}
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  border: 2px solid var(--linea);
+  border-top-color: var(--blu);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}
+.map-overlay {
+  gap: 8px;
+}
+
+/* ---------- Alloggi ---------- */
+.hytte-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.hytte-head p {
+  margin: 0;
+  flex: 1 1 320px;
+}
+.search-for {
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: var(--regione);
+  border-radius: 8px;
+}
+.search-summary {
+  margin: 4px 0 0;
+}
+.place-dialog h3 {
+  margin: 16px 0 6px;
+  font-size: 1rem;
+}
+
+/* ---------- Giornate e tappe intermedie ---------- */
+.day-transfer {
+  margin: 4px 0;
+}
+.day-transfer.is-oltre {
+  color: var(--rosso-testo);
+}
+.break-list {
+  display: grid;
+  gap: 6px;
+}
+.break-list .chip {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* ---------- Esportazioni e meteo ---------- */
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.export-grid article {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.export-grid h3,
+.export-grid p {
+  margin: 0;
+}
+.exports {
+  margin-bottom: 16px;
+}
+.weather h2 {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ---------- Telefono: «Altro» nella barra in basso ---------- */
+.tab-more {
+  display: none;
+}
+@media (max-width: 760px) {
+  .tab-more {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+  }
+  .tab-more > summary {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 100%;
+    padding: 8px 2px 6px;
+    color: var(--bianco);
+    cursor: pointer;
+    border-top: 3px solid transparent;
+    font-weight: 500;
+  }
+  .tab-more > summary::-webkit-details-marker {
+    display: none;
+  }
+  .tab-more.active > summary,
+  .tab-more[open] > summary {
+    background: var(--bianco);
+    color: var(--blu);
+  }
+  .tab-more-menu {
+    position: fixed;
+    right: 8px;
+    bottom: calc(70px + env(safe-area-inset-bottom));
+    display: grid;
+    min-width: 240px;
+    padding: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-float);
+  }
+  .tab-more-menu a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    color: var(--blu);
+    text-decoration: none;
+    border-radius: 8px;
+  }
+  .tab-more-menu a[aria-current='page'] {
+    background: var(--regione);
+    font-weight: 600;
+  }
+}
+
+.export-grid article > .btn,
+.export-grid article > .row {
+  justify-self: start;
+}
+.export-grid .check {
+  white-space: normal;
+}
+@media (max-width: 760px) {
+  .tabs .tab-label,
+  .tab-more .tab-label {
+    font-size: 0.875rem;
+  }
+}
+.map-overlay .btn {
+  align-self: center;
+  width: auto;
 }

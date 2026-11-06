@@ -17,7 +17,7 @@ export const BUDGET_CATEGORIES: { id: BudgetCategory; label: string }[] = [
 ];
 
 export const STATUS_LABEL: Record<DataStatus, string> = {
-  confermato: 'Confermato da fonte',
+  confermato: 'Verificato sulla fonte',
   stimato: 'Stimato',
   da_verificare: 'Da verificare',
   prenotato: 'Prenotato',

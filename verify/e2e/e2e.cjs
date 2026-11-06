@@ -1,112 +1,270 @@
-const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
-const http = require('http'); const fs = require('fs'); const path = require('path');
-const ROOT = require('path').resolve(__dirname, '../../dist-local');
-const OUT = process.argv[2];
-const srv = http.createServer((req, res) => { res.setHeader('Content-Type','text/html; charset=utf-8'); res.end(fs.readFileSync(path.join(ROOT,'index.html'))); }).listen(4173);
-const log = []; const fail = (m) => { console.log('FAIL:', m); process.exitCode = 1; };
-const ok = (m) => console.log('OK:', m);
+// Percorso completo nel browser sulla build di produzione (dist/), con servizi esterni simulati.
+// Copre i criteri di rilascio: verifica ≠ prenotazione, prossimo passo coerente, tempi non verificabili, ricerca alloggi
+// unica, errori di mappa e percorsi, bozze non applicate, esportazioni, pacchetto offline, tastiera e 375 px.
+// Uso: npm run build && node verify/e2e/e2e.cjs [cartella-output]
+const fs = require('fs');
+const path = require('path');
+const { serve, launch, context, ok, fail, check, results } = require('./serve.cjs');
+
+const OUT = path.resolve(process.argv[2] || path.join(__dirname, 'out'));
+fs.mkdirSync(OUT, { recursive: true });
+const PORT = 4181;
+const BASE = `http://localhost:${PORT}/`;
+
+// Percorsi OSRM finti: linea retta con 40 punti; oltre 80 km un traghetto a metà strada
+function osrm(url, mode) {
+  if (mode === 'errore') return { status: 503, body: '{}' };
+  const m = /driving\/([\d.-]+),([\d.-]+);([\d.-]+),([\d.-]+)/.exec(url);
+  const [lng1, lat1, lng2, lat2] = m.slice(1).map(Number);
+  const km = Math.hypot((lat2 - lat1) * 111, (lng2 - lng1) * 55);
+  const pts = (a, b) => Array.from({ length: 20 }, (_, i) => [a[0] + ((b[0] - a[0]) * i) / 19, a[1] + ((b[1] - a[1]) * i) / 19]);
+  const mid = [(lng1 + lng2) / 2, (lat1 + lat2) / 2];
+  const drive = (a, b, d) => ({ mode: 'driving', distance: d * 1000, duration: (d / 55) * 3600, geometry: { coordinates: pts(a, b) } });
+  const steps =
+    km > 80
+      ? [drive([lng1, lat1], mid, km * 0.65), { mode: 'ferry', distance: 6000, duration: 1500, name: 'Test ferje', geometry: { coordinates: [mid, mid] } }, drive(mid, [lng2, lat2], km * 0.65)]
+      : [drive([lng1, lat1], [lng2, lat2], km * 1.3)];
+  return { status: 200, body: JSON.stringify({ code: 'Ok', routes: [{ distance: 1, duration: 1, legs: [{ steps }] }] }) };
+}
+
+const stored = (p) => p.evaluate(() => JSON.parse(localStorage.getItem('nfhp.trip.v1') || '{}'));
+const overflow = (p) => p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+
 (async () => {
-  const b = await chromium.launch({ args: ['--no-sandbox'] });
-  const ctx = await b.newContext({ viewport: { width: 1360, height: 900 }, locale: 'it-IT' });
+  const srv = serve(PORT);
+  const browser = await launch();
+  const ctx = await context(browser, { viewport: { width: 1440, height: 900 } });
   const p = await ctx.newPage();
-  p.on('console', (m) => { if (m.type() === 'error') log.push(m.text()); });
-  p.on('pageerror', (e) => log.push('PAGEERROR ' + e.message));
-  p.on('dialog', (d) => d.accept());
-  await p.route('**/unpkg.com/**', (r) => r.abort());
-  await p.route(/openstreetmap.org\/|arcgisonline/, (r) => r.abort());
+  const errors = [];
+  p.on('pageerror', (e) => errors.push(e.message));
+  p.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  let routing = 'ok';
   let osrmCalls = 0;
-  await p.route('**/routing.openstreetmap.de/**', (r) => { osrmCalls++; r.fulfill({ contentType: 'application/json', body: JSON.stringify({ code: 'Ok', routes: [{ distance: 1, duration: 1, legs: [{ steps: [
-    { mode: 'driving', distance: 120000, duration: 7200, geometry: { coordinates: [[5.3,60.4],[6,60.7]] } },
-    { mode: 'ferry', distance: 6000, duration: 1500, name: 'Test ferje', geometry: { coordinates: [[6,60.7],[6.2,60.8]] } },
-    { mode: 'driving', distance: 50000, duration: 3000, geometry: { coordinates: [[6.2,60.8],[7.1,60.86]] } } ] }] }] }) }); });
-  await p.route('**/overpass-api.de/**', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ elements: [
-    { type: 'node', id: 11, lat: 60.87, lon: 7.12, tags: { tourism: 'chalet', name: 'Test Hytte Fjord', website: 'https://example.org' } },
-    { type: 'node', id: 12, lat: 60.86, lon: 7.10, tags: { tourism: 'camp_site', name: 'Test Camping' } } ] }) }));
+  await ctx.route(/supabase\.co/, (r) => r.abort());
+  await ctx.route(/unpkg\.com|tiles\.openfreemap|openstreetmap\.org\/|arcgisonline|tile\./, (r) => r.abort());
+  await ctx.route(/open-meteo/, (r) => r.abort());
+  await ctx.route(/routing\.openstreetmap\.de/, (r) => {
+    osrmCalls++;
+    const res = osrm(r.request().url(), routing);
+    return r.fulfill({ status: res.status, contentType: 'application/json', body: res.body });
+  });
+  await ctx.route(/overpass|nominatim/, (r) =>
+    r.fulfill({ contentType: 'application/json', body: JSON.stringify({ elements: [{ type: 'node', id: 11, lat: 62.1, lon: 7.2, tags: { tourism: 'chalet', name: 'Test Hytte Fjord', website: 'https://example.org' } }] }) }),
+  );
+  await p.addInitScript(() => {
+    if (!sessionStorage.getItem('e2e-init')) {
+      localStorage.clear();
+      localStorage.setItem('nfhp.ui.mode', 'planning');
+      sessionStorage.setItem('e2e-init', '1');
+    }
+  });
 
-  await p.goto('http://localhost:4173/#/itinerario');
-  await p.waitForSelector('text=Tappe');
-  (await p.textContent('.save-state')).includes('Salvato solo qui') ? ok('stato salvataggio dichiarato') : fail('stato salvataggio');
-  await p.waitForSelector('.map-error', { timeout: 20000 }).then(() => ok('mappa: errore gestito senza bloccare l\'app')).catch(() => fail('overlay errore mappa'));
+  // 1. Viaggio vuoto: un'azione iniziale consigliata e un'alternativa distinta
+  await p.goto(BASE + '#/panoramica');
+  await p.waitForSelector('.ov-start');
+  check((await p.locator('.ov-start-card.is-recommended a.btn-primary').count()) === 1 && (await p.locator('.ov-start-card:not(.is-recommended) a.btn').count()) === 1, 'viaggio vuoto: proposta consigliata e costruzione manuale distinte');
 
-  const add = async (q) => { await p.fill('input[aria-label="Cerca località"]', q); await p.click('.suggestions button >> nth=0'); };
-  await add('Bergen'); await add('Flåm'); await add('Geiranger');
-  const n = await p.locator('.stops > li').count(); n === 3 ? ok('3 tappe aggiunte') : fail('tappe ' + n);
-  await p.click('.stops > li:nth-child(1) [aria-label="Una notte in più"]');
-  await p.click('.stops > li:nth-child(2) [aria-label="Una notte in più"]');
-  await p.click('.stops > li:nth-child(2) [aria-label="Una notte in più"]');
-  (await p.locator('text=Collegamento non calcolato').count()) === 2 ? ok('2 tratti non calcolati') : fail('tratti non calcolati');
-  await p.click('text=Calcola tratti mancanti');
-  await p.waitForSelector('text=Calcolati 2 tratti', { timeout: 15000 }).then(() => ok('calcolo tratti')).catch(() => fail('calcolo tratti'));
-  const sum = await p.textContent('.stops > li:nth-child(1) .leg-summary');
-  /170 km su strada/.test(sum) && /1 traghetto/.test(sum) ? ok('tratto: km strada separati dal traghetto → ' + sum.trim()) : fail('summary ' + sum);
-  osrmCalls === 2 ? ok('2 chiamate routing (throttle)') : fail('osrm calls ' + osrmCalls);
-  await p.screenshot({ path: OUT + '/1-itinerario.png', fullPage: true });
+  // 2. Costruzione manuale e tempi non verificabili prima del calcolo
+  await p.goto(BASE + '#/pianifica');
+  const add = async (q) => {
+    await p.fill('input[aria-label="Cerca località"]', q);
+    await p.click('.suggestions button >> nth=0');
+  };
+  for (const q of ['Bergen', 'Flåm', 'Geiranger', 'Ålesund']) await add(q);
+  await p.click('.segmented button:has-text("Giorni")');
+  const tl = await p.textContent('.timeline');
+  check(/non verificabile/.test(tl) && !/entro il limite/i.test(tl), 'giornate con tratti non calcolati: «non verificabile», mai «entro il limite»');
+  const step1 = await p.textContent('.plan-status .next-step-text');
+  check(/Calcola 3 collegamenti/.test(step1), 'prossimo passo: calcolare i tratti', step1);
 
-  // Sposta tappa e verifica ricalcolo necessario
-  await p.click('.stops > li:nth-child(3) [aria-label="Sposta su"]');
-  (await p.locator('text=Collegamento non calcolato').count()) >= 1 ? ok('riordino: coppie nuove tornano non calcolate') : fail('riordino');
-  await p.click('.stops > li:nth-child(2) [aria-label="Sposta giù"]');
+  // 3. Calcolo dal prossimo passo: stato visibile, nessuno spinner che resta
+  await p.click('.plan-status .next-step a.btn-primary');
+  await p.waitForSelector('.toast:has-text("Calcolati 3 tratti")', { timeout: 20000 }).then(() => ok('calcolo dei tratti dal prossimo passo')).catch(() => fail('calcolo dei tratti'));
+  await p.waitForTimeout(300);
+  check((await p.locator('.plan-status .spinner').count()) === 0, 'nessun indicatore di calcolo rimasto acceso');
+  check(osrmCalls === 3, '3 richieste al servizio di percorsi', String(osrmCalls));
 
-  await p.click('a[href="#/giornate"]'); await p.waitForSelector('.day');
-  const days = await p.locator('.day').count(); days === 7 ? ok('7 giornate (2+3+1 notti +1)') : fail('giornate ' + days);
-  await p.screenshot({ path: OUT + '/2-giornate.png', fullPage: true });
+  // 4. Stesso prossimo passo in Itinerario, Panoramica e Prenotazioni
+  const read = async () => ({ text: (await p.textContent('.next-step-text'))?.trim(), href: await p.getAttribute('.next-step a.btn-primary', 'href') });
+  const inPlanner = await read();
+  await p.goto(BASE + '#/panoramica');
+  const inOverview = await read();
+  await p.goto(BASE + '#/prenotazioni');
+  const inBookings = await read();
+  check(inPlanner.text === inOverview.text && inOverview.text === inBookings.text && inPlanner.href === inBookings.href, 'prossimo passo identico in tre schermate', `${inPlanner.text} | ${inOverview.text} | ${inBookings.text}`);
+  check((await p.locator('.next-step').count()) === 1, 'una sola scheda di prossimo passo in Prenotazioni');
 
-  await p.click('a[href="#/crociere"]');
-  await p.click('text=+ Nuova opzione Hurtigruten');
-  await p.selectOption('section.form-panel select >> nth=2', 'Måløy');
-  await p.fill('section.form-panel input[type=number] >> nth=0', '9');
-  const priceInput = p.locator('section.form-panel .money input').first(); await priceInput.fill('640');
-  await p.click('text=Salva opzione');
-  await p.click('text=Includi nel budget');
-  (await p.locator('.row-selected').count()) === 1 ? ok('opzione costiera inclusa') : fail('costiera');
-  await p.screenshot({ path: OUT + '/3-costiera.png', fullPage: true });
+  // 5. Verifica ≠ prenotazione: il traghetto verificato resta «Non prenotato»
+  const ferryRow = p.locator('.bk-row', { hasText: 'Traghetto Test ferje' }).first();
+  check(/Non prenotato/.test(await ferryRow.textContent()) && /da verificare/i.test(await ferryRow.textContent()), 'traghetto: non prenotato, orario da verificare');
+  await ferryRow.locator('a.btn').click();
+  await p.waitForSelector('.ol-detail .verification');
+  await p.locator('.ol-detail .verification summary').first().click();
+  await p.locator('.ol-detail .verification button:has-text("Verificata oggi")').first().click();
+  await p.goto(BASE + '#/prenotazioni');
+  const ferryAfter = await p.locator('.bk-row', { hasText: 'Traghetto Test ferje' }).first().textContent();
+  check(/Non prenotato/.test(ferryAfter) && /Orario: verificata/.test(ferryAfter) && !/Prenotato\b(?!,)/.test(ferryAfter.replace('Non prenotato', '')), 'orario verificato: mostrato come verifica, non come prenotazione', ferryAfter);
 
-  await p.click('a[href="#/hytte"]');
-  await p.selectOption('select[aria-label="Tappa"]', { index: 2 });
-  await p.click('text=Cerca su OpenStreetMap');
-  await p.waitForSelector('text=Test Hytte Fjord');
-  await p.click('.osm-results li:has-text("Test Hytte Fjord") button');
-  await p.locator('.form-panel .money input').first().fill('1800');
-  const cur = p.locator('.form-panel .money select').first(); await cur.selectOption('NOK');
-  await p.click('.form-panel >> text=Salva');
-  (await p.locator('text=scelta').count()) >= 1 ? ok('hytte salvata e scelta per la tappa') : fail('hytte');
-  const ext = await p.locator('.ext-links a').count(); ext === 3 ? ok('3 link di ricerca esterni') : fail('ext ' + ext);
-  await p.screenshot({ path: OUT + '/4-hytte.png', fullPage: true });
+  // 6. Ricerca alloggi contestuale: un solo pannello già impostato sulla tappa
+  await p.click('.bk-row a[aria-label="Cerca: Geiranger"]');
+  await p.waitForSelector('dialog.drawer[open] .search-summary');
+  const summary = await p.textContent('dialog.drawer .search-summary');
+  check(/Geiranger/.test(summary) && /2 adulti e 2 bambini/.test(summary) && /raggio 15 km/.test(summary) && /dal /.test(summary), 'ricerca alloggi precompilata: tappa, date, persone, raggio', summary);
+  check((await p.locator('#hytte-search').count()) === 0, 'nessun secondo modulo di ricerca nella pagina');
+  await p.click('dialog.drawer button:has-text("Cerca entro")');
+  await p.waitForSelector('dialog.drawer .osm-results li');
+  check(/Sono ricerche: non confermano la disponibilità/.test(await p.textContent('dialog.drawer')), 'ricerche esterne dichiarate come non prenotazioni');
+  await p.keyboard.press('Escape');
+  check((await p.locator('dialog[open]').count()) === 0, 'Esc chiude il pannello di ricerca');
 
-  await p.click('a[href="#/budget"]');
-  const tot = await p.textContent('.kpi strong >> nth=0');
-  // hytte: 1800 NOK × 3 notti / 10.3885 (cambio iniziale) = 519.8 ; costiera 640 → 1160
-  /1\.?160/.test(tot) ? ok('budget totale ' + tot) : fail('budget ' + tot);
-  await p.screenshot({ path: OUT + '/5-budget.png', fullPage: true });
+  // 7. Mappa: caricamento, errore, Riprova; elenco utilizzabile
+  await p.goto(BASE + '#/pianifica');
+  await p.click('.segmented button:has-text("Mappa")');
+  await p.waitForSelector('.map-error', { timeout: 20000 });
+  check((await p.locator('.map-error button:has-text("Riprova")').count()) === 1, 'mappa non disponibile: messaggio e «Riprova»');
+  await p.click('.map-error button:has-text("Riprova")');
+  await p.waitForSelector('.map-overlay', { timeout: 3000 });
+  await p.waitForSelector('.map-error', { timeout: 20000 }).then(() => ok('Riprova rifà il caricamento e torna all\'errore senza restare bloccata')).catch(() => fail('Riprova mappa'));
+  await p.click('.ol-item.ol-stop:has-text("Flåm")');
+  check((await p.locator('.ol-detail').count()) === 1, 'senza mappa elenco e dettagli restano utilizzabili');
 
-  await p.reload(); await p.waitForSelector('.kpi'); await p.waitForTimeout(300);
-  const tot2 = await p.textContent('.kpi strong >> nth=0'); tot2 === tot ? ok('persistenza locale dopo ricarica') : fail('persistenza ' + tot2);
+  // 8. Errore del servizio di percorsi: messaggio, stima dichiarata, nessuno spinner
+  routing = 'errore';
+  await p.click('.ol-item.ol-leg >> nth=1');
+  await p.click('.ol-detail button:has-text("Ricalcola strada")');
+  await p.waitForSelector('.ol-detail [role=alert]:has-text("Calcolo non riuscito")', { timeout: 10000 }).then(() => ok('errore di calcolo mostrato nel tratto')).catch(() => fail('errore di calcolo'));
+  check((await p.locator('.ol-detail [role=status]:has-text("Calcolo del percorso in corso")').count()) === 0, 'dopo l\'errore il calcolo non resta «in corso»');
+  routing = 'ok';
 
-  await p.click('a[href="#/catalogo"]'); await p.waitForSelector('.card');
-  const cards = await p.locator('.card').count(); ok('catalogo schede: ' + cards);
-  await p.click('a[href="#/viaggio"]'); await p.waitForSelector('text=Backup su file');
-  (await p.locator('button[type=submit]:has-text("Accedi")').count()) === 1 ? ok('cloud configurato: form di accesso visibile') : fail('cloud');
+  // 9. Limite superato: bozza di tappa intermedia, nulla cambia fino alla conferma
+  await p.goto(BASE + '#/impostazioni');
+  await p.fill('#' + (await p.locator('label:has-text("Soglia trasferimenti")').getAttribute('for')), '90');
+  await p.waitForTimeout(600);
+  await p.goto(BASE + '#/pianifica');
+  const over = await p.textContent('.plan-status .next-step-text');
+  check(/superano il limite|supera il limite/.test(over), 'prossimo passo: trasferimenti oltre il limite', over);
+  await p.click('.plan-status .next-step a.btn-primary');
+  await p.waitForSelector('.ol-detail .leg');
+  const before = JSON.stringify((await stored(p)).stops);
+  const opener = p.locator('.ol-detail button:has-text("Cerca una tappa intermedia")');
+  await opener.click();
+  await p.waitForSelector('dialog[open]');
+  check(await p.evaluate(() => document.querySelector('dialog[open]').contains(document.activeElement)), 'dialogo: il focus entra nel dialogo');
+  await p.waitForTimeout(800);
+  check(JSON.stringify((await stored(p)).stops) === before, 'bozza della tappa intermedia: il viaggio non cambia prima della conferma');
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(200);
+  check((await p.locator('dialog[open]').count()) === 0, 'Esc chiude il dialogo');
+  check(await p.evaluate(() => document.activeElement?.textContent?.includes('Cerca una tappa intermedia')), 'chiuso il dialogo il focus torna al pulsante che lo ha aperto');
 
-  // Mobile
-  await p.setViewportSize({ width: 390, height: 844 });
-  await p.click('a[href="#/itinerario"]');
-  const overflow = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  overflow <= 0 ? ok('nessuno scroll orizzontale su mobile') : fail('overflow mobile ' + overflow);
-  await p.screenshot({ path: OUT + '/6-mobile.png', fullPage: false });
-  await p.click('a[href="#/budget"]');
-  const ov2 = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  ov2 <= 0 ? ok('budget mobile senza overflow') : fail('overflow budget ' + ov2);
-  await p.screenshot({ path: OUT + '/7-mobile-budget.png', fullPage: true });
+  // 10. Piano B: bozza, poi annulla
+  await p.click('.versions summary');
+  await p.click('.versions-menu button:has-text("Prepara un piano B")');
+  await p.locator('dialog[open] .planb-stops li >> nth=1').locator('button:has-text("Salta")').click();
+  check(JSON.stringify((await stored(p)).stops) === before, 'piano B: la bozza non modifica il viaggio');
+  await p.click('dialog[open] button.btn-ghost:has-text("Annulla")');
 
-  // Errore routing
-  await p.setViewportSize({ width: 1360, height: 900 });
-  await p.unroute('**/routing.openstreetmap.de/**');
-  await p.route('**/routing.openstreetmap.de/**', (r) => r.abort());
-  await p.click('a[href="#/itinerario"]');
-  await p.click('.stops > li:nth-child(1) .leg-head button');
-  await p.waitForSelector('[role=alert].error', { timeout: 10000 }).then(async () => ok('errore routing mostrato: ' + (await p.textContent('[role=alert].error')))).catch(() => fail('errore routing'));
+  // 11. Proposta automatica: revisione, conferma esplicita, attivazione
+  await p.goto(BASE + '#/configuratore');
+  await p.click('button:has-text("Crea la proposta da controllare")');
+  await p.waitForSelector('.proposal-review');
+  await p.waitForFunction(() => !/Calcolo dei percorsi stradali/.test(document.querySelector('.proposal-review [role=status]')?.textContent || ''), null, { timeout: 30000 });
+  check(JSON.stringify((await stored(p)).stops) === before, 'proposta in revisione: il viaggio attivo non cambia');
+  check(/Calcolato/.test(await p.textContent('.review-legend')) && /Stima di massima/.test(await p.textContent('.review-legend')), 'revisione: legenda calcolato / stimato / da verificare');
+  await p.click('button:has-text("Attiva questo itinerario")');
+  await p.waitForSelector('dialog[open]');
+  await p.keyboard.press('Escape');
+  check(JSON.stringify((await stored(p)).stops) === before, 'conferma annullata: nulla cambia');
+  await p.click('button:has-text("Attiva questo itinerario")');
+  const confirm = p.locator('dialog[open] button:has-text("Sì, attiva")');
+  if (await confirm.isDisabled()) await p.locator('dialog[open] .impact-confirm input').check();
+  await confirm.click();
+  await p.waitForSelector('.plan-status.is-activated');
+  check(/conservata tra le/.test(await p.textContent('.plan-status')), 'dopo l\'attivazione: la versione precedente è conservata');
 
-  const real = log.filter((l) => !/unpkg|ERR_FAILED|routing\.openstreetmap|Failed to load resource/.test(l));
-  real.length ? fail('console: ' + real.join(' | ')) : ok('nessun errore JS in console');
-  await b.close(); srv.close();
-})().catch((e) => { console.error(e); srv.close(); process.exit(1); });
+  // 12. Esportazioni con dati locali
+  await p.goto(BASE + '#/impostazioni?sezione=esporta');
+  const save = async (label, name) => {
+    const [d] = await Promise.all([p.waitForEvent('download'), p.click(`#esporta button:has-text("${label}")`)]);
+    const file = path.join(OUT, name);
+    await d.saveAs(file);
+    return fs.readFileSync(file);
+  };
+  const pdf = await save('Scarica il PDF', 'viaggio.pdf');
+  check(pdf.subarray(0, 8).toString('latin1') === '%PDF-1.4' && pdf.toString('latin1').trimEnd().endsWith('%%EOF'), 'PDF generato', `${pdf.length} byte`);
+  const ics = (await save('Scarica il calendario', 'viaggio.ics')).toString('utf8');
+  check(ics.startsWith('BEGIN:VCALENDAR') && /BEGIN:VEVENT/.test(ics) && /Ålesund|Geiranger/.test(ics), 'calendario .ics generato con accenti', `${(ics.match(/BEGIN:VEVENT/g) || []).length} eventi`);
+  const gpx = (await save('Scarica GPX', 'viaggio.gpx')).toString('utf8');
+  check(/<gpx version="1.1"/.test(gpx) && (gpx.match(/<wpt /g) || []).length >= 4 && /<trkpt/.test(gpx), 'GPX con tappe e tracciati');
+  const kml = (await save('Scarica KML', 'viaggio.kml')).toString('utf8');
+  check(/<kml/.test(kml) && /<Placemark>/.test(kml), 'KML con le tappe');
+  const html = (await save('Scarica il pacchetto offline', 'pacchetto-offline.html')).toString('utf8');
+  check(/Pacchetto offline creato il/.test(html) && /Giornate/.test(html) && !/<script/i.test(html), 'pacchetto offline autonomo, senza script');
+
+  // 13. Tastiera: ogni elemento raggiunto con Tab ha il focus visibile
+  await p.goto(BASE + '#/pianifica');
+  await p.click('body');
+  const invisible = [];
+  for (let i = 0; i < 40; i++) {
+    await p.keyboard.press('Tab');
+    const r = await p.evaluate(() => {
+      const el = document.activeElement;
+      if (!el || el === document.body) return null;
+      const s = getComputedStyle(el);
+      return { name: (el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 40), visible: s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0 };
+    });
+    if (r && !r.visible) invisible.push(r.name);
+  }
+  check(invisible.length === 0, 'tastiera: focus visibile su 40 tabulazioni', invisible.join(', '));
+  // Schede della tappa con le frecce
+  await p.click('.ol-item.ol-stop:has-text("Bergen")');
+  await p.focus('.stop-tabs [role=tab][aria-selected=true]');
+  await p.keyboard.press('ArrowRight');
+  await p.waitForTimeout(150);
+  check(await p.evaluate(() => document.activeElement?.getAttribute('aria-selected') === 'true' && document.activeElement?.textContent?.startsWith('Giornate')), 'schede della tappa: le frecce cambiano scheda e focus');
+
+  // 14. 375 px in pianificazione: niente overflow, barra in basso leggibile, «Altro»
+  await p.setViewportSize({ width: 375, height: 812 });
+  for (const v of ['panoramica', 'pianifica', 'prenotazioni', 'hytte', 'voli', 'crociere', 'giornate', 'budget', 'configuratore', 'catalogo', 'scenari', 'impostazioni']) {
+    await p.goto(BASE + '#/' + v);
+    await p.waitForTimeout(350);
+    const o = await overflow(p);
+    check(o <= 0, `375 px: ${v} senza scorrimento orizzontale`, `${o}px`);
+  }
+  const labels = await p.$$eval('.tabs a:visible .tab-label, .tab-more .tab-label', (els) => els.filter((e) => e.offsetParent).map((e) => parseFloat(getComputedStyle(e).fontSize)));
+  check(labels.length === 5 && labels.every((s) => s >= 12), 'barra in basso: 5 voci con etichette di almeno 12 px', labels.join(','));
+  const heights = await p.$$eval('.tabs > a, .tab-more > summary', (els) => els.filter((e) => e.offsetParent).map((e) => e.getBoundingClientRect().height));
+  check(heights.every((h) => h >= 44), 'barra in basso: controlli alti almeno 44 px', heights.map(Math.round).join(','));
+  await p.click('.tab-more summary');
+  check(await p.isVisible('.tab-more-menu a:has-text("Budget")'), '«Altro» apre Budget, Modalità viaggio e Impostazioni');
+  await p.keyboard.press('Escape');
+
+  // 15. Modalità viaggio a 375 px, anche senza rete
+  await p.click('.tab-more summary');
+  await p.click('.tab-more-menu a:has-text("Modalità viaggio")');
+  for (const v of ['t/oggi', 't/itinerario', 't/mappa', 't/diario', 't/altro']) {
+    await p.goto(BASE + '#/' + v);
+    await p.waitForTimeout(300);
+    const o = await overflow(p);
+    check(o <= 0, `modalità viaggio: ${v} senza scorrimento orizzontale`, `${o}px`);
+  }
+  await ctx.setOffline(true);
+  await p.goto(BASE + '#/t/oggi').catch(() => undefined);
+  await p.evaluate(() => window.dispatchEvent(new Event('offline')));
+  await p.waitForTimeout(300);
+  check(await p.isVisible('.travel-offline'), 'senza rete: avviso con ciò che funziona e ciò che no');
+  check(/(solo negli ultimi 16 giorni|Serve la rete|già passata)/.test((await p.textContent('.weather')) || ''), 'meteo: nessuna previsione inventata fuori intervallo o senza rete');
+  await p.goto(BASE + '#/t/altro').catch(() => undefined);
+  check(await p.isVisible('.exports button:has-text("Scarica il pacchetto offline")'), 'pacchetto offline disponibile in modalità viaggio');
+  await ctx.setOffline(false);
+  await p.screenshot({ path: path.join(OUT, 'mobile-altro.png') });
+
+  const real = errors.filter((e) => !/Failed to load resource|ERR_|net::|unpkg|openfreemap|Libreria mappa|Impossibile scaricare/.test(e));
+  check(real.length === 0, 'nessun errore JavaScript in console', real.join(' | '));
+  console.log(`\n${results.ok} OK, ${results.fail} FAIL · file in ${OUT}`);
+  await browser.close();
+  srv.close();
+})().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

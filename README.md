@@ -36,8 +36,7 @@ Altri comandi:
 | `npm test` | Test della logica (giornate, tratti, budget, rotta costiera, routing) |
 | `npm run lint` | ESLint |
 | `npm run build` | Controllo tipi + build di produzione in `dist/` |
-| `node verify/build-local.mjs` | Anteprima in un solo file HTML (`dist-local/index.html`) |
-| `node verify/e2e/e2e.cjs` · `sync.cjs` · `planning.cjs` · `a11y.cjs` | Test nel browser sull'anteprima (richiedono `npm i -D playwright` e `npx playwright install chromium`) |
+| `node verify/e2e/e2e.cjs` · `planning.cjs` · `sync.cjs` · `a11y.cjs` | Test nel browser sulla build in `dist/` (prima `npm run build`). Servono il pacchetto `playwright` (variabile `PLAYWRIGHT_PATH` se non è installato nel progetto) e Chrome (`CHROME_PATH`) o Chromium di Playwright. Servizi esterni simulati, Supabase mai contattato |
 
 ## Salvataggio cloud (Supabase)
 
@@ -69,6 +68,9 @@ Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Edi
 | unpkg.com (Leaflet 1.9.4) | Libreria mappa | Caricata al primo uso |
 | overpass-api.de + 2 mirror | Hytte e campeggi vicini | Servizio pubblico spesso sovraccarico |
 | Supabase (progetto `norway-planner`) | Login e salvataggio cloud | Email di conferma obbligatoria alla registrazione |
+| api.open-meteo.com | Previsione meteo della giornata, solo su richiesta | Gratuito per uso non commerciale, senza chiave, CC BY 4.0; solo nei 16 giorni prima |
+
+Esportazioni (PDF, calendario .ics, GPX, KML, pacchetto offline HTML) si generano sul dispositivo senza servizi esterni.
 
 Ogni servizio è isolato in `src/services/` e si può sostituire senza toccare le schermate.
 

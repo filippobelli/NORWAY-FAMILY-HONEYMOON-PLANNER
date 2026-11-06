@@ -21,6 +21,11 @@ import { getRoutingProvider, RoutingError } from '../services/routing';
 import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, ModeIcon, MODE_LABEL, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { Icon } from './icons';
+import { dayTransfer, DAY_STATE_LABEL, legTiming, missingText } from '../domain/dayTransfer';
+import { segmentInfo, INFO_STATE_LABEL } from '../domain/verification';
+import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
+import { BreakLegDialog } from './DraftDialogs';
+import { VerificationControl } from './Verification';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
@@ -73,7 +78,7 @@ export function useLegRouting() {
       await routeLeg(leg, trip, ac.signal);
       toast('Percorso calcolato');
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') toast((e as Error).message, 'errore');
+      if ((e as Error).name !== 'AbortError') toast('Calcolo non riuscito: il motivo è indicato nel tratto', 'errore');
     } finally {
       setBusy(null);
     }
@@ -111,7 +116,12 @@ export function useLegRouting() {
       }
     }
     setBusy(null);
-    toast(`Calcolati ${ok} tratti${ko ? `, ${ko} non riusciti` : ''}${skipped ? `, ${skipped} in nave da collegare` : ''}`, ko ? 'errore' : 'ok');
+    toast(
+      ko
+        ? `Calcolati ${ok} tratti, ${ko} non riusciti: per quelli resta la stima di massima, il motivo è nel tratto${skipped ? `; ${skipped} in nave da collegare` : ''}`
+        : `Calcolati ${ok} tratti${skipped ? `, ${skipped} in nave da collegare` : ''}`,
+      ko ? 'errore' : 'ok',
+    );
   };
 
   return { busy, abort, calcOne, calcAll };
@@ -197,7 +207,6 @@ export function StopPicker({ onAdd, onBrowse }: { onAdd: (s: Stop | undefined) =
 }
 
 export const shortDate = (iso: string) => new Date(iso).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
-const ACC_STATUS_LABEL = { individuata: 'individuata', disponibile: 'disponibile', opzionata: 'opzionata', prenotata: 'prenotata' } as const;
 
 export function StopCard({
   stop,
@@ -250,8 +259,8 @@ export function StopCard({
             ) : null}
             {stop.kind === 'luogo' && stop.nights > 0 &&
               (acc ? (
-                <Badge tone={acc.status === 'prenotata' ? 'ok' : 'info'}>
-                  <Icon name="bed" /> {acc.name} · {ACC_STATUS_LABEL[acc.status]}
+                <Badge tone={acc.status === 'prenotata' ? 'ok' : acc.status === 'annullata' ? 'warn' : 'info'}>
+                  <Icon name="bed" /> {acc.name} · {ACCOMMODATION_STATUS_LABEL[acc.status].toLowerCase()}
                 </Badge>
               ) : (
                 <Badge tone="warn"><Icon name="bed" /> Alloggio da scegliere</Badge>
@@ -358,7 +367,7 @@ export function StopLodgingSelect({ stop }: { stop: Stop }) {
           <option value="">— nessuno —</option>
           {accs.map((a) => (
             <option key={a.id} value={a.id}>
-              {a.name} ({a.status})
+              {a.name} ({ACCOMMODATION_STATUS_LABEL[a.status].toLowerCase()})
             </option>
           ))}
         </select>
@@ -373,7 +382,6 @@ const LEG_STATE: Record<LegState, string> = {
   manuale: 'Inserito a mano',
   misto: '✓ Calcolato + a mano',
 };
-const FIRM_STATUS = ['confermato', 'prenotato', 'pagato'];
 
 export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Leg; fromNum: number; day?: DayInfo; busy: boolean; onCalc: () => void; expanded?: boolean }) {
   const { trip, update } = useTrip();
@@ -384,6 +392,9 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
   const routable = isRoutableLeg(leg, trip.stops);
   const setLeg = (fn: (l: Leg) => Leg) => update((tr) => ({ ...tr, legs: tr.legs.map((l) => (l.id === leg.id ? fn(l) : l)) }));
   const [addMode, setAddMode] = useState<TransportMode | ''>('');
+  const [breaking, setBreaking] = useState(false);
+  const timing = legTiming(leg, trip);
+  const dt = day ? dayTransfer(trip, day) : undefined;
 
   const addSegment = (mode: TransportMode) => {
     const seg: Segment = { id: newId(), mode, label: MODE_LABEL[mode], status: 'da_verificare', costStatus: 'da_verificare' };
@@ -395,6 +406,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
   const hasParts = sum.roadKm > 0 || t.ferryCount > 0 || sum.otherMin > 0;
   return (
     <div className={`leg leg-${sum.state}`} aria-busy={busy}>
+      {breaking && <BreakLegDialog legId={leg.id} onClose={() => setBreaking(false)} />}
       <div className="leg-head">
         <span className="leg-line" aria-hidden />
         <div className="leg-summary">
@@ -459,7 +471,9 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
                   {s.durationMin !== undefined ? ` · ${formatDuration(s.durationMin)}` : <em> · durata da inserire</em>}
                   {s.waitMin !== undefined && ` + attesa ${formatDuration(s.waitMin)}`}
                   {s.mode !== 'strada' && (
-                    <em>{FIRM_STATUS.includes(s.status) ? (s.departureTime ? ` · ore ${s.departureTime}` : ' · confermato') : ' · orario da verificare'}</em>
+                    <em>
+                      {s.departureTime ? ` · ore ${s.departureTime}` : ' · orario non inserito'} · orario {INFO_STATE_LABEL[segmentInfo(s, trip.settings)?.state ?? 'da_verificare'].toLowerCase()}
+                    </em>
                   )}
                   <span className="seg-src">{isAutoSegment(s) ? 'calcolato' : 'inserito a mano'}</span>
                 </li>
@@ -476,7 +490,23 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
           )}
           {leg.routingError && (
             <span className="error small" role="alert">
-              {leg.routingError}
+              Calcolo non riuscito: {leg.routingError}
+              {timing.roughMin !== undefined && ` Stima di massima in linea d'aria: circa ${formatDuration(timing.roughMin)}, non usata nei totali.`}
+            </span>
+          )}
+          {busy && (
+            <span className="small" role="status">
+              Calcolo del percorso in corso…
+            </span>
+          )}
+          {dt && (dt.state === 'oltre' || dt.state === 'non_verificabile') && (
+            <span className={`small ${dt.state === 'oltre' ? 'warn-text' : ''}`}>
+              <strong>Giorno {dt.dayIndex + 1}: {DAY_STATE_LABEL[dt.state].toLowerCase()}</strong>
+              {dt.knownMin > 0 && ` · tempi noti circa ${formatDuration(dt.knownMin)} su ${formatDuration(dt.limitMin)}`}
+              {dt.missing.length > 0 && ` · manca: ${missingText(dt.missing)}`}{' '}
+              <button type="button" className="link-btn" onClick={() => setBreaking(true)}>
+                Cerca una tappa intermedia
+              </button>
             </span>
           )}
         </div>
@@ -547,7 +577,7 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
     <div className="segment">
       <div className="segment-head">
         <span>
-          <ModeIcon mode={seg.mode} /> <strong>{seg.label}</strong> <StatusBadge status={seg.status} />
+          <ModeIcon mode={seg.mode} /> <strong>{seg.label}</strong> {seg.mode === 'strada' && <StatusBadge status={seg.status} />}
         </span>
         <button className="icon-btn danger" aria-label="Rimuovi tratto" onClick={onRemove}>
           <Icon name="close" />
@@ -592,9 +622,11 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
           </Field>
         )}
         {seg.mode !== 'costiera' && (
-          <Field label="Stato costo">{(id) => <StatusSelect id={id} value={seg.costStatus} onChange={(v) => onChange({ costStatus: v })} />}</Field>
+          <Field label="Costo e prenotazione" hint="«Prenotato» o «Pagato» solo se hai il biglietto">
+            {(id) => <StatusSelect id={id} value={seg.costStatus} onChange={(v) => onChange({ costStatus: v })} />}
+          </Field>
         )}
-        <Field label="Stato dati">{(id) => <StatusSelect id={id} value={seg.status} onChange={(v) => onChange({ status: v })} />}</Field>
+        {seg.mode === 'strada' && <Field label="Affidabilità del dato">{(id) => <StatusSelect id={id} value={seg.status} onChange={(v) => onChange({ status: v })} />}</Field>}
         <Field label="Fonte (link)">
           {(id) => (
             <input
@@ -610,11 +642,15 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
           )}
         </Field>
       </div>
-      {seg.source && (
-        <p className="muted small">
-          Fonte: {seg.source.label}
-          {seg.source.checkedAt ? ` · ${fmtDateTime(seg.source.checkedAt)}` : ''}
-        </p>
+      {seg.mode !== 'strada' && segmentInfo(seg, trip.settings) ? (
+        <VerificationControl what="Orario" info={segmentInfo(seg, trip.settings)!} value={seg.verification} onChange={(v) => onChange({ verification: v })} />
+      ) : (
+        seg.source && (
+          <p className="muted small">
+            Fonte: {seg.source.label}
+            {seg.source.checkedAt ? ` · ${fmtDateTime(seg.source.checkedAt)}` : ''}
+          </p>
+        )
       )}
     </div>
   );

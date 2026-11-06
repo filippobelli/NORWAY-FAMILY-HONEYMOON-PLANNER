@@ -3,20 +3,17 @@ import { formatEur } from '../domain/budget';
 import { formatDateIt } from '../domain/itinerary';
 import { tripOverview, type NextAction, type StepState } from '../domain/overview';
 import type { AccommodationStatus } from '../domain/types';
-import { buildHash, parseRoute, placeOf } from '../state/route';
+import { buildHash, parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
+import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
+import { NextStepCard } from './NextStep';
 import { Badge, Field, NumberInput } from './common';
 import { Icon, type IconName } from './icons';
 
 const STEP_ICON: Record<StepState, IconName> = { fatto: 'check', in_corso: 'progress', da_fare: 'circle' };
 const STEP_TEXT: Record<StepState, string> = { fatto: 'Fatto', in_corso: 'In corso', da_fare: 'Da fare' };
 const PRIORITY_TEXT: Record<NextAction['priority'], string> = { alta: 'Priorità alta', media: 'Da sistemare', bassa: 'Rifinitura' };
-const ACC_TEXT: Record<AccommodationStatus, string> = {
-  individuata: 'Individuata',
-  disponibile: 'Disponibile',
-  opzionata: 'Opzionata',
-  prenotata: 'Prenotata',
-};
+const ACC_TEXT: Record<AccommodationStatus, string> = ACCOMMODATION_STATUS_LABEL;
 
 function fmtLongDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
@@ -140,27 +137,7 @@ export function OverviewView() {
           </div>
         </section>
       ) : (
-        top && (
-          <section className={`ov-next prio-${top.priority}`} aria-labelledby="ov-next-title">
-            <div>
-              <h2 id="ov-next-title" className="ov-prio">
-                Prossimo passo · {PRIORITY_TEXT[top.priority]}
-              </h2>
-              <p>{top.text}</p>
-              <p className="small ov-where">Si apre in: {placeOf(top.href)}</p>
-            </div>
-            <span className="row wrap">
-              <a className="btn btn-primary" href={top.href}>
-                {top.cta}
-              </a>
-              {top.secondary && (
-                <a className="btn btn-ghost" href={top.secondary.href}>
-                  {top.secondary.cta}
-                </a>
-              )}
-            </span>
-          </section>
-        )
+        <NextStepCard />
       )}
 
       <details className="panel ov-trip-form" ref={formRef} open={formOpen} onToggle={(e) => setFormOpen(e.currentTarget.open)}>
@@ -303,7 +280,7 @@ export function OverviewView() {
                         </span>
                       )}
                     </span>
-                    {l.status ? <Badge tone={l.status === 'prenotata' ? 'ok' : 'info'}>{ACC_TEXT[l.status]}</Badge> : <Badge tone="warn">Da scegliere</Badge>}
+                    {l.status ? <Badge tone={l.status === 'prenotata' ? 'ok' : l.status === 'annullata' ? 'warn' : 'neutral'}>{ACC_TEXT[l.status]}</Badge> : <Badge tone="warn">Da cercare</Badge>}
                   </li>
                 )}
               />
@@ -382,7 +359,7 @@ export function OverviewView() {
                   </div>
                 </dl>
                 {o.budget.total > 0 && <SplitBar firm={o.budget.firm} est={o.budget.estimated} ver={o.budget.toVerify} />}
-                <p className="muted small">«Certo» = confermato da fonte, prenotato o pagato.</p>
+                <p className="muted small">«Certo» = importo verificato sulla fonte, prenotato o pagato.</p>
               </>
             )}
             {o.budget.missingPrices.length > 0 && (

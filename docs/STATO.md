@@ -8,7 +8,23 @@ Ultimo audit: [AUDIT-2026-10-27.md](AUDIT-2026-10-27.md) (22 problemi, 18 risolt
 - **Itinerario** (`#/pianifica`) è l'unica destinazione per modificare il percorso: `#/itinerario` (ex «Tappe e mappa») è ora un alias. Proposta automatica, catalogo (anche in pannello laterale) e versioni si aprono da lì.
 - **Proposta automatica**: impostazioni → revisione (tempi calcolati, stimati e da verificare dichiarati, limite giornaliero, alloggi, orari) → conferma con confronto → attivazione. Salvare senza attivare è possibile. Attivando, il limite giornaliero della proposta diventa quello del viaggio.
 - **Prenotazioni** (`#/prenotazioni`): riepilogo unico con stato per elemento, derivato da `src/domain/bookings.ts`. Le schede restano in Voli, Crociere e Alloggi.
-- **Verifiche e2e**: `verify/e2e/*.cjs` usano ancora selettori della vecchia interfaccia (già prima di questo intervento) e vanno riallineati.
+- **Verifiche e2e**: riallineate il 06/11/2026 (vedi sotto).
+
+## Prenotazioni, verifiche, esportazioni (6 novembre 2026)
+
+- **Prenotazione e verifica separate** (`src/domain/verification.ts`, `src/domain/bookings.ts`). Ogni elemento ha uno stato di prenotazione (da cercare, individuato, opzionato, prenotato, annullato, non prenotato) e, se cambia nel tempo, una verifica (da verificare, verificata con data e fonte, da ricontrollare). Regola esplicita: dopo `settings.recheckAfterDays` giorni (predefinito 30, modificabile in Impostazioni) una verifica torna «da ricontrollare». Nuovo campo facoltativo `verification` su tratti, alloggi, attività, voli e crociere; nuovo stato alloggio `annullata`; campi facoltativi `address`, `phone`, `usefulInfo`.
+- **Nessuna migrazione**: `schemaVersion` resta 2. I viaggi salvati prima si leggono come prima: `status: 'confermato'` di un tratto vale «orario verificato» (data dalla fonte se c'è), l'alloggio `disponibile` vale «individuato, disponibilità verificata». Nessun dato viene riscritto finché l'utente non modifica. Nessuna modifica allo schema Supabase.
+- **Prossimo passo unico** (`nextStep` in `src/domain/overview.ts`): stessa card in Panoramica, Itinerario, Prenotazioni e dopo l'attivazione. Livelli: 1 trasferimenti oltre il limite o non verificabili, 2 orari da confermare, 3 prenotazioni mancanti, 4 rifiniture. Ogni azione ha «Perché adesso».
+- **Tempi incerti** (`src/domain/dayTransfer.ts`): calcolato / stima / da verificare / non disponibile. Un tempo mancante non vale zero: la giornata è «non verificabile», oppure «oltre il limite» se i tempi noti lo superano già.
+- **Tappe intermedie**: dal tratto o dalla giornata, bozze con luoghi del catalogo vicini al tracciato calcolato, tempi ricalcolati sulla bozza e conferma con l'impatto. Le proposte di alleggerimento in Giornate ora chiedono conferma; spostare una tappa che tocca prenotazioni o tappe già vissute chiede conferma.
+- **Ricerca alloggi**: un solo pannello laterale, già impostato su tappa, date, persone e raggio (`#/hytte?tappa=…&cerca=1`).
+- **Mappa e percorsi**: caricamento visibile, errore con «Riprova», errore di calcolo nel tratto con la stima in linea d'aria dichiarata (mai nei totali).
+- **Esportazioni** (Impostazioni e Modalità viaggio › Altro): PDF (generatore interno, senza dipendenze), calendario .ics (orari solo se inseriti, fuso Europe/Oslo uguale a quello italiano), GPX e KML, pacchetto offline HTML. Tutto sul dispositivo, senza rete. Mappe offline non disponibili.
+- **Meteo**: Open-Meteo (gratuito per uso non commerciale, senza chiave, CC BY 4.0, termini letti il 06/11/2026), solo su richiesta e solo nei 16 giorni prima della giornata. Avvisi ufficiali (MET Norway) non integrati: richiederebbero un proxy con identificazione.
+- **Accessibilità**: dialoghi con focus iniziale, contenimento nativo, Esc e ritorno del focus; schede della tappa con le frecce; barra in basso del telefono a 4 aree + «Altro» con etichette da 13 px.
+- **Verifiche nel browser** sulla build di produzione (`npm run build`), servizi esterni simulati e Supabase mai contattato: `e2e.cjs` (60 controlli), `planning.cjs` (16), `sync.cjs` (server Supabase finto, 16), `a11y.cjs` (17 viste × 2 larghezze, contrasto e dimensioni). `verify/build-local.mjs` resta per l'ambiente precedente e non è più necessario.
+
+## Punto di partenza
 
 ## Punto di partenza
 

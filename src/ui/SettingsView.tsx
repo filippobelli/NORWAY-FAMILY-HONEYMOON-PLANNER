@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createEmptyTrip } from '../domain/defaults';
 import { exportTripFile, readTripFile } from '../services/storage/local';
 import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, type CloudTripRow } from '../services/storage/supabase';
@@ -9,6 +9,9 @@ import { Badge, Field, fmtDateTime, NumberInput } from './common';
 import { LogoutDialog } from './SyncDialogs';
 import { RatesPanel } from './RatesPanel';
 import { OfflineInfo } from './SyncStatus';
+import { ExportsPanel } from './ExportsPanel';
+import { DEFAULT_RECHECK_DAYS } from '../domain/verification';
+import { parseRoute } from '../state/route';
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
@@ -27,8 +30,14 @@ export function SettingsView() {
     setMode(v === 'auto' ? undefined : v);
   };
 
+  // «Prepara le esportazioni» dal prossimo passo porta direttamente alla sezione
+  useEffect(() => {
+    if (parseRoute(window.location.hash).params.sezione === 'esporta') document.getElementById('esporta')?.scrollIntoView({ block: 'start' });
+  }, []);
+
   return (
     <div className="settings">
+      <ExportsPanel />
       <section className="panel">
         <h2>Preferenze</h2>
         <div className="grid-4">
@@ -48,6 +57,16 @@ export function SettingsView() {
                 value={trip.settings.maxTravelMinPerDay}
                 min={60}
                 onChange={(v) => v && update((t) => ({ ...t, settings: { ...t.settings, maxTravelMinPerDay: v } }))}
+              />
+            )}
+          </Field>
+          <Field label="Ricontrolla le verifiche dopo (giorni)" hint={`Orari e disponibilità controllati da più tempo diventano «Da ricontrollare». Predefinito ${DEFAULT_RECHECK_DAYS}.`}>
+            {(id) => (
+              <NumberInput
+                id={id}
+                value={trip.settings.recheckAfterDays ?? DEFAULT_RECHECK_DAYS}
+                min={1}
+                onChange={(v) => update((t) => ({ ...t, settings: { ...t.settings, recheckAfterDays: v && v > 0 ? Math.round(v) : undefined } }))}
               />
             )}
           </Field>
