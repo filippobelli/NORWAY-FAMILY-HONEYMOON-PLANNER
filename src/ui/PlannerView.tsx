@@ -32,6 +32,8 @@ import { BookingConfirm, ImpactView } from './PlanBDialog';
 import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
 import { dayTransfer, DAY_STATE_LABEL } from '../domain/dayTransfer';
 import { VersionsControl } from './VersionsControl';
+import { StopThingsSection } from './ThingsToDo';
+import { stopThings } from '../domain/thingsToDo';
 
 // Itinerario: unico spazio di lavoro per modificare il percorso. In alto il prossimo passo e la linea del viaggio,
 // sotto l'elenco con il dettaglio della selezione aperto in linea e, a destra, la mappa o i giorni, che restano fermi.
@@ -675,7 +677,7 @@ function TransferLine({ trip, day }: { trip: Trip; day: DayInfo }) {
   );
 }
 
-type StopTab = 'panoramica' | 'giornate' | 'alloggio' | 'costi' | 'note';
+type StopTab = 'panoramica' | 'cosafare' | 'giornate' | 'alloggio' | 'costi' | 'note';
 
 function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSelect: (s: Selection) => void; onClear: () => void; routing: ReturnType<typeof useLegRouting> }) {
   const { trip, update } = useTrip();
@@ -709,8 +711,11 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
     const prevLeg = i > 0 ? trip.legs.find((l) => l.toStopId === stop.id) : undefined;
     const nextLeg = i < trip.stops.length - 1 ? trip.legs.find((l) => l.fromStopId === stop.id) : undefined;
     const hasLodging = stop.kind === 'luogo' && stop.nights > 0;
+    const things = stopThings(trip, stop.id);
+    const thingsCount = things.ideas.length + things.planned.length + things.personal.length;
     const tabs: { id: StopTab; label: string }[] = [
       { id: 'panoramica', label: 'Panoramica' },
+      { id: 'cosafare', label: `Cosa fare${thingsCount ? ` (${thingsCount})` : ''}` },
       { id: 'giornate', label: `Giornate (${stopDays.length})` },
       ...(hasLodging ? [{ id: 'alloggio' as const, label: stop.accommodationId ? 'Alloggio ✓' : 'Alloggio' }] : []),
       { id: 'costi', label: 'Costi' },
@@ -777,6 +782,7 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
               </div>
             </>
           )}
+          {cur === 'cosafare' && <StopThingsSection stop={stop} onSelectDay={(k) => onSelect({ kind: 'day', id: k })} />}
           {cur === 'giornate' &&
             (stopDays.length === 0 ? (
               <p className="muted small">Sosta di passaggio: nessuna giornata in questa tappa.</p>

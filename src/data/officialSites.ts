@@ -24,6 +24,12 @@ export const OFFICIAL_SITES: Record<string, OfficialSite> = {
   // Musei e acquari
   'folkemuseum': { url: 'https://norskfolkemuseum.no/', kind: 'attrazione', via: 'Wikidata' },
   'fram': { url: 'https://frammuseum.no/', kind: 'attrazione', via: 'Wikidata' },
+  // Aperti e controllati il 06/11/2026 (risposta 200, pagina del museo)
+  'kontiki': { url: 'https://www.kon-tiki.no/', kind: 'attrazione', via: 'verifica manuale' },
+  'munch': { url: 'https://www.munch.no/', kind: 'attrazione', via: 'verifica manuale' },
+  'teknisk': { url: 'https://www.tekniskmuseum.no/', kind: 'attrazione', via: 'verifica manuale' },
+  'holmenkollen': { url: 'https://www.holmenkollen.com/', kind: 'attrazione', via: 'verifica manuale' },
+  'vigeland': { url: 'https://vigeland.museum.no/', kind: 'attrazione', via: 'verifica manuale' },
   'bergen-aquarium': { url: 'https://www.akvariet.no/', kind: 'attrazione', via: 'Wikidata' },
   'atlanterhavsparken': { url: 'https://www.atlanterhavsparken.no/', kind: 'attrazione', via: 'Wikidata' },
   'polaria': { url: 'https://polaria.no/', kind: 'attrazione', via: 'Wikidata' },

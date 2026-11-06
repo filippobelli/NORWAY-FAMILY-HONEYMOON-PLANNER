@@ -18,6 +18,7 @@ import { PlanBDialog } from './PlanBDialog';
 import { DataStatusCard } from './SyncStatus';
 import { ExportsPanel } from './ExportsPanel';
 import { WeatherCard } from './WeatherCard';
+import { ActivityPlaceLinks } from './ThingsToDo';
 
 // Travel Mode: stesso viaggio e stessi dati del Planning Mode, pensato per il telefono.
 
@@ -253,6 +254,7 @@ export function TodayScreen() {
               <li key={a.id} className={`t-row is-${state}`}>
                 <span>
                   {a.title || 'Attività'} <StateChip state={state} />
+                  {a.destinationId ? <ActivityPlaceLinks destinationId={a.destinationId} /> : <span className="small muted block">Attività personale</span>}
                 </span>
                 <span className="t-actions">
                   {state !== 'da_fare' ? (

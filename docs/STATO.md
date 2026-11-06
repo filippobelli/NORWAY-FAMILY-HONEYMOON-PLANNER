@@ -10,6 +10,12 @@ Ultimo audit: [AUDIT-2026-10-27.md](AUDIT-2026-10-27.md) (22 problemi, 18 risolt
 - **Prenotazioni** (`#/prenotazioni`): riepilogo unico con stato per elemento, derivato da `src/domain/bookings.ts`. Le schede restano in Voli, Crociere e Alloggi.
 - **Verifiche e2e**: riallineate il 06/11/2026 (vedi sotto).
 
+## Cosa fare per tappa (6 novembre 2026)
+
+- Scheda «Cosa fare» nel dettaglio della tappa: esplora musei e attrazioni (pannello laterale, a tutto schermo sul telefono) oppure aggiungi un'attività personale. Idee salvate in `stop.ideas`, visite pianificate come attività collegate alla scheda (`destinationId`), con conferma e carico del giorno prima di applicare.
+- Giornate: «Dal catalogo» e «Personale» distinti, scheda del luogo e indicazioni; i chip «+ luogo» sono sostituiti da «Esplora cosa fare a…». Oggi: scheda e indicazioni per le visite.
+- Schede di Oslo verificate sui siti ufficiali e su Wikidata il 06/11/2026: dettagli, fonti e regole in [ATTRAZIONI.md](ATTRAZIONI.md). Nessuna migrazione.
+
 ## Prenotazioni, verifiche, esportazioni (6 novembre 2026)
 
 - **Prenotazione e verifica separate** (`src/domain/verification.ts`, `src/domain/bookings.ts`). Ogni elemento ha uno stato di prenotazione (da cercare, individuato, opzionato, prenotato, annullato, non prenotato) e, se cambia nel tempo, una verifica (da verificare, verificata con data e fonte, da ricontrollare). Regola esplicita: dopo `settings.recheckAfterDays` giorni (predefinito 30, modificabile in Impostazioni) una verifica torna «da ricontrollare». Nuovo campo facoltativo `verification` su tratti, alloggi, attività, voli e crociere; nuovo stato alloggio `annullata`; campi facoltativi `address`, `phone`, `usefulInfo`.

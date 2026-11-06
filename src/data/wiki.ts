@@ -39,6 +39,12 @@ export const WIKI: Record<string, WikiRef> = {
   'flamsbana': { qid: 'Q402957', it: "Flåmsbana", en: "Flåm Line", image: ".00 1230 Flåmsbana und Bahnhof von Flåm, Norwegen.jpg" },
   'folkemuseum': { qid: 'Q937521', it: "Norsk Folkemuseum", en: "Norwegian Museum of Cultural History", image: "Norway Folk Museum - Street scene.jpg" },
   'fram': { qid: 'Q941250', it: "Museo Fram", en: "Fram Museum", image: "Fram Museum in Oslo.JPG" },
+  // Aggiunti il 06/11/2026: elemento e immagine principale (P18) letti su Wikidata; autore e licenza si leggono da Commons al momento
+  'kontiki': { qid: 'Q1415972', en: "Kon-Tiki Museum", image: "The Kon-Tiki Museum, Oslo.jpg" },
+  'munch': { qid: 'Q844926', en: "Munch Museum", image: "Munchmuseet Oslo JUN2019.jpg" },
+  'teknisk': { qid: 'Q7061184', en: "Norwegian Museum of Science and Technology", image: "Norsk Teknisk Museum TRS 070501 011.jpg" },
+  'holmenkollen': { qid: 'Q1633217', en: "Holmenkollen Ski Museum", image: "Holmenkollen with visitors centre.jpg" },
+  'vigeland': { qid: 'Q1126911', en: "Frogner Park", image: "Frognerpark water.jpg" },
   'geiranger': { qid: 'Q1019493', it: "Geiranger", en: "Geiranger", image: ".00 1262 Geiranger - Norway.jpg" },
   'geirangerfjord': { qid: 'Q193989', it: "Geirangerfjord", en: "Geirangerfjord", image: "Fiordo de Geiranger desde Flydalsjuvet, Noruega, 2019-09-07, DD 61.jpg" },
   'glacier-museum': { qid: 'Q2530322', it: "Museo dei ghiacciai", en: "Norwegian Glacier Museum", image: "Museo Glaciar Fjaerland.jpg" },

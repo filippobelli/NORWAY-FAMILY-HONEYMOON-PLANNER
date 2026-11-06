@@ -280,7 +280,8 @@ test('catalogo: identificativi unici, coordinate in Norvegia, fonti per le coord
     assert.ok(d.lat > 57.9 && d.lat < 71.3 && d.lng > 4.4 && d.lng < 31.3, `fuori dalla Norvegia: ${'name' in d ? d.name : ''}`);
   }
   for (const d of DESTINATIONS.filter((x) => x.coordsStatus === 'verificate')) {
-    assert.match(d.sources[0]?.url ?? '', /^https:\/\/www\.openstreetmap\.org\/(node|way|relation)\/\d+$/);
+    // Coordinate verificate su OpenStreetMap oppure, per le schede attrazioni, dalla proprietà P625 di Wikidata
+    assert.match(d.sources[0]?.url ?? '', /^https:\/\/(www\.openstreetmap\.org\/(node|way|relation)\/\d+|www\.wikidata\.org\/wiki\/Q\d+)$/);
   }
   assert.ok(DESTINATIONS.filter((x) => x.coordsStatus === 'verificate').length >= 60);
 });

@@ -4,6 +4,7 @@ import { addDays, computeDays, formatDateIt, formatDuration, totalDays } from '.
 import type { Trip } from './types';
 import { accommodationInfo, INFO_STATE_LABEL } from './verification';
 import { visibleDiary } from './actuals';
+import { DESTINATIONS } from '../data/destinations';
 
 // Riepilogo del viaggio in sezioni di testo: la stessa base per il PDF e per il pacchetto offline.
 // Contiene solo dati del viaggio aperto, così come sono stati inseriti: nessuna informazione inventata.
@@ -85,6 +86,7 @@ export function tripSummary(trip: Trip, opts: SummaryOptions = {}): TripSummary 
       lines: [
         s.nights === 0 ? 'Di passaggio, senza notti' : `${s.nights} ${s.nights === 1 ? 'notte' : 'notti'}${s.kind === 'a_bordo' ? ' a bordo' : ''}`,
         hasCoords(s) ? `Coordinate: ${coord(s.lat)}, ${coord(s.lng)}` : 'Coordinate non disponibili',
+        ...(s.ideas?.length ? [`Idee salvate (non pianificate): ${s.ideas.map((id) => DESTINATIONS.find((d) => d.id === id)?.name ?? id).join(', ')}`] : []),
         ...(s.notes ? [`Note: ${s.notes}`] : []),
         ...(s.weatherPlanB ? [`In caso di maltempo: ${s.weatherPlanB}`] : []),
       ],

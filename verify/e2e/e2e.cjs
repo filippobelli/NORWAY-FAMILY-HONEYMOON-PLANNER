@@ -221,7 +221,7 @@ const overflow = (p) => p.evaluate(() => document.documentElement.scrollWidth - 
   await p.focus('.stop-tabs [role=tab][aria-selected=true]');
   await p.keyboard.press('ArrowRight');
   await p.waitForTimeout(150);
-  check(await p.evaluate(() => document.activeElement?.getAttribute('aria-selected') === 'true' && document.activeElement?.textContent?.startsWith('Giornate')), 'schede della tappa: le frecce cambiano scheda e focus');
+  check(await p.evaluate(() => document.activeElement?.getAttribute('aria-selected') === 'true' && document.activeElement?.textContent?.startsWith('Cosa fare')), 'schede della tappa: le frecce cambiano scheda e focus');
 
   // 14. 375 px in pianificazione: niente overflow, barra in basso leggibile, «Altro»
   await p.setViewportSize({ width: 375, height: 812 });

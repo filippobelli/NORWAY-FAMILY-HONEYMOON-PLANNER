@@ -36,7 +36,7 @@ Altri comandi:
 | `npm test` | Test della logica (giornate, tratti, budget, rotta costiera, routing) |
 | `npm run lint` | ESLint |
 | `npm run build` | Controllo tipi + build di produzione in `dist/` |
-| `node verify/e2e/e2e.cjs` · `planning.cjs` · `sync.cjs` · `a11y.cjs` | Test nel browser sulla build in `dist/` (prima `npm run build`). Servono il pacchetto `playwright` (variabile `PLAYWRIGHT_PATH` se non è installato nel progetto) e Chrome (`CHROME_PATH`) o Chromium di Playwright. Servizi esterni simulati, Supabase mai contattato |
+| `node verify/e2e/e2e.cjs` · `planning.cjs` · `sync.cjs` · `a11y.cjs` · `cosafare.cjs` | Test nel browser sulla build in `dist/` (prima `npm run build`). Servono il pacchetto `playwright` (variabile `PLAYWRIGHT_PATH` se non è installato nel progetto) e Chrome (`CHROME_PATH`) o Chromium di Playwright. Servizi esterni simulati, Supabase mai contattato |
 
 ## Salvataggio cloud (Supabase)
 

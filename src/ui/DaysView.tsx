@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { DESTINATIONS, findDestination } from '../data/destinations';
+import { findDestination } from '../data/destinations';
 import { computeDayLoads, describeLoad, loadFactors, suggestAlternatives, type DayLoad, type Suggestion } from '../domain/dayLoad';
 import { newId } from '../domain/ids';
 import { assumptions, computeDays, formatDateIt, formatDuration, legSummary, orphanDayKeys, type DayInfo } from '../domain/itinerary';
 import type { Activity, DayPlan } from '../domain/types';
-import { haversineKm } from '../services/accommodation/search';
 import { parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
-import { OfficialLink } from './OfficialLink';
 import { Badge, Empty, Field, fmtMoney, ModeIcon, MoneyInput, NumberInput, StatusSelect } from './common';
 import { Icon } from './icons';
 import { SuggestionDialog } from './DraftDialogs';
+import { ActivityPlaceLinks, AttractionsDrawer } from './ThingsToDo';
+import { unplanActivity } from '../domain/thingsToDo';
 import { dayTransfer, DAY_STATE_LABEL, missingText } from '../domain/dayTransfer';
 import { activityInfo } from '../domain/verification';
 import { VerificationControl } from './Verification';
@@ -179,14 +179,12 @@ function OrphanDay({ dayKey, days }: { dayKey: string; days: DayInfo[] }) {
 }
 
 export function DayCard({ day, load, suggestions, onApply, expanded }: { day: DayInfo; load: DayLoad; suggestions: Suggestion[]; onApply: (sg: Suggestion) => void; expanded?: boolean }) {
-  const { trip, update } = useTrip();
+  const { trip, update, toast } = useTrip();
   const plan = trip.days[day.key] ?? emptyDay();
   const [title, setTitle] = useState('');
   const setPlan = (fn: (p: DayPlan) => DayPlan) => update((t) => ({ ...t, days: { ...t.days, [day.key]: fn(t.days[day.key] ?? emptyDay()) } }));
   const here = day.sleepStop ?? day.wakeStop;
-  const nearby = here
-    ? DESTINATIONS.filter((x) => x.category !== 'aeroporti' && haversineKm(x, here) < 60 && x.id !== here.destinationId).slice(0, 6)
-    : [];
+  const [exploring, setExploring] = useState(false);
   const addActivity = (a: Partial<Activity>) =>
     setPlan((p) => ({ ...p, activities: [...p.activities, { id: newId(), title: a.title ?? '', costStatus: 'da_verificare', ...a }] }));
   const setAct = (id: string, patch: Partial<Activity>) =>
@@ -342,6 +340,7 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
           const dest = findDestination(a.destinationId);
           return (
             <li key={a.id} className="activity">
+              <span className={`activity-kind ${a.destinationId ? 'is-catalog' : 'is-personal'}`}>{a.destinationId ? 'Dal catalogo' : 'Personale'}</span>
               <input aria-label="Attività" value={a.title} onChange={(e) => setAct(a.id, { title: e.target.value })} />
               <NumberInput
                 ariaLabel="Durata in minuti"
@@ -354,11 +353,17 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
               <button
                 className="icon-btn danger"
                 aria-label={`Rimuovi ${a.title || 'attività'}`}
-                onClick={() => setPlan((p) => ({ ...p, activities: p.activities.filter((x) => x.id !== a.id) }))}
+                onClick={() => {
+                  // Una visita dal catalogo tolta dal giorno torna tra le idee della tappa: la scheda non si perde
+                  if (a.destinationId && here) {
+                    update((t) => unplanActivity(t, here.id, a.id));
+                    toast(`${a.title || 'Visita'} tolta dal giorno: resta tra le idee di ${here.name}`);
+                  } else setPlan((p) => ({ ...p, activities: p.activities.filter((x) => x.id !== a.id) }));
+                }}
               >
                 <Icon name="close" />
               </button>
-              {dest?.officialUrl && <OfficialLink id={dest.id} />}
+              {a.destinationId && <ActivityPlaceLinks destinationId={a.destinationId} />}
               {dest?.augustNote && <span className="note-warn small"><Icon name="warning" /> {dest.augustNote}</span>}
               <div className="activity-verify">
                 <VerificationControl what="Orari e apertura" info={activityInfo(a, trip.settings)} value={a.verification} onChange={(v) => setAct(a.id, { verification: v })} />
@@ -385,16 +390,15 @@ export function DayCard({ day, load, suggestions, onApply, expanded }: { day: Da
           Aggiungi
         </button>
       </div>
-      {nearby.length > 0 && (
-        <div className="chips">
-          <span className="muted small">Nei dintorni (entro ~60 km in linea d'aria):</span>
-          {nearby.map((x) => (
-            <button key={x.id} className="chip" onClick={() => addActivity({ title: x.name, destinationId: x.id })} title={x.description}>
-              + {x.name}
-            </button>
-          ))}
-        </div>
+      {here && (
+        <p className="row wrap day-things">
+          <button type="button" className="btn btn-small" onClick={() => setExploring(true)}>
+            Esplora cosa fare a {here.name}
+          </button>
+          <span className="small muted">Musei e attrazioni con fonte e verifica: salvali come idee o pianificali qui, con conferma.</span>
+        </p>
       )}
+      {exploring && here && <AttractionsDrawer stopId={here.id} onClose={() => setExploring(false)} />}
       <details open={expanded}>
         <summary>Note e piano B {plan.activities.some((a) => a.cost) && `· ${plan.activities.filter((a) => a.cost).map((a) => fmtMoney(a.cost)).join(' + ')}`}</summary>
         <div className="grid-2">

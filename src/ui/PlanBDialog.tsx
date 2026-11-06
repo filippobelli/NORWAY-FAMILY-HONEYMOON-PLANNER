@@ -55,6 +55,7 @@ export function ImpactView({ i }: { i: PlanImpact }) {
       </ol>
       {i.route.removed.length > 0 && <p className="small place-removed">Tolte: {i.route.removed.map((r) => r.name).join(', ')}.</p>}
       {i.unassigned.length > 0 && <p className="small note-warn">Attività senza giornata (restano da ricollocare): {i.unassigned.join(', ')}.</p>}
+      {i.ideasLost.length > 0 && <p className="small note-warn">Idee salvate di tappe tolte (restano nella versione precedente): {i.ideasLost.join('; ')}.</p>}
       {(i.transport.added.length > 0 || i.transport.removed.length > 0) && (
         <p className="small">
           {i.transport.removed.length > 0 && `Mezzi che escono: ${i.transport.removed.join(', ')}. `}

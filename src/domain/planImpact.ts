@@ -39,6 +39,8 @@ export interface PlanImpact {
   budget: { before: number; after: number; rows: BudgetDelta[]; missingBefore: number; missingAfter: number };
   /** Dati che servono per giudicare e non sono disponibili */
   missing: string[];
+  /** Idee salvate delle tappe tolte */
+  ideasLost: string[];
   /** Serve la conferma aggiuntiva: l'app non annulla prenotazioni */
   needsBookingConfirm: boolean;
 }
@@ -135,6 +137,9 @@ export function planImpact(before: Trip, after: Trip): PlanImpact {
     }
   }
 
+  // Idee salvate per tappe che escono dal percorso: restano nella versione precedente, ma qui non ci sono più
+  const ideasLost = before.stops.filter((s) => !stillThere.has(s.id) && (s.ideas?.length ?? 0) > 0).map((s) => `${s.name}: ${s.ideas!.length} ${s.ideas!.length === 1 ? 'idea' : 'idee'}`);
+
   const mB = scenarioMetrics(before);
   const mA = scenarioMetrics(after);
   const bB = computeBudget(before);
@@ -157,6 +162,7 @@ export function planImpact(before: Trip, after: Trip): PlanImpact {
     times: { theoreticalBefore: mB.transferTheoreticalMin, theoreticalAfter: mA.transferTheoreticalMin, realisticBefore: mB.transferRealisticMin, realisticAfter: mA.transferRealisticMin, complete: toCalculate === 0 },
     budget: { before: bB.total, after: bA.total, rows, missingBefore: bB.missing.length, missingAfter: bA.missing.length },
     missing,
+    ideasLost,
     needsBookingConfirm: booked.length > 0,
   };
 }

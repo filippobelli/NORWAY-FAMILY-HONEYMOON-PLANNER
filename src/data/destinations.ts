@@ -1,5 +1,6 @@
 import type { Category, Destination, Region } from '../domain/types';
 import { COORDS_CHECKED_AT, VERIFIED_COORDS } from './coordVerification';
+import { ATTRACTION_INFO } from './attractions';
 import { OFFICIAL_SITES } from './officialSites';
 
 // CATALOGO.
@@ -96,8 +97,13 @@ const SEEDS: Seed[] = [
   ['saltstraumen', 'Saltstraumen', 'fauna', 'Nordland e Lofoten', 67.235, 14.62, 3, 'facile', [1, 2], 'La corrente di marea più forte del mondo, vortici visibili dal ponte.', 'Strada 17 vicino a Bodø.'],
 
   // Musei e attività per bambini
-  ['folkemuseum', 'Museo del Popolo Norvegese', 'musei', 'Oslo e Østlandet', 59.907, 10.684, 3, 'facile', [3, 4], 'Museo all\'aperto con fattorie e chiesa in legno.', 'Bygdøy, Oslo.', undefined, undefined, 'Norsk Folkemuseum'],
-  ['fram', 'Museo Fram', 'musei', 'Oslo e Østlandet', 59.903, 10.699, 3, 'facile', [2, 3], 'La nave polare Fram, si sale a bordo.', 'Bygdøy, Oslo.', undefined, undefined, 'Frammuseet'],
+  ['folkemuseum', 'Museo del Popolo Norvegese', 'musei', 'Oslo e Østlandet', 59.907, 10.684, 3, 'facile', [3, 4], 'Grande museo all\'aperto con edifici storici da tutta la Norvegia, più mostre al coperto.', 'Bygdøy, Oslo.', undefined, undefined, 'Norsk Folkemuseum'],
+  ['fram', 'Museo Fram', 'musei', 'Oslo e Østlandet', 59.903, 10.699, 3, 'facile', [2, 3], 'Museo delle esplorazioni polari costruito intorno alla nave Fram.', 'Bygdøy, Oslo.', undefined, undefined, 'Frammuseet'],
+  ['kontiki', 'Museo Kon-Tiki', 'musei', 'Oslo e Østlandet', 59.903611, 10.698056, 3, 'facile', [1, 2], 'Museo delle spedizioni di Thor Heyerdahl, con la zattera Kon-Tiki e la barca di papiro Ra II.', 'Bygdøy, Oslo, vicino al Museo Fram.', undefined, undefined, 'Kon-Tiki Museet'],
+  ['munch', 'MUNCH', 'musei', 'Oslo e Østlandet', 59.90575, 10.755306, 2, 'facile', [1.5, 3], 'Museo d\'arte sul lungomare di Bjørvika con la più grande raccolta di opere di Edvard Munch.', 'Bjørvika, Oslo: vicino alla stazione centrale.', undefined, undefined, 'MUNCH'],
+  ['teknisk', 'Museo norvegese della tecnica', 'musei', 'Oslo e Østlandet', 59.966667, 10.782778, 3, 'facile', [2, 4], 'Museo nazionale di tecnica, industria, scienza e medicina, con molte postazioni interattive.', 'Kjelsås, nel nord di Oslo.', undefined, undefined, 'Norsk Teknisk Museum'],
+  ['holmenkollen', 'Museo dello sci di Holmenkollen', 'musei', 'Oslo e Østlandet', 59.962594, 10.666775, 2, 'facile', [1.5, 2.5], 'Storia dello sci nel complesso del trampolino di Holmenkollen, con la torre panoramica.', 'Holmenkollen, sulla collina a nord-ovest di Oslo.', undefined, undefined, 'Skimuseet i Holmenkollen'],
+  ['vigeland', 'Parco delle sculture di Vigeland', 'natura', 'Oslo e Østlandet', 59.926944, 10.701111, 3, 'facile', [1, 2], 'Parco pubblico di Frogner con le sculture di Gustav Vigeland; accanto c\'è il museo dello scultore.', 'Frogner, Oslo.', undefined, undefined, 'Vigelandsparken'],
   ['bergen-aquarium', 'Acquario di Bergen', 'musei', 'Fiordi occidentali', 60.4, 5.304, 3, 'facile', [2, 3], 'Pinguini, foche e vasche dell\'Atlantico.', 'Nordnes, Bergen.', undefined, undefined, 'Akvariet i Bergen'],
   ['atlanterhavsparken', 'Atlanterhavsparken', 'musei', 'Fiordi occidentali', 62.469, 6.072, 3, 'facile', [2, 3], 'Acquario sul mare di Ålesund.', 'Ålesund.'],
   ['polaria', 'Polaria – acquario artico', 'musei', 'Troms e Finnmark', 69.643, 18.949, 3, 'facile', [1, 2], 'Acquario artico di Tromsø con foche barbate.', 'Tromsø.'],
@@ -108,7 +114,7 @@ const SEEDS: Seed[] = [
   // Parchi divertimento e attrazioni familiari
   ['hunderfossen', 'Hunderfossen Familiepark', 'parchi', 'Oslo e Østlandet', 61.22, 10.43, 3, 'facile', [5, 7], 'Parco a tema troll e fiabe norvegesi, adatto ai piccoli.', 'Strada E6 a nord di Lillehammer.'],
   ['kongeparken', 'Kongeparken', 'parchi', 'Sørlandet e Rogaland', 58.85, 5.73, 3, 'facile', [5, 7], 'Parco divertimenti per famiglie vicino a Stavanger.', 'Ålgård.'],
-  ['tusenfryd', 'TusenFryd', 'parchi', 'Oslo e Østlandet', 59.746, 10.778, 2, 'facile', [5, 8], 'Grande parco divertimenti a sud di Oslo.', 'Strada E6.'],
+  ['tusenfryd', 'TusenFryd', 'parchi', 'Oslo e Østlandet', 59.746, 10.778, 2, 'facile', [5, 8], 'Il più grande parco divertimenti della Norvegia, a Vinterbro, fuori Oslo.', 'Vinterbro, circa 20 km dal centro di Oslo.', 'Stagionale: date di agosto da verificare'],
   ['dyreparken', 'Kristiansand Dyrepark', 'parchi', 'Sørlandet e Rogaland', 58.184, 8.137, 3, 'facile', [6, 8], 'Zoo e parco a tema (villaggio di Cardamomo).', 'Kristiansand.'],
 
   // Esperienze stagionali
@@ -155,15 +161,16 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 export const DESTINATIONS: Destination[] = SEEDS.map(
   ([id, name, category, region, lat, lng, kidScore, difficulty, visitHours, description, access, season, augustNote, localName]) => {
     const v = VERIFIED_COORDS[id];
+    const a = v ? undefined : ATTRACTION_INFO[id];
     return {
       id,
       name,
       localName,
       category,
       region: REGION_FIX[id] ?? region,
-      lat: v ? v.lat : lat,
-      lng: v ? v.lng : lng,
-      coordsStatus: v ? 'verificate' : 'approssimative',
+      lat: v ? v.lat : a ? a.coords.lat : lat,
+      lng: v ? v.lng : a ? a.coords.lng : lng,
+      coordsStatus: v || a ? 'verificate' : 'approssimative',
       kidScore,
       difficulty,
       visitHours,
@@ -174,7 +181,9 @@ export const DESTINATIONS: Destination[] = SEEDS.map(
       officialUrl: OFFICIAL_SITES[id]?.url,
       sources: v
         ? [{ label: `Coordinate: OpenStreetMap (${v.match})`, url: `https://www.openstreetmap.org/${v.osm}`, checkedAt: COORDS_CHECKED_AT }]
-        : [],
+        : a
+          ? [{ label: `Coordinate: Wikidata ${a.wikidata} (P625)`, url: `https://www.wikidata.org/wiki/${a.wikidata}`, checkedAt: a.checkedAt }]
+          : [],
       reliability: 'da_verificare',
     };
   },

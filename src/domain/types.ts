@@ -95,6 +95,8 @@ export interface Stop {
   weatherPlanB: string;
   /** Crociera per cui la tappa è stata creata (porti e notti a bordo): si toglie insieme a lei */
   placedFrom?: ID;
+  /** Idee salvate: schede del catalogo che interessano, non ancora assegnate a un giorno */
+  ideas?: ID[];
 }
 
 export type TransportMode = 'strada' | 'traghetto' | 'costiera' | 'treno' | 'bus' | 'aereo' | 'non_calcolato';
