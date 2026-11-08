@@ -1,3 +1,4 @@
+import { FILE_COUNTRY } from '../data/country';
 import { computeDays, formatDateIt } from './itinerary';
 import type { Trip } from './types';
 import { hasCoords, tripSummary, type SummaryOptions, type TripSummary } from './tripSummary';
@@ -8,11 +9,30 @@ import { hasCoords, tripSummary, type SummaryOptions, type TripSummary } from '.
 
 // ---------- iCalendar ----------
 
-const TZ = 'Europe/Oslo';
-// Italia e Norvegia hanno lo stesso fuso (CET/CEST): gli orari inseriti si leggono nell'ora locale di entrambe
-const VTIMEZONE = [
+/** Scarto dall'UTC (minuti) di un fuso IANA in un istante */
+function offsetMin(tz: string, at: Date): number {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(at);
+  const g = (t: string) => Number(parts.find((p) => p.type === t)?.value);
+  const local = Date.UTC(g('year'), g('month') - 1, g('day'), g('hour') === 24 ? 0 : g('hour'), g('minute'));
+  return Math.round((local - at.getTime()) / 60000);
+}
+
+/**
+ * Fuso del calendario: quello della nazione del viaggio (dal catalogo). Per i fusi dell'Europa centrale (CET/CEST,
+ * regole UE) si scrive il VTIMEZONE; per gli altri gli orari si scrivono in UTC, calcolati dal fuso della nazione.
+ */
+function zoneInfo(tz: string): { cet: boolean } {
+  try {
+    const jan = offsetMin(tz, new Date(Date.UTC(2027, 0, 15, 12)));
+    const jul = offsetMin(tz, new Date(Date.UTC(2027, 6, 15, 12)));
+    return { cet: jan === 60 && jul === 120 };
+  } catch {
+    return { cet: false };
+  }
+}
+const cetVtimezone = (tz: string) => [
   'BEGIN:VTIMEZONE',
-  `TZID:${TZ}`,
+  `TZID:${tz}`,
   'BEGIN:DAYLIGHT',
   'TZOFFSETFROM:+0100',
   'TZOFFSETTO:+0200',
@@ -29,6 +49,16 @@ const VTIMEZONE = [
   'END:STANDARD',
   'END:VTIMEZONE',
 ];
+
+/** «DTSTART;TZID=…:AAAAMMGGTHHMM00» per i fusi CET, altrimenti l'istante in UTC */
+function localStamp(prop: string, tz: string, cet: boolean, date: string, time: string): string {
+  const d = date.replace(/-/g, '');
+  const t = time.replace(':', '');
+  if (cet) return `${prop};TZID=${tz}:${d}T${t}00`;
+  const guess = new Date(`${date}T${time}:00Z`);
+  const utc = new Date(guess.getTime() - offsetMin(tz, guess) * 60000);
+  return `${prop}:${utc.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`;
+}
 
 export const icsText = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 const ymd = (iso: string) => iso.slice(0, 10).replace(/-/g, '');
@@ -57,11 +87,12 @@ export function foldIcsLine(line: string): string {
   return out.join('\r\n ');
 }
 
-export function tripToIcs(trip: Trip, now = new Date()): string {
+export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTRY.timezone): string {
+  const { cet } = zoneInfo(tz);
   const days = computeDays(trip);
   const stamp = utcStamp(now);
   const uid = (k: string) => `${trip.id}-${k.replace(/[^A-Za-z0-9-]/g, '-')}@norvegia-2027`;
-  const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Norway Family Honeymoon Planner//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${icsText(trip.title || 'Norvegia 2027')}`, `X-WR-TIMEZONE:${TZ}`, ...VTIMEZONE];
+  const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Norway Family Honeymoon Planner//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${icsText(trip.title || 'Norvegia 2027')}`, `X-WR-TIMEZONE:${tz}`, ...(cet ? cetVtimezone(tz) : [])];
   const event = (props: string[]) => lines.push('BEGIN:VEVENT', ...props, 'END:VEVENT');
 
   for (const d of days) {
@@ -98,7 +129,7 @@ export function tripToIcs(trip: Trip, now = new Date()): string {
         event([
           `UID:${uid(`tratto-${s.id}`)}`,
           `DTSTAMP:${stamp}`,
-          `DTSTART;TZID=${TZ}:${ymd(d.date)}T${t.replace(':', '')}00`,
+          localStamp('DTSTART', tz, cet, d.date, t),
           ...(s.durationMin ? [`DURATION:PT${Math.round(s.durationMin)}M`] : []),
           `SUMMARY:${icsText(s.label)}`,
           `DESCRIPTION:${icsText(`Orario inserito a mano: verificalo sul sito dell'operatore.${s.source?.url ? `\nFonte: ${s.source.url}` : ''}`)}`,
@@ -113,8 +144,8 @@ export function tripToIcs(trip: Trip, now = new Date()): string {
     event([
       `UID:${uid(`volo-${f.id}`)}`,
       `DTSTAMP:${stamp}`,
-      `DTSTART;TZID=${TZ}:${ymd(f.date)}T${t.replace(':', '')}00`,
-      ...(arr && arr > t ? [`DTEND;TZID=${TZ}:${ymd(f.date)}T${arr.replace(':', '')}00`] : []),
+      localStamp('DTSTART', tz, cet, f.date, t),
+      ...(arr && arr > t ? [localStamp('DTEND', tz, cet, f.date, arr)] : []),
       `SUMMARY:${icsText(`Volo ${f.fromAirport} → ${f.toAirport}${f.flightNumber ? ` (${f.airline} ${f.flightNumber})` : ''}`)}`,
       `DESCRIPTION:${icsText(`Volo del ${formatDateIt(f.date)}. Orari inseriti a mano: verificali con la compagnia.`)}`,
     ]);

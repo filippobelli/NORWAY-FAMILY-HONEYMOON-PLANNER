@@ -172,7 +172,7 @@ export function adoptMerged(kv: Kv, merged: Trip, remote: Trip, remoteUpdatedAt:
 
 // ---------- Dati del viaggio sul dispositivo ----------
 
-const TRIP_DATA = /^nfhp\.(trip\.|cloud\.dirty\.|cloud\.lastSync\.|sync\.|configurator\.)/;
+const TRIP_DATA = /^nfhp\.(trip\.|cloud\.dirty\.|cloud\.lastSync\.|sync\.|configurator\.|contesto\.)/;
 const OWNER_KEY = 'nfhp.owner';
 const HOLD_PREFIX = 'nfhp.hold.';
 

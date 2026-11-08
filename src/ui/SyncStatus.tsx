@@ -28,7 +28,7 @@ export function OfflineInfo() {
         <ul className="small">
           <li>Oggi, itinerario in elenco, diario, stati di visita</li>
           <li>Budget già calcolato e modifiche al viaggio, salvate sul dispositivo</li>
-          <li>Allegati del diario, che restano solo su questo dispositivo</li>
+          <li>Allegati del diario: si salvano qui e si caricano nel cloud al ritorno della rete</li>
         </ul>
       </div>
       <div>

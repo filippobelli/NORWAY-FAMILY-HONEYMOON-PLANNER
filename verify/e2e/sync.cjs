@@ -9,7 +9,9 @@ let patchCount = 0, postCount = 0;
   const b = await launch(); const ctx = await context(b, { viewport: { width: 1300, height: 900 } }); const p = await ctx.newPage();
   await p.addInitScript(() => { if (!sessionStorage.getItem('e2e')) { localStorage.clear(); localStorage.setItem('nfhp.ui.mode', 'planning'); sessionStorage.setItem('e2e', '1'); } });
   p.on('pageerror', (e) => fail('pageerror ' + e.message));
-  await p.route(/unpkg\.com|openfreemap|openstreetmap\.org|routing\.openstreetmap/, (r) => r.abort());
+  // Test ermetico: ogni rete esterna è bloccata (cambio Norges Bank/BCE, carburante SSB, meteo, mappe, Wikipedia…);
+  // passano solo la pagina locale e il Supabase finto qui sotto
+  await p.route((u) => u.hostname !== 'localhost' && !u.hostname.endsWith('supabase.co'), (r) => r.abort());
   await p.route(/supabase\.co\//, async (r) => {
     const req = r.request(); const u = new URL(req.url()); const m = req.method();
     const json = (status, body) => r.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });

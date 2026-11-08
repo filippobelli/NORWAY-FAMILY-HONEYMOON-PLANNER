@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createEmptyTrip } from '../domain/defaults';
 import { exportTripFile, readTripFile } from '../services/storage/local';
 import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, type CloudTripRow } from '../services/storage/supabase';
-import { useCloudSync } from '../state/cloudSync';
+import { markRowsTrip, useCloudSync } from '../state/cloudSync';
+import { newTripInRows } from '../state/conversionMode';
 import { useAppMode } from '../state/mode';
 import { useTrip } from '../state/store';
 import { Badge, Field, fmtDateTime, NumberInput } from './common';
@@ -10,11 +11,15 @@ import { LogoutDialog } from './SyncDialogs';
 import { RatesPanel } from './RatesPanel';
 import { OfflineInfo } from './SyncStatus';
 import { ExportsPanel } from './ExportsPanel';
+import { CountriesPanel } from './Countries';
+import { FormatPanel } from './FormatPanel';
+import { AttachmentsPanel } from './AttachmentsPanel';
 import { DEFAULT_RECHECK_DAYS } from '../domain/verification';
 import { parseRoute } from '../state/route';
 
 export function SettingsView() {
   const { trip, update, replace, toast } = useTrip();
+  const cloudOn = Boolean(useCloudSync().session);
   const fileRef = useRef<HTMLInputElement>(null);
   const { setMode } = useAppMode();
   const [modeChoice, setChoice] = useState<'auto' | 'planning' | 'travel'>(() => {
@@ -41,7 +46,7 @@ export function SettingsView() {
       <section className="panel">
         <h2>Preferenze</h2>
         <div className="grid-4">
-          <Field label="Modalità su questo dispositivo" hint="Non dipende da date o posizione">
+          <Field label="Modalità su questo dispositivo" hint="Salvata per il tuo account su questo dispositivo: gli altri dispositivi hanno la loro.">
             {(id) => (
               <select id={id} value={modeChoice} onChange={(e) => setModeChoice(e.target.value as 'auto' | 'planning' | 'travel')}>
                 <option value="auto">Automatica (dalla larghezza dello schermo)</option>
@@ -85,6 +90,8 @@ export function SettingsView() {
         </div>
       </section>
 
+      <CountriesPanel />
+
       <section className="panel">
         <h2>Ipotesi per le stime realistiche</h2>
         <p className="muted small">
@@ -122,9 +129,13 @@ export function SettingsView() {
         <p className="small muted">Ogni modifica si salva sul dispositivo e resta in attesa di invio al cloud; riparte alla riapertura, al ritorno della rete e ogni 30 secondi.</p>
       </section>
 
+      <AttachmentsPanel />
+
       <RatesPanel />
 
       <CloudPanel />
+
+      <FormatPanel />
 
       <section className="panel">
         <h2>Backup su file</h2>
@@ -159,8 +170,16 @@ export function SettingsView() {
           <button
             className="btn danger"
             onClick={() => {
-              if (window.confirm('Creare un viaggio vuoto? Il viaggio attuale verrà sostituito in questo browser (esporta prima un backup).')) {
-                replace(createEmptyTrip());
+              const msg = cloudOn
+                ? 'Creare un nuovo viaggio? Quello attuale resta nel cloud e lo riapri da «Viaggi salvati nel cloud».'
+                : 'Creare un viaggio vuoto? Il viaggio attuale verrà sostituito in questo browser (esporta prima un backup).';
+              if (window.confirm(msg)) {
+                // Viaggio nuovo: titolo provvisorio e nessuna nazione, che si sceglie nella Panoramica (design §1)
+                const fresh = { ...createEmptyTrip(), title: 'Nuovo viaggio', countries: [] };
+                // Nel formato a righe solo con il cloud collegato e VITE_PASSAGGIO_RIGHE=pulsante|auto; altrimenti documento
+                if (newTripInRows(cloudOn)) markRowsTrip(fresh.id);
+                replace(fresh);
+                window.location.hash = '#/panoramica';
               }
             }}
           >

@@ -262,7 +262,7 @@ export function FlightsView() {
                       {f.price ? (
                         <>
                           <strong>{fmtMoney(f.price)}</strong>
-                          {f.price.currency === 'NOK' && <span className="small muted"> ≈ {formatEur(toEur(f.price, trip.settings))}</span>}
+                          {f.price.currency === 'NOK' && <span className="small muted"> ≈ {formatEur(toEur(f.price, trip.settings, trip.rates))}</span>}
                           <span className="small muted"> famiglia</span>
                         </>
                       ) : (

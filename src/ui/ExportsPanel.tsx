@@ -1,3 +1,7 @@
+import { countryInfo } from '../catalog/registry';
+import { FILE_COUNTRY } from '../data/country';
+import { tripCountries } from '../domain/countries';
+import type { Trip } from '../domain/types';
 import { useState } from 'react';
 import { exportFileName, offlinePackage, tripToGpx, tripToIcs, tripToKml } from '../domain/exportFormats';
 import { summaryToPdf } from '../domain/pdf';
@@ -67,7 +71,7 @@ export function ExportsPanel({ compact }: { compact?: boolean }) {
             <Icon name="calendar" /> Calendario (.ics)
           </h3>
           <p className="small">Un evento per ogni giornata. Voli e traghetti diventano eventi con l'ora solo se l'orario è stato inserito: nessun orario inventato.</p>
-          <button className="btn" onClick={() => run('Calendario', () => download(exportFileName(trip, 'ics'), tripToIcs(trip), 'text/calendar;charset=utf-8'))}>
+          <button className="btn" onClick={() => run('Calendario', () => download(exportFileName(trip, 'ics'), tripToIcs(trip, undefined, tripTimezone(trip)), 'text/calendar;charset=utf-8'))}>
             Scarica il calendario
           </button>
         </article>
@@ -103,4 +107,10 @@ export function ExportsPanel({ compact }: { compact?: boolean }) {
       </p>
     </section>
   );
+}
+
+/** Fuso del calendario: quello della prima nazione del viaggio (dal catalogo) */
+function tripTimezone(trip: Trip): string {
+  const first = tripCountries(trip)[0];
+  return countryInfo(first?.code)?.timezone ?? FILE_COUNTRY.timezone;
 }

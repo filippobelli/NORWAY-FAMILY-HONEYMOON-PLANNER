@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useCatalog } from '../catalog/registry';
+import { tripCountries } from '../domain/countries';
 import { formatPeriod, fuelCostPerKm } from '../domain/budget';
 import type { CarSettings, FuelType, TripSettings } from '../domain/types';
 import { formatRateDate, refreshRatesNow } from '../state/autoRates';
@@ -14,6 +16,15 @@ export function RatesPanel() {
   const car = st.car ?? DEFAULT_CAR;
   const fuel = fuelCostPerKm(st);
   const [refreshing, setRefreshing] = useState(false);
+  const { countries } = useCatalog();
+  // Valute delle nazioni del viaggio diverse da EUR e NOK (NOK ha il suo campo con la fonte automatica di sempre)
+  const otherCurrencies = [
+    ...new Set(
+      tripCountries(trip)
+        .map((c) => countries.find((x) => x.code === c.code)?.currency)
+        .filter((c): c is string => Boolean(c) && c !== 'EUR' && c !== 'NOK'),
+    ),
+  ];
   const setS = (p: Partial<TripSettings>) => update((t) => ({ ...t, settings: { ...t.settings, ...p } }));
   const setCar = (p: Partial<CarSettings>) => update((t) => ({ ...t, settings: { ...t.settings, car: { ...(t.settings.car ?? DEFAULT_CAR), ...p } } }));
 
@@ -57,6 +68,26 @@ export function RatesPanel() {
               </div>
               <small className="hint">All'apertura dell'app, al massimo ogni 6 ore</small>
             </div>
+            {otherCurrencies.map((cur) => (
+              <Field key={cur} label={`Cambio ${cur} per 1 EUR`} hint="Nessuna fonte automatica per questa valuta: inseriscilo a mano.">
+                {(id) => (
+                  <NumberInput
+                    id={id}
+                    value={trip.rates?.[cur]?.perEur}
+                    min={0}
+                    step={0.0001}
+                    onChange={(v) =>
+                      update((t) => {
+                        const rates = { ...(t.rates ?? {}) };
+                        if (v && v > 0) rates[cur] = { perEur: v, date: new Date().toISOString().slice(0, 10), note: 'Impostato a mano', auto: false };
+                        else delete rates[cur];
+                        return { ...t, rates };
+                      })
+                    }
+                  />
+                )}
+              </Field>
+            ))}
             <Field label="Alimentazione dell'auto">
               {(id) => (
                 <select

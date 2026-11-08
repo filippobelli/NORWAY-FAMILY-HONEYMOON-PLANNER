@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
 import { useAutoRates } from './state/autoRates';
+import { CatalogProvider, useTripCatalog } from './state/catalog';
+import { useUserDataSync } from './state/userSync';
+import { useAttachmentUploads } from './state/attachmentsSync';
 import { CloudSyncProvider, useCloudSync } from './state/cloudSync';
 import { TripProvider, useTrip } from './state/store';
 import { isTravelView, parseRoute, startView, type ViewId } from './state/route';
@@ -124,7 +127,9 @@ export default function App() {
   return (
     <TripProvider>
       <CloudSyncProvider>
-        <Shell />
+        <CatalogProvider>
+          <Shell />
+        </CatalogProvider>
       </CloudSyncProvider>
     </TripProvider>
   );
@@ -167,7 +172,10 @@ function Shell() {
   const days = totalDays(trip.stops);
   const total = computeBudget(trip).total;
   const cloud = useCloudSync();
+  const catalog = useTripCatalog();
   useAutoRates(cloud.status);
+  useUserDataSync();
+  useAttachmentUploads();
   const activeScenario = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
 
   const banners = (
@@ -220,10 +228,16 @@ function Shell() {
           {loadError}
         </div>
       )}
+      {catalog.fileMode && (
+        <div className="note-info banner">
+          <span>Modalità di prova: catalogo di prova da file, i dati restano solo in questo browser.</span>
+        </div>
+      )}
     </>
   );
+  // Cambiando il catalogo (nazioni del viaggio) le viste si ridisegnano da capo con i dati nuovi
   const page = (
-    <>
+    <Fragment key={catalog.state.version}>
       {tab === 'panoramica' && <OverviewView />}
       {tab === 'pianifica' && <PlannerView />}
       {tab === 'configuratore' && <ConfiguratorView />}
@@ -241,7 +255,7 @@ function Shell() {
       {tab === 't/mappa' && <TravelMap />}
       {tab === 't/diario' && <DiaryScreen />}
       {tab === 't/altro' && <MoreScreen />}
-    </>
+    </Fragment>
   );
   const toastList = (
     <div className="toasts" aria-live="polite">

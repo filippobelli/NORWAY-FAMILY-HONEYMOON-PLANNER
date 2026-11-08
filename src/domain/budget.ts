@@ -1,6 +1,6 @@
-import { toEur } from './coastal';
+import { canConvert, toEur } from './coastal';
 import { computeDays, legTotals, totalDays } from './itinerary';
-import type { BudgetCategory, DataStatus, TripSettings, Trip } from './types';
+import type { BudgetCategory, DataStatus, Money, TripSettings, Trip } from './types';
 
 export const BUDGET_CATEGORIES: { id: BudgetCategory; label: string }[] = [
   { id: 'voli', label: "Voli da e per l'Italia" },
@@ -106,13 +106,24 @@ export function computeBudget(trip: Trip): BudgetSummary {
     missing.push(text);
     missingByCategory[c] = (missingByCategory[c] ?? 0) + 1;
   };
+  // Importi in una valuta senza cambio: «non convertibili», esclusi dal totale ed elencati, mai zero
+  const rates = trip.rates;
+  const eurOf = (c: BudgetCategory, label: string, ...ms: (Money | undefined)[]): number => {
+    for (const m of ms) {
+      if (m && !canConvert(m, s, rates)) {
+        missingIn(c, `${label}: ${m.amount.toLocaleString('it-IT')} ${m.currency}, cambio da inserire`);
+        return Number.NaN;
+      }
+    }
+    return ms.reduce((n, m) => n + toEur(m, s, rates), 0);
+  };
 
   for (const it of trip.budgetItems) {
     lines.push({
       key: `m-${it.id}`,
       category: it.category,
       label: it.label,
-      eur: toEur(it.amount, s),
+      eur: eurOf(it.category, it.label, it.amount),
       status: it.status,
       origin: 'manuale',
       itemId: it.id,
@@ -128,7 +139,9 @@ export function computeBudget(trip: Trip): BudgetSummary {
       missingIn('alloggi', `Prezzo mancante per "${a.name}"`);
       continue;
     }
-    const eur = toEur(a.pricePerNight, s) * stop.nights + toEur(a.cleaningFee, s) + toEur(a.linenFee, s);
+    const eur = canConvert(a.pricePerNight, s, rates)
+      ? eurOf('alloggi', a.name, a.pricePerNight) * stop.nights + eurOf('alloggi', a.name, a.cleaningFee, a.linenFee)
+      : eurOf('alloggi', a.name, a.pricePerNight);
     lines.push({
       key: `a-${a.id}`,
       category: 'alloggi',
@@ -165,7 +178,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
       missingIn('voli', `Prezzo mancante: ${label}`);
       continue;
     }
-    lines.push({ key: `f-${f.id}`, category: 'voli', label, eur: toEur(f.price, s), status: f.priceStatus, origin: 'voli' });
+    lines.push({ key: `f-${f.id}`, category: 'voli', label, eur: eurOf('voli', label, f.price), status: f.priceStatus, origin: 'voli' });
   }
 
   // Navigazione costiera selezionata
@@ -178,7 +191,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
       key: `c-${o.id}`,
       category: 'costiera',
       label: `${o.operator} ${o.fromPort} → ${o.toPort}`,
-      eur: toEur(o.price, s) + toEur(o.extras, s),
+      eur: eurOf('costiera', `${o.operator} ${o.fromPort} → ${o.toPort}`, o.price, o.extras),
       status: o.priceStatus,
       origin: 'costiera',
     });
@@ -198,7 +211,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
         key: `s-${seg.id}`,
         category,
         label: seg.label,
-        eur: toEur(seg.cost, s),
+        eur: eurOf(category, seg.label, seg.cost),
         status: seg.costStatus,
         origin: 'trasporti',
       });
@@ -234,7 +247,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
         key: `d-${dayKey}-${act.id}`,
         category: 'attrazioni',
         label: act.title,
-        eur: toEur(act.cost, s),
+        eur: eurOf('attrazioni', act.title, act.cost),
         status: act.costStatus,
         origin: 'giornate',
       });
@@ -288,7 +301,7 @@ export function computeBudget(trip: Trip): BudgetSummary {
     }
   }
   if (e.contingencyPct && e.contingencyPct > 0 && !has('extra_imprevisti')) {
-    const base = lines.reduce((sum, l) => sum + l.eur, 0);
+    const base = lines.reduce((sum, l) => sum + (Number.isNaN(l.eur) ? 0 : l.eur), 0);
     if (base > 0) {
       lines.push({
         key: 'e-extra',
@@ -301,6 +314,8 @@ export function computeBudget(trip: Trip): BudgetSummary {
     }
   }
 
+  // Le voci non convertibili sono già elencate tra i costi esclusi: escono dalle righe e dal totale
+  for (let i = lines.length - 1; i >= 0; i--) if (Number.isNaN(lines[i]!.eur)) lines.splice(i, 1);
   const byCategory = Object.fromEntries(BUDGET_CATEGORIES.map((c) => [c.id, 0])) as Record<BudgetCategory, number>;
   const byStatus: Record<DataStatus, number> = { confermato: 0, stimato: 0, da_verificare: 0, prenotato: 0, pagato: 0 };
   let total = 0;
@@ -431,4 +446,38 @@ export function budgetCompleteness(b: BudgetSummary): BudgetCompleteness {
 
 export function formatEur(v: number): string {
   return v.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+}
+
+export interface RateUsed {
+  currency: string;
+  /** Unità per 1 EUR; assente = cambio mancante */
+  perEur?: number;
+  date?: string;
+  note?: string;
+  /** Importi in questa valuta nel viaggio */
+  amounts: number;
+}
+
+/**
+ * Cambi usati dal budget («Cambi usati», design §5): una riga per ogni valuta diversa da EUR delle nazioni del viaggio
+ * (passate da chi chiama) o di un importo inserito, con il cambio salvato oppure «cambio mancante».
+ */
+export function ratesUsed(trip: Trip, countryCurrencies: string[] = []): RateUsed[] {
+  const count = new Map<string, number>();
+  const add = (m?: Money) => {
+    if (m && m.currency !== 'EUR') count.set(m.currency, (count.get(m.currency) ?? 0) + 1);
+  };
+  for (const b of trip.budgetItems) add(b.amount);
+  for (const a of trip.accommodations) [a.pricePerNight, a.cleaningFee, a.linenFee].forEach(add);
+  for (const f of trip.flights ?? []) add(f.price);
+  for (const o of trip.coastalOptions) [o.price, o.extras].forEach(add);
+  for (const l of trip.legs) for (const sg of l.segments) add(sg.cost);
+  for (const d of Object.values(trip.days)) for (const a of d.activities) add(a.cost);
+  const currencies = [...new Set([...countryCurrencies.filter((c) => c !== 'EUR'), ...count.keys()])];
+  const s = trip.settings;
+  return currencies.map((currency) => {
+    const r = currency === 'NOK' ? { perEur: s.nokPerEur, date: s.nokRateDate, note: s.nokRateNote } : trip.rates?.[currency];
+    const ok = r && typeof r.perEur === 'number' && r.perEur > 0;
+    return { currency, perEur: ok ? r!.perEur : undefined, date: ok ? r!.date : undefined, note: ok ? r!.note : undefined, amounts: count.get(currency) ?? 0 };
+  });
 }

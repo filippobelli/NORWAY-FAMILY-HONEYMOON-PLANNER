@@ -1,7 +1,8 @@
 // Modello dati del planner. Entità distinte, serializzate insieme come documento "Trip".
 
 export type ID = string;
-export type Currency = 'EUR' | 'NOK';
+/** Codice ISO 4217. EUR è la valuta del viaggio (totali e tetti); le altre vengono dalle nazioni del viaggio. */
+export type Currency = string;
 
 export interface Money {
   amount: number;
@@ -97,6 +98,8 @@ export interface Stop {
   placedFrom?: ID;
   /** Idee salvate: schede del catalogo che interessano, non ancora assegnate a un giorno */
   ideas?: ID[];
+  /** Nazione della tappa (ISO 3166-1 alfa-2). Assente nei viaggi salvati prima: vale la prima nazione del viaggio */
+  countryCode?: string;
 }
 
 export type TransportMode = 'strada' | 'traghetto' | 'costiera' | 'treno' | 'bus' | 'aereo' | 'non_calcolato';
@@ -396,9 +399,13 @@ export interface DiaryAttachment {
   name: string;
   type: string;
   size: number;
-  /** Il file sta sul dispositivo, non nel documento del viaggio */
-  state: 'solo_dispositivo' | 'errore';
+  /** Il file sta sul dispositivo (solo_dispositivo, errore) o nello Storage privato del cloud (nel_cloud) */
+  state: 'solo_dispositivo' | 'errore' | 'nel_cloud';
   error?: string;
+  /** Percorso nello Storage ({owner_id}/{trip_id}/{id}), dopo il caricamento confermato */
+  storagePath?: string;
+  /** ISO date-time del caricamento confermato */
+  uploadedAt?: string;
 }
 
 export interface DiaryEntry {
@@ -425,6 +432,37 @@ export interface PlanLogEntry {
   label: string;
   from: ID;
   to: ID;
+}
+
+// ---------- Nazioni e cambi ----------
+
+/** Prezzo del carburante in una nazione (aggiornamento automatico solo dove c'è una fonte ufficiale) */
+export interface CountryFuel {
+  price?: number;
+  currency?: string;
+  auto?: boolean;
+  period?: string;
+  source?: string;
+  fetchedAt?: string;
+}
+
+/** Nazione del viaggio con la versione del catalogo caricata: non cambia da sola */
+export interface TripCountry {
+  /** ISO 3166-1 alfa-2 */
+  code: string;
+  /** Versione del catalogo, es. «NO-1» */
+  releaseId: string;
+  fuel?: CountryFuel;
+}
+
+/** Cambio di una valuta: unità per 1 EUR */
+export interface CurrencyRate {
+  perEur?: number;
+  date?: string;
+  note: string;
+  source?: string;
+  auto: boolean;
+  fetchedAt?: string;
 }
 
 export interface Trip {
@@ -455,4 +493,11 @@ export interface Trip {
   activeScenarioId?: ID;
   settings: TripSettings;
   updatedAt: string;
+  /**
+   * Nazioni del viaggio, nell'ordine di aggiunta (la prima è la proposta per le tappe libere).
+   * Assente nei viaggi salvati prima: vale Norvegia, catalogo NO-1 (vedi ensureCountries).
+   */
+  countries?: TripCountry[];
+  /** Cambi delle valute diverse da EUR e NOK (il cambio NOK resta in settings.nokPerEur per compatibilità) */
+  rates?: Record<string, CurrencyRate>;
 }

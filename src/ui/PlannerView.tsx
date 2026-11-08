@@ -1,3 +1,4 @@
+import { getContext, setContext } from '../state/workContext';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
 import { stopState, STOP_STATE_LABEL } from '../domain/actuals';
 import { BUDGET_CATEGORIES, computeBudget, formatEur, ORIGIN_NAME } from '../domain/budget';
@@ -50,18 +51,24 @@ interface UiState {
   scroll?: number;
 }
 
+// L'elemento scelto è contesto di lavoro (nel cloud per utente); mappa/giorni, filtro e scorrimento sono stato visivo
+// di questa scheda e restano nella sessione del browser.
 function loadUi(): UiState {
+  let visual: UiState = {};
   try {
-    return JSON.parse(sessionStorage.getItem(UI_KEY) ?? '{}') as UiState;
+    visual = JSON.parse(sessionStorage.getItem(UI_KEY) ?? '{}') as UiState;
   } catch {
-    return {};
+    /* nessuno stato visivo */
   }
+  return { ...visual, sel: getContext().plannerSel ?? visual.sel };
 }
 function saveUi(s: UiState): void {
+  const { sel, ...visual } = s;
+  setContext({ plannerSel: sel });
   try {
-    sessionStorage.setItem(UI_KEY, JSON.stringify(s));
+    sessionStorage.setItem(UI_KEY, JSON.stringify(visual));
   } catch {
-    /* senza sessionStorage la selezione non si conserva al ritorno */
+    /* senza sessionStorage la posizione non si conserva al ritorno */
   }
 }
 

@@ -36,7 +36,7 @@ Altri comandi:
 | `npm test` | Test della logica (giornate, tratti, budget, rotta costiera, routing) |
 | `npm run lint` | ESLint |
 | `npm run build` | Controllo tipi + build di produzione in `dist/` |
-| `node verify/e2e/e2e.cjs` · `planning.cjs` · `sync.cjs` · `a11y.cjs` · `cosafare.cjs` | Test nel browser sulla build in `dist/` (prima `npm run build`). Servono il pacchetto `playwright` (variabile `PLAYWRIGHT_PATH` se non è installato nel progetto) e Chrome (`CHROME_PATH`) o Chromium di Playwright. Servizi esterni simulati, Supabase mai contattato |
+| `node verify/e2e/e2e.cjs` · `planning.cjs` · `sync.cjs` · `righe.cjs` · `a11y.cjs` · `cosafare.cjs` | Test nel browser sulla build in `dist/` (prima `npm run build`). Servono il pacchetto `playwright` (variabile `PLAYWRIGHT_PATH` se non è installato nel progetto) e Chrome (`CHROME_PATH`) o Chromium di Playwright. Servizi esterni simulati, Supabase mai contattato. `righe.cjs` vuole la build con `VITE_PASSAGGIO_RIGHE=pulsante` (pulsante di conversione) |
 
 ## Salvataggio cloud (Supabase)
 
@@ -57,6 +57,8 @@ Per autorizzare un'altra persona:
 3. In **Authentication** → **Users** clicca **Add user** → **Send invitation** con lo stesso indirizzo.
 
 Per usare un altro progetto Supabase: esegui `supabase/schema.sql` nello SQL Editor e sostituisci i valori in `.env`. Mai inserire la secret/service_role key.
+
+**Passaggio al formato a righe** (`docs/architettura.md` §9): `VITE_PASSAGGIO_RIGHE` vuota (predefinito) = nessun pulsante e nessun passaggio; `pulsante` = pulsante «Converti il viaggio al nuovo formato» in Impostazioni con conferma esplicita, e viaggi nuovi creati direttamente nel formato a righe (con il cloud collegato); `auto` = come `pulsante`, più il passaggio automatico al primo accesso. Senza la variabile ogni viaggio nuovo nasce nel formato documento di oggi. Da attivare solo dopo l'approvazione del passaggio del viaggio reale. Ritorno al documento di un viaggio: `supabase/rollback/20261108_ritorno_documento_esporta.sql` + `scripts/ritorno-documento.ts` (procedura in `docs/sviluppo.md`).
 
 ## Servizi esterni
 

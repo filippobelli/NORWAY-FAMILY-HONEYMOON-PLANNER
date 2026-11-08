@@ -1,3 +1,7 @@
+import { CatalogVersionNote } from './Countries';
+import { countryInfo, placeCountry, useCatalog } from '../catalog/registry';
+import { REGION_COUNTIES } from '../data/regionShapes';
+import { tripCountries } from '../domain/countries';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS } from '../data/destinations';
 import { WIKI } from '../data/wiki';
@@ -10,7 +14,6 @@ import { stopFromDestination } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
 import { StopDialog } from './PlacementDialog';
 
-const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
 
 export function CatalogView() {
@@ -21,6 +24,14 @@ export function CatalogView() {
   const [kids, setKids] = useState(false);
   const [onlyFav, setOnlyFav] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [nation, setNation] = useState('');
+  const catalog = useCatalog();
+  const countries = tripCountries(trip);
+  // Filtro e gruppi per nazione solo con due o più nazioni nel viaggio (design §5)
+  const multi = countries.length > 1;
+  const nameOf = (code: string) => countryInfo(code)?.name ?? code;
+  // Regioni del catalogo in uso (per nazione e versione), non un elenco fisso
+  const regions = Object.keys(REGION_COUNTIES).filter((r) => !nation || catalog.regionCountry[r] === nation);
 
   const list = useMemo(() => {
     const qq = q.trim().toLowerCase();
@@ -29,10 +40,12 @@ export function CatalogView() {
         (!qq || `${d.name} ${d.localName ?? ''} ${d.description}`.toLowerCase().includes(qq)) &&
         (!cat || d.category === cat) &&
         (!region || d.region === region) &&
+        (!nation || placeCountry(d.id) === nation) &&
         (!kids || d.kidScore === 3) &&
         (!onlyFav || trip.favorites.includes(d.id)),
     );
-  }, [q, cat, region, kids, onlyFav, trip.favorites]);
+  }, [q, cat, region, nation, kids, onlyFav, trip.favorites]);
+  const byCountry = countries.map((c) => ({ code: c.code, items: list.filter((d) => placeCountry(d.id) === c.code) }));
 
   const inTrip = new Set(trip.stops.map((s) => s.destinationId));
   const [placing, setPlacing] = useState<Stop | null>(null);
@@ -41,12 +54,30 @@ export function CatalogView() {
     <div className="catalog">
       {placing && <StopDialog stop={placing} onClose={() => setPlacing(null)} />}
       <div className="note-info">
+        <CatalogVersionNote />
         {DESTINATIONS.length} luoghi. Coordinate verificate su OpenStreetMap per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length}{' '}
         schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>{' '}
         sulle fonti ufficiali; prezzi e orari non sono inseriti di proposito.
       </div>
       <div className="filters">
         <input type="search" placeholder="Cerca…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Cerca nel catalogo" />
+        {multi && (
+          <select
+            value={nation}
+            onChange={(e) => {
+              setNation(e.target.value);
+              setRegion('');
+            }}
+            aria-label="Nazione"
+          >
+            <option value="">Tutte le nazioni</option>
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {nameOf(c.code)}
+              </option>
+            ))}
+          </select>
+        )}
         <select value={cat} onChange={(e) => setCat(e.target.value as Category | '')} aria-label="Categoria">
           <option value="">Tutte le categorie</option>
           {(Object.keys(CATEGORY_LABEL) as Category[]).map((c) => (
@@ -57,9 +88,17 @@ export function CatalogView() {
         </select>
         <select value={region} onChange={(e) => setRegion(e.target.value as Region | '')} aria-label="Regione">
           <option value="">Tutte le regioni</option>
-          {REGIONS.map((r) => (
-            <option key={r}>{r}</option>
-          ))}
+          {multi && !nation
+            ? countries.map((c) => (
+                <optgroup key={c.code} label={nameOf(c.code)}>
+                  {regions
+                    .filter((r) => catalog.regionCountry[r] === c.code)
+                    .map((r) => (
+                      <option key={r}>{r}</option>
+                    ))}
+                </optgroup>
+              ))
+            : regions.map((r) => <option key={r}>{r}</option>)}
         </select>
         <label className="check">
           <input type="checkbox" checked={kids} onChange={(e) => setKids(e.target.checked)} /> Molto adatte ai bambini
@@ -68,9 +107,21 @@ export function CatalogView() {
           <input type="checkbox" checked={onlyFav} onChange={(e) => setOnlyFav(e.target.checked)} /> Solo preferiti
         </label>
       </div>
-      <p className="muted small">{list.length} risultati</p>
+      <p className="muted small" role="status">
+        {list.length} risultati{multi ? ` · ${byCountry.map((g) => `${nameOf(g.code)} ${g.items.length}`).join(', ')}` : ''}
+      </p>
+      {(multi && !nation ? byCountry : [{ code: '', items: list }]).map((g) => (
+        <section key={g.code || 'tutti'}>
+          {g.code && (
+            <h3 className="row wrap">
+              {nameOf(g.code)}{' '}
+              <span className="muted small">
+                catalogo versione {countryInfo(g.code)?.version ?? '—'} · {countryInfo(g.code)?.placeCount ?? g.items.length} luoghi
+              </span>
+            </h3>
+          )}
       <div className="cards catalog-cards">
-        {list.map((d) => (
+        {g.items.map((d) => (
           <DestinationCard
             key={d.id}
             d={d}
@@ -88,6 +139,8 @@ export function CatalogView() {
           />
         ))}
       </div>
+        </section>
+      ))}
     </div>
   );
 }

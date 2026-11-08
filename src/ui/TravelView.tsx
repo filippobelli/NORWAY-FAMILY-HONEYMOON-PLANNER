@@ -7,6 +7,11 @@ import { addDays, computeDays, formatDateIt, formatDuration } from '../domain/it
 import { defaultDayIndex, phaseNote, todayView, type BookingInfo } from '../domain/today';
 import type { DiaryAttachment, DiaryEntry, StopVisitState } from '../domain/types';
 import { deleteBlob, getBlob, putBlob } from '../services/storage/blobs';
+import { ATTACHMENT_ACCEPT, attachmentProblem, formatMb } from '../domain/attachments';
+import { cloudAttachments } from '../services/storage/attachmentsCloud';
+import { retryUploads, useUploadState } from '../state/attachmentsSync';
+import { useCloudSync } from '../state/cloudSync';
+import { useOnline } from '../state/uiContext';
 import { useAppMode } from '../state/mode';
 import { isTravelView, parseRoute, type ViewId } from '../state/route';
 import { useTrip } from '../state/store';
@@ -456,7 +461,13 @@ function DiaryComposer({ dayDate, stop, onDone }: { dayDate?: string; stop?: { i
   const [day, setDay] = useState(dayDate ?? '');
   const [stopId, setStopId] = useState(stop?.id ?? '');
   const [files, setFiles] = useState<File[]>([]);
+  const [rejected, setRejected] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const choose = (list: File[]) => {
+    // Immagini e PDF fino a 10 MB: gli altri file si dicono subito, quelli validi restano
+    setRejected(list.map(attachmentProblem).filter((x): x is string => Boolean(x)));
+    setFiles(list.filter((f) => !attachmentProblem(f)));
+  };
 
   const save = async () => {
     if (!text.trim() && files.length === 0) return;
@@ -467,8 +478,16 @@ function DiaryComposer({ dayDate, stop, onDone }: { dayDate?: string; stop?: { i
     update((t) => addDiaryEntry(t, entry), { immediate: true });
     setText('');
     setFiles([]);
+    setRejected([]);
     if (fileRef.current) fileRef.current.value = '';
-    toast(attachments.some((a) => a.state === 'errore') ? 'Voce salvata, ma un allegato non è stato salvato: puoi riprovare' : 'Voce salvata su questo dispositivo', attachments.some((a) => a.state === 'errore') ? 'errore' : 'ok');
+    toast(
+      attachments.some((a) => a.state === 'errore')
+        ? 'Voce salvata, ma un allegato non è stato salvato: puoi riprovare'
+        : attachments.length
+          ? 'Voce salvata su questo dispositivo: gli allegati si caricano nel cloud'
+          : 'Voce salvata su questo dispositivo',
+      attachments.some((a) => a.state === 'errore') ? 'errore' : 'ok',
+    );
     onDone?.();
   };
 
@@ -501,9 +520,25 @@ function DiaryComposer({ dayDate, stop, onDone }: { dayDate?: string; stop?: { i
           )}
         </Field>
       </div>
-      <Field label="Allegati (facoltativi)" hint="Restano solo su questo dispositivo">
-        {(id) => <input id={id} ref={fileRef} type="file" multiple onChange={(e) => setFiles([...(e.target.files ?? [])])} />}
+      <Field label="Allegati (facoltativi)" hint="Immagini o PDF, al massimo 10 MB per file. Si salvano subito qui e poi nel cloud.">
+        {(id) => <input id={id} ref={fileRef} type="file" multiple accept={ATTACHMENT_ACCEPT} onChange={(e) => choose([...(e.target.files ?? [])])} />}
       </Field>
+      {rejected.length > 0 && (
+        <div className="note-warn small" role="alert">
+          {rejected.map((r) => (
+            <p key={r}>{r}</p>
+          ))}
+        </div>
+      )}
+      {files.length > 0 && (
+        <ul className="diary-files small" aria-label="File scelti">
+          {files.map((f) => (
+            <li key={f.name + f.size}>
+              {f.name} · {formatMb(f.size)} MB
+            </li>
+          ))}
+        </ul>
+      )}
       <button className="btn btn-primary" disabled={!text.trim() && files.length === 0} onClick={() => void save()}>
         Salva nel diario
       </button>
@@ -524,10 +559,15 @@ async function saveFile(f: File): Promise<DiaryAttachment> {
 
 function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
   const { update } = useTrip();
+  const { config, session } = useCloudSync();
+  const online = useOnline();
+  const upload = useUploadState(a.id);
   const [url, setUrl] = useState<string>();
   const [missing, setMissing] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [openError, setOpenError] = useState<string>();
   useEffect(() => {
-    if (a.state !== 'solo_dispositivo') return;
+    if (a.state === 'errore') return;
     let u: string | undefined;
     let live = true;
     getBlob(a.id)
@@ -557,6 +597,25 @@ function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
       patch('errore', (e as Error).message);
     }
   };
+  // Nel cloud ma non su questo dispositivo: si scarica con un link firmato temporaneo, poi resta in cache
+  const open = async () => {
+    if (!config || !session || !a.storagePath) return;
+    setOpening(true);
+    setOpenError(undefined);
+    try {
+      const link = await cloudAttachments(config).signedUrl(a.storagePath);
+      const res = await fetch(link);
+      if (!res.ok) throw new Error(`Errore ${res.status}`);
+      const blob = await res.blob();
+      await putBlob(a.id, blob).catch(() => undefined);
+      setUrl(URL.createObjectURL(blob));
+      setMissing(false);
+    } catch (e) {
+      setOpenError((e as Error).message);
+    } finally {
+      setOpening(false);
+    }
+  };
   if (a.state === 'errore') {
     return (
       <li className="small">
@@ -571,17 +630,70 @@ function Attachment({ a, entry }: { a: DiaryAttachment; entry: DiaryEntry }) {
       </li>
     );
   }
+  const size = `${formatMb(a.size)} MB`;
+  let status: ReactNode;
+  if (a.state === 'nel_cloud') {
+    status = (
+      <>
+        {' '}
+        <Badge tone="ok">✓ nel cloud</Badge>
+        {!url && (online ? <span className="muted"> Si scarica quando lo apri, poi resta qui.</span> : <span className="muted"> Senza rete: non disponibile su questo dispositivo.</span>)}
+        {!url && online && (
+          <button className="btn btn-small" disabled={opening} onClick={() => void open()}>
+            {opening ? 'Apro…' : 'Apri'}
+          </button>
+        )}
+        {openError && <span className="warn-text" role="alert"> {openError}</span>}
+      </>
+    );
+  } else if (missing) {
+    status = (
+      <>
+        {' '}
+        <Badge tone="warn">non ancora caricato</Badge> <span className="muted">{size}. È solo sul dispositivo che lo ha aggiunto: si caricherà da lì.</span>
+      </>
+    );
+  } else if (upload?.s === 'in_caricamento') {
+    status = (
+      <span role="status">
+        {' '}
+        <span className="spinner" aria-hidden /> Caricamento nel cloud…
+      </span>
+    );
+  } else if (upload?.s === 'errore') {
+    status = (
+      <>
+        <span className="warn-text" role="alert">
+          {' '}
+          ⚠ Caricamento non riuscito · {upload.error}. Il file resta su questo dispositivo.
+        </span>{' '}
+        {online && (
+          <button className="btn btn-small" onClick={retryUploads}>
+            Riprova
+          </button>
+        )}
+      </>
+    );
+  } else {
+    status = (
+      <>
+        {' '}
+        <Badge tone="info">solo su questo dispositivo</Badge> <span className="muted">Si carica al ritorno della rete.</span>
+      </>
+    );
+  }
   return (
     <li className="small">
       {url && a.type.startsWith('image/') && <img className="diary-img" src={url} alt={a.name} />}
       <Icon name="clip" /> {url ? <a href={url} download={a.name}>{a.name}</a> : a.name}
-      <span className="muted"> · {missing ? 'file non presente su questo dispositivo' : 'solo su questo dispositivo'}</span>
+      {status}
     </li>
   );
 }
 
 export function DiaryScreen() {
   const { trip, update, toast } = useTrip();
+  const cloud = useCloudSync();
   const [filter, setFilter] = useState('');
   // «Annota» da una tappa: il diario si apre già su quella tappa
   const [fromStop] = useState(() => {
@@ -670,9 +782,14 @@ export function DiaryScreen() {
                   <button
                     className="btn btn-small danger"
                     onClick={() => {
-                      if (window.confirm('Eliminare questa voce del diario?')) {
+                      const n = e.attachments?.length ?? 0;
+                      if (window.confirm(n ? `Eliminare questa voce del diario? Vengono eliminati anche i suoi ${n} allegati, da questo dispositivo e dal cloud.` : 'Eliminare questa voce del diario?')) {
                         update((t) => removeDiaryEntry(t, e.id), { immediate: true });
-                        for (const a of e.attachments ?? []) void deleteBlob(a.id).catch(() => undefined);
+                        for (const a of e.attachments ?? []) {
+                          void deleteBlob(a.id).catch(() => undefined);
+                          // Il file nel cloud si toglie solo dopo la conferma dell'utente (questa)
+                          if (a.storagePath && cloud.config && cloud.session) void cloudAttachments(cloud.config).remove(a.storagePath).catch(() => undefined);
+                        }
                         toast('Voce eliminata');
                       }
                     }}

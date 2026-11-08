@@ -1,3 +1,4 @@
+import { CountriesLine, CountryChooser } from './Countries';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { formatEur } from '../domain/budget';
 import { formatDateIt } from '../domain/itinerary';
@@ -38,6 +39,8 @@ function Clipped<T>({ items, max = 4, render }: { items: T[]; max?: number; rend
 
 export function OverviewView() {
   const { trip, update } = useTrip();
+  // Viaggio nuovo senza nazioni: prima si sceglie la nazione (design §1)
+  const noCountries = Array.isArray(trip.countries) && trip.countries.length === 0;
   const o = useMemo(() => tripOverview(trip), [trip]);
   const done = o.steps.filter((s) => s.state === 'fatto').length;
   const [top, ...rest] = o.actions;
@@ -97,6 +100,7 @@ export function OverviewView() {
               Modifica date e partecipanti
             </button>
           </p>
+          {!noCountries && <CountriesLine />}
         </div>
         <dl className="ov-facts">
           <div>
@@ -114,7 +118,9 @@ export function OverviewView() {
         </dl>
       </section>
 
-      {empty ? (
+      {noCountries ? (
+        <CountryChooser />
+      ) : empty ? (
         <section className="ov-start" aria-labelledby="ov-start-title">
           <h2 id="ov-start-title">Da dove vuoi cominciare?</h2>
           <div className="ov-start-grid">

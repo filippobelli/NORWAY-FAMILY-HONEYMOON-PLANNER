@@ -10,8 +10,11 @@ import { newId } from './ids';
 import { dayKey, syncLegs } from './itinerary';
 import type { Activity, DayPlan, Destination, Leg, PlanSnapshot, Region, ScenarioKind, Segment, Stop } from './types';
 
-/** Località adatte a fare da base per dormire (le altre schede diventano visite in giornata). */
-export const BASE_IDS = [
+/**
+ * Località adatte a fare da base per dormire (le altre schede diventano visite in giornata).
+ * Valori della riserva da file (catalogo NO-1); con il catalogo del viaggio li sostituisce src/catalog/registry.ts.
+ */
+export const BASE_IDS: string[] = [
   'oslo',
   'bergen',
   'alesund',
@@ -29,10 +32,10 @@ export const BASE_IDS = [
   'henningsvaer',
   'andenes',
   'senja',
-] as const;
+];
 
 /** Schede che non sono luoghi da visitare in un giorno preciso (fenomeni, aree estese, collegamenti). */
-const NOT_VISITS = new Set(['aurora', 'midnight-sun', 'lofoten', 'bodo-moskenes', 'sognefjord', 'hardangerfjord', 'jotunheimen']);
+export const NOT_VISITS = new Set(['aurora', 'midnight-sun', 'lofoten', 'bodo-moskenes', 'sognefjord', 'hardangerfjord', 'jotunheimen']);
 
 export type Pace = 'tranquillo' | 'equilibrato' | 'intenso';
 export const PACE_MIN_NIGHTS: Record<Pace, number> = { tranquillo: 3, equilibrato: 2, intenso: 1 };
@@ -53,7 +56,7 @@ export const TRAVEL_MODE_LABEL: Record<TravelMode, string> = {
  * Linee ferroviarie tra le località base del catalogo (rete Vy/SJ Nord/Go-Ahead).
  * Servono solo a proporre il treno: durata, orari e prezzi restano da verificare su vy.no.
  */
-const RAIL: Record<string, { label: string; note: string }> = {
+export const RAIL: Record<string, { label: string; note: string }> = {
   'bergen|oslo': { label: 'Treno Oslo–Bergen (Bergensbanen)', note: 'Durata e orari da verificare su vy.no' },
   'flam|oslo': { label: 'Treno Oslo–Myrdal–Flåm (Bergensbanen + Flåmsbana)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' },
   'bergen|flam': { label: 'Treno Bergen–Myrdal–Flåm (Bergensbanen + Flåmsbana)', note: 'Cambio a Myrdal; durata e orari da verificare su vy.no' },

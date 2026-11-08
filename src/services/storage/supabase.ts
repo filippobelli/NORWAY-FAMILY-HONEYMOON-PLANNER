@@ -24,6 +24,8 @@ export interface CloudTripRow {
   updated_at: string;
   /** Ultimo invio scritto nel documento */
   last_mutation?: string | null;
+  /** «documento» (viaggio in data) o «righe» (viaggio nelle tabelle); assente con lo schema precedente */
+  storage_format?: string | null;
 }
 
 const CONFIG_KEY = 'nfhp.cloud.config';
@@ -198,14 +200,14 @@ async function restError(res: Response): Promise<CloudError> {
 
 export async function listCloudTrips(cfg: CloudConfig): Promise<CloudTripRow[]> {
   const s = await validSession(cfg);
-  const res = await call(cfg, '/rest/v1/trips?select=id,title,updated_at&order=updated_at.desc', { token: s.accessToken });
+  const res = await call(cfg, '/rest/v1/trips?select=id,title,updated_at,storage_format&order=updated_at.desc', { token: s.accessToken });
   if (!res.ok) throw await restError(res);
   return (await res.json()) as CloudTripRow[];
 }
 
 export async function getCloudTripMeta(cfg: CloudConfig, id: string): Promise<CloudTripRow | undefined> {
   const s = await validSession(cfg);
-  const res = await call(cfg, `/rest/v1/trips?select=id,title,updated_at,last_mutation:data->>lastMutationId&id=eq.${encodeURIComponent(id)}`, { token: s.accessToken });
+  const res = await call(cfg, `/rest/v1/trips?select=id,title,updated_at,storage_format,last_mutation:data->>lastMutationId&id=eq.${encodeURIComponent(id)}`, { token: s.accessToken });
   if (!res.ok) throw await restError(res);
   const rows = (await res.json()) as CloudTripRow[];
   return rows[0];
@@ -267,4 +269,53 @@ export async function saveCloudTripIfUnchanged(
   const updatedAt = rows[0]?.updated_at;
   if (!updatedAt) return { kind: 'conflitto' };
   return { kind: 'salvato', updatedAt };
+}
+
+// ---------- Accesso generico per le tabelle nuove (catalogo, righe del viaggio, preferenze) ----------
+
+/** Errore del database: messaggio leggibile, codice HTTP e codice Postgres se presenti */
+async function dbError(res: Response): Promise<CloudError> {
+  let detail = '';
+  try {
+    const j = (await res.json()) as { message?: string; code?: string };
+    detail = j.message ?? '';
+  } catch {
+    /* corpo non JSON */
+  }
+  return new CloudError(`Errore cloud ${res.status}${detail ? `: ${detail}` : ''}`, res.status);
+}
+
+/** Richiesta autenticata a PostgREST; restituisce il corpo JSON (null se vuoto) */
+export async function restJson<T>(cfg: CloudConfig, path: string, init: RequestInit = {}): Promise<T> {
+  const s = await validSession(cfg);
+  const res = await call(cfg, `/rest/v1/${path}`, { ...init, token: s.accessToken });
+  if (!res.ok) throw await dbError(res);
+  const text = await res.text();
+  return (text ? JSON.parse(text) : null) as T;
+}
+
+/** Chiamata di una funzione del database (RPC) */
+export function rpc<T>(cfg: CloudConfig, fn: string, args: Record<string, unknown>, opts: { keepalive?: boolean } = {}): Promise<T> {
+  const body = JSON.stringify(args);
+  return restJson<T>(cfg, `rpc/${fn}`, { method: 'POST', body, keepalive: Boolean(opts.keepalive) && body.length < 60_000 });
+}
+
+/** Upsert di una riga (preferenze, contesto, dispositivi): l'ultima scrittura vince */
+export function upsertRow(cfg: CloudConfig, table: string, row: Record<string, unknown>, onConflict: string): Promise<unknown> {
+  return restJson(cfg, `${table}?on_conflict=${encodeURIComponent(onConflict)}`, {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(row),
+  });
+}
+
+/** Token e utente della sessione valida (rinnovata se serve), per lo Storage */
+export async function sessionFor(cfg: CloudConfig): Promise<CloudSession> {
+  return validSession(cfg);
+}
+
+/** Richiesta autenticata all'API Storage */
+export async function storageFetch(cfg: CloudConfig, path: string, init: RequestInit = {}): Promise<Response> {
+  const s = await validSession(cfg);
+  return call(cfg, `/storage/v1/${path}`, { ...init, token: s.accessToken });
 }

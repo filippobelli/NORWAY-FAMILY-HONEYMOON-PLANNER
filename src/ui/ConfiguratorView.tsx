@@ -1,3 +1,4 @@
+import { getContext, setContext } from '../state/workContext';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS, findDestination } from '../data/destinations';
 import {
@@ -41,17 +42,14 @@ const MODE_HINT: Record<TravelMode, string> = {
 };
 /** "Aeroporto Bergen Flesland" → "Bergen Flesland (BGO)" */
 const airportLabel = (id: string, name: string) => `${name.replace(/^Aeroporto (di )?/, '')} (${id.toUpperCase()})`;
-const STORE_KEY = 'nfhp.configurator.v1';
 export const AUTO_ROUTE_KEY = 'nfhp.autoRoute';
 
-const AIRPORTS = DESTINATIONS.filter((d) => d.category === 'aeroporti');
+// Calcolato a ogni uso: il catalogo cambia con le nazioni del viaggio
+const airports = () => DESTINATIONS.filter((d) => d.category === 'aeroporti');
 
+/** Valori del configuratore: contesto di lavoro dell'utente (nel cloud, con la copia sul dispositivo) */
 function loadSaved(): Partial<ConfiguratorInput> {
-  try {
-    return JSON.parse(localStorage.getItem(STORE_KEY) ?? '{}') as Partial<ConfiguratorInput>;
-  } catch {
-    return {};
-  }
+  return (getContext().configurator ?? {}) as Partial<ConfiguratorInput>;
 }
 
 export function ConfiguratorView() {
@@ -106,7 +104,7 @@ export function ConfiguratorView() {
         const keep: Partial<ConfiguratorInput> = { ...input };
         delete keep.mustSee;
         delete keep.startDate;
-        localStorage.setItem(STORE_KEY, JSON.stringify(keep));
+        setContext({ configurator: keep as Record<string, unknown> });
       } catch {
         /* storage non disponibile: si ricomincia dai valori iniziali */
       }
@@ -153,7 +151,7 @@ export function ConfiguratorView() {
           <Field label="Aeroporto di arrivo">
             {(id) => (
               <select id={id} value={input.arrivalAirportId} onChange={(e) => set({ arrivalAirportId: e.target.value })}>
-                {AIRPORTS.map((a) => (
+                {airports().map((a) => (
                   <option key={a.id} value={a.id}>
                     {airportLabel(a.id, a.name)}
                   </option>
@@ -164,7 +162,7 @@ export function ConfiguratorView() {
           <Field label="Aeroporto di ripartenza">
             {(id) => (
               <select id={id} value={input.departureAirportId} onChange={(e) => set({ departureAirportId: e.target.value })}>
-                {AIRPORTS.map((a) => (
+                {airports().map((a) => (
                   <option key={a.id} value={a.id}>
                     {airportLabel(a.id, a.name)}
                   </option>

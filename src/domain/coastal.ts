@@ -1,7 +1,7 @@
 import type { CoastalCatalogVoyage } from '../data/coastalCatalog';
 import { portsFor, type CoastalPort } from '../data/coastalPorts';
 import { newId } from './ids';
-import type { CoastalOption, Money, Participants, TripSettings } from './types';
+import type { CoastalOption, Money, Participants, TripSettings, CurrencyRate } from './types';
 
 export interface CoastalRoute {
   ports: CoastalPort[];
@@ -28,9 +28,23 @@ export function coastalRoute(direction: 'nord' | 'sud', from: string, to: string
   return { ports, intermediateStops: ports.length - 2, valid: true };
 }
 
-export function toEur(m: Money | undefined, settings: TripSettings): number {
+/**
+ * Cambio di una valuta (unità per 1 EUR): EUR vale 1; NOK dal cambio del viaggio di sempre (settings.nokPerEur);
+ * le altre valute dai cambi del viaggio (`rates`). Undefined = valuta senza cambio: l'importo non è convertibile.
+ */
+export function rateFor(currency: string, settings: Pick<TripSettings, 'nokPerEur'>, rates?: Record<string, CurrencyRate>): number | undefined {
+  if (currency === 'EUR') return 1;
+  const v = currency === 'NOK' ? settings.nokPerEur : rates?.[currency]?.perEur;
+  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : undefined;
+}
+
+export const canConvert = (m: Money | undefined, settings: Pick<TripSettings, 'nokPerEur'>, rates?: Record<string, CurrencyRate>) => !m || rateFor(m.currency, settings, rates) !== undefined;
+
+/** Importo in euro. Una valuta senza cambio vale 0 qui: chi somma deve escluderla ed elencarla (vedi computeBudget). */
+export function toEur(m: Money | undefined, settings: TripSettings, rates?: Record<string, CurrencyRate>): number {
   if (!m) return 0;
-  return m.currency === 'EUR' ? m.amount : m.amount / settings.nokPerEur;
+  const r = rateFor(m.currency, settings, rates);
+  return r ? m.amount / r : 0;
 }
 
 export function coastalTotalEur(o: CoastalOption, settings: TripSettings): number | undefined {

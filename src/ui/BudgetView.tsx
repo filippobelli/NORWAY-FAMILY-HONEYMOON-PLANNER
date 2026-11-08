@@ -1,5 +1,7 @@
+import { useCatalog } from '../catalog/registry';
+import { tripCountries } from '../domain/countries';
 import { useMemo, useState } from 'react';
-import { BUDGET_CATEGORIES, budgetCompleteness, budgetOverlaps, capStatus, categoryBreakdown, computeBudget, type CategoryBreakdown, formatEur, STATUS_LABEL } from '../domain/budget';
+import { BUDGET_CATEGORIES, budgetCompleteness, budgetOverlaps, capStatus, categoryBreakdown, computeBudget, type CategoryBreakdown, formatEur, ratesUsed, STATUS_LABEL } from '../domain/budget';
 import { newId } from '../domain/ids';
 import type { BudgetCategory, BudgetEstimates, BudgetItem, DataStatus, Money, TripSettings } from '../domain/types';
 import { formatRateDate } from '../state/autoRates';
@@ -68,6 +70,13 @@ export function BudgetView() {
   // Riferimento del cambio: solo data e fonte salvate; se mancano lo si dice, senza inventarle
   const rateNote = st.nokRateNote?.trim().replace(/\.+$/, '');
   const rateDate = st.nokRateDate ? formatRateDate(st.nokRateDate) : undefined;
+  const { countries: catalogCountries } = useCatalog();
+  const rates = ratesUsed(
+    trip,
+    tripCountries(trip)
+      .map((c) => catalogCountries.find((x) => x.code === c.code)?.currency)
+      .filter((x): x is string => Boolean(x)),
+  );
   const rateRef = `${rateDate ? (rateNote?.includes(rateDate) ? '' : ` (cambio del ${rateDate})`) : ' (data del cambio non indicata)'}${rateNote ? ` · ${rateNote}` : ' · fonte non indicata'}`;
 
   return (
@@ -101,10 +110,29 @@ export function BudgetView() {
           </div>
         )}
       </section>
-      <p className="muted small budget-rate">
-        Importi in NOK convertiti a {st.nokPerEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} NOK per 1 €{rateRef}. Gli importi restano salvati nella
-        valuta originale.
-      </p>
+      <div className="muted small budget-rate">
+        <p>Totali in euro, la valuta del viaggio.</p>
+        <ul className="plain-list" aria-label="Cambi usati">
+          {rates.map((r) =>
+            r.currency === 'NOK' && r.perEur ? (
+              <li key={r.currency}>
+                Importi in NOK convertiti a {st.nokPerEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} NOK per 1 €{rateRef}.
+              </li>
+            ) : r.perEur ? (
+              <li key={r.currency}>
+                Importi in {r.currency} convertiti a {r.perEur.toLocaleString('it-IT', { maximumFractionDigits: 4 })} {r.currency} per 1 € ({r.note || 'fonte non indicata'}
+                {r.date ? `, cambio del ${formatRateDate(r.date)}` : ', data del cambio non indicata'}).
+              </li>
+            ) : (
+              <li key={r.currency} className="warn-text">
+                Importi in {r.currency}: cambio mancante. {r.amounts} {r.amounts === 1 ? 'voce non convertibile, esclusa' : 'voci non convertibili, escluse'} dal totale.{' '}
+                <a href="#/impostazioni">Inserisci il cambio</a>
+              </li>
+            ),
+          )}
+        </ul>
+        <p>Gli importi restano salvati nella valuta originale.</p>
+      </div>
       {overlaps.length > 0 && (
         <section className="note-warn" aria-labelledby="budget-overlaps">
           <strong id="budget-overlaps">Possibili doppi conteggi da verificare</strong>

@@ -1,23 +1,9 @@
 import { useEffect, useState } from 'react';
 
-// Contesto dell'interfaccia che non fa parte del viaggio: resta nella sessione del browser, non va mai nel cloud.
+import { getContext, setContext } from './workContext';
 
-function read<T>(key: string): T | undefined {
-  try {
-    const v = sessionStorage.getItem(key);
-    return v ? (JSON.parse(v) as T) : undefined;
-  } catch {
-    return undefined;
-  }
-}
-function write(key: string, value: unknown): void {
-  try {
-    if (value === undefined) sessionStorage.removeItem(key);
-    else sessionStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* senza sessionStorage il contesto vale finché la schermata resta aperta */
-  }
-}
+// Contesto di lavoro: nel cloud per utente (user_context) con la copia sul dispositivo per l'uso senza rete
+// (state/workContext.ts). Prima stava solo nella sessione del browser.
 
 // ---------- Attivazione di una proposta ----------
 
@@ -32,15 +18,13 @@ export interface ActivationNotice {
   prevLimit: number;
 }
 
-const NOTICE_KEY = 'nfhp.ui.activation';
-export const loadNotice = () => read<ActivationNotice>(NOTICE_KEY);
-export const saveNotice = (n: ActivationNotice | undefined) => write(NOTICE_KEY, n);
+export const loadNotice = () => getContext().activation as ActivationNotice | undefined;
+export const saveNotice = (n: ActivationNotice | undefined) => setContext({ activation: n });
 
 // ---------- Ritorno dalla modalità viaggio ----------
 
-const PLANNING_KEY = 'nfhp.ui.lastPlanning';
-export const loadLastPlanning = () => read<string>(PLANNING_KEY) ?? '#/pianifica';
-export const saveLastPlanning = (hash: string) => write(PLANNING_KEY, hash);
+export const loadLastPlanning = () => getContext().lastPlanning ?? '#/pianifica';
+export const saveLastPlanning = (hash: string) => setContext({ lastPlanning: hash });
 
 // ---------- Modalità viaggio: giornata e tappa restano le stesse passando da una schermata all'altra ----------
 
@@ -51,12 +35,11 @@ export interface TravelContext {
   stopId?: string;
 }
 
-const TRAVEL_KEY = 'nfhp.ui.travel';
 export const loadTravelContext = (today: string): TravelContext => {
-  const c = read<TravelContext>(TRAVEL_KEY);
+  const c = getContext().travel as TravelContext | undefined;
   return c?.on === today ? c : { on: today };
 };
-export const saveTravelContext = (c: TravelContext) => write(TRAVEL_KEY, c);
+export const saveTravelContext = (c: TravelContext) => setContext({ travel: c });
 
 // ---------- Hook ----------
 

@@ -1,3 +1,7 @@
+import { useCatalog } from '../catalog/registry';
+import { rateFor } from '../domain/coastal';
+import { tripCountries } from '../domain/countries';
+import { useTrip } from '../state/store';
 import { useId, type ReactNode } from 'react';
 import { STATUS_LABEL } from '../domain/budget';
 import type { Currency, DataStatus, Money, TransportMode } from '../domain/types';
@@ -120,6 +124,10 @@ export function NumberInput({
 
 export function MoneyInput({ id, value, onChange, ariaLabel }: { id?: string; value: Money | undefined; onChange: (m: Money | undefined) => void; ariaLabel?: string }) {
   const currency: Currency = value?.currency ?? 'EUR';
+  const { trip } = useTrip();
+  const { countries } = useCatalog();
+  // EUR (valuta del viaggio) e le valute delle nazioni del viaggio; quella già salvata resta sempre sceglibile
+  const currencies = [...new Set(['EUR', ...tripCountries(trip).map((c) => countries.find((x) => x.code === c.code)?.currency).filter((x): x is string => Boolean(x)), currency])];
   return (
     <div className="money">
       <input
@@ -141,9 +149,13 @@ export function MoneyInput({ id, value, onChange, ariaLabel }: { id?: string; va
         value={currency}
         onChange={(e) => value && onChange({ ...value, currency: e.target.value as Currency })}
       >
-        <option value="EUR">EUR</option>
-        <option value="NOK">NOK</option>
+        {currencies.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
       </select>
+      {value && rateFor(value.currency, trip.settings, trip.rates) === undefined && <span className="small warn-text">Senza cambio: non entra nei totali.</span>}
     </div>
   );
 }

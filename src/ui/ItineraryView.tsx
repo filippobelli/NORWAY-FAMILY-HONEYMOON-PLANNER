@@ -1,3 +1,5 @@
+import { countryInfo, placeCountry, useCatalog } from '../catalog/registry';
+import { defaultCountry, stopCountry, tripCountries } from '../domain/countries';
 import { useMemo, useRef, useState } from 'react';
 import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
@@ -130,7 +132,13 @@ export function useLegRouting() {
 export function StopPicker({ onAdd, onBrowse }: { onAdd: (s: Stop | undefined) => void; onBrowse?: () => void }) {
   const [q, setQ] = useState('');
   const [custom, setCustom] = useState(false);
-  const [c, setC] = useState<{ name: string; lat?: number; lng?: number }>({ name: '' });
+  const [c, setC] = useState<{ name: string; lat?: number; lng?: number; country?: string }>({ name: '' });
+  const { trip } = useTrip();
+  useCatalog();
+  const countries = tripCountries(trip);
+  // Con più nazioni la tappa libera sceglie la sua (D4, proposta la prima); con una sola resta implicita
+  const multi = countries.length > 1;
+  const chosenCountry = c.country ?? defaultCountry(trip);
   const results = useMemo(() => {
     const qq = q.trim().toLowerCase();
     if (qq.length < 2) return [];
@@ -189,11 +197,26 @@ export function StopPicker({ onAdd, onBrowse }: { onAdd: (s: Stop | undefined) =
             {(id) => <NumberInput id={id} value={c.lat} onChange={(v) => setC({ ...c, lat: v })} />}
           </Field>
           <Field label="Longitudine">{(id) => <NumberInput id={id} value={c.lng} onChange={(v) => setC({ ...c, lng: v })} />}</Field>
+          {multi ? (
+            <Field label="Nazione" hint="Serve per valuta e fuso orario della tappa.">
+              {(id) => (
+                <select id={id} value={chosenCountry} onChange={(e) => setC({ ...c, country: e.target.value })}>
+                  {countries.map((x) => (
+                    <option key={x.code} value={x.code}>
+                      {countryInfo(x.code)?.name ?? x.code}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Field>
+          ) : (
+            <p className="small muted">Nazione: {countryInfo(chosenCountry)?.name ?? chosenCountry}</p>
+          )}
           <button
             className="btn btn-primary"
             disabled={!c.name.trim() || c.lat === undefined || c.lng === undefined || Math.abs(c.lat) > 90 || Math.abs(c.lng) > 180}
             onClick={() => {
-              onAdd({ id: newId(), kind: 'luogo', name: c.name.trim(), lat: c.lat!, lng: c.lng!, nights: 1, notes: '', weatherPlanB: '' });
+              onAdd({ id: newId(), kind: 'luogo', name: c.name.trim(), lat: c.lat!, lng: c.lng!, nights: 1, notes: '', weatherPlanB: '', ...(multi && chosenCountry ? { countryCode: chosenCountry } : {}) });
               setC({ name: '' });
               setCustom(false);
             }}
@@ -234,6 +257,24 @@ export function StopCard({
   const setStop = (patch: Partial<Stop>) => update((t) => ({ ...t, stops: t.stops.map((s) => (s.id === stop.id ? { ...s, ...patch } : s)) }));
   const move = (to: number) => update((t) => ({ ...t, stops: moveItem(t.stops, index, to) }));
   const acc = trip.accommodations.find((a) => a.id === stop.accommodationId);
+  const cat = useCatalog();
+  const multi = tripCountries(trip).length > 1;
+  const nameOf = (code?: string) => (code ? (countryInfo(code)?.name ?? code) : undefined);
+  const port = stop.kind === 'a_bordo' ? COASTAL_PORTS_NORTHBOUND.find((p) => p.lat === stop.lat && p.lng === stop.lng) : undefined;
+  // Testata con la nazione, solo con più nazioni nel viaggio (design §4)
+  const subtitle = !multi
+    ? dest
+      ? dest.region
+      : stop.kind === 'a_bordo'
+        ? 'Pernottamento in nave'
+        : 'Luogo personalizzato'
+    : dest
+      ? `${dest.region} · ${nameOf(stopCountry(trip, stop, placeCountry))}`
+      : stop.kind === 'a_bordo'
+        ? port && cat.portCountry[port.name]
+          ? `Pernottamento in nave · ${nameOf(cat.portCountry[port.name])} (porto d'imbarco)`
+          : "Pernottamento in nave · nazione dal porto d'imbarco: scegli il porto"
+        : `Luogo personalizzato · ${nameOf(stopCountry(trip, stop, placeCountry))}`;
 
   return (
     <article className={`stop ${stop.kind === 'a_bordo' ? 'stop-ship' : ''} ${selected ? 'stop-selected' : ''}`}>
@@ -247,7 +288,7 @@ export function StopCard({
             {selected && <span className="sel-tag"><Icon name="pin" /> sulla mappa</span>}
           </strong>
           <span className="muted small">
-            {dest ? dest.region : stop.kind === 'a_bordo' ? 'Pernottamento in nave' : 'Luogo personalizzato'}
+            {subtitle}
           </span>
           <span className="stop-meta small">
             {checkIn && stop.nights > 0 ? (
@@ -322,6 +363,21 @@ export function StopCard({
               </option>
             ))}
           </select>
+        </div>
+      )}
+      {multi && stop.kind === 'luogo' && !dest && (
+        <div className="row wrap small">
+          <label htmlFor={`country-${stop.id}`}>Nazione della tappa</label>
+          <select id={`country-${stop.id}`} aria-describedby={`country-note-${stop.id}`} value={stopCountry(trip, stop, placeCountry) ?? ''} onChange={(e) => setStop({ countryCode: e.target.value })}>
+            {tripCountries(trip).map((x) => (
+              <option key={x.code} value={x.code}>
+                {nameOf(x.code)}
+              </option>
+            ))}
+          </select>
+          <span id={`country-note-${stop.id}`} className="muted">
+            Decide valuta proposta e fuso orario di questa tappa.
+          </span>
         </div>
       )}
       {dest?.augustNote && <p className="note-warn small"><Icon name="warning" /> {dest.augustNote}</p>}

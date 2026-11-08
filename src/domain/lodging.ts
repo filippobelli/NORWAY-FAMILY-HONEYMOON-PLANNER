@@ -78,7 +78,7 @@ export function decisionFor(a: Accommodation, chosen: boolean): LodgingDecision 
 /** Costo del soggiorno con le stesse regole del budget (alloggio scelto × notti + extra). */
 export function stayCostEur(a: Accommodation, nights: number, trip: Trip): number | undefined {
   if (!a.pricePerNight) return undefined;
-  return toEur(a.pricePerNight, trip.settings) * nights + toEur(a.cleaningFee, trip.settings) + toEur(a.linenFee, trip.settings);
+  return toEur(a.pricePerNight, trip.settings, trip.rates) * nights + toEur(a.cleaningFee, trip.settings, trip.rates) + toEur(a.linenFee, trip.settings, trip.rates);
 }
 
 export function lodgingComparison(trip: Trip): StopLodging[] {
@@ -105,7 +105,7 @@ export function lodgingComparison(trip: Trip): StopLodging[] {
           acc,
           chosen,
           decision: decisionFor(acc, chosen),
-          nightlyEur: acc.pricePerNight ? toEur(acc.pricePerNight, trip.settings) : undefined,
+          nightlyEur: acc.pricePerNight ? toEur(acc.pricePerNight, trip.settings, trip.rates) : undefined,
           stayEur,
           currency: acc.pricePerNight?.currency,
           priceStatus: acc.priceStatus,

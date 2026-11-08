@@ -20,13 +20,14 @@ function readCache(): Cache {
 export class WeatherError extends Error {}
 
 export async function fetchDayForecast(p: { place: string; lat: number; lng: number }, date: string, signal?: AbortSignal): Promise<DayForecast> {
+  // Fuso: quello del luogo (timezone=auto), quindi della nazione della tappa, non un fuso fisso
   // Coordinate arrotondate: bastano per la previsione e non rivelano un indirizzo preciso
   const lat = Math.round(p.lat * 100) / 100;
   const lng = Math.round(p.lng * 100) / 100;
   const key = `${lat},${lng},${date}`;
   const cached = readCache()[key];
   if (cached && Date.now() - Date.parse(cached.fetchedAt) < CACHE_MS) return cached;
-  const url = `${BASE}?latitude=${lat}&longitude=${lng}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=Europe%2FOslo&start_date=${date}&end_date=${date}`;
+  const url = `${BASE}?latitude=${lat}&longitude=${lng}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=auto&start_date=${date}&end_date=${date}`;
   let res: Response;
   try {
     res = await fetch(url, { signal });

@@ -291,7 +291,7 @@ export function HytteView() {
           <div className="cards">
             {trip.accommodations.map((a) => {
               const st = trip.stops.find((s) => s.id === a.stopId);
-              const total = st && a.pricePerNight ? toEur(a.pricePerNight, trip.settings) * st.nights + toEur(a.cleaningFee, trip.settings) + toEur(a.linenFee, trip.settings) : undefined;
+              const total = st && a.pricePerNight ? toEur(a.pricePerNight, trip.settings, trip.rates) * st.nights + toEur(a.cleaningFee, trip.settings, trip.rates) + toEur(a.linenFee, trip.settings, trip.rates) : undefined;
               return (
                 <article key={a.id} className="card">
                   <header>

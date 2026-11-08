@@ -4,6 +4,7 @@ import { exportTripFile } from '../services/storage/local';
 import { useCloudSync, type CloudConflict } from '../state/cloudSync';
 import { useTrip } from '../state/store';
 import { Modal } from './PlacementDialog';
+import { formatMb, notUploaded } from '../domain/attachments';
 
 /** Stessa cosa cambiata in modo diverso su due dispositivi: si confronta e si sceglie, punto per punto. */
 export function ConflictDialog({ conflict, onClose }: { conflict: CloudConflict; onClose: () => void }) {
@@ -63,6 +64,9 @@ export function LogoutDialog({ onClose }: { onClose: () => void }) {
   const { pending, status, logout, syncNow, session } = useCloudSync();
   const [busy, setBusy] = useState(false);
   const [understood, setUnderstood] = useState(false);
+  const [filesUnderstood, setFilesUnderstood] = useState(false);
+  const local = notUploaded(trip);
+  const localBytes = local.reduce((n, x) => n + x.attachment.size, 0);
   return (
     <Modal title="Esci dall'account" onClose={onClose}>
       <p className="small">Uscendo, il viaggio, il diario e gli allegati vengono tolti da questo dispositivo: chi accede dopo non li vede. Ciò che è nel cloud resta.</p>
@@ -84,11 +88,25 @@ export function LogoutDialog({ onClose }: { onClose: () => void }) {
           </label>
         </>
       )}
-      <p className="muted small">Gli allegati del diario stanno solo sul dispositivo: uscendo vengono eliminati anche loro.</p>
+      {local.length > 0 && (
+        <>
+          <p className="note-warn small" role="alert">
+            {local.length} allegati ({formatMb(localBytes)} MB) non sono ancora nel cloud: uscendo andrebbero persi. Il backup su file non li contiene: aspetta che si carichino.
+          </p>
+          <ul className="small">
+            {local.slice(0, 10).map((x) => (
+              <li key={x.attachment.id}>{x.attachment.name}</li>
+            ))}
+          </ul>
+          <label className="check impact-confirm">
+            <input type="checkbox" checked={filesUnderstood} onChange={(e) => setFilesUnderstood(e.target.checked)} /> Ho capito: gli allegati non caricati vengono eliminati da questo dispositivo.
+          </label>
+        </>
+      )}
       <div className="row wrap place-actions">
         <button
           className="btn btn-primary"
-          disabled={busy || (pending && !understood)}
+          disabled={busy || (pending && !understood) || (local.length > 0 && !filesUnderstood)}
           onClick={() => {
             setBusy(true);
             void logout().then(() => {
