@@ -1,3 +1,4 @@
+import { tripTitle } from './tripTitle';
 import { FILE_COUNTRY } from '../data/country';
 import { computeDays, formatDateIt } from './itinerary';
 import type { Trip } from './types';
@@ -92,7 +93,7 @@ export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTR
   const days = computeDays(trip);
   const stamp = utcStamp(now);
   const uid = (k: string) => `${trip.id}-${k.replace(/[^A-Za-z0-9-]/g, '-')}@norvegia-2027`;
-  const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Norway Family Honeymoon Planner//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${icsText(trip.title || 'Norvegia 2027')}`, `X-WR-TIMEZONE:${tz}`, ...(cet ? cetVtimezone(tz) : [])];
+  const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Norway Family Honeymoon Planner//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${icsText(tripTitle(trip))}`, `X-WR-TIMEZONE:${tz}`, ...(cet ? cetVtimezone(tz) : [])];
   const event = (props: string[]) => lines.push('BEGIN:VEVENT', ...props, 'END:VEVENT');
 
   for (const d of days) {
@@ -165,7 +166,7 @@ export function tripToGpx(trip: Trip, now = new Date()): string {
   const out: string[] = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<gpx version="1.1" creator="Norway Family Honeymoon Planner" xmlns="http://www.topografix.com/GPX/1/1">',
-    `  <metadata><name>${xml(trip.title || 'Norvegia 2027')}</name><time>${now.toISOString()}</time></metadata>`,
+    `  <metadata><name>${xml(tripTitle(trip))}</name><time>${now.toISOString()}</time></metadata>`,
   ];
   stops.forEach((s) => {
     const i = trip.stops.indexOf(s);
@@ -197,7 +198,7 @@ export function tripToKml(trip: Trip): string {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<kml xmlns="http://www.opengis.net/kml/2.2">',
     '<Document>',
-    `  <name>${xml(trip.title || 'Norvegia 2027')}</name>`,
+    `  <name>${xml(tripTitle(trip))}</name>`,
     '  <Folder><name>Tappe</name>',
   ];
   stops.forEach((s) => {
@@ -247,7 +248,7 @@ export function offlinePackage(trip: Trip, opts: SummaryOptions = {}): string {
 
 /** Nome di file sicuro, senza caratteri accentati problematici per alcuni sistemi. */
 export function exportFileName(trip: Trip, ext: string, now = new Date()): string {
-  const base = (trip.title || 'norvegia-2027')
+  const base = tripTitle(trip)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[øØ]/g, 'o')

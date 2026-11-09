@@ -1,3 +1,4 @@
+import { tripTitle } from './tripTitle';
 import { ACCOMMODATION_STATUS_LABEL, BOOKING_STATE_LABEL, bookingsOverview } from './bookings';
 import { DAY_STATE_LABEL, dayTransfers, missingText, TIMING_LABEL } from './dayTransfer';
 import { addDays, computeDays, formatDateIt, formatDuration, totalDays } from './itinerary';
@@ -49,7 +50,7 @@ export function tripSummary(trip: Trip, opts: SummaryOptions = {}): TripSummary 
   sections.push({
     id: 'viaggio',
     heading: 'Il viaggio',
-    items: [{ title: trip.title || 'Norvegia 2027', lines: [period, people, `Dati aggiornati al ${new Date(trip.updatedAt).toLocaleString('it-IT')}`] }],
+    items: [{ title: tripTitle(trip), lines: [period, people, `Dati aggiornati al ${new Date(trip.updatedAt).toLocaleString('it-IT')}`] }],
   });
 
   sections.push({
@@ -144,5 +145,5 @@ export function tripSummary(trip: Trip, opts: SummaryOptions = {}): TripSummary 
     });
   }
 
-  return { title: trip.title || 'Norvegia 2027', subtitle: `${period} · ${people}`, generatedAt: now.toISOString(), sections };
+  return { title: tripTitle(trip), subtitle: `${period} · ${people}`, generatedAt: now.toISOString(), sections };
 }

@@ -79,10 +79,10 @@ let patchCount = 0, postCount = 0;
   const confirmOut = p.locator('dialog[open] button:has-text("Esci")').last();
   if (await confirmOut.isDisabled()) await p.locator('dialog[open] input[type=checkbox]').first().check();
   await confirmOut.click();
-  const other3 = JSON.parse(JSON.stringify(db.get(id).data)); other3.title = 'Rinominato altrove';
+  const other3 = JSON.parse(JSON.stringify(db.get(id).data)); other3.participants = { ...other3.participants, adults: 3 }; // il titolo è automatico: cambia un dato visibile nell'intestazione
   Object.assign(db.get(id), { data: other3, updated_at: ts() });
   await p.fill('input[type=email]', 'f@x.it'); await p.fill('input[type=password]', 'segreta123'); await p.click('button[type=submit]');
-  await p.waitForFunction(() => /Rinominato altrove/.test(document.querySelector('.brand h1').textContent), null, { timeout: 8000 })
+  await p.waitForFunction(() => /3 adulti/.test(document.querySelector('.brand').textContent), null, { timeout: 8000 })
     .then(() => ok('nuovo accesso: modifiche altrove scaricate senza falso conflitto')).catch(async () => fail('relogin: ' + (await p.locator('.conflict').count() ? 'conflitto falso' : await label())));
   (await p.locator('.conflict').count()) === 0 ? ok('nessun banner di conflitto') : fail('banner conflitto presente');
   console.log('richieste: POST', postCount, 'PATCH', patchCount);

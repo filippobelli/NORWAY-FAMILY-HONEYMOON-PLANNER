@@ -232,7 +232,8 @@ test('Pacchetto offline: solo dati del viaggio, HTML protetto, diario solo se sc
   assert.ok(!html.includes('Bellissimo fiordo'));
   assert.ok(offlinePackage(t, { diary: true, now: NOW }).includes('Bellissimo fiordo'));
   assert.ok(!/<script/i.test(html), 'nessuno script: funziona offline senza risorse esterne');
-  assert.equal(exportFileName({ ...t, title: 'Norvegia, fjordi & Ålesund' }, 'pdf', NOW), 'norvegia-fjordi-alesund-2027-07-01.pdf');
+  // Il nome viene dal titolo automatico (nazione e periodo), non dal titolo salvato
+  assert.equal(exportFileName({ ...t, title: 'Norvegia, fjordi & Ålesund' }, 'pdf', NOW), 'norvegia-agosto-2027-2027-07-01.pdf');
 });
 
 // ---------- K. Meteo ----------

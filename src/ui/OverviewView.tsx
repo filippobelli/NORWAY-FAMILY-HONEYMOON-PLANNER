@@ -8,6 +8,8 @@ import { buildHash, parseRoute } from '../state/route';
 import { useTrip } from '../state/store';
 import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
 import { NextStepCard } from './NextStep';
+import { countryInfo } from '../catalog/registry';
+import { tripTitle } from '../domain/tripTitle';
 import { Badge, Field, NumberInput } from './common';
 import { Icon, type IconName } from './icons';
 
@@ -47,9 +49,9 @@ export function OverviewView() {
   const budgetPartial = o.budget.missingPrices.length > 0 || o.budget.emptyCategories > 0;
   const empty = trip.stops.length === 0;
   const activeVersion = (trip.scenarios?.length ?? 0) > 1 ? trip.scenarios?.find((s) => s.id === trip.activeScenarioId)?.name : undefined;
-  // Date e partecipanti: chiusi per non competere con il prossimo passo; si aprono da «Modifica» o da un'azione sulle date
+  // Date e partecipanti: sono la base del viaggio, si modificano nell'intestazione («Modifica» o un'azione sulle date)
   const [formOpen, setFormOpen] = useState(false);
-  const formRef = useRef<HTMLDetailsElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const openForm = () => {
     setFormOpen(true);
     requestAnimationFrame(() => {
@@ -76,7 +78,7 @@ export function OverviewView() {
       <section className="ov-hero" aria-labelledby="ov-title">
         <div>
           <p className="ov-eyebrow">Il viaggio</p>
-          <h2 id="ov-title">{trip.title || 'Norvegia 2027'}</h2>
+          <h2 id="ov-title">{tripTitle(trip, (c) => countryInfo(c)?.name)}</h2>
           {o.period ? (
             <p className={`ov-period ${o.period.tentative ? 'is-tentative' : 'is-confirmed'}`}>
               <span className="ov-period-kind">{o.period.tentative ? 'Periodo ipotizzato' : '✓ Date confermate'}</span>
@@ -96,8 +98,8 @@ export function OverviewView() {
               </>
             )}
             {' · '}
-            <button type="button" className="link-btn" onClick={openForm}>
-              Modifica date e partecipanti
+            <button type="button" className="link-btn" onClick={() => (formOpen ? setFormOpen(false) : openForm())} aria-expanded={formOpen} aria-controls="ov-trip-form">
+              {formOpen ? 'Chiudi la modifica' : 'Modifica date e partecipanti'}
             </button>
           </p>
           {!noCountries && <CountriesLine />}
@@ -116,6 +118,43 @@ export function OverviewView() {
             <dd>{o.sleepStops || '—'}</dd>
           </div>
         </dl>
+        {formOpen && (
+          <div className="ov-trip-form" id="ov-trip-form" ref={formRef} role="group" aria-label="Date e partecipanti">
+            <div className="grid-4">
+              <Field label="Data di partenza" hint={trip.dateTentative ? 'Provvisoria' : 'Confermata'}>
+                {(id) => <input id={id} type="date" value={trip.startDate} onChange={(e) => e.target.value && update((t) => ({ ...t, startDate: e.target.value }))} />}
+              </Field>
+              <Field label="Date">
+                {(id) => (
+                  <select id={id} value={trip.dateTentative ? 'p' : 'c'} onChange={(e) => update((t) => ({ ...t, dateTentative: e.target.value === 'p' }))}>
+                    <option value="p">Provvisorie</option>
+                    <option value="c">Decise</option>
+                  </select>
+                )}
+              </Field>
+              <Field label="Adulti">
+                {(id) => (
+                  <NumberInput id={id} value={trip.participants.adults} min={1} onChange={(v) => v && update((t) => ({ ...t, participants: { ...t.participants, adults: v } }))} />
+                )}
+              </Field>
+              <Field label="Età bambini alla partenza" hint="Separate da virgola">
+                {(id) => (
+                  <input
+                    id={id}
+                    defaultValue={trip.participants.childrenAges.join(', ')}
+                    onBlur={(e) => {
+                      const ages = e.target.value
+                        .split(',')
+                        .map((x: string) => Number(x.trim()))
+                        .filter((x: number) => Number.isFinite(x) && x >= 0 && x < 18);
+                      update((t) => ({ ...t, participants: { ...t.participants, childrenAges: ages } }));
+                    }}
+                  />
+                )}
+              </Field>
+            </div>
+          </div>
+        )}
       </section>
 
       {noCountries ? (
@@ -146,52 +185,6 @@ export function OverviewView() {
         <NextStepCard />
       )}
 
-      <details className="panel ov-trip-form" ref={formRef} open={formOpen} onToggle={(e) => setFormOpen(e.currentTarget.open)}>
-        <summary>Date e partecipanti{trip.dateTentative ? ' · date provvisorie' : ' · date decise'}</summary>
-        <div className="grid-4">
-          <Field label="Titolo">{(id) => <input id={id} value={trip.title} onChange={(e) => update((t) => ({ ...t, title: e.target.value }))} />}</Field>
-          <Field label="Data di partenza" hint={trip.dateTentative ? 'Provvisoria' : 'Confermata'}>
-            {(id) => (
-              <input
-                id={id}
-                type="date"
-                value={trip.startDate}
-                min="2027-07-01"
-                max="2027-09-30"
-                onChange={(e) => e.target.value && update((t) => ({ ...t, startDate: e.target.value }))}
-              />
-            )}
-          </Field>
-          <Field label="Date">
-            {(id) => (
-              <select id={id} value={trip.dateTentative ? 'p' : 'c'} onChange={(e) => update((t) => ({ ...t, dateTentative: e.target.value === 'p' }))}>
-                <option value="p">Provvisorie</option>
-                <option value="c">Decise</option>
-              </select>
-            )}
-          </Field>
-          <Field label="Adulti">
-            {(id) => (
-              <NumberInput id={id} value={trip.participants.adults} min={1} onChange={(v) => v && update((t) => ({ ...t, participants: { ...t.participants, adults: v } }))} />
-            )}
-          </Field>
-          <Field label="Età bambini (ad agosto 2027)" hint="Separate da virgola">
-            {(id) => (
-              <input
-                id={id}
-                defaultValue={trip.participants.childrenAges.join(', ')}
-                onBlur={(e) => {
-                  const ages = e.target.value
-                    .split(',')
-                    .map((x: string) => Number(x.trim()))
-                    .filter((x: number) => Number.isFinite(x) && x >= 0 && x < 18);
-                  update((t) => ({ ...t, participants: { ...t.participants, childrenAges: ages } }));
-                }}
-              />
-            )}
-          </Field>
-        </div>
-      </details>
 
       {!empty && (
       <section className="panel" aria-labelledby="ov-steps">

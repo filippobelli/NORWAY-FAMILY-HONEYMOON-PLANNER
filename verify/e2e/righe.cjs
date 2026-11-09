@@ -175,7 +175,7 @@ const tripRow = () => rows.get(key('trips', { id: TRIP })).row;
   // 1. Accesso: il viaggio (formato documento) arriva dal cloud
   await p.goto(`${BASE}/#/impostazioni`);
   await p.fill('input[type=email]', 'f@x.it'); await p.fill('input[type=password]', 'segreta123'); await p.click('button[type=submit]');
-  await p.waitForFunction(() => /Viaggio di prova/.test(document.querySelector('.brand h1')?.textContent ?? ''), null, { timeout: 10000 })
+  await p.waitForFunction(() => /\d+ giorni/.test(document.querySelector('.brand')?.textContent ?? ''), null, { timeout: 10000 })
     .then(() => ok('viaggio del cloud aperto (formato documento)')).catch(async () => fail('apertura: ' + await label()));
 
   // 2. Conversione al formato a righe, con conferma esplicita
@@ -220,10 +220,10 @@ const tripRow = () => rows.get(key('trips', { id: TRIP })).row;
   check(count('stops') === 2, 'tappa nuova nel cloud', String(count('stops')));
   check(pushes > pushesAfterImport, 'invio con sync_push');
 
-  // 4. Modifica da un altro dispositivo (titolo) → ritorno in primo piano
-  const tr = tripRow(); Object.assign(tr, { title: 'Titolo da altro dispositivo', rev: tr.rev + 1, seq: ++seq, last_mutation_id: 'altro' });
+  // 4. Modifica da un altro dispositivo (partecipanti; il titolo è automatico) → ritorno in primo piano
+  const tr = tripRow(); Object.assign(tr, { participants: { adults: 3, childrenAges: [8, 5] }, rev: tr.rev + 1, seq: ++seq, last_mutation_id: 'altro' });
   await p.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true }); document.dispatchEvent(new Event('visibilitychange')); });
-  await p.waitForFunction(() => /Titolo da altro dispositivo/.test(document.querySelector('.brand h1')?.textContent ?? ''), null, { timeout: 10000 })
+  await p.waitForFunction(() => /3 adulti/.test(document.querySelector('.brand')?.textContent ?? ''), null, { timeout: 10000 })
     .then(() => ok('modifica dell\'altro dispositivo ricevuta con sync_pull')).catch(async () => fail('pull: ' + await label()));
 
   // 5. Stessa tappa cambiata sui due lati → conflitto per riga

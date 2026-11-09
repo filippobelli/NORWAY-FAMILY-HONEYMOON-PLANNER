@@ -1,3 +1,4 @@
+import { tripTitle } from './domain/tripTitle';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { computeBudget, formatEur } from './domain/budget';
 import { totalDays } from './domain/itinerary';
@@ -297,7 +298,7 @@ function Shell() {
           </span>
           <div>
             <p className="eyebrow">{section ? `${section.label}${viewLabel && section.views.length > 1 ? ` / ${viewLabel}` : ''}` : 'Impostazioni'}</p>
-            <h1>{trip.title || 'Norvegia 2027'}</h1>
+            <h1>{tripTitle(trip)}</h1>
             <p>
               {days ? `${days} giorni` : 'Itinerario da costruire'} · {trip.participants.adults} adulti, {trip.participants.childrenAges.length} bambini
               {total > 0 && ` · ${formatEur(total)}`}

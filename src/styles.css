@@ -1188,13 +1188,14 @@ code {
   color: var(--blu);
   font-weight: 600;
 }
-.ov-trip-form summary,
 .ov-more > summary {
   cursor: pointer;
   font-weight: 600;
 }
-.ov-trip-form[open] summary {
-  margin-bottom: 10px;
+.ov-trip-form {
+  flex: 1 1 100%;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
 .ov-more {
   margin-bottom: 16px;

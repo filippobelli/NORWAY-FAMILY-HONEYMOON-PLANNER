@@ -1,3 +1,4 @@
+import { tripTitle } from '../domain/tripTitle';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { STATUS_LABEL } from '../domain/budget';
 import { activityState, addDiaryEntry, editDiaryEntry, newDiaryEntry, removeDiaryEntry, setActivityState, setStopState, stopState, STOP_STATE_LABEL, visibleDiary } from '../domain/actuals';
@@ -53,7 +54,7 @@ export function TravelShell({ tab, status, online, children }: { tab: ViewId; st
           </span>
           <div>
             <span className="eyebrow">Viaggio / {BAR.find((b) => b.id === active)?.label}</span>
-            <strong>{trip.title || 'Norvegia 2027'}</strong>
+            <strong>{tripTitle(trip)}</strong>
           </div>
         </div>
         <div className="travel-top-right">
