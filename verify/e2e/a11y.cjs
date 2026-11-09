@@ -4,7 +4,7 @@
 const { serve, launch, context, check, results } = require('./serve.cjs');
 
 const PORT = 4182;
-const VIEWS = ['panoramica', 'pianifica', 'configuratore', 'catalogo', 'scenari', 'prenotazioni', 'voli', 'crociere', 'hytte', 'giornate', 'budget', 'impostazioni', 't/oggi', 't/itinerario', 't/mappa', 't/diario', 't/altro'];
+const VIEWS = ['panoramica', 'pianifica', 'configuratore', 'catalogo', 'scenari', 'prenotazioni', 'voli', 'crociere', 'crociere?parte=traghetti', 'hytte', 'giornate', 'budget', 'impostazioni', 't/oggi', 't/itinerario', 't/mappa', 't/diario', 't/altro'];
 
 (async () => {
   const srv = serve(PORT);

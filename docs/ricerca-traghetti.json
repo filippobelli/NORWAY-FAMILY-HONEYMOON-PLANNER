@@ -1,0 +1,5637 @@
+{
+  "schema": "ricerca-traghetti/1",
+  "lettoIl": "2026-11-09",
+  "valuta": "NOK",
+  "note": [
+    "Tariffe 2026 = «tariffa di oggi, da verificare per il 2027», salvo Bergen–Flåm (prezzi 2027 pubblicati da Fjord1).",
+    "Durate da orari invernali 2026/27 su Entur, salvo diversa fonte indicata nel campo.",
+    "Coordinate: solo moli del registro nazionale NSR letti da Entur; nessuna coordinata stimata.",
+    "Classe auto norvegese: «fino a 6 m» (non 5 m); un'auto familiare normale vi rientra, una con portapacchi/rimorchio va misurata."
+  ],
+  "fonti": {
+    "entur": {
+      "titolo": "Entur Journey Planner API v3 (orari pubblicati, NeTEx nazionale; dati validi nov 2026 – mar/apr 2027)",
+      "url": "https://api.entur.io/journey-planner/v3/graphql",
+      "lettoIl": "2026-11-09"
+    },
+    "nsr": {
+      "titolo": "Entur / Nasjonalt stoppestedsregister (coordinate dei moli, StopPlace)",
+      "url": "https://api.entur.io/geocoder/v1/autocomplete",
+      "lettoIl": "2026-11-09"
+    },
+    "skyss-ferje": {
+      "titolo": "Skyss – Ferry prices (Vestland): passeggeri gratis, si paga veicolo + conducente",
+      "url": "https://www.skyss.no/en/tickets-and-prices/prices/ferry/",
+      "lettoIl": "2026-11-09"
+    },
+    "skyss-fares": {
+      "titolo": "Skyss – Fares and discounts for passengers in Vestland (dal 1/7/2026)",
+      "url": "https://www.skyss.no/en/tickets-and-prices/fares-and-discounts-for-passengers-in-vestland/",
+      "lettoIl": "2026-11-09"
+    },
+    "reis-ferge": {
+      "titolo": "Reis Nordland – Ferge (passeggeri gratis; 20 linee gratis per i veicoli fuori dall'estate)",
+      "url": "https://reisnordland.no/ferge",
+      "lettoIl": "2026-11-09"
+    },
+    "reis-priser": {
+      "titolo": "Reis Nordland – Priser og billettyper (bambini 6–15, gratis sotto 6)",
+      "url": "https://reisnordland.no/priser-og-billettyper",
+      "lettoIl": "2026-11-09"
+    },
+    "reis-hb": {
+      "titolo": "Reis Nordland – Rutetabeller hurtigbåt",
+      "url": "https://reisnordland.no/rutetabeller-hurtigbt",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-bus": {
+      "titolo": "Svipper – categorie di età (bambino 6–17, gratis sotto 6, adulto 30–66, giovane 18–29)",
+      "url": "https://svipper.no/menu/tickets/bus-fares/",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-hb": {
+      "titolo": "Svipper – Express boat fares (dal 1/2/2026, posto garantito)",
+      "url": "https://svipper.no/menu/tickets/express-boat-fares/",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-l2": {
+      "titolo": "Svipper – Tabella prezzi linea 2 Tromsø–Finnsnes–Harstad (dal 1/2/2026)",
+      "url": "https://svipper.no/~/_f/p3/i616bd0d2-c599-4ee7-abdd-472c05fb12c1/linje-2-tromso-finnsnes-harstad.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-l3": {
+      "titolo": "Svipper – Tabella prezzi linea 3 Tromsø–Skjervøy (dal 1/2/2026)",
+      "url": "https://svipper.no/~/_f/p3/i4383581f-af28-4a2c-8c96-294ecfc0d8ca/linje-3-tromso-skjervoy.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-180": {
+      "titolo": "Svipper – Prezzi 180 Andenes–Gryllefjord (dal 1/1/2026)",
+      "url": "https://svipper.no/~/_f/p3/ie1faf2ce-1f10-4c09-8f00-3c1652bd136f/180-andenes-gryllefjord-2026.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-180-news": {
+      "titolo": "Svipper – New summer prices on the ferries (12/6/2026)",
+      "url": "https://svipper.no/news/new-summer-prices-on-the-ferries.6755.aspx",
+      "lettoIl": "2026-11-09"
+    },
+    "svipper-181": {
+      "titolo": "Svipper – Prezzi 181 Botnhamn–Brensholmen (20/6–31/8/2026)",
+      "url": "https://svipper.no/_f/p3/if0227ff1-104d-42b4-80d4-e88e00887195/181-botnhamn-brensholmen-010126_pristabell.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "snelandia-hb": {
+      "titolo": "Snelandia – Hurtigbåtpriser dal 1/2/2026 (bambino 4–19)",
+      "url": "https://snelandia.no/billetter/hurtigbat/priser/",
+      "lettoIl": "2026-11-09"
+    },
+    "snelandia-ferge": {
+      "titolo": "Snelandia – Billetter: «Ferge i Finnmark er gratis»",
+      "url": "https://snelandia.no/billetter/",
+      "lettoIl": "2026-11-09"
+    },
+    "torg-782": {
+      "titolo": "Torghatten – rotta 18-782 Bodø–Værøy–Røst–Moskenes (prezzi, plassgaranti)",
+      "url": "https://www.torghatten.no/our-routes/18-782",
+      "lettoIl": "2026-11-09"
+    },
+    "torg-703": {
+      "titolo": "Torghatten – rotta 18-703 Bognes–Lødingen",
+      "url": "https://www.torghatten.no/our-routes/18-703",
+      "lettoIl": "2026-11-09"
+    },
+    "torg-1018": {
+      "titolo": "Torghatten – rotta 1018 Halhjem–Sandvikvåg",
+      "url": "https://www.torghatten.no/our-routes/1018",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-gh-pdf": {
+      "titolo": "Fjord1 – Ticket Prices + Timetable Geiranger–Hellesylt 2026 (PDF)",
+      "url": "https://res.cloudinary.com/fjord1-asa/image/upload/v1780050779/Prices_and_timetable_Geiranger_Hellesylt_idmirtr7nk.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-gh": {
+      "titolo": "Fjord1 – Geiranger–Hellesylt",
+      "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/geiranger-hellesylt",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-flam-prices": {
+      "titolo": "Fjord1 – Bergen–Flåm, prezzi 2027",
+      "url": "https://www.fjord1.no/eng/routes/Vestland/bergen-balestrand-sogndal?from=NSR%3AQuay%3A51969&to=NSR%3AQuay%3A59727",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-flam-tt": {
+      "titolo": "Fjord1 – Orario estivo Bergen–Sogn–Flåm–Bergen, 1/4–31/10/2027 (PDF)",
+      "url": "https://res.cloudinary.com/fjord1-asa/image/upload/v1791530064/Timetable_Bergen_Sogn_Fl%C3%A5m_Bergen_ihw4g6w3jt.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-sogn": {
+      "titolo": "Fjord1 – Bergen–Balestrand–Sogndal",
+      "url": "https://www.fjord1.no/eng/routes/Vestland/bergen-balestrand-sogndal",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-exp": {
+      "titolo": "Fjord1 – Express boats (subentra a Norled dal 1/12/2026)",
+      "url": "https://www.fjord1.no/eng/about-fjord1/our-operating-segments/express-boats",
+      "lettoIl": "2026-11-09"
+    },
+    "f1-nordfjord": {
+      "titolo": "Fjord1 – Bergen–Florø–Måløy–Selje",
+      "url": "https://www.fjord1.no/eng/routes/Vestland/bergen-floroe-maaloey-selje",
+      "lettoIl": "2026-11-09"
+    },
+    "norled-flam": {
+      "titolo": "Norled – Fjord cruise Bergen–Flåm (pagina senza anno, gestore fino al 30/11/2026)",
+      "url": "https://www.norled.no/en/?p=3594",
+      "lettoIl": "2026-11-09"
+    },
+    "rodne-hfe": {
+      "titolo": "Rødne – Hardangerfjord Express Bergen–Rosendal, prezzi dal 1/2/2026 (PDF)",
+      "url": "https://rodne.no/wp-content/uploads/2026/01/HFE-Prices-2026.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "rodne-lyse-pdf": {
+      "titolo": "Rødne – Lysefjord Tourist Ferry, Prices 2026 (PDF)",
+      "url": "https://rodne.no/wp-content/uploads/2026/03/Lysefjord-Tourist-Ferry-%E2%80%93-Price-List-2026.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "rodne-lyse": {
+      "titolo": "Rødne – Lysefjord Scenic Car Ferry (stagione 2026, fermate, durata)",
+      "url": "https://rodne.no/?p=9946",
+      "lettoIl": "2026-11-09"
+    },
+    "kolumbus-lyse": {
+      "titolo": "Kolumbus – Lysefjorden (rotte 561 passeggeri e 563 auto)",
+      "url": "https://www.kolumbus.no/en/travel/timetables/boats-and-ferries/lysefjorden",
+      "lettoIl": "2026-11-09"
+    },
+    "florli": {
+      "titolo": "Florli.no – Ferry on the Lysefjord 2026",
+      "url": "https://www.florli.no/ferry-lysefjord/",
+      "lettoIl": "2026-11-09"
+    },
+    "visitbergen-flam": {
+      "titolo": "Visit Bergen – Fjord cruise between Flåm and Gudvangen (Lustrabåtane, 2026)",
+      "url": "https://en.visitbergen.com/things-to-do/fjord-cruise-between-flam-and-gudvangen-p8399913",
+      "lettoIl": "2026-11-09"
+    },
+    "gfs-pdf": {
+      "titolo": "Visit Geiranger / Geiranger Fjordservice – Ålesund–Geiranger 2026/2027 (PDF)",
+      "url": "https://www.geirangerfjord.no/upload/pdf/2026/2025%202026%20Alesund%20TIMETABLE.pdf",
+      "lettoIl": "2026-11-09"
+    },
+    "fergeruter": {
+      "titolo": "fergeruter.info – prezzi 2026 per tratta (aggregatore, fonte secondaria)",
+      "url": "https://www.fergeruter.info/",
+      "lettoIl": "2026-11-09"
+    },
+    "fjord1-pagina-tratta": {
+      "titolo": "Fjord1 – pagina della singola tratta (URL in fonteFjord1)",
+      "url": "https://www.fjord1.no/eng/routes",
+      "lettoIl": "2026-11-09"
+    }
+  },
+  "tratte": [
+    {
+      "id": "bergen-flam-express",
+      "nome": "Bergen – Sognefjord – Flåm (battello veloce estivo)",
+      "operatore": "Fjord1 (dal 1/12/2026; fino al 30/11/2026 Norled)",
+      "tipo": "hurtigbat",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "partenza": "Bergen (Strandkaiterminalen)",
+      "arrivo": "Flåm kai",
+      "tappe": [
+        {
+          "nome": "Strandkaiterminalen båtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:30219",
+          "lat": 60.395259,
+          "lng": 5.321964
+        },
+        {
+          "nome": "Lygra (a richiesta)",
+          "minutiDaPartenza": 50
+        },
+        {
+          "nome": "Vardetangen kai",
+          "minutiDaPartenza": 68,
+          "nsrId": "NSR:StopPlace:70401",
+          "lat": 60.802891,
+          "lng": 4.951181
+        },
+        {
+          "nome": "Skjerjehamn (a richiesta)"
+        },
+        {
+          "nome": "Sollibotn kai",
+          "minutiDaPartenza": 93,
+          "nsrId": "NSR:StopPlace:37394",
+          "lat": 60.98635,
+          "lng": 5.035641
+        },
+        {
+          "nome": "Rysjedalsvika kai",
+          "minutiDaPartenza": 117,
+          "nsrId": "NSR:StopPlace:36713",
+          "lat": 61.114199,
+          "lng": 5.283348
+        },
+        {
+          "nome": "Lavik kai",
+          "minutiDaPartenza": 140,
+          "nsrId": "NSR:StopPlace:36984",
+          "lat": 61.104534,
+          "lng": 5.507957
+        },
+        {
+          "nome": "Nordeide kai",
+          "minutiDaPartenza": 172,
+          "nsrId": "NSR:StopPlace:36820",
+          "lat": 61.173496,
+          "lng": 5.986739
+        },
+        {
+          "nome": "Vik kai",
+          "minutiDaPartenza": 215,
+          "nsrId": "NSR:StopPlace:34790",
+          "lat": 61.08883,
+          "lng": 6.58066
+        },
+        {
+          "nome": "Balestrand kai",
+          "minutiDaPartenza": 238,
+          "nsrId": "NSR:StopPlace:34831",
+          "lat": 61.209922,
+          "lng": 6.538137
+        },
+        {
+          "nome": "Leikanger kai",
+          "minutiDaPartenza": 258,
+          "nsrId": "NSR:StopPlace:35069",
+          "lat": 61.182777,
+          "lng": 6.798102
+        },
+        {
+          "nome": "Nærøyfjord (solo passaggio, senza fermata)"
+        },
+        {
+          "nome": "Aurland kai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:34490",
+          "lat": 60.90682,
+          "lng": 7.18634
+        },
+        {
+          "nome": "Flåm kai",
+          "minutiDaPartenza": 340,
+          "nsrId": "NSR:StopPlace:34484",
+          "lat": 60.862892,
+          "lng": 7.115664
+        }
+      ],
+      "durataMinuti": {
+        "valore": 340,
+        "stato": "confermato",
+        "nota": "Bergen 08:00 → Flåm 13:40; ritorno Flåm 15:30 → Bergen 20:45 (315 min). Aurland solo discesa.",
+        "fonte": "f1-flam-tt"
+      },
+      "frequenzaEstiva": {
+        "testo": "1 corsa al giorno per senso (tutti i giorni), Bergen 08:00, Flåm 15:30",
+        "stato": "confermato",
+        "fonte": "f1-flam-tt"
+      },
+      "stagione": {
+        "testo": "1 aprile – 31 ottobre 2027 (orario estivo pubblicato)",
+        "stato": "confermato",
+        "fonte": "f1-flam-tt"
+      },
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2027,
+        "periodo": "18 maggio – 31 agosto 2027",
+        "adulto": 1449,
+        "bambino": 719,
+        "fasciaBambino": "6–17",
+        "gratisSottoAnni": 6,
+        "senior67": 1449,
+        "famiglia2piu2": 3299,
+        "regole": [
+          "Bambino con adulto pagante: massimo 209 NOK per bambino, a tratta",
+          "Massimo 4 bambini per famiglia, compresi i minori di 6 anni",
+          "Fuori dal periodo 18/5–31/8: adulto 1349, bambino 649, famiglia 3099"
+        ],
+        "nota": "La pagina non dice in modo esplicito se il prezzo è di sola andata; da verificare.",
+        "stato": "confermato",
+        "fonte": "f1-flam-prices",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "bergen",
+        "arrivo": "flam",
+        "tappe": [
+          "balestrand",
+          "sognefjord",
+          "naeroyfjord",
+          "aurlandsfjord"
+        ]
+      },
+      "fonti": [
+        "f1-flam-tt",
+        "f1-flam-prices",
+        "f1-exp",
+        "norled-flam",
+        "nsr"
+      ],
+      "note": [
+        "Unico battello Bergen–Flåm: con il treno di Flåm e la ferrovia Bergen–Oslo forma un anello senza auto.",
+        "Coordinate delle fermate dal registro NSR (Entur)."
+      ],
+      "lettoIl": "2026-11-09"
+    },
+    {
+      "id": "bergen-sogndal-express",
+      "nome": "Bergen – Balestrand – Sogndal (battello veloce tutto l'anno)",
+      "operatore": "Fjord1 dal 1/12/2026 (Entur indica ancora Norled per la linea 890)",
+      "tipo": "hurtigbat",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "partenza": "Bergen (Strandkaiterminalen)",
+      "arrivo": "Sogndal kai",
+      "frequenzaEstiva": {
+        "testo": "estate 2027: 1 corsa pomeridiana Bergen 16:30 → Sogndal 21:20 (sabato 14:15 → 19:00) + mattina Sogndal 07:05 → Bergen 11:50",
+        "stato": "confermato",
+        "fonte": "f1-flam-tt"
+      },
+      "stagione": {
+        "testo": "tutto l'anno",
+        "stato": "confermato",
+        "fonte": "f1-sogn"
+      },
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Pagina Fjord1 senza prezzi; da verificare sulla prenotazione Fjord1.",
+        "regoleGenerali": "Vestland: bambini sotto 6 anni gratis, 6–17 circa metà prezzo (Skyss); le linee Bergen–Sogn/Nordfjord hanno però prezzi propri.",
+        "fonte": "skyss-fares",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "bergen",
+        "arrivo": null,
+        "tappe": [
+          "balestrand",
+          "sognefjord"
+        ]
+      },
+      "fonti": [
+        "f1-sogn",
+        "f1-flam-tt",
+        "f1-exp",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Strandkaiterminalen båtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:30219",
+          "lat": 60.395259,
+          "lng": 5.321964
+        },
+        {
+          "nome": "Lygra kai",
+          "minutiDaPartenza": 50,
+          "nsrId": "NSR:StopPlace:70402",
+          "lat": 60.691292,
+          "lng": 5.106347
+        },
+        {
+          "nome": "Mjømna kai",
+          "minutiDaPartenza": 80,
+          "nsrId": "NSR:StopPlace:37461",
+          "lat": 60.918285,
+          "lng": 4.901333
+        },
+        {
+          "nome": "Skjerjehamn kai",
+          "minutiDaPartenza": 90,
+          "nsrId": "NSR:StopPlace:37458",
+          "lat": 60.943546,
+          "lng": 4.953598
+        },
+        {
+          "nome": "Sollibotn kai",
+          "minutiDaPartenza": [
+            97,
+            101
+          ],
+          "nsrId": "NSR:StopPlace:37394",
+          "lat": 60.98635,
+          "lng": 5.035641
+        },
+        {
+          "nome": "Rysjedalsvika kai",
+          "minutiDaPartenza": [
+            122,
+            130
+          ],
+          "nsrId": "NSR:StopPlace:36713",
+          "lat": 61.114199,
+          "lng": 5.283348
+        },
+        {
+          "nome": "Lavik kai",
+          "minutiDaPartenza": [
+            147,
+            155
+          ],
+          "nsrId": "NSR:StopPlace:36984",
+          "lat": 61.104534,
+          "lng": 5.507957
+        },
+        {
+          "nome": "Nordeide kai",
+          "minutiDaPartenza": [
+            180,
+            185
+          ],
+          "nsrId": "NSR:StopPlace:36820",
+          "lat": 61.173496,
+          "lng": 5.986739
+        },
+        {
+          "nome": "Vik kai",
+          "minutiDaPartenza": [
+            219,
+            225
+          ],
+          "nsrId": "NSR:StopPlace:34790",
+          "lat": 61.08883,
+          "lng": 6.58066
+        },
+        {
+          "nome": "Balestrand kai",
+          "minutiDaPartenza": [
+            241,
+            245
+          ],
+          "nsrId": "NSR:StopPlace:34831",
+          "lat": 61.209922,
+          "lng": 6.538137
+        },
+        {
+          "nome": "Leikanger kai",
+          "minutiDaPartenza": [
+            260,
+            261
+          ],
+          "nsrId": "NSR:StopPlace:35069",
+          "lat": 61.182777,
+          "lng": 6.798102
+        },
+        {
+          "nome": "Sogndal kai",
+          "minutiDaPartenza": [
+            285,
+            290
+          ],
+          "nsrId": "NSR:StopPlace:34257",
+          "lat": 61.22969,
+          "lng": 7.10477
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:890",
+        "codice": "890",
+        "nome": "Sogn-Bergen",
+        "operatoreEntur": "Norled AS",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 2,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": [
+          285,
+          290
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bergen-nordfjord-express",
+      "nome": "Bergen – Florø – Måløy – Selje (battello veloce)",
+      "operatore": "Fjord1 dal 1/12/2026 (Entur indica Norled, linea 190)",
+      "tipo": "hurtigbat",
+      "zona": "Vestland – costa di Sogn og Fjordane",
+      "regione": "Fiordi occidentali",
+      "partenza": "Bergen (Strandkaiterminalen)",
+      "arrivo": "Selje kai",
+      "stagione": {
+        "testo": "tutti i giorni dell'anno",
+        "stato": "confermato",
+        "fonte": "f1-nordfjord"
+      },
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Nessun prezzo pubblicato sulla pagina.",
+        "fonte": "f1-nordfjord",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "bergen",
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "f1-nordfjord",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Strandkaiterminalen båtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:30219",
+          "lat": 60.395259,
+          "lng": 5.321964
+        },
+        {
+          "nome": "Lygra kai",
+          "minutiDaPartenza": 50,
+          "nsrId": "NSR:StopPlace:70402",
+          "lat": 60.691292,
+          "lng": 5.106347
+        },
+        {
+          "nome": "Vardetangen kai",
+          "minutiDaPartenza": [
+            68,
+            70
+          ],
+          "nsrId": "NSR:StopPlace:70401",
+          "lat": 60.802891,
+          "lng": 4.951181
+        },
+        {
+          "nome": "Skjerjehamn kai",
+          "minutiDaPartenza": [
+            85,
+            90
+          ],
+          "nsrId": "NSR:StopPlace:37458",
+          "lat": 60.943546,
+          "lng": 4.953598
+        },
+        {
+          "nome": "Sollibotn kai",
+          "minutiDaPartenza": [
+            97,
+            98
+          ],
+          "nsrId": "NSR:StopPlace:37394",
+          "lat": 60.98635,
+          "lng": 5.035641
+        },
+        {
+          "nome": "Krakhella kai",
+          "minutiDaPartenza": [
+            114,
+            117
+          ],
+          "nsrId": "NSR:StopPlace:36556",
+          "lat": 61.12893,
+          "lng": 5.019454
+        },
+        {
+          "nome": "Askvoll kai",
+          "minutiDaPartenza": [
+            152,
+            155
+          ],
+          "nsrId": "NSR:StopPlace:35723",
+          "lat": 61.345497,
+          "lng": 5.065444
+        },
+        {
+          "nome": "Florø terminal",
+          "minutiDaPartenza": [
+            200,
+            202
+          ],
+          "nsrId": "NSR:StopPlace:37066",
+          "lat": 61.601838,
+          "lng": 5.028723
+        },
+        {
+          "nome": "Smørhamn kai",
+          "minutiDaPartenza": [
+            222,
+            227
+          ],
+          "nsrId": "NSR:StopPlace:34950",
+          "lat": 61.779453,
+          "lng": 4.947399
+        },
+        {
+          "nome": "Leirgulen kai",
+          "minutiDaPartenza": 260,
+          "nsrId": "NSR:StopPlace:34937",
+          "lat": 61.861518,
+          "lng": 5.310017
+        },
+        {
+          "nome": "Måløy hurtigbåtterminal",
+          "minutiDaPartenza": [
+            272,
+            279
+          ],
+          "nsrId": "NSR:StopPlace:35011",
+          "lat": 61.933285,
+          "lng": 5.114278
+        },
+        {
+          "nome": "Selje kai",
+          "minutiDaPartenza": [
+            300,
+            310
+          ],
+          "nsrId": "NSR:StopPlace:36354",
+          "lat": 62.04521,
+          "lng": 5.342231
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:190",
+        "codice": "190",
+        "nome": "Bergen - Nordfjord",
+        "operatoreEntur": "Norled AS",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": [
+          300,
+          310
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bergen-rosendal-express",
+      "nome": "Hardangerfjordekspressen Bergen – Rosendal",
+      "operatore": "Rødne (L. Rødne & Sønner)",
+      "tipo": "hurtigbat",
+      "zona": "Vestland – Hardanger/Sunnhordland",
+      "regione": "Fiordi occidentali",
+      "partenza": "Bergen (Strandkaiterminalen)",
+      "arrivo": "Rosendal båtkai",
+      "trasportaAuto": false,
+      "stagione": {
+        "testo": "servizio di linea; stagione estiva da verificare",
+        "stato": "da verificare"
+      },
+      "tariffa": {
+        "anno": 2026,
+        "validoDal": "2026-02-01",
+        "adulto": 581,
+        "bambino": 291,
+        "fasciaBambino": "6–17 (anche senior/militari, 50%)",
+        "gratisSottoAnni": null,
+        "andataRitornoAdulto": 872,
+        "andataRitornoBambino": 436,
+        "nota": "Età gratuita non indicata nel listino (Skyss: sotto 6 anni gratis, da verificare per Rødne).",
+        "stato": "confermato",
+        "fonte": "rodne-hfe",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "bergen",
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "rodne-hfe",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Strandkaiterminalen båtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:30219",
+          "lat": 60.395259,
+          "lng": 5.321964
+        },
+        {
+          "nome": "Flesland båtkai",
+          "minutiDaPartenza": 25,
+          "nsrId": "NSR:StopPlace:30217",
+          "lat": 60.291885,
+          "lng": 5.205522
+        },
+        {
+          "nome": "Os båtkai",
+          "minutiDaPartenza": 60,
+          "nsrId": "NSR:StopPlace:29096",
+          "lat": 60.183456,
+          "lng": 5.469503
+        },
+        {
+          "nome": "Malkenes båtkai",
+          "minutiDaPartenza": 80,
+          "nsrId": "NSR:StopPlace:31526",
+          "lat": 60.07737,
+          "lng": 5.687741
+        },
+        {
+          "nome": "Rosendal båtkai",
+          "minutiDaPartenza": 115,
+          "nsrId": "NSR:StopPlace:31805",
+          "lat": 59.986745,
+          "lng": 6.006764
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:2075",
+        "codice": "2075",
+        "nome": "Hardangerfjordekspressen",
+        "operatoreEntur": "L. RÃ¸dne & SÃ¸nner AS",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 7,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 3
+      },
+      "durataMinuti": {
+        "valore": 115,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 7 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "flam-gudvangen",
+      "nome": "Crociera sul Nærøyfjord Flåm – Gudvangen",
+      "operatore": "Lustrabåtane / GlacierTour AS (altra offerta: Norway's Best / The Fjords, dati non letti)",
+      "tipo": "turistico",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "partenza": "Flåm kai",
+      "arrivo": "Gudvangen ferjekai",
+      "durataMinuti": {
+        "valore": 120,
+        "stato": "da verificare",
+        "nota": "Entur (linea Lustrabaatane, dati giugno 2026): 120 min; Visit Bergen non indica la durata della sola crociera.",
+        "fonte": "entur"
+      },
+      "frequenzaEstiva": {
+        "testo": "1/6–31/8/2026: 4 partenze per senso (08:30, 11:00, 13:30, 16:00)",
+        "stato": "da verificare",
+        "fonte": "visitbergen-flam"
+      },
+      "stagione": {
+        "testo": "20/4–31/12/2026 (orari ridotti fuori estate)",
+        "stato": "da verificare",
+        "fonte": "visitbergen-flam"
+      },
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "adulto": 550,
+        "fasciaAdulto": "16+",
+        "bambino": 275,
+        "fasciaBambino": "4–15",
+        "gratisSottoAnni": 4,
+        "famiglia2piu2": 1365,
+        "andataRitornoAdulto": 815,
+        "andataRitornoFamiglia": 2030,
+        "nota": "Fonte: scheda Visit Bergen (ente turistico), non il sito dell'operatore. «Prices may be subject to change».",
+        "stato": "da verificare",
+        "fonte": "visitbergen-flam",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "flam",
+        "arrivo": null,
+        "tappe": [
+          "aurlandsfjord",
+          "naeroyfjord"
+        ]
+      },
+      "fonti": [
+        "visitbergen-flam",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Non porta auto: chi viaggia in auto deve tornare a prenderla (o usare bus Gudvangen–Flåm, da verificare)."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Flåm kai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:34484",
+          "lat": 60.862892,
+          "lng": 7.115664
+        },
+        {
+          "nome": "Gudvangen ferjekai",
+          "minutiDaPartenza": 120,
+          "nsrId": "NSR:StopPlace:34496",
+          "lat": 60.88141,
+          "lng": 6.84142
+        }
+      ],
+      "enturLinea": {
+        "id": "SOF:Line:2468_69",
+        "codice": "150",
+        "nome": "Gudvangen-FlÃ¥m",
+        "operatoreEntur": null,
+        "datiValidiDal": "2026-06-17",
+        "datiValidiAl": "2026-06-23",
+        "corseMer18nov2026": 0,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 0
+      }
+    },
+    {
+      "id": "mortavika-arsvagen",
+      "nome": "Mortavika – Arsvågen (E39 Boknafjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Rogaland",
+      "regione": "Sørlandet e Rogaland",
+      "strada": "E39",
+      "partenza": "Arsvågen ferjekai",
+      "arrivo": "Mortavika ferjekai",
+      "trasportaAuto": true,
+      "frequenzaEstiva": {
+        "testo": "ogni 15 minuti nel pomeriggio (pagina Fjord1, novembre 2026)",
+        "stato": "da verificare",
+        "fonte": "fjord1-pagina-tratta"
+      },
+      "tariffa": {
+        "passeggeri": "gratis («People travel for free on all connections»)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 178,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "traghetto 104 + pedaggio 74"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Collega Stavanger a nord verso Haugesund/Bergen sulla E39."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Arsvågen ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:57913",
+          "lat": 59.17066,
+          "lng": 5.453159
+        },
+        {
+          "nome": "Mortavika ferjekai",
+          "minutiDaPartenza": [
+            24,
+            28
+          ],
+          "nsrId": "NSR:StopPlace:58652",
+          "lat": 59.13727,
+          "lng": 5.58802
+        }
+      ],
+      "enturLinea": {
+        "id": "KOL:Line:30_1130",
+        "codice": "1130",
+        "nome": "Mortavika - ArsvÃ¥gen",
+        "operatoreEntur": "Fjord1 ASA",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-03-29",
+        "corseMer18nov2026": 140,
+        "corseSab21nov2026": 99,
+        "corseDom22nov2026": 115
+      },
+      "durataMinuti": {
+        "valore": [
+          24,
+          28
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Rogaland/mortavika-arsvaagen"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      }
+    },
+    {
+      "id": "halhjem-sandvikvag",
+      "nome": "Halhjem – Sandvikvåg (E39 Bjørnafjorden)",
+      "operatore": "Torghatten",
+      "tipo": "ferje",
+      "zona": "Vestland",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "partenza": "Halhjem ferjekai",
+      "arrivo": "Sandvikvåg ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 176,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "torg-1018",
+          "stato": "da verificare",
+          "nota": "«Fullpris»; anno non indicato sulla pagina, pagina letta nel 2026"
+        },
+        "stato": "da verificare",
+        "fonte": "torg-1018",
+        "daVerificarePer2027": true
+      },
+      "durataMinuti": {
+        "valore": 45,
+        "stato": "confermato",
+        "nota": "Torghatten: «Overfarten tar 45 minutter»; Entur 45–50",
+        "fonte": "torg-1018"
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "torg-1018",
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Tratta principale Bergen–Stavanger."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Halhjem ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:29088",
+          "lat": 60.145655,
+          "lng": 5.426696
+        },
+        {
+          "nome": "Sandvikvåg ferjekai",
+          "minutiDaPartenza": [
+            45,
+            50
+          ],
+          "nsrId": "NSR:StopPlace:30297",
+          "lat": 59.968321,
+          "lng": 5.334047
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1018",
+        "codice": "1018",
+        "nome": "Halhjem - SandvikvÃ¥g",
+        "operatoreEntur": "Torghatten trafikkselskap AS",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 108,
+        "corseSab21nov2026": 84,
+        "corseDom22nov2026": 98
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 108 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "halhjem-vage",
+      "nome": "Halhjem – Våge (Tysnes)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Vestland",
+      "regione": "Fiordi occidentali",
+      "partenza": "Halhjem ferjekai",
+      "arrivo": "Våge ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 129,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Halhjem ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:29088",
+          "lat": 60.145655,
+          "lng": 5.426696
+        },
+        {
+          "nome": "Våge ferjekai",
+          "minutiDaPartenza": 35,
+          "nsrId": "NSR:StopPlace:30445",
+          "lat": 60.046692,
+          "lng": 5.524162
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1021",
+        "codice": "1021",
+        "nome": "VÃ¥ge - Halhjem",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-06",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 24,
+        "corseSab21nov2026": 24,
+        "corseDom22nov2026": 22
+      },
+      "durataMinuti": {
+        "valore": 35,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Vestland/halhjem-vaage"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 24 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "lavik-oppedal",
+      "nome": "Lavik – Oppedal (E39 Sognefjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "partenza": "Oppedal ferjekai",
+      "arrivo": "Lavik ferjekai",
+      "trasportaAuto": true,
+      "frequenzaEstiva": {
+        "testo": "ogni 15 minuti nel pomeriggio (pagina Fjord1, novembre 2026)",
+        "stato": "da verificare",
+        "fonte": "fjord1-pagina-tratta"
+      },
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 81,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "zona tariffaria 6"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "sognefjord"
+        ]
+      },
+      "fonti": [
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Oppedal ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:37139",
+          "lat": 61.054604,
+          "lng": 5.504574
+        },
+        {
+          "nome": "Lavik ferjekai",
+          "minutiDaPartenza": [
+            20,
+            25
+          ],
+          "nsrId": "NSR:StopPlace:36986",
+          "lat": 61.104754,
+          "lng": 5.507128
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1045",
+        "codice": "1045",
+        "nome": "Lavik - Oppedal",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 128,
+        "corseSab21nov2026": 92,
+        "corseDom22nov2026": 116
+      },
+      "durataMinuti": {
+        "valore": [
+          20,
+          25
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Vestland/lavik-oppedal"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      }
+    },
+    {
+      "id": "anda-lote",
+      "nome": "Anda – Lote (E39 Nordfjord)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Vestland – Nordfjord",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "partenza": "Anda ferjekai",
+      "arrivo": "Lote ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 63,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "zona tariffaria 3"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Anda ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:35862",
+          "lat": 61.846394,
+          "lng": 6.082006
+        },
+        {
+          "nome": "Lote ferjekai",
+          "minutiDaPartenza": 11,
+          "nsrId": "NSR:StopPlace:36362",
+          "lat": 61.864013,
+          "lng": 6.079534
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1044",
+        "codice": "1044",
+        "nome": "Lote - Anda",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 106,
+        "corseSab21nov2026": 106,
+        "corseDom22nov2026": 98
+      },
+      "durataMinuti": {
+        "valore": 11,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Vestland/lote-anda"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 106 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "leirvag-slovag",
+      "nome": "Leirvåg – Sløvåg (Fv57, verso Sognefjord)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Vestland",
+      "regione": "Fiordi occidentali",
+      "partenza": "Leirvågen ferjekai",
+      "arrivo": "Sløvågen ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 88,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "zona tariffaria 7"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Leirvågen ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:33470",
+          "lat": 60.814715,
+          "lng": 5.004892
+        },
+        {
+          "nome": "Sløvågen ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:37262",
+          "lat": 60.856807,
+          "lng": 5.063858
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1029",
+        "codice": "1029",
+        "nome": "LeirvÃ¥g - SlÃ¸vÃ¥g",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 34,
+        "corseSab21nov2026": 34,
+        "corseDom22nov2026": 34
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Vestland/leirvaag-sloevaag"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 34 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "mannheller-fodnes",
+      "nome": "Mannheller – Fodnes (Rv5 Sognefjorden)",
+      "operatore": "Norled",
+      "tipo": "ferje",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "strada": "Rv5",
+      "partenza": "Fodnes ferjekai",
+      "arrivo": "Mannheller ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 69,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "fonte secondaria (fergeruter.info), da confermare su Norled/Skyss"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "sognefjord"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Collega la E16 (Lærdal) a Sogndal/Kaupanger."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Fodnes ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:34746",
+          "lat": 61.14871,
+          "lng": 7.383429
+        },
+        {
+          "nome": "Mannheller ferjekai",
+          "minutiDaPartenza": 15,
+          "nsrId": "NSR:StopPlace:34249",
+          "lat": 61.160332,
+          "lng": 7.336877
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1047",
+        "codice": "1047",
+        "nome": "Manheller-. Fodnes",
+        "operatoreEntur": "Norled AS",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 116,
+        "corseSab21nov2026": 116,
+        "corseDom22nov2026": 116
+      },
+      "durataMinuti": {
+        "valore": 15,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 116 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "vangsnes-hella-dragsvik",
+      "nome": "Vangsnes – Hella – Dragsvik (Rv13 Sognefjorden)",
+      "operatore": "Norled",
+      "tipo": "ferje",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "strada": "Rv13",
+      "partenza": "Vangsnes ferjekai",
+      "arrivo": "Dragsvik ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 81,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "Vangsnes–Dragsvik; prezzo per singolo tratto via Hella non indicato"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "sognefjord",
+          "balestrand"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Dragsvik è a pochi km da Balestrand (distanza stradale da calcolare, non in linea d'aria)."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Vangsnes ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:37166",
+          "lat": 61.174963,
+          "lng": 6.637408
+        },
+        {
+          "nome": "Hella ferjekai",
+          "minutiDaPartenza": 15,
+          "nsrId": "NSR:StopPlace:35119",
+          "lat": 61.207448,
+          "lng": 6.597636
+        },
+        {
+          "nome": "Dragsvik ferjekai",
+          "minutiDaPartenza": [
+            30,
+            40
+          ],
+          "nsrId": "NSR:StopPlace:57912",
+          "lat": 61.214685,
+          "lng": 6.566166
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1046",
+        "codice": "1046",
+        "nome": "Vangsnes-Hella-Dragsvik",
+        "operatoreEntur": "Norled AS",
+        "datiValidiDal": "2026-11-06",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 60,
+        "corseSab21nov2026": 58,
+        "corseDom22nov2026": 58
+      },
+      "durataMinuti": {
+        "valore": [
+          30,
+          40
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 60 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "solvorn-ornes",
+      "nome": "Solvorn – Ornes (Lustrafjorden, chiesa di Urnes)",
+      "operatore": "Lustrabåtane",
+      "tipo": "ferje",
+      "zona": "Vestland – Sognefjord",
+      "regione": "Fiordi occidentali",
+      "partenza": "Solvorn ferjekai",
+      "arrivo": "Ornes ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Prezzo non trovato.",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "sognefjord"
+        ]
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Solvorn ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:36366",
+          "lat": 61.301363,
+          "lng": 7.248654
+        },
+        {
+          "nome": "Ornes ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:57933",
+          "lat": 61.299383,
+          "lng": 7.312611
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1048",
+        "codice": "1048",
+        "nome": "Solvorn-Ornes",
+        "operatoreEntur": "Lustrabaatane AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 8,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 8 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "jondal-torvikbygd",
+      "nome": "Jondal – Tørvikbygd (Hardangerfjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Vestland – Hardanger",
+      "regione": "Fiordi occidentali",
+      "partenza": "Tørvikbygd ferjekai",
+      "arrivo": "Jondal ferjekai",
+      "trasportaAuto": true,
+      "frequenzaEstiva": {
+        "testo": "circa ogni ora (pagina Fjord1, novembre 2026)",
+        "stato": "da verificare",
+        "fonte": "fjord1-pagina-tratta"
+      },
+      "tariffa": {
+        "passeggeri": "gratis (regola Vestland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 88,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "zona tariffaria 7"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "hardangerfjord"
+        ]
+      },
+      "fonti": [
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Tørvikbygd ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:33122",
+          "lat": 60.300803,
+          "lng": 6.171754
+        },
+        {
+          "nome": "Jondal ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:32218",
+          "lat": 60.275691,
+          "lng": 6.25151
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1026",
+        "codice": "1026",
+        "nome": "Jondal - TÃ¸rvikbygd",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 36,
+        "corseSab21nov2026": 32,
+        "corseDom22nov2026": 32
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Vestland/jondal-toervikbygd"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      }
+    },
+    {
+      "id": "utne-kvanndal",
+      "nome": "Utne – Kvanndal (Hardangerfjorden)",
+      "operatore": "Boreal",
+      "tipo": "ferje",
+      "zona": "Vestland – Hardanger",
+      "regione": "Fiordi occidentali",
+      "partenza": "Kvanndal ferjekai",
+      "arrivo": "Utne ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 88,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "fonte secondaria"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "hardangerfjord"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "skyss-ferje",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Kvanndal ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:59337",
+          "lat": 60.471748,
+          "lng": 6.612112
+        },
+        {
+          "nome": "Utne ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:31023",
+          "lat": 60.424023,
+          "lng": 6.621791
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1024",
+        "codice": "1024",
+        "nome": "Utne - Kvanndal",
+        "operatoreEntur": "Boreal",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 34,
+        "corseSab21nov2026": 30,
+        "corseDom22nov2026": 32
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 34 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "kinsarvik-utne",
+      "nome": "Kinsarvik – Utne (Hardangerfjorden)",
+      "operatore": "Boreal",
+      "tipo": "ferje",
+      "zona": "Vestland – Hardanger",
+      "regione": "Fiordi occidentali",
+      "partenza": "Kinsarvik ferjekai",
+      "arrivo": "Utne ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 0,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "indicata gratuita da fonte secondaria; da verificare su Skyss/Boreal"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "hardangerfjord"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Kinsarvik ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:31076",
+          "lat": 60.375978,
+          "lng": 6.719095
+        },
+        {
+          "nome": "Utne ferjekai",
+          "minutiDaPartenza": 28,
+          "nsrId": "NSR:StopPlace:31023",
+          "lat": 60.424023,
+          "lng": 6.621791
+        }
+      ],
+      "enturLinea": {
+        "id": "SKY:Line:1025",
+        "codice": "1025",
+        "nome": "Kinsarvik - Utne",
+        "operatoreEntur": "Boreal",
+        "datiValidiDal": "2026-11-07",
+        "datiValidiAl": "2027-03-14",
+        "corseMer18nov2026": 20,
+        "corseSab21nov2026": 8,
+        "corseDom22nov2026": 10
+      },
+      "durataMinuti": {
+        "valore": 28,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 20 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "lysefjord-turistferje",
+      "nome": "Traghetto turistico del Lysefjord Lauvvik – Lysebotn",
+      "operatore": "Rødne",
+      "tipo": "turistico",
+      "zona": "Rogaland – Lysefjord",
+      "regione": "Sørlandet e Rogaland",
+      "partenza": "Lauvvik (da settembre 2026 anche Oanes al posto di Forsand)",
+      "arrivo": "Lysebotn",
+      "tappe": [
+        {
+          "nome": "Lauvvik ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:27056",
+          "lat": 58.894253,
+          "lng": 6.055429
+        },
+        {
+          "nome": "Forsand / Oanes"
+        },
+        {
+          "nome": "Songesand ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:27124",
+          "lat": 59.016224,
+          "lng": 6.3233
+        },
+        {
+          "nome": "Flørli ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:28301",
+          "lat": 59.015266,
+          "lng": 6.431338
+        },
+        {
+          "nome": "Lysebotn ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:27354",
+          "lat": 59.054695,
+          "lng": 6.645238
+        }
+      ],
+      "durataMinuti": {
+        "valore": 150,
+        "stato": "confermato",
+        "nota": "«circa 2,5 ore» per senso; tempi per tappa non pubblicati",
+        "fonte": "rodne-lyse"
+      },
+      "frequenzaEstiva": {
+        "testo": "partenze giornaliere; orario nel PDF (non letto)",
+        "stato": "da verificare",
+        "fonte": "rodne-lyse"
+      },
+      "stagione": {
+        "testo": "15 maggio – 27 settembre 2026 (la stessa pagina indica anche 29 settembre; florli.no: 30 settembre)",
+        "stato": "da verificare",
+        "fonte": "rodne-lyse"
+      },
+      "trasportaAuto": true,
+      "tariffa": {
+        "anno": 2026,
+        "adulto": 595,
+        "bambino": 350,
+        "fasciaBambino": "4–15",
+        "gratisSottoAnni": 4,
+        "andataRitornoAdulto": 893,
+        "andataRitornoBambino": 525,
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 1290,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "rodne-lyse-pdf",
+          "stato": "confermato",
+          "nota": "andata e ritorno 2580"
+        },
+        "pacchettoAuto": {
+          "nok": 1990,
+          "descrizione": "auto fino a 6 m + fino a 5 passeggeri (conducente compreso nel conteggio da verificare)",
+          "andataRitorno": 3980
+        },
+        "regole": [
+          "Veicoli e moto includono il conducente",
+          "A Flørli non scendono veicoli",
+          "Fuori dal sistema AutoPASS"
+        ],
+        "stato": "confermato",
+        "fonte": "rodne-lyse-pdf",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "lysefjord"
+        ]
+      },
+      "fonti": [
+        "rodne-lyse-pdf",
+        "rodne-lyse",
+        "florli",
+        "nsr"
+      ],
+      "note": [
+        "Lysebotn è la base per Kjerag; Preikestolen si raggiunge da terra (non da questa linea)."
+      ],
+      "lettoIl": "2026-11-09"
+    },
+    {
+      "id": "lauvvik-lysebotn-kolumbus",
+      "nome": "Lauvvik – Lysebotn (linea pubblica Kolumbus)",
+      "operatore": "Rødne Trafikk per Kolumbus",
+      "tipo": "ferje",
+      "zona": "Rogaland – Lysefjord",
+      "regione": "Sørlandet e Rogaland",
+      "partenza": "Lauvvik ferjekai",
+      "arrivo": "Lysebotn ferjekai",
+      "trasportaAuto": true,
+      "stagione": {
+        "testo": "tutto l'anno; orario invernale valido fino al 31/3/2027, da marzo 2027 orario estivo con più partenze; non opera il sabato (orario invernale)",
+        "stato": "da verificare",
+        "fonte": "florli"
+      },
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Kolumbus non pubblica prezzi sulla pagina; prenotazione su billetter.kolumbus.no (vendita chiude 120 min prima).",
+        "fonte": "kolumbus-lyse",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "lysefjord"
+        ]
+      },
+      "fonti": [
+        "kolumbus-lyse",
+        "florli",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Kolumbus indica le rotte 561 (passeggeri) e 563 (auto, MF Sveio); in Entur la linea è la 560: numerazione da chiarire."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Lauvvik ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:27056",
+          "lat": 58.894253,
+          "lng": 6.055429
+        },
+        {
+          "nome": "Forsand ferjekai",
+          "minutiDaPartenza": 5,
+          "nsrId": "NSR:StopPlace:28351",
+          "lat": 58.90152,
+          "lng": 6.088172
+        },
+        {
+          "nome": "Revså hurtigbåtkai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:64356",
+          "lat": 58.969092,
+          "lng": 6.157553
+        },
+        {
+          "nome": "Bratteli hurtigbåtkai",
+          "minutiDaPartenza": 35,
+          "nsrId": "NSR:StopPlace:28558",
+          "lat": 59.011864,
+          "lng": 6.263118
+        },
+        {
+          "nome": "Bakken hurtigbåtkai",
+          "minutiDaPartenza": 40,
+          "nsrId": "NSR:StopPlace:28285",
+          "lat": 59.013218,
+          "lng": 6.290624
+        },
+        {
+          "nome": "Songesand ferjekai",
+          "minutiDaPartenza": 45,
+          "nsrId": "NSR:StopPlace:27124",
+          "lat": 59.016224,
+          "lng": 6.3233
+        },
+        {
+          "nome": "Kalleli hurtigbåtkai",
+          "minutiDaPartenza": 55,
+          "nsrId": "NSR:StopPlace:26974",
+          "lat": 59.00892,
+          "lng": 6.39366
+        },
+        {
+          "nome": "Flørli ferjekai",
+          "minutiDaPartenza": 60,
+          "nsrId": "NSR:StopPlace:28301",
+          "lat": 59.015266,
+          "lng": 6.431338
+        },
+        {
+          "nome": "Håheller hurtigbåtkai",
+          "minutiDaPartenza": 75,
+          "nsrId": "NSR:StopPlace:26688",
+          "lat": 59.040276,
+          "lng": 6.513715
+        },
+        {
+          "nome": "Lysebotn ferjekai",
+          "minutiDaPartenza": 90,
+          "nsrId": "NSR:StopPlace:27354",
+          "lat": 59.054695,
+          "lng": 6.645238
+        }
+      ],
+      "enturLinea": {
+        "id": "KOL:Line:8_5460",
+        "codice": "560",
+        "nome": "560",
+        "operatoreEntur": "RÃ¸dne Trafikk AS",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-03-29",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 90,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "stavanger-lysefjord-cruise",
+      "nome": "Crociera Stavanger – Lysefjord e Preikestolen (andata e ritorno)",
+      "operatore": "Rødne",
+      "tipo": "turistico",
+      "zona": "Rogaland – Lysefjord",
+      "regione": "Sørlandet e Rogaland",
+      "partenza": "Stavanger (Strandkaien)",
+      "arrivo": "Stavanger (Strandkaien)",
+      "tappe": [
+        {
+          "nome": "Stavanger Strandkaien"
+        },
+        {
+          "nome": "Lysefjord (sotto Preikestolen, senza sbarco indicato)"
+        },
+        {
+          "nome": "Stavanger Strandkaien"
+        }
+      ],
+      "durataMinuti": {
+        "valore": [
+          180,
+          210
+        ],
+        "stato": "confermato",
+        "nota": "3–3,5 ore",
+        "fonte": "rodne-lyse"
+      },
+      "trasportaAuto": false,
+      "andataRitorno": true,
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Prezzi non indicati sulla pagina letta.",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "stavanger",
+        "arrivo": "stavanger",
+        "tappe": [
+          "lysefjord",
+          "preikestolen"
+        ]
+      },
+      "fonti": [
+        "rodne-lyse"
+      ],
+      "lettoIl": "2026-11-09",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "assente",
+        "stato": "assente",
+        "fonte": null
+      }
+    },
+    {
+      "id": "hjelmeland-nesvik",
+      "nome": "Hjelmeland – Nesvik (Rv13 Ryfylke)",
+      "operatore": "Norled",
+      "tipo": "ferje",
+      "zona": "Rogaland – Ryfylke",
+      "regione": "Sørlandet e Rogaland",
+      "strada": "Rv13",
+      "partenza": "Hjelmeland ferjekai",
+      "arrivo": "Nesvik ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "stato": "assente",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Strada turistica Ryfylke tra Stavanger e Hardanger/Odda (Rv13)."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Hjelmeland ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:26462",
+          "lat": 59.234396,
+          "lng": 6.165803
+        },
+        {
+          "nome": "Nesvik ferjekai",
+          "minutiDaPartenza": [
+            12,
+            13
+          ],
+          "nsrId": "NSR:StopPlace:27370",
+          "lat": 59.261368,
+          "lng": 6.159095
+        }
+      ],
+      "enturLinea": {
+        "id": "KOL:Line:26_5958",
+        "codice": "1054",
+        "nome": "Hjelmeland - Nesvik - Skipavik",
+        "operatoreEntur": "Norled AS",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-03-24",
+        "corseMer18nov2026": 112,
+        "corseSab21nov2026": 110,
+        "corseDom22nov2026": 100
+      },
+      "durataMinuti": {
+        "valore": [
+          12,
+          13
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 112 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "geiranger-hellesylt",
+      "nome": "Geiranger – Hellesylt (Geirangerfjorden)",
+      "operatore": "Fjord1",
+      "tipo": "turistico",
+      "zona": "Møre og Romsdal – Geiranger",
+      "regione": "Fiordi occidentali",
+      "partenza": "Geiranger ferjekai",
+      "arrivo": "Hellesylt ferjekai",
+      "tappe": [
+        {
+          "nome": "Geiranger ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:39824",
+          "lat": 62.1036,
+          "lng": 7.20273
+        },
+        {
+          "nome": "Hellesylt ferjekai",
+          "minutiDaPartenza": 65,
+          "nsrId": "NSR:StopPlace:59931",
+          "lat": 62.087378,
+          "lng": 6.870108
+        }
+      ],
+      "durataMinuti": {
+        "valore": 65,
+        "stato": "da verificare",
+        "nota": "Fjord1: circa 65 min; Entur (dati ottobre 2026, operatore «Vestlandske»): 45 min. Valori in conflitto.",
+        "fonte": "f1-gh"
+      },
+      "frequenzaEstiva": {
+        "testo": "1/6–13/9/2026: da Geiranger 10:00, 11:30, 13:00, 14:30, 16:00, 17:30, 18:45; da Hellesylt 08:30, 10:00, 11:30, 13:00, 14:30, 16:00, 17:30",
+        "stato": "confermato",
+        "fonte": "f1-gh-pdf",
+        "anno": 2026
+      },
+      "stagione": {
+        "testo": "1 aprile – 31 ottobre 2026 (alta stagione maggio–settembre)",
+        "stato": "confermato",
+        "fonte": "f1-gh-pdf"
+      },
+      "trasportaAuto": true,
+      "tariffa": {
+        "anno": 2026,
+        "adulto": 420,
+        "bambino": 210,
+        "fasciaBambino": "non indicata",
+        "gratisSottoAnni": 4,
+        "ritorno": "50% di sconto sul ritorno (adulto e bambino)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 810,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "f1-gh-pdf",
+          "stato": "confermato",
+          "nota": "auto fino a 6 m, conducente incluso"
+        },
+        "pacchettoAuto": {
+          "nok": 1650,
+          "descrizione": "auto fino a 6 m con conducente + 4 passeggeri"
+        },
+        "stato": "confermato",
+        "fonte": "f1-gh-pdf",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "geiranger",
+        "arrivo": null,
+        "tappe": [
+          "geirangerfjord",
+          "sju-sostrene"
+        ]
+      },
+      "fonti": [
+        "f1-gh-pdf",
+        "f1-gh",
+        "nsr"
+      ],
+      "note": [
+        "Il pacchetto auto (1650) costa meno di auto + 3 passeggeri a prezzo pieno; per la famiglia (auto + 1 adulto + 2 bambini) confrontare: 810 + 420 + 210 + 210 = 1650."
+      ],
+      "lettoIl": "2026-11-09"
+    },
+    {
+      "id": "alesund-geiranger",
+      "nome": "Ålesund – Geiranger (Silent Fjord Cruise)",
+      "operatore": "Geiranger Fjordservice (Visit Geiranger)",
+      "tipo": "turistico",
+      "zona": "Møre og Romsdal – Geiranger",
+      "regione": "Fiordi occidentali",
+      "partenza": "Ålesund (Skutvika / Nedre Strandgate 53)",
+      "arrivo": "Geiranger hurtigbåtkai",
+      "durataMinuti": {
+        "valore": 180,
+        "stato": "confermato",
+        "nota": "15/5–settembre: Ålesund 08:30 → Geiranger 11:30; ritorno 15:30 → 18:30",
+        "fonte": "gfs-pdf"
+      },
+      "frequenzaEstiva": {
+        "testo": "15 maggio – settembre: 1 andata e ritorno al giorno",
+        "stato": "confermato",
+        "fonte": "gfs-pdf"
+      },
+      "stagione": {
+        "testo": "tutto l'anno (orario 2026/2027)",
+        "stato": "confermato",
+        "fonte": "gfs-pdf"
+      },
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": "2026/2027",
+        "adulto": 1124,
+        "andataRitornoAdulto": 2247,
+        "bambino": null,
+        "nota": "Aprile–ottobre. Sconti bambini non indicati nel PDF (una scheda online cita 5–15 anni 50%: da verificare).",
+        "stato": "confermato",
+        "fonte": "gfs-pdf",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "alesund",
+        "arrivo": "geiranger",
+        "tappe": [
+          "geirangerfjord"
+        ]
+      },
+      "fonti": [
+        "gfs-pdf",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Ålesund Skutvika",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:64389",
+          "lat": 62.469784,
+          "lng": 6.139692
+        },
+        {
+          "nome": "Stranda hurtigbåtkai",
+          "minutiDaPartenza": 105,
+          "nsrId": "NSR:StopPlace:59975",
+          "lat": 62.308495,
+          "lng": 6.949292
+        },
+        {
+          "nome": "Geiranger hurtigbåtkai",
+          "minutiDaPartenza": 180,
+          "nsrId": "NSR:StopPlace:59974",
+          "lat": 62.102269,
+          "lng": 7.204818
+        }
+      ],
+      "enturLinea": {
+        "id": "GFS:FlexibleLine:88f9e793-74bc-4173-8d42-146703a86a86",
+        "codice": "1147",
+        "nome": "Ã…lesund-Geirangerfjord",
+        "operatoreEntur": "Geiranger Fjordservice",
+        "datiValidiDal": "2026-11-02",
+        "datiValidiAl": "2027-10-31",
+        "corseMer18nov2026": 2,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 0
+      }
+    },
+    {
+      "id": "eidsdal-linge",
+      "nome": "Eidsdal – Linge (Rv63, tra Geiranger e Trollstigen)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Geiranger",
+      "regione": "Fiordi occidentali",
+      "strada": "Rv63",
+      "partenza": "Eidsdal ferjekai",
+      "arrivo": "Linge ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 81,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "geiranger",
+          "trollstigen"
+        ]
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Tratta obbligata sulla «strada d'oro» Geiranger–Trollstigen."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Eidsdal ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:58772",
+          "lat": 62.262806,
+          "lng": 7.171881
+        },
+        {
+          "nome": "Linge ferjekai",
+          "minutiDaPartenza": 13,
+          "nsrId": "NSR:StopPlace:58656",
+          "lat": 62.284286,
+          "lng": 7.187338
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1054",
+        "codice": "1054",
+        "nome": "Eidsdal-Linge",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 58,
+        "corseSab21nov2026": 54,
+        "corseDom22nov2026": 52
+      },
+      "durataMinuti": {
+        "valore": 13,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/eidsdal-linge"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 58 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "stranda-liabygda",
+      "nome": "Stranda – Liabygda (Storfjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Geiranger",
+      "regione": "Fiordi occidentali",
+      "strada": null,
+      "partenza": "Stranda ferjekai",
+      "arrivo": "Liabygda ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 81,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Stranda ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:58897",
+          "lat": 62.309063,
+          "lng": 6.94925
+        },
+        {
+          "nome": "Liabygda ferjekai",
+          "minutiDaPartenza": 13,
+          "nsrId": "NSR:StopPlace:58899",
+          "lat": 62.308316,
+          "lng": 7.005793
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1053",
+        "codice": "1053",
+        "nome": "Liabygda-Stranda",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 58,
+        "corseSab21nov2026": 52,
+        "corseDom22nov2026": 50
+      },
+      "durataMinuti": {
+        "valore": 13,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/stranda-liabygda"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 58 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "magerholm-sykkylven",
+      "nome": "Magerholm – Sykkylven (verso Ålesund)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "strada": null,
+      "partenza": "Magerholm ferjekai",
+      "arrivo": "Sykkylven ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 88,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Magerholm ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:70399",
+          "lat": 62.432278,
+          "lng": 6.497206
+        },
+        {
+          "nome": "Sykkylven ferjekai",
+          "minutiDaPartenza": 15,
+          "nsrId": "NSR:StopPlace:40205",
+          "lat": 62.410144,
+          "lng": 6.547712
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1055",
+        "codice": "1055",
+        "nome": "Magerholm-Sykkylven",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 112,
+        "corseSab21nov2026": 98,
+        "corseDom22nov2026": 98
+      },
+      "durataMinuti": {
+        "valore": 15,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/sykkylven-magerholm"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 112 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "hareid-sulesund",
+      "nome": "Hareid – Sulesund (verso Ålesund/Runde)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "strada": null,
+      "partenza": "Hareid ferjekai",
+      "arrivo": "Sulesund ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 110,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "alesund",
+          "runde"
+        ]
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Collega Ålesund al lato di Runde."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Hareid ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:38669",
+          "lat": 62.370199,
+          "lng": 6.030877
+        },
+        {
+          "nome": "Sulesund ferjekai",
+          "minutiDaPartenza": 23,
+          "nsrId": "NSR:StopPlace:58754",
+          "lat": 62.395002,
+          "lng": 6.164373
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1068",
+        "codice": "1068",
+        "nome": "Hareid - Sulesund",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 98,
+        "corseSab21nov2026": 68,
+        "corseDom22nov2026": 66
+      },
+      "durataMinuti": {
+        "valore": 23,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/hareid-sulesund"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 98 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "solsnes-afarnes",
+      "nome": "Sølsnes – Åfarnes (Romsdal)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Romsdal",
+      "regione": "Fiordi occidentali",
+      "strada": null,
+      "partenza": "Sølsnes ferjekai",
+      "arrivo": "Åfarnes ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 88,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Sølsnes ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:58749",
+          "lat": 62.684788,
+          "lng": 7.464652
+        },
+        {
+          "nome": "Åfarnes ferjekai",
+          "minutiDaPartenza": 15,
+          "nsrId": "NSR:StopPlace:38739",
+          "lat": 62.663743,
+          "lng": 7.504845
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1060",
+        "codice": "1060",
+        "nome": "SÃ¸lsnes-Ã…farnes",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 102,
+        "corseSab21nov2026": 84,
+        "corseDom22nov2026": 76
+      },
+      "durataMinuti": {
+        "valore": 15,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/aafarnes-soelsnes"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 102 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "halsa-kanestraum",
+      "nome": "Halsa – Kanestraum (E39 Nordmøre)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Nordmøre",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "partenza": "Halsa ferjekai",
+      "arrivo": "Kanestraum ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato sulla pagina (in Vestland/Rogaland/Nordland passeggeri gratis: da verificare per Møre og Romsdal)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 81,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Halsa ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:38565",
+          "lat": 63.068321,
+          "lng": 8.227537
+        },
+        {
+          "nome": "Kanestraum ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:39782",
+          "lat": 63.053097,
+          "lng": 8.124985
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1072",
+        "codice": "1072",
+        "nome": "Halsa-Kanestraum",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 100,
+        "corseSab21nov2026": 72,
+        "corseDom22nov2026": 96
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/halsa-kanestraum"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 100 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "saebo-leknes",
+      "nome": "Sæbø – Lekneset (Hjørundfjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 0,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "0 NOK per tutte le classi (zona tariffaria 1)"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "hjorundfjord"
+        ]
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Sæbø ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:58764",
+          "lat": 62.21102,
+          "lng": 6.47599
+        },
+        {
+          "nome": "Lekneset ferjekai",
+          "minutiDaPartenza": 13,
+          "nsrId": "NSR:StopPlace:39234",
+          "lat": 62.205733,
+          "lng": 6.534416
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1135",
+        "codice": "1135",
+        "nome": "SÃ¦bÃ¸-Leknes",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 36,
+        "corseSab21nov2026": 30,
+        "corseDom22nov2026": 32
+      },
+      "durataMinuti": {
+        "valore": 13,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/leknes-saeboe"
+      },
+      "partenza": "Sæbø ferjekai",
+      "arrivo": "Lekneset ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 36 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "festoya-hundeidvika",
+      "nome": "Festøya – Hundeidvika",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "non indicato",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 0,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "0 NOK (zona 1)"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Festøya ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:38754",
+          "lat": 62.374922,
+          "lng": 6.33147
+        },
+        {
+          "nome": "Hundeidvik ferjekai",
+          "minutiDaPartenza": [
+            20,
+            25
+          ],
+          "nsrId": "NSR:StopPlace:58756",
+          "lat": 62.371677,
+          "lng": 6.424135
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1049",
+        "codice": "1049",
+        "nome": "FestÃ¸ya-Hundeidvika",
+        "operatoreEntur": "Fjord1",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 26,
+        "corseSab21nov2026": 16,
+        "corseDom22nov2026": 18
+      },
+      "durataMinuti": {
+        "valore": [
+          20,
+          25
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/moere-og-romsdal/hundeidvika-festoeya"
+      },
+      "partenza": "Festøya ferjekai",
+      "arrivo": "Hundeidvik ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 26 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "festoya-solavagen",
+      "nome": "Festøya – Solavågen (E39 verso Ålesund)",
+      "operatore": "Norled",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 75,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "fonte secondaria"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "alesund"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Festøya ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:38754",
+          "lat": 62.374922,
+          "lng": 6.33147
+        },
+        {
+          "nome": "Solavågen ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:41550",
+          "lat": 62.413704,
+          "lng": 6.32823
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1069",
+        "codice": "1069",
+        "nome": "FestÃ¸ya-SolavÃ¥gen",
+        "operatoreEntur": "Norled ferje",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 104,
+        "corseSab21nov2026": 76,
+        "corseDom22nov2026": 76
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Festøya ferjekai",
+      "arrivo": "Solavågen ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 104 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "molde-vestnes",
+      "nome": "Molde – Vestnes (E39 Romsdalsfjorden)",
+      "operatore": "Boreal Sjø",
+      "tipo": "ferje",
+      "zona": "Møre og Romsdal – Romsdal",
+      "regione": "Fiordi occidentali",
+      "strada": "E39",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 116,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "fonte secondaria"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "fergeruter",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Il molo di Vestnes in Entur è «Furneset ferjekai»."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Molde ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:40439",
+          "lat": 62.737009,
+          "lng": 7.168901
+        },
+        {
+          "nome": "Furneset ferjekai",
+          "minutiDaPartenza": [
+            33,
+            36
+          ],
+          "nsrId": "NSR:StopPlace:39508",
+          "lat": 62.651628,
+          "lng": 7.085018
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1070",
+        "codice": "1070",
+        "nome": "Molde-Vestnes",
+        "operatoreEntur": "Boreal SjÃ¸",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 102,
+        "corseSab21nov2026": 72,
+        "corseDom22nov2026": 70
+      },
+      "durataMinuti": {
+        "valore": [
+          33,
+          36
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Molde ferjekai",
+      "arrivo": "Furneset ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 102 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "alesund-hareid-express",
+      "nome": "Ålesund – Valderøya – Hareid (battello veloce)",
+      "operatore": "Boreal Sjø (per FRAM)",
+      "tipo": "hurtigbat",
+      "zona": "Møre og Romsdal – Sunnmøre",
+      "regione": "Fiordi occidentali",
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "alesund",
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Ålesund hurtigbåtkai Skateflukaia",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:38768",
+          "lat": 62.474562,
+          "lng": 6.154449
+        },
+        {
+          "nome": "Valderøya hurtigbåtkai",
+          "minutiDaPartenza": [
+            8,
+            10
+          ],
+          "nsrId": "NSR:StopPlace:58746",
+          "lat": 62.49582,
+          "lng": 6.129025
+        },
+        {
+          "nome": "Hareid hurtigbåtkai",
+          "minutiDaPartenza": [
+            28,
+            30
+          ],
+          "nsrId": "NSR:StopPlace:38672",
+          "lat": 62.370917,
+          "lng": 6.031355
+        }
+      ],
+      "enturLinea": {
+        "id": "MOR:Line:1145",
+        "codice": "1145",
+        "nome": "Hareid-ValderÃ¸ya-Ã…lesund",
+        "operatoreEntur": "Boreal SjÃ¸",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-04-10",
+        "corseMer18nov2026": 32,
+        "corseSab21nov2026": 18,
+        "corseDom22nov2026": 20
+      },
+      "durataMinuti": {
+        "valore": [
+          28,
+          30
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Ålesund hurtigbåtkai Skateflukaia",
+      "arrivo": "Hareid hurtigbåtkai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 32 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bodo-moskenes",
+      "nome": "Bodø – Moskenes (Lofoten)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Lofoten",
+      "regione": "Nordland e Lofoten",
+      "partenza": "Bodø ferjekai",
+      "arrivo": "Moskenes ferjekai",
+      "trasportaAuto": true,
+      "stagione": {
+        "testo": "tutto l'anno; orario estivo 2027 non ancora pubblicato (pagina con orario invernale dal 7/9/2026)",
+        "stato": "da verificare",
+        "fonte": "torg-782"
+      },
+      "tariffa": {
+        "passeggeri": "gratis («Selve fergeturen koster ikke noe for passasjerer, kun kjøretøy»)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 605,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "torg-782",
+          "stato": "confermato",
+          "nota": "anno non indicato sulla pagina; fergeruter.info riporta lo stesso valore per il 2026"
+        },
+        "prenotazione": {
+          "adulto": 65,
+          "bambino": 35,
+          "auto06m": 130,
+          "nota": "Plassgaranti facoltativa, in aggiunta al biglietto; da pagare prima della conferma"
+        },
+        "stato": "confermato",
+        "fonte": "torg-782",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "bodo-moskenes",
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "torg-782",
+        "reis-ferge",
+        "fergeruter",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "La scheda catalogo «bodo-moskenes» esiste già in destinations.ts: collegare la tratta a quella scheda.",
+        "Moskenes è vicino a Å e Reine (distanza stradale da calcolare).",
+        "D'estate la capacità per auto è il collo di bottiglia: prenotazione consigliata."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bodø ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:49735",
+          "lat": 67.288332,
+          "lng": 14.394311
+        },
+        {
+          "nome": "Moskenes ferjekai",
+          "minutiDaPartenza": 195,
+          "nsrId": "NSR:StopPlace:47301",
+          "lat": 67.899835,
+          "lng": 13.043995
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8782",
+        "codice": "18-782",
+        "nome": "A-rute BodÃ¸ - VÃ¦rÃ¸y - RÃ¸st - Moskenes",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-29",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 3,
+        "corseDom22nov2026": 3
+      },
+      "durataMinuti": {
+        "valore": 195,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bodo-vaeroy-rost",
+      "nome": "Bodø – Røst – Værøy – Bodø (varianti con Moskenes)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Lofoten",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 605,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "torg-782",
+          "stato": "da verificare",
+          "nota": "la pagina riporta un unico listino per la rotta 18-782: non è chiaro se valga per ogni tratto"
+        },
+        "stato": "da verificare",
+        "fonte": "torg-782",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "torg-782",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Giro a tappe: le isole Værøy e Røst sono in fondo alle Lofoten."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bodø ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:49735",
+          "lat": 67.288332,
+          "lng": 14.394311
+        },
+        {
+          "nome": "Røst ferjekai",
+          "minutiDaPartenza": 210,
+          "nsrId": "NSR:StopPlace:49624",
+          "lat": 67.5049,
+          "lng": 12.07147
+        },
+        {
+          "nome": "Værøy ferjekai",
+          "minutiDaPartenza": [
+            315,
+            330
+          ],
+          "nsrId": "NSR:StopPlace:49490",
+          "lat": 67.65269,
+          "lng": 12.711028
+        },
+        {
+          "nome": "Bodø ferjekai",
+          "minutiDaPartenza": [
+            510,
+            525
+          ],
+          "nsrId": "NSR:StopPlace:49735",
+          "lat": 67.288332,
+          "lng": 14.394311
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8782",
+        "codice": "18-782",
+        "nome": "A-rute BodÃ¸ - VÃ¦rÃ¸y - RÃ¸st - Moskenes",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-29",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 3,
+        "corseDom22nov2026": 3
+      },
+      "durataMinuti": {
+        "valore": [
+          510,
+          525
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Bodø ferjekai",
+      "arrivo": "Bodø ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bodo-svolvaer-express",
+      "nome": "Bodø – Skutvik – Svolvær (battello veloce NEX 2)",
+      "operatore": "Boreal Sjø (per Reis Nordland)",
+      "tipo": "hurtigbat",
+      "zona": "Nordland – Lofoten",
+      "regione": "Nordland e Lofoten",
+      "partenza": "Bodø hurtigbåtkai",
+      "arrivo": "Svolvær hurtigbåtkai",
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "nota": "Reis Nordland non pubblica prezzi per tratta («cerca la tratta nell'app Reis»).",
+        "regoleGenerali": "Reis Nordland: bambini sotto 6 anni gratis; biglietto bambino 6–15 (prezzo non indicato).",
+        "fonte": "reis-priser",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": "svolvaer",
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "reis-hb",
+        "reis-priser",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Alternativa senza auto Bodø → Lofoten centrali (Svolvær), con fermata a Skutvik."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bodø hurtigbåtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:49739",
+          "lat": 67.284044,
+          "lng": 14.372917
+        },
+        {
+          "nome": "Helnessund hurtigbåtkai",
+          "minutiDaPartenza": 65,
+          "nsrId": "NSR:StopPlace:49001",
+          "lat": 67.732972,
+          "lng": 14.772864
+        },
+        {
+          "nome": "Nordskot hurtigbåtkai",
+          "minutiDaPartenza": 80,
+          "nsrId": "NSR:StopPlace:47435",
+          "lat": 67.835153,
+          "lng": 14.788354
+        },
+        {
+          "nome": "Holkestad hurtigbåtkai",
+          "minutiDaPartenza": 100,
+          "nsrId": "NSR:StopPlace:49002",
+          "lat": 67.885034,
+          "lng": 14.887346
+        },
+        {
+          "nome": "Bogøy hurtigbåtkai",
+          "minutiDaPartenza": 115,
+          "nsrId": "NSR:StopPlace:49005",
+          "lat": 67.899876,
+          "lng": 15.189618
+        },
+        {
+          "nome": "Skutvik hurtigbåtkai",
+          "minutiDaPartenza": [
+            132,
+            142
+          ],
+          "nsrId": "NSR:StopPlace:49158",
+          "lat": 68.015253,
+          "lng": 15.336522
+        },
+        {
+          "nome": "Skrova hurtigbåtkai",
+          "minutiDaPartenza": 190,
+          "nsrId": "NSR:StopPlace:49648",
+          "lat": 68.16683,
+          "lng": 14.66215
+        },
+        {
+          "nome": "Svolvær hurtigbåtkai",
+          "minutiDaPartenza": 205,
+          "nsrId": "NSR:StopPlace:47288",
+          "lat": 68.231434,
+          "lng": 14.566731
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_3755",
+        "codice": "23-755",
+        "nome": "BodÃ¸ - SvolvÃ¦r - BodÃ¸",
+        "operatoreEntur": "Boreal SjÃ¸ AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 2,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 205,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 2 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bodo-sandnessjoen-express",
+      "nome": "Bodø – Ørnes – Sandnessjøen (battello veloce NEX 1)",
+      "operatore": "Boreal Sjø (per Reis Nordland)",
+      "tipo": "hurtigbat",
+      "zona": "Nordland – Helgeland",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "regoleGenerali": "bambini sotto 6 anni gratis (Reis Nordland)",
+        "fonte": "reis-priser",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-hb",
+        "reis-priser",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bodø hurtigbåtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:49739",
+          "lat": 67.284044,
+          "lng": 14.372917
+        },
+        {
+          "nome": "Sørarnøy hurtigbåtkai",
+          "minutiDaPartenza": 30,
+          "nsrId": "NSR:StopPlace:47145",
+          "lat": 67.136275,
+          "lng": 13.976777
+        },
+        {
+          "nome": "Støtt hurtigbåtkai",
+          "minutiDaPartenza": 70,
+          "nsrId": "NSR:StopPlace:50499",
+          "lat": 66.92611,
+          "lng": 13.434234
+        },
+        {
+          "nome": "Ørnes hurtigbåtkai",
+          "minutiDaPartenza": 90,
+          "nsrId": "NSR:StopPlace:46882",
+          "lat": 66.86863,
+          "lng": 13.702011
+        },
+        {
+          "nome": "Grønnøy hurtigbåtkai",
+          "minutiDaPartenza": 115,
+          "nsrId": "NSR:StopPlace:46880",
+          "lat": 66.794109,
+          "lng": 13.452075
+        },
+        {
+          "nome": "Bolga hurtigbåtkai",
+          "minutiDaPartenza": 130,
+          "nsrId": "NSR:StopPlace:49759",
+          "lat": 66.804988,
+          "lng": 13.236976
+        },
+        {
+          "nome": "Vågaholmen hurtigbåtkai",
+          "minutiDaPartenza": 150,
+          "nsrId": "NSR:StopPlace:46886",
+          "lat": 66.710494,
+          "lng": 13.280121
+        },
+        {
+          "nome": "Rødøy hurtigbåtkai",
+          "minutiDaPartenza": 170,
+          "nsrId": "NSR:StopPlace:50922",
+          "lat": 66.656183,
+          "lng": 13.066193
+        },
+        {
+          "nome": "Gjerøy hurtigbåtkai",
+          "minutiDaPartenza": 175,
+          "nsrId": "NSR:StopPlace:47644",
+          "lat": 66.614612,
+          "lng": 12.992044
+        },
+        {
+          "nome": "Selsøyvik hurtigbåtkai",
+          "minutiDaPartenza": 185,
+          "nsrId": "NSR:StopPlace:50045",
+          "lat": 66.57431,
+          "lng": 12.978405
+        },
+        {
+          "nome": "Tonnes hurtigbåtkai",
+          "minutiDaPartenza": 205,
+          "nsrId": "NSR:StopPlace:47500",
+          "lat": 66.511896,
+          "lng": 13.007926
+        },
+        {
+          "nome": "Indre Kvarøy hurtigbåtkai",
+          "minutiDaPartenza": 210,
+          "nsrId": "NSR:StopPlace:48692",
+          "lat": 66.488968,
+          "lng": 12.966474
+        },
+        {
+          "nome": "Onøy hurtigbåtkai",
+          "minutiDaPartenza": 230,
+          "nsrId": "NSR:StopPlace:47503",
+          "lat": 66.393038,
+          "lng": 12.824105
+        },
+        {
+          "nome": "Nesna hurtigbåtkai",
+          "minutiDaPartenza": 265,
+          "nsrId": "NSR:StopPlace:47511",
+          "lat": 66.20046,
+          "lng": 13.008145
+        },
+        {
+          "nome": "Sandnessjøen hurtigbåtkai",
+          "minutiDaPartenza": 305,
+          "nsrId": "NSR:StopPlace:49452",
+          "lat": 66.022865,
+          "lng": 12.633902
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_3731",
+        "codice": "23-731",
+        "nome": "BodÃ¸-Helgeland",
+        "operatoreEntur": "Boreal SjÃ¸ AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 2,
+        "corseSab21nov2026": 2,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 305,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Bodø hurtigbåtkai",
+      "arrivo": "Sandnessjøen hurtigbåtkai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 2 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "skutvik-svolvaer",
+      "nome": "Skutvik – Skrova – Svolvær",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Lofoten",
+      "regione": "Nordland e Lofoten",
+      "partenza": "Skutvik ferjekai",
+      "arrivo": "Svolvær ferjekai",
+      "tappe": [
+        {
+          "nome": "Skutvik ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:58676",
+          "lat": 68.014935,
+          "lng": 15.335412
+        },
+        {
+          "nome": "Skrova ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:48069",
+          "lat": 68.16713,
+          "lng": 14.66281
+        },
+        {
+          "nome": "Svolvær ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:47285",
+          "lat": 68.234587,
+          "lng": 14.551885
+        }
+      ],
+      "durataMinuti": {
+        "valore": null,
+        "stato": "assente",
+        "nota": "Nei dati invernali Entur compare solo Skrova–Svolvær (30 min); il tratto Skutvik non è pubblicato per l'inverno.",
+        "fonte": "entur"
+      },
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Gratis per i veicoli fuori dall'estate; tariffa estiva non pubblicata (calcolatore autopassferje.no)",
+          "fonte": "reis-ferge"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": "svolvaer",
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "assente",
+        "stato": "assente",
+        "fonte": null
+      }
+    },
+    {
+      "id": "bognes-lodingen",
+      "nome": "Bognes – Lødingen (verso Lofoten/Vesterålen)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Lofoten/Vesterålen",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Reis Nordland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 187,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "torg-703",
+          "stato": "da verificare",
+          "nota": "«Fullpris», anno non indicato"
+        },
+        "stato": "da verificare",
+        "fonte": "torg-703",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "torg-703",
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bognes ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:48052",
+          "lat": 68.224379,
+          "lng": 16.074301
+        },
+        {
+          "nome": "Lødingen ferjekai",
+          "minutiDaPartenza": 60,
+          "nsrId": "NSR:StopPlace:48065",
+          "lat": 68.420041,
+          "lng": 15.994278
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8703",
+        "codice": "18-703",
+        "nome": "Bognes-LÃ¸dingen",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 28,
+        "corseSab21nov2026": 26,
+        "corseDom22nov2026": 26
+      },
+      "durataMinuti": {
+        "valore": 60,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Bognes ferjekai",
+      "arrivo": "Lødingen ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 28 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "bognes-skarberget",
+      "nome": "Bognes – Skarberget (E6 Tysfjorden)",
+      "operatore": "Fjord1",
+      "tipo": "ferje",
+      "zona": "Nordland",
+      "regione": "Nordland e Lofoten",
+      "strada": "E6",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis (regola Reis Nordland)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 104,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fjord1-pagina-tratta",
+          "stato": "confermato",
+          "nota": "zona tariffaria 10"
+        },
+        "stato": "confermato",
+        "fonte": "fjord1-pagina-tratta",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Bognes ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:48052",
+          "lat": 68.224379,
+          "lng": 16.074301
+        },
+        {
+          "nome": "Skarberget ferjekai",
+          "minutiDaPartenza": 25,
+          "nsrId": "NSR:StopPlace:48048",
+          "lat": 68.232394,
+          "lng": 16.234818
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8611",
+        "codice": "18-611",
+        "nome": "Skarberget - Bognes",
+        "operatoreEntur": "Fjord1 AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 48,
+        "corseSab21nov2026": 48,
+        "corseDom22nov2026": 48
+      },
+      "durataMinuti": {
+        "valore": 25,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "fonteFjord1": {
+        "titolo": "Fjord1 – pagina tratta (prezzi «as of 09.Nov 2026»)",
+        "url": "https://www.fjord1.no/eng/routes/Nordland/bognes-skarberget"
+      },
+      "partenza": "Bognes ferjekai",
+      "arrivo": "Skarberget ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 48 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "fiskebol-melbu",
+      "nome": "Fiskebøl – Melbu (Lofoten – Vesterålen)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Lofoten/Vesterålen",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 116,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "tariffa ridotta secondo Reis Nordland; valore da fonte secondaria"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "fergeruter",
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Fiskebøl ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:48078",
+          "lat": 68.430895,
+          "lng": 14.824312
+        },
+        {
+          "nome": "Melbu ferjekai",
+          "minutiDaPartenza": 25,
+          "nsrId": "NSR:StopPlace:48073",
+          "lat": 68.49865,
+          "lng": 14.801009
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8732",
+        "codice": "18-732",
+        "nome": "Melbu - FiskebÃ¸l",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 22,
+        "corseSab21nov2026": 22,
+        "corseDom22nov2026": 20
+      },
+      "durataMinuti": {
+        "valore": 25,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Fiskebøl ferjekai",
+      "arrivo": "Melbu ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 22 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "andenes-gryllefjord",
+      "nome": "Andenes – Gryllefjord (Vesterålen – Senja, solo estate)",
+      "operatore": "Torghatten Nord (per Svipper/Troms)",
+      "tipo": "ferje",
+      "zona": "Nordland/Troms – Vesterålen e Senja",
+      "regione": "Nordland e Lofoten",
+      "partenza": "Andenes ferjekai",
+      "arrivo": "Gryllefjord ferjekai",
+      "tappe": [
+        {
+          "nome": "Andenes ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:63911",
+          "lat": 69.326799,
+          "lng": 16.133369
+        },
+        {
+          "nome": "Gryllefjord ferjekai",
+          "minutiDaPartenza": null,
+          "nsrId": "NSR:StopPlace:60125",
+          "lat": 69.3633,
+          "lng": 17.052289
+        }
+      ],
+      "durataMinuti": {
+        "valore": null,
+        "stato": "assente",
+        "nota": "Linea estiva non presente nei dati invernali Entur."
+      },
+      "stagione": {
+        "testo": "estate: 15 giugno – 27 settembre 2026",
+        "stato": "confermato",
+        "fonte": "svipper-180-news"
+      },
+      "trasportaAuto": true,
+      "tariffa": {
+        "anno": 2026,
+        "passeggeri": "2026 (prova): adulto 30–66 anni 100 NOK; bambini, giovani e senior gratis; conducente incluso nel prezzo del veicolo",
+        "adulto": 100,
+        "bambino": 0,
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 925,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "svipper-180",
+          "stato": "confermato",
+          "nota": "prezzo ordinario; 833 con AutoPASS, 463 con accordo privato"
+        },
+        "stato": "confermato",
+        "fonte": "svipper-180",
+        "nota": "Il biglietto passeggero era una prova per la stagione 2026: da verificare per il 2027.",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "andenes",
+        "arrivo": "senja",
+        "tappe": []
+      },
+      "fonti": [
+        "svipper-180",
+        "svipper-180-news",
+        "nsr"
+      ],
+      "note": [
+        "Scorciatoia estiva Vesterålen → Senja → Tromsø."
+      ],
+      "lettoIl": "2026-11-09",
+      "frequenzaEstiva": {
+        "testo": "assente",
+        "stato": "assente",
+        "fonte": null
+      }
+    },
+    {
+      "id": "festvag-misten",
+      "nome": "Festvåg – Misten (verso Kjerringøy, Bodø)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Kystriksveien/Bodø",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Gratis per i veicoli fuori dall'estate (Reis Nordland); tariffa estiva non pubblicata",
+          "fonte": "reis-ferge"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Festvåg ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:47405",
+          "lat": 67.43861,
+          "lng": 14.761843
+        },
+        {
+          "nome": "Misten ferjekai",
+          "minutiDaPartenza": 10,
+          "nsrId": "NSR:StopPlace:47408",
+          "lat": 67.452793,
+          "lng": 14.729496
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8538",
+        "codice": "18-538",
+        "nome": "FestvÃ¥g - Misten",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 40,
+        "corseSab21nov2026": 26,
+        "corseDom22nov2026": 34
+      },
+      "durataMinuti": {
+        "valore": 10,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Festvåg ferjekai",
+      "arrivo": "Misten ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 40 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "kilboghamn-jektvik",
+      "nome": "Kilboghamn – Jektvik (Fv17 Kystriksveien, Circolo polare)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Kystriksveien/Bodø",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Gratis per i veicoli fuori dall'estate (Reis Nordland); tariffa estiva non pubblicata",
+          "fonte": "reis-ferge"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Attraversa il Circolo polare artico."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Kilboghamn ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:47989",
+          "lat": 66.489032,
+          "lng": 13.227493
+        },
+        {
+          "nome": "Sørfjorden ferjekai",
+          "minutiDaPartenza": 10,
+          "nsrId": "NSR:StopPlace:47974",
+          "lat": 66.506542,
+          "lng": 13.302185
+        },
+        {
+          "nome": "Jektvik ferjekai",
+          "minutiDaPartenza": 65,
+          "nsrId": "NSR:StopPlace:47701",
+          "lat": 66.624295,
+          "lng": 13.285483
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8414",
+        "codice": "18-414",
+        "nome": "Jektvik - Kilboghamn A-ferge",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 12,
+        "corseSab21nov2026": 8,
+        "corseDom22nov2026": 10
+      },
+      "durataMinuti": {
+        "valore": 65,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Kilboghamn ferjekai",
+      "arrivo": "Jektvik ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 12 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "foroy-agskardet",
+      "nome": "Forøy – Ågskardet (Fv17, Svartisen)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Kystriksveien/Bodø",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Gratis per i veicoli fuori dall'estate (Reis Nordland); tariffa estiva non pubblicata",
+          "fonte": "reis-ferge"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Forøy ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:48011",
+          "lat": 66.73861,
+          "lng": 13.51394
+        },
+        {
+          "nome": "Ågskardet ferjekai",
+          "minutiDaPartenza": 10,
+          "nsrId": "NSR:StopPlace:48020",
+          "lat": 66.720021,
+          "lng": 13.476443
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8421",
+        "codice": "18-421",
+        "nome": "ForÃ¸y - Ã…gskardet",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 40,
+        "corseSab21nov2026": 30,
+        "corseDom22nov2026": 32
+      },
+      "durataMinuti": {
+        "valore": 10,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Forøy ferjekai",
+      "arrivo": "Ågskardet ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 40 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "tjotta-forvik",
+      "nome": "Tjøtta – Forvik (Fv17 Kystriksveien)",
+      "operatore": "Boreal Sjø",
+      "tipo": "ferje",
+      "zona": "Nordland – Kystriksveien/Bodø",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Gratis per i veicoli fuori dall'estate (Reis Nordland); tariffa estiva non pubblicata",
+          "fonte": "reis-ferge"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "note": [],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Tjøtta ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:47451",
+          "lat": 65.821893,
+          "lng": 12.43014
+        },
+        {
+          "nome": "Mindland ferjekai",
+          "minutiDaPartenza": [
+            15,
+            20
+          ],
+          "nsrId": "NSR:StopPlace:47447",
+          "lat": 65.807031,
+          "lng": 12.494909
+        },
+        {
+          "nome": "Tro ferjekai",
+          "minutiDaPartenza": [
+            25,
+            30
+          ],
+          "nsrId": "NSR:StopPlace:47671",
+          "lat": 65.796731,
+          "lng": 12.526533
+        },
+        {
+          "nome": "Stokkasjøen ferjekai",
+          "minutiDaPartenza": [
+            30,
+            35
+          ],
+          "nsrId": "NSR:StopPlace:47437",
+          "lat": 65.758648,
+          "lng": 12.55696
+        },
+        {
+          "nome": "Vågsodden ferjekai",
+          "minutiDaPartenza": [
+            50,
+            60
+          ],
+          "nsrId": "NSR:StopPlace:47433",
+          "lat": 65.721527,
+          "lng": 12.45138
+        },
+        {
+          "nome": "Forvik ferjekai",
+          "minutiDaPartenza": [
+            55,
+            70
+          ],
+          "nsrId": "NSR:StopPlace:59698",
+          "lat": 65.712723,
+          "lng": 12.459102
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8162",
+        "codice": "18-162",
+        "nome": "TjÃ¸tta - Forvik",
+        "operatoreEntur": "Boreal SjÃ¸ AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 22,
+        "corseSab21nov2026": 12,
+        "corseDom22nov2026": 16
+      },
+      "durataMinuti": {
+        "valore": [
+          55,
+          70
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Tjøtta ferjekai",
+      "arrivo": "Forvik ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 22 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "nesna-levang",
+      "nome": "Nesna – Levang (Fv17 Kystriksveien)",
+      "operatore": "Torghatten Nord",
+      "tipo": "ferje",
+      "zona": "Nordland – Kystriksveien",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "nok": null,
+          "stato": "assente",
+          "nota": "Tariffa ridotta (Reis Nordland), importo non pubblicato"
+        },
+        "stato": "da verificare",
+        "fonte": "reis-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "reis-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Nesna ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:47187",
+          "lat": 66.200679,
+          "lng": 13.011479
+        },
+        {
+          "nome": "Levang ferjekai",
+          "minutiDaPartenza": [
+            25,
+            30
+          ],
+          "nsrId": "NSR:StopPlace:47674",
+          "lat": 66.153175,
+          "lng": 13.078864
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8335",
+        "codice": "18-335",
+        "nome": "Nesna - Levang N",
+        "operatoreEntur": "Torghatten Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-31",
+        "corseMer18nov2026": 26,
+        "corseSab21nov2026": 18,
+        "corseDom22nov2026": 18
+      },
+      "durataMinuti": {
+        "valore": [
+          25,
+          30
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Nesna ferjekai",
+      "arrivo": "Levang ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 26 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "reine-vindstad",
+      "nome": "Reinefjorden: Reine – Kirkefjord – Vindstad (barca locale)",
+      "operatore": "Charter i Nord (per Reis Nordland)",
+      "tipo": "hurtigbat",
+      "zona": "Nordland – Lofoten",
+      "regione": "Nordland e Lofoten",
+      "trasportaAuto": false,
+      "tariffa": {
+        "stato": "assente",
+        "regoleGenerali": "bambini sotto 6 anni gratis (Reis Nordland)",
+        "fonte": "reis-priser",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "reine",
+        "arrivo": null,
+        "tappe": [
+          "lofoten"
+        ]
+      },
+      "fonti": [
+        "reis-priser",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Vindstad è il punto di partenza del sentiero per la spiaggia di Bunes (informazione da verificare prima di inserirla nella scheda)."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Reine hurtigbåtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:48469",
+          "lat": 67.935463,
+          "lng": 13.094791
+        },
+        {
+          "nome": "Rostad hurtigbåtkai",
+          "minutiDaPartenza": 15,
+          "nsrId": "NSR:StopPlace:47101",
+          "lat": 67.962109,
+          "lng": 13.04487
+        },
+        {
+          "nome": "Kirkefjord hurtigbåtkai",
+          "minutiDaPartenza": 25,
+          "nsrId": "NSR:StopPlace:47103",
+          "lat": 67.992307,
+          "lng": 13.015384
+        },
+        {
+          "nome": "Vindstad hurtigbåtkai",
+          "minutiDaPartenza": 40,
+          "nsrId": "NSR:StopPlace:47097",
+          "lat": 67.957221,
+          "lng": 13.005294
+        }
+      ],
+      "enturLinea": {
+        "id": "NOR:Line:12_8773",
+        "codice": "18-773",
+        "nome": "Reinefjorden",
+        "operatoreEntur": "Charter i Nord AS",
+        "datiValidiDal": "2026-11-08",
+        "datiValidiAl": "2027-03-29",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 4
+      },
+      "durataMinuti": {
+        "valore": 40,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Reine hurtigbåtkai",
+      "arrivo": "Vindstad hurtigbåtkai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "tromso-harstad-express",
+      "nome": "Tromsø – Finnsnes – Harstad (battello veloce linea 2)",
+      "operatore": "Norled (per Svipper)",
+      "tipo": "hurtigbat",
+      "zona": "Troms",
+      "regione": "Troms e Finnmark",
+      "partenza": "Tromsø Prostneset",
+      "arrivo": "Harstad hurtigbåtkai",
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "validoDal": "2026-02-01",
+        "adulto": 630,
+        "giovane18_29": 377,
+        "bambino": 209,
+        "fasciaBambino": "6–17 (categorie Svipper)",
+        "gratisSottoAnni": 6,
+        "sabatoAdulto": 277,
+        "sabatoBambino": 154,
+        "tratti": [
+          {
+            "da": "Tromsø",
+            "a": "Finnsnes",
+            "adulto": 295,
+            "bambino": 98
+          },
+          {
+            "da": "Finnsnes",
+            "a": "Harstad",
+            "adulto": 381,
+            "bambino": 126
+          }
+        ],
+        "nota": "Fasce d'età lette sulla pagina tariffe bus di Svipper; applicazione ai battelli da verificare. Dal 1/2/2026 posto garantito: biglietto per una partenza precisa.",
+        "stato": "confermato",
+        "fonte": "svipper-l2",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "tromso",
+        "arrivo": null,
+        "tappe": [
+          "senja"
+        ]
+      },
+      "fonti": [
+        "svipper-l2",
+        "svipper-hb",
+        "svipper-bus",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Finnsnes è la porta di Senja; Harstad è vicina all'aeroporto di Evenes (distanza da calcolare)."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Tromsø Prostneset hurtigbåtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:52279",
+          "lat": 69.646316,
+          "lng": 18.957687
+        },
+        {
+          "nome": "Finnsnes kai",
+          "minutiDaPartenza": 75,
+          "nsrId": "NSR:StopPlace:55427",
+          "lat": 69.229089,
+          "lng": 17.974282
+        },
+        {
+          "nome": "Brøstadbotn hurtigbåtkai",
+          "minutiDaPartenza": 110,
+          "nsrId": "NSR:StopPlace:56219",
+          "lat": 69.072048,
+          "lng": 17.657841
+        },
+        {
+          "nome": "Engenes kai",
+          "minutiDaPartenza": 140,
+          "nsrId": "NSR:StopPlace:55174",
+          "lat": 68.925935,
+          "lng": 17.125438
+        },
+        {
+          "nome": "Harstad hurtigbåtkai",
+          "minutiDaPartenza": 180,
+          "nsrId": "NSR:StopPlace:70023",
+          "lat": 68.801062,
+          "lng": 16.546732
+        }
+      ],
+      "enturLinea": {
+        "id": "TRO:Line:1_2",
+        "codice": "2",
+        "nome": "TromsÃ¸ - Finnsnes - Harstad",
+        "operatoreEntur": "Norled hurtigbÃ¥t",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-04-30",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 4,
+        "corseDom22nov2026": 4
+      },
+      "durataMinuti": {
+        "valore": 180,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "tromso-skjervoy-express",
+      "nome": "Tromsø – Skjervøy (battello veloce linea 3)",
+      "operatore": "Norled (per Svipper)",
+      "tipo": "hurtigbat",
+      "zona": "Troms",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "validoDal": "2026-02-01",
+        "adulto": 424,
+        "giovane18_29": 253,
+        "bambino": 142,
+        "fasciaBambino": "6–17 (categorie Svipper)",
+        "gratisSottoAnni": 6,
+        "stato": "confermato",
+        "fonte": "svipper-l3",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "tromso",
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "svipper-l3",
+        "svipper-bus",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Tromsø Prostneset hurtigbåtkai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:52279",
+          "lat": 69.646316,
+          "lng": 18.957687
+        },
+        {
+          "nome": "Finnkroken hurtigbåtkai",
+          "minutiDaPartenza": 30,
+          "nsrId": "NSR:StopPlace:55399",
+          "lat": 69.834185,
+          "lng": 19.436038
+        },
+        {
+          "nome": "Vannvåg kai",
+          "minutiDaPartenza": 75,
+          "nsrId": "NSR:StopPlace:52707",
+          "lat": 70.072438,
+          "lng": 19.99214
+        },
+        {
+          "nome": "Nord-Lenangen",
+          "minutiDaPartenza": 105,
+          "nsrId": "NSR:StopPlace:56050",
+          "lat": 69.909302,
+          "lng": 20.163453
+        },
+        {
+          "nome": "Arnøyhamn kai",
+          "minutiDaPartenza": 135,
+          "nsrId": "NSR:StopPlace:55270",
+          "lat": 70.052904,
+          "lng": 20.636074
+        },
+        {
+          "nome": "Nikkeby",
+          "minutiDaPartenza": 150,
+          "nsrId": "NSR:StopPlace:55951",
+          "lat": 70.074228,
+          "lng": 20.815288
+        },
+        {
+          "nome": "Skjervøy kai",
+          "minutiDaPartenza": 170,
+          "nsrId": "NSR:StopPlace:53630",
+          "lat": 70.035446,
+          "lng": 20.983748
+        }
+      ],
+      "enturLinea": {
+        "id": "TRO:Line:1_3",
+        "codice": "3",
+        "nome": "TromsÃ¸ - SkjervÃ¸y",
+        "operatoreEntur": "Norled hurtigbÃ¥t",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-04-30",
+        "corseMer18nov2026": 1,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 170,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Tromsø Prostneset hurtigbåtkai",
+      "arrivo": "Skjervøy kai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 1 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "botnhamn-brensholmen",
+      "nome": "Botnhamn – Brensholmen (Senja – Kvaløya/Tromsø)",
+      "operatore": "Torghatten Nord (per Svipper)",
+      "tipo": "ferje",
+      "zona": "Troms",
+      "regione": "Troms e Finnmark",
+      "partenza": "Botnhamn ferjekai",
+      "arrivo": "Brensholmen ferjekai",
+      "trasportaAuto": true,
+      "tariffa": {
+        "anno": 2026,
+        "passeggeri": "gratis («Personer og sykler: Gratis»)",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 247,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "svipper-181",
+          "stato": "confermato",
+          "nota": "20/6–31/8/2026; dal 31/8: 228"
+        },
+        "stato": "confermato",
+        "fonte": "svipper-181",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": "senja",
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "svipper-181",
+        "svipper-180-news",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Tratta stagionale più frequente d'estate (da verificare); collega Senja a Tromsø."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Botnhamn ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:70258",
+          "lat": 69.506933,
+          "lng": 17.908503
+        },
+        {
+          "nome": "Brensholmen ferjekai",
+          "minutiDaPartenza": 35,
+          "nsrId": "NSR:StopPlace:56141",
+          "lat": 69.607852,
+          "lng": 18.031594
+        }
+      ],
+      "enturLinea": {
+        "id": "TRO:Line:1_181",
+        "codice": "181",
+        "nome": "Botnhamn - Brensholmen",
+        "operatoreEntur": "Torghatten Nord",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-04-30",
+        "corseMer18nov2026": 8,
+        "corseSab21nov2026": 4,
+        "corseDom22nov2026": 6
+      },
+      "durataMinuti": {
+        "valore": 35,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 8 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "breivikeidet-svensby",
+      "nome": "Breivikeidet – Svensby (Lyngen)",
+      "operatore": "Norled (per Svipper)",
+      "tipo": "ferje",
+      "zona": "Troms – Lyngen",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": true,
+      "tariffa": {
+        "stato": "assente",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Via breve Tromsø → Lyngen."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Breivikeidet ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:70319",
+          "lat": 69.669926,
+          "lng": 19.65081
+        },
+        {
+          "nome": "Svensby ferjekai",
+          "minutiDaPartenza": 20,
+          "nsrId": "NSR:StopPlace:70320",
+          "lat": 69.66337,
+          "lng": 19.809251
+        }
+      ],
+      "enturLinea": {
+        "id": "TRO:Line:1_191",
+        "codice": "191",
+        "nome": "Breivikeidet - Svensby",
+        "operatoreEntur": "Norled Ferge",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-04-30",
+        "corseMer18nov2026": 30,
+        "corseSab21nov2026": 22,
+        "corseDom22nov2026": 24
+      },
+      "durataMinuti": {
+        "valore": 20,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Breivikeidet ferjekai",
+      "arrivo": "Svensby ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 30 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "lyngseidet-olderdalen",
+      "nome": "Lyngseidet – Olderdalen (Lyngenfjorden)",
+      "operatore": "Norled (per Svipper)",
+      "tipo": "ferje",
+      "zona": "Troms – Lyngen",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 152,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "fergeruter",
+          "stato": "da verificare",
+          "nota": "fonte secondaria"
+        },
+        "stato": "da verificare",
+        "fonte": "fergeruter",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "fergeruter",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Con Breivikeidet–Svensby forma la scorciatoia Tromsø → E6 verso il Finnmark."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Lyngseidet ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:70315",
+          "lat": 69.577181,
+          "lng": 20.2237
+        },
+        {
+          "nome": "Olderdalen ferjekai",
+          "minutiDaPartenza": 40,
+          "nsrId": "NSR:StopPlace:70316",
+          "lat": 69.601573,
+          "lng": 20.532672
+        }
+      ],
+      "enturLinea": {
+        "id": "TRO:Line:1_190",
+        "codice": "190",
+        "nome": "Lyngseidet - Olderdalen",
+        "operatoreEntur": "Norled Ferge",
+        "datiValidiDal": "2026-11-09",
+        "datiValidiAl": "2027-04-30",
+        "corseMer18nov2026": 18,
+        "corseSab21nov2026": 14,
+        "corseDom22nov2026": 14
+      },
+      "durataMinuti": {
+        "valore": 40,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Lyngseidet ferjekai",
+      "arrivo": "Olderdalen ferjekai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 18 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "hammerfest-alta-express",
+      "nome": "Hammerfest – Alta (VargsundXpressen)",
+      "operatore": "Boreal Sjø (per Snelandia)",
+      "tipo": "hurtigbat",
+      "zona": "Finnmark",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "validoDal": "2026-02-01",
+        "adulto": 420,
+        "bambino": 263,
+        "fasciaBambino": "4–19 (anche honnør/militari)",
+        "gratisSottoAnni": null,
+        "giovane20_29": 315,
+        "nota": "«Gratis sotto 4 anni» indicato solo su alcune righe del listino: da verificare. Tutte le fermate del battello vanno prenotate in anticipo.",
+        "stato": "confermato",
+        "fonte": "snelandia-hb",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "snelandia-hb",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Hammerfest havn",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:56851",
+          "lat": 70.664175,
+          "lng": 23.682516
+        },
+        {
+          "nome": "Alta hurtigbåtterminal",
+          "minutiDaPartenza": 95,
+          "nsrId": "NSR:StopPlace:60051",
+          "lat": 69.976851,
+          "lng": 23.328427
+        }
+      ],
+      "enturLinea": {
+        "id": "FIN:Line:2330",
+        "codice": "B330",
+        "nome": "VargsundXpressen",
+        "operatoreEntur": "Boreal SjÃ¸ - hurtigbÃ¥t",
+        "datiValidiDal": "2026-10-01",
+        "datiValidiAl": "2027-01-15",
+        "corseMer18nov2026": 4,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": 95,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Hammerfest havn",
+      "arrivo": "Alta hurtigbåtterminal",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 4 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "hammerfest-havoysund-express",
+      "nome": "Hammerfest – Ingøy – Havøysund (MåsøyXpressen)",
+      "operatore": "Boreal Sjø (per Snelandia)",
+      "tipo": "hurtigbat",
+      "zona": "Finnmark",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "validoDal": "2026-02-01",
+        "adulto": 327,
+        "bambino": 204,
+        "fasciaBambino": "4–19",
+        "giovane20_29": 245,
+        "stato": "confermato",
+        "fonte": "snelandia-hb",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "snelandia-hb",
+        "entur",
+        "nsr"
+      ],
+      "note": [
+        "Havøysund è anche porto Hurtigruten; da Havøysund a Honningsvåg/Capo Nord non c'è battello pubblico Snelandia nei dati."
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Hammerfest havn",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:56851",
+          "lat": 70.664175,
+          "lng": 23.682516
+        },
+        {
+          "nome": "Gunnarnes kai",
+          "minutiDaPartenza": [
+            60,
+            70
+          ],
+          "nsrId": "NSR:StopPlace:57336",
+          "lat": 70.992232,
+          "lng": 24.128953
+        },
+        {
+          "nome": "Ingøy kai",
+          "minutiDaPartenza": [
+            105,
+            115
+          ],
+          "nsrId": "NSR:StopPlace:57338",
+          "lat": 71.084273,
+          "lng": 24.06193
+        },
+        {
+          "nome": "Havøysund kai",
+          "minutiDaPartenza": [
+            150,
+            160
+          ],
+          "nsrId": "NSR:StopPlace:57328",
+          "lat": 70.994496,
+          "lng": 24.676172
+        }
+      ],
+      "enturLinea": {
+        "id": "FIN:Line:2350",
+        "codice": "B350",
+        "nome": "MÃ¥sÃ¸yXpressen",
+        "operatoreEntur": "Boreal SjÃ¸ - hurtigbÃ¥t",
+        "datiValidiDal": "2026-10-01",
+        "datiValidiAl": "2027-01-15",
+        "corseMer18nov2026": 6,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 6
+      },
+      "durataMinuti": {
+        "valore": [
+          150,
+          160
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Hammerfest havn",
+      "arrivo": "Havøysund kai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 6 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "hammerfest-hasvik-oksfjord-express",
+      "nome": "Hammerfest – Hasvik – Øksfjord (LoppaXpressen)",
+      "operatore": "Boreal Sjø (per Snelandia)",
+      "tipo": "hurtigbat",
+      "zona": "Finnmark",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": false,
+      "tariffa": {
+        "anno": 2026,
+        "tratti": [
+          {
+            "da": "Hammerfest",
+            "a": "Hasvik",
+            "adulto": 327,
+            "bambino": 204
+          }
+        ],
+        "fasciaBambino": "4–19",
+        "nota": "Prezzo fino a Øksfjord non letto.",
+        "stato": "confermato",
+        "fonte": "snelandia-hb",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "snelandia-hb",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Hammerfest havn",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:56851",
+          "lat": 70.664175,
+          "lng": 23.682516
+        },
+        {
+          "nome": "Kårhamn kai",
+          "minutiDaPartenza": [
+            30,
+            40
+          ],
+          "nsrId": "NSR:StopPlace:56847",
+          "lat": 70.546553,
+          "lng": 23.158413
+        },
+        {
+          "nome": "Hasvik kai",
+          "minutiDaPartenza": [
+            90,
+            100
+          ],
+          "nsrId": "NSR:StopPlace:57206",
+          "lat": 70.483277,
+          "lng": 22.163037
+        },
+        {
+          "nome": "Øksfjord hurtigbåtkai",
+          "minutiDaPartenza": [
+            135,
+            145
+          ],
+          "nsrId": "NSR:StopPlace:57164",
+          "lat": 70.238444,
+          "lng": 22.348516
+        }
+      ],
+      "enturLinea": {
+        "id": "FIN:Line:2320",
+        "codice": "B320",
+        "nome": "LoppaXpressen",
+        "operatoreEntur": "Boreal SjÃ¸ - hurtigbÃ¥t",
+        "datiValidiDal": "2026-10-01",
+        "datiValidiAl": "2027-01-15",
+        "corseMer18nov2026": 3,
+        "corseSab21nov2026": 0,
+        "corseDom22nov2026": 2
+      },
+      "durataMinuti": {
+        "valore": [
+          135,
+          145
+        ],
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Hammerfest havn",
+      "arrivo": "Øksfjord hurtigbåtkai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 3 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    },
+    {
+      "id": "oksfjord-hasvik",
+      "nome": "Øksfjord – Hasvik (Sørøya)",
+      "operatore": "Boreal Sjø (per Snelandia)",
+      "tipo": "ferje",
+      "zona": "Finnmark",
+      "regione": "Troms e Finnmark",
+      "trasportaAuto": true,
+      "tariffa": {
+        "passeggeri": "gratis",
+        "auto": {
+          "classe": "fino a 6 m",
+          "nok": 0,
+          "conducenteIncluso": true,
+          "anno": 2026,
+          "fonte": "snelandia-ferge",
+          "stato": "da verificare",
+          "nota": "«Ferge i Finnmark er gratis»; la pagina non distingue passeggeri e veicoli"
+        },
+        "stato": "da verificare",
+        "fonte": "snelandia-ferge",
+        "daVerificarePer2027": true
+      },
+      "destinazioni": {
+        "partenza": null,
+        "arrivo": null,
+        "tappe": []
+      },
+      "fonti": [
+        "snelandia-ferge",
+        "entur",
+        "nsr"
+      ],
+      "lettoIl": "2026-11-09",
+      "tappe": [
+        {
+          "nome": "Øksfjord ferjekai",
+          "minutiDaPartenza": 0,
+          "nsrId": "NSR:StopPlace:57179",
+          "lat": 70.23317,
+          "lng": 22.357564
+        },
+        {
+          "nome": "Hasvik kai",
+          "minutiDaPartenza": 75,
+          "nsrId": "NSR:StopPlace:57210",
+          "lat": 70.483803,
+          "lng": 22.161698
+        }
+      ],
+      "enturLinea": {
+        "id": "FIN:Line:2500",
+        "codice": "500",
+        "nome": "Ã˜ksfjord - Hasvik",
+        "operatoreEntur": "Boreal SjÃ¸ - ferje",
+        "datiValidiDal": "2026-04-04",
+        "datiValidiAl": "2027-01-15",
+        "corseMer18nov2026": 8,
+        "corseSab21nov2026": 4,
+        "corseDom22nov2026": 4
+      },
+      "durataMinuti": {
+        "valore": 75,
+        "stato": "confermato",
+        "nota": "orario invernale 2026/27 (Entur); d'estate da verificare",
+        "fonte": "entur"
+      },
+      "partenza": "Øksfjord ferjekai",
+      "arrivo": "Hasvik kai",
+      "stagione": {
+        "testo": "tutto l'anno secondo l'orario Entur; estate 2027 da verificare",
+        "stato": "da verificare"
+      },
+      "frequenzaEstiva": {
+        "testo": "non pubblicata; riferimento invernale: 8 corse/giorno (entrambi i sensi) mercoledì 18/11/2026",
+        "stato": "assente",
+        "fonte": "entur"
+      }
+    }
+  ]
+}

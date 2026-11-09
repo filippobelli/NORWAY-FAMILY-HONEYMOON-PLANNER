@@ -224,3 +224,63 @@ password nei file.
    dispositivo «Apri» la scarica. Impostazioni › «Allegati del diario» mostra lo spazio usato.
 8. Ritorno indietro se qualcosa non va: procedura «Ritorno al documento» (sezione del secondo giro, tre passi); dopo,
    l'app di oggi torna a salvare il viaggio.
+
+## Trasporti via mare (2026-11-09)
+
+Ramo `feature/trasporti-mare` (da `main`). Riferimenti: `docs/piano-2026-11-09-trasporti-mare.md`, `docs/spec-trasporti-mare.md`,
+`docs/design-trasporti-mare.md` (+ mockup), `docs/architettura.md` §16. **Nulla applicato al database**, nessun push,
+nessuna variabile d'ambiente impostata; il viaggio reale non è stato toccato.
+
+### Cosa è stato fatto
+- **Menù e indirizzi**: la voce «Crociere» di Prenotazioni diventa «Trasporti via mare» (`src/ui/SeaView.tsx`) con due
+  schede (`role=tablist`, frecce/Home/Fine): Crociere = `CoastalView` invariata; Traghetti = `#/crociere?parte=traghetti`
+  (la scheda scelta aggiorna l'indirizzo con `replaceState`), `&tratta={id}` apre la scheda, alias `#/mare`. Testi
+  aggiornati in `VIEW_PLACE`, Riepilogo Prenotazioni («Crociere e traghetti») e avvisi dell'Itinerario.
+- **Catalogo**: `adaptFerries` in `src/catalog/adapter.ts` ricostruisce `FerryRoute` dalle righe `ferry_*` (chiavi
+  facoltative: NO-1 e copie offline vecchie danno zero tratte, nessun errore); `AppCatalog.ferryRoutes/ferrySources/
+  ferryRelease`. Il registro sostituisce `FERRY_ROUTES`/`FERRY_SOURCES` come le crociere e tiene la versione di ogni
+  tratta. `FILE_COUNTRY` = `NO-2`, versione 2 (il seed di NO-1 resta identico: rigenerato e confrontato).
+- **Dominio** `src/domain/ferries.ts` (puro): `ferryCost` (età del viaggio con avviso a ±1 anno dalla soglia, gratis sotto
+  età, tetto bambino, conducente incluso nel veicolo, passeggeri gratis/a pagamento/non indicata, auto solo se scelta,
+  pacchetto auto e biglietto famiglia con scelta del più basso — a parità il conto per persona —, tariffa del sabato e
+  periodi della fonte, sottotratte solo con prezzo pubblicato, sconto ritorno e prenotazione facoltativa solo se scelti,
+  prezzo mancante = non calcolabile, anno tariffa ≠ anno del viaggio = da verificare); testi dello stato (tre soli);
+  ricerca senza accenti, filtri, zone, gruppi; `tripFerryRoutes` (solo la versione del catalogo del viaggio);
+  `ferrySuggestions` (solo battelli veloci/turistici, entrambe le tappe collegate per id, collegamento in auto,
+  nascondibili e reversibili); `ferrySegment`/`applyFerry`/`insertRoadParts` (tratto a sé, nessun km, durata della
+  tratta, attesa e orario dell'utente, linea solo tra moli NSR; strada lasciata, sostituita o ricalcolata fino ai moli).
+  `upgradeCatalog` e `releaseVersion` in `src/domain/countries.ts`.
+- **UI Traghetti** (`src/ui/SeaView.tsx`, `src/ui/Ferries.tsx`): nota, riepilogo (1 prezzo 2027 · 46 da verificare · 11
+  assenti), suggerimenti «Alternative all'auto», ricerca + zona + auto + mezzo + «Solo con prezzo» + «Collegate alle mie
+  tappe», conteggio in `role=status` (300 ms), stati (versione 1, caricamento, errore, senza rete, nessun risultato);
+  dialogo a passi scheda → aggiungi (tappe, durata, regola tariffaria, tabella delle tariffe, fonti con data, «Vai alla
+  fonte ↗», nessun «Prenota»; collegamento, imbarco/sbarco, auto, strada, partenze pubblicate come chip, attesa, opzioni,
+  anteprima del costo con «Si usa», «Ho trovato il prezzo», anteprima del collegamento). Telefono: filtri in «Filtri»,
+  pulsanti ≥ 44 px, azioni fisse in basso, conto a due colonne.
+- **Percorso**: chip «· con auto · 1650 NOK · dal catalogo traghetti», riga «C'è anche un battello… Vedi», blocco «Costo per
+  la famiglia» con «Come è calcolato», «Cambia imbarco, auto e opzioni», «Scheda della tratta»; costo modificato a mano =
+  `costByUser` con «Torna al calcolo».
+- **Budget**: voce «Traghetto A → B · con/senza auto» (categoria Traghetti, origine Itinerario) con dettaglio e «Apri nel
+  percorso»; senza prezzo «Traghetto …: prezzo da cercare» tra i costi senza importo, mai zero.
+- **Impostazioni › Nazioni e cataloghi**: con il viaggio su NO-1 messaggio e pulsante «Passa a NO-2» con conferma
+  (`UpgradeDialog`, Annulla nel toast). L'offerta viene dall'elenco del server; senza elenco (non collegati) e con il
+  catalogo dei file in uso si propone la versione contenuta nell'app.
+
+### Verifiche (2026-11-09)
+- `npm run typecheck`, `npm run lint`: puliti. `npm test`: 255 test, 0 falliti (29 nuovi in `tests/traghetti-costi.test.ts`,
+  `tests/traghetti-catalogo.test.ts`, `tests/traghetti-percorso.test.ts`: esempi della spec 1469, 1650, 1990, 3107/3299,
+  1365, 81 / non calcolabile, 0/605/735, prezzi assenti; adattatore ≡ file; upgrade senza perdite; righe del viaggio).
+- `npm run build`: ok. Script nel browser, tutti senza FAIL: `traghetti.cjs` (nuovo) 64 OK · `e2e.cjs` 60 OK ·
+  `planning.cjs` 16 OK · `cosafare.cjs` 30 OK · `a11y.cjs` 36 OK (ora anche `#/crociere?parte=traghetti`) · `sync.cjs` tutti OK ·
+  `righe.cjs` 8 OK con la build normale e 34 OK con la build `VITE_PASSAGGIO_RIGHE=pulsante` (variabile solo per quel
+  comando); poi `dist` ricostruita senza variabile.
+- Seed: `npx tsx scripts/seed-catalog.ts` (NO-1) identico a prima; `--version 2` identico a `catalogo-norvegia-v2.sql`.
+
+### Limiti e rischi
+- «Ricalcola la strada fino all'imbarco» usa il servizio di percorsi dopo «Applica»; un successivo «Ricalcola strada» del
+  collegamento ricalcola A → B intero (comportamento di sempre con i traghetti manuali, avviso dei tempi sommati).
+- Nessuna corrispondenza tra fermate e luoghi lungo la tratta (es. Finnsnes ↔ Senja): l'imbarco/sbarco proposto è la
+  tratta intera, l'utente sceglie la sottotratta.
+- La crociera andata e ritorno (Stavanger–Lysefjord) rimanda alle Giornate, senza creare l'attività da sola.
+- Senza collegamento al cloud il passaggio a NO-2 si basa sui file dell'app: se NO-2 non fosse pubblicata sul server, il
+  download fallirebbe con il messaggio d'errore della nazione (il piano prevede la pubblicazione di NO-2).

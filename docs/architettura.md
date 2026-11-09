@@ -368,3 +368,86 @@ Stima d'uso: catalogo Norvegia ~0,2 MB; un viaggio qualche MB al massimo (geomet
 8. **Dimensione dei lotti**: limite del corpo delle richieste da verificare (§13); le geometrie dei segmenti possono essere grandi.
 9. **Limiti del piano gratuito**: tutti da verificare (§13).
 10. **`attachments_usage`** legge `storage.objects.metadata->>'size'`: campo da verificare sulla versione di Storage del progetto.
+
+## 16. Trasporti via mare (NO-2)
+
+Aggiunta del 2026-11-09 (architetto-dati). Piano `docs/piano-2026-11-09-trasporti-mare.md`, spec `docs/spec-trasporti-mare.md`, design `docs/design-trasporti-mare.md` (§13 DU9, DU13, DU15; §14), dati `docs/ricerca-traghetti.json` (58 tratte, letto il 2026-11-09). **Nulla è applicato al database**: la migrazione la applica il capo progetto dopo la revisione.
+
+### 16.1 File
+
+| File | Cosa fa |
+|---|---|
+| `supabase/migrations/20261109000000_traghetti.sql` | 5 tabelle `ferry_*`, guardie di immutabilità, RLS, `catalog_bundle` esteso. Solo aggiunte, idempotente |
+| `supabase/rollback/20261109_annulla_traghetti.sql` | Toglie le versioni con traghetti (NO-2), le tabelle `ferry_*`, rimette `catalog_bundle` di prima. Si ferma se un viaggio usa NO-2 |
+| `supabase/seed/catalogo-norvegia-v2.sql` | Seed generato: NO-2 = tutto NO-1 + 58 tratte, `previous_release_id = 'NO-1'` |
+| `src/data/ferryTypes.ts` | Tipi del catalogo traghetti (scritti a mano) |
+| `src/data/ferryRoutes.ts` | Dati: `FERRY_ROUTES` (58), `FERRY_SOURCES` (36), `FERRY_CHECKED_AT`. **Generato** da `scripts/build-ferry-routes.ts` |
+| `scripts/build-ferry-routes.ts` | JSON della ricerca → `ferryRoutes.ts` (deterministico, controlli: fonti esistenti, coordinate solo con id NSR, regioni note) |
+| `scripts/seed-catalog.ts` | Nuovo `buildNorwayV2()`, opzione `--version 2`, `ferryRows()`/`ferryBundle()` (stesse righe per SQL e bundle) |
+| `src/domain/types.ts` | Campi facoltativi del `Segment` traghetto e `Trip.hiddenFerrySuggestions` (§16.4) |
+
+Comandi: `npx tsx scripts/build-ferry-routes.ts` (se cambia la ricerca), poi `npx tsx scripts/seed-catalog.ts --version 2` (SQL) o `--version 2 --bundle` (JSON per `verify/e2e`). `npx tsx scripts/seed-catalog.ts` senza opzioni produce ancora NO-1, **identico byte per byte** al file pubblicato.
+
+### 16.2 Tabelle del catalogo
+
+Tutte con `release_id` nella chiave, come le altre tabelle del catalogo; stessa guardia `catalog_child_guard` (una versione pubblicata non cambia), stessa policy `catalogo_lettura` (select per `authenticated` solo su versioni pubblicate o ritirate; `anon`: nulla; insert/update/delete/truncate revocati).
+
+| Tabella | Chiave | Contenuto | Perché così |
+|---|---|---|---|
+| `ferry_sources` | (`release_id`, `source_key`) | titolo, URL, data di lettura | dizionario: ogni campo con stato punta qui (`*_source_key`, chiave esterna composta); URL e data una volta sola |
+| `ferry_routes` | (`release_id`, `route_key`) | nome, operatore (testo), mezzo `ferje`/`hurtigbat`/`turistico`, zona, regione (FK `regions`), strada, porta l'auto, andata e ritorno, porti; **durata** min/max + stato + nota + fonte; **stagione** e **frequenza estiva** (testo + stato + fonte + anno); **tariffa comune**: stato, anno (+ etichetta «2026/2027»), valida dal, periodo, fonte, nota, «da verificare per l'anno del viaggio», **regola passeggeri** `gratis`/`a_pagamento`/`non_indicata`, gratis sotto X anni, fascia bambino/adulto (testo), tetto bambino, sconto ritorno %, regole della fonte (testi), fonti, note, linea Entur (JSONB) | colonne per ciò che si filtra (mezzo, auto, regione, stato del prezzo); JSONB solo per elenchi di testi letti interi |
+| `ferry_route_stops` | (`release_id`, `route_key`, `seq`) | tappe in ordine: nome, minuti dalla partenza (min/max), tipo `fermata`/`a_richiesta`/`solo_discesa`/`solo_passaggio`/`senza_sbarco`, id NSR, lat/lng, fonte delle coordinate | **coordinate solo con id NSR e fonte** (vincolo `check`); nessuna coordinata stimata (spec D9) |
+| `ferry_route_places` | (`release_id`, `route_key`, `role`, `place_key`) | luoghi del catalogo collegati: `partenza`, `arrivo`, `lungo` | collegamento per chiave (FK `places`), mai per distanza; indice per «tratte vicine alle mie tappe» |
+| `ferry_fares` | (`release_id`, `route_key`, `position`) | una voce per riga: categoria (`adulto`, `bambino`, `giovane`, `senior`, `famiglia`, `veicolo`, `pacchetto_veicolo`, `prenotazione_*`), andata / andata e ritorno, importo + valuta (NOK), fascia d'età (min/max + testo), classe veicolo `fino_6m`, conducente incluso (sì/no/null = non detto), passeggeri/adulti/bambini compresi, sottotratta (da/a), sabato, periodo, facoltativa, anno, stato, fonte, nota | le tariffe sono eterogenee (58 tratte, 91 voci): una riga per voce evita decine di colonne vuote. `check`: importo nullo ⇔ stato `assente` |
+
+**Operatori**: restano testo in `ferry_routes.operator_name` e **non** entrano in `operators`: l'adattatore trasforma ogni riga di `operators` in fatti e fonti delle crociere (`COASTAL_FACTS`/`COASTAL_SOURCES`, per nome); 30 operatori traghetto li sporcherebbero, e i nomi della ricerca contengono cambi di gestione («Fjord1 dal 1/12/2026…»).
+
+**Stato del dato nel catalogo**: `confermato` / `da_verificare` / `assente` solo nelle tabelle `ferry_*` (stato della fonte). **Non** è un nuovo `DataStatus` del viaggio (design DU13): nel tratto, prezzo mancante = `cost` assente + «prezzo da cercare».
+
+**Regole strutturate** (spec §4.6), ognuna dal testo della ricerca, che lo script cita e controlla: Bergen–Flåm tetto bambino 209 e tariffe fuori dal 18/5–31/8 (1349 / 649 / 3099); Geiranger–Hellesylt sconto ritorno 50% e pacchetto = conducente + 4; Lysefjord pacchetto 5 persone (conducente nel conteggio non chiaro → `driver_included` nullo, stato `da_verificare`); Andenes–Gryllefjord adulto 100 NOK solo 30–66 anni e solo oltre il conducente; Aurland «solo discesa». Le altre regole restano testi mostrati così come sono.
+
+**Allineamenti con il design**: regola passeggeri esplicita, così Eidsdal–Linge e le linee di Møre og Romsdal (`non_indicata`) senza auto danno «non calcolabile», non 0 (DU9; la spec diceva 0). Stavanger–Lysefjord ha `round_trip = true`: l'app la offre come escursione nelle Giornate, non come tratto (DU15). Prenotazione Torghatten: voci `optional = true`, non sommate per default.
+
+### 16.3 Versione NO-2 e passaggio del viaggio
+
+- **NO-2 = tutto NO-1 + traghetti**: `buildNorwayV2()` usa gli stessi file e le stesse chiavi di NO-1 (nessun luogo nuovo: i porti dei traghetti sono fermate della tratta, non luoghi). Il seed si ferma se NO-1 non è pubblicata e, alla fine, controlla per ogni tabella di NO-1 che **ogni riga di NO-1 sia identica in NO-2** (tranne `release_id`): se i file sono cambiati dopo NO-1, il seed fallisce e serve una scelta esplicita. `previous_release_id = 'NO-1'`.
+- **Il viaggio resta su NO-1** finché l'utente non sceglie «Passa a NO-2» (Impostazioni › Nazioni e cataloghi). Su NO-1 la parte Traghetti mostra solo l'invito ad aggiornare, nessuna tratta. Funzione di dominio da scrivere (sviluppatore), pura:
+  ```ts
+  /** Cambia la versione del catalogo di una nazione. Nulla si perde: la nuova contiene la vecchia (stesse chiavi). */
+  export function upgradeCatalog(t: Trip, code: string, releaseId: string): Trip
+  // = { ...t, countries: tripCountries(t).map(c => c.code === code ? { ...c, releaseId } : c) }
+  ```
+  Nessun altro campo cambia (tappe, idee, preferiti, attività restano: le `place_key` esistono anche in NO-2). Nel viaggio a righe è una modifica di `trip_countries.release_id` con `sync_push` (conflitto normale se un altro dispositivo l'ha cambiata). Il ritorno a NO-1 è la stessa funzione: i tratti traghetto restano (dati salvati nel tratto), solo la scheda della tratta non si apre finché il catalogo non la contiene.
+- **Catalogo da file (senza cloud)**: contiene i traghetti (`src/data/ferryRoutes.ts`, importato dal registro come gli altri file). Il file corrisponde a NO-2: per lo sviluppatore, `FILE_COUNTRY` passa a `releaseId: 'NO-2', version: 2` (il seed prende da lì solo nazione, valuta, fuso, lingua: NO-1 non cambia). La regola «niente traghetti su NO-1» vale anche senza cloud (si guarda la versione della nazione nel viaggio, non la fonte del catalogo).
+- **Adattatore (sviluppatore)**: `AppCatalog.ferryRoutes: FerryRoute[]` e `ferrySources`; `adaptBundle` ricostruisce `FerryRoute` dalle righe `ferry_*` (inverso di `ferryRows` in `scripts/seed-catalog.ts`). Le chiavi `ferry_*` vanno lette come **facoltative** (`[]` se mancano): le copie offline di NO-1 scaricate prima della migrazione non le hanno, e `checkBundle` non deve rifiutarle. Test consigliato: `adaptBundle(seedBundle(buildNorwayV2())).ferryRoutes` ≡ `FERRY_ROUTES` (canonico) e il test esistente su NO-1 invariato. Il registro sostituisce `FERRY_ROUTES` come fa con `COASTAL_CATALOG`.
+
+### 16.4 Dati del viaggio: nessuna tabella nuova, nessuna colonna nuova
+
+Il tratto traghetto è un `Segment` con `mode: 'traghetto'` e i campi facoltativi del design §14 (già in `src/domain/types.ts`): `ferryRouteId` (= `route_key`), `ferryReleaseId`, `ferryBoardStop` / `ferryAlightStop` (`seq` delle fermate), `withCar`, `ferryReturnBought`, `ferryBookingAdded`, `costByUser`; più `waitMin`, `departureTime`, `cost`, `costStatus`, `source` già esistenti. Il viaggio ha `hiddenFerrySuggestions`.
+
+**Decisione: nel viaggio a righe questi campi vanno in `segments.extra` (e `trips.extra`), non in colonne nuove.** Motivi:
+1. il viaggio reale resta nel formato documento (`VITE_PASSAGGIO_RIGHE` non si imposta): oggi i campi viaggiano nel JSON di `trips.data` senza alcuna modifica di schema;
+2. `toRows`/`fromRows` mettono già ogni campo sconosciuto in `extra` e lo ricostruiscono identico (uguaglianza canonica, §9.3): nessun codice di conversione nuovo, nessun rischio per il passaggio;
+3. nessuno interroga i segmenti per tratta lato server; il conto si calcola sul dispositivo dal catalogo.
+Se un giorno servisse cercarli: colonna additiva `ferry_route_id text generated always as (extra ->> 'ferryRouteId') stored` + indice, senza toccare i dati.
+
+Nessun riferimento con chiave esterna dal viaggio al catalogo (come `place_key`, §1.7): una tratta tolta in una versione futura si elenca come «non trovata», non blocca.
+
+### 16.5 Applicazione (capo progetto, dopo la revisione)
+
+1. SQL Editor di `norway-planner`: `begin;` + `20261109000000_traghetti.sql` + `commit;`. Controllo interno: RLS e guardie su 5 tabelle, `anon` senza accesso, NO-1 senza tratte.
+2. `supabase/seed/catalogo-norvegia-v2.sql` (ha la sua transazione). Messaggio atteso: «Catalogo NO-2 pubblicato e controllato: 117 luoghi, 24 crociere, 35 porti in rotta, 58 tratte traghetto».
+3. Verifiche: `select jsonb_array_length(public.catalog_bundle('NO-2')->'ferry_routes')` = 58 (da `authenticated`); `catalog_bundle('NO-1')` uguale a prima nelle chiavi vecchie e `ferry_*` vuoti; `select count(*) from public.trips` e md5 di `data` invariati (§12.4).
+4. Annullare: `supabase/rollback/20261109_annulla_traghetti.sql` (si ferma se un viaggio usa NO-2).
+
+**Prova eseguita (2026-11-09)**, su Postgres in memoria (PGlite 0.2.17, ruoli `anon`/`authenticated` simulati, nessun dato reale): migrazione del catalogo 2026-11-06 + seed NO-1 → migrazione traghetti (due volte) → bundle NO-1 identico nelle chiavi vecchie → seed NO-2 (due volte) → 117 luoghi, 58 tratte, 207 tappe, 91 voci di tariffa, 58 collegamenti a luoghi, 36 fonti → modifica di NO-2 e scrittura in NO-1 rifiutate dalle guardie → rollback → bundle NO-1 identico a prima della migrazione → migrazione e seed di nuovo. Il bundle NO-2 dal database coincide (canonico) con `seedBundle(buildNorwayV2())` per tutte le tabelle `ferry_*` e quelle ereditate. Non provato: policy RLS con utenti reali di Supabase e Postgres 17 del progetto.
+
+### 16.6 Rischi
+
+1. **Tariffe 2026 per un viaggio 2027**: tutte `fare_verify_for_trip_year = true`; solo Bergen–Flåm ha prezzi 2027. Un aggiornamento a inizio 2027 = versione NO-3 (le pubblicate non cambiano), stesso schema.
+2. **Linee «gratis»** (Nordland fuori estate, Finnmark, zona 1) e prezzi da fergeruter.info (`da_verificare`): possono cambiare per agosto 2027.
+3. **NO-2 deve contenere NO-1**: se `src/data` cambia prima del seed NO-2, il controllo finale fallisce (voluto). Rigenerare NO-1 oggi dà lo stesso file pubblicato.
+4. **Copie offline di NO-1 senza chiavi `ferry_*`**: l'adattatore deve accettarle (§16.3).
+5. **Operatore Bergen–Sogn** (Norled → Fjord1 dal 1/12/2026) e durate in conflitto (Geiranger–Hellesylt 65 vs 45): restano testo e stato `da_verificare`, nessuna scelta automatica.
+6. **Nomi Entur con caratteri rovinati** nella ricerca (es. «TromsÃ¸»): ricodificati dallo script (stessa stringa, non dati nuovi).
+7. **Gratuità passeggeri in Møre og Romsdal** non scritta: «non calcolabile» senza auto finché una fonte non la conferma (DU9).

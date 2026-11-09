@@ -33,6 +33,11 @@ export interface BudgetLine {
   /** Da dove arriva la riga: manuale o calcolata da un'altra sezione */
   origin: 'manuale' | 'hytte' | 'costiera' | 'voli' | 'trasporti' | 'giornate' | 'stime';
   itemId?: string;
+  /** Tratto traghetto del catalogo: collegamento e tratto (per «Dettaglio» e «Apri nel percorso») */
+  legId?: string;
+  segId?: string;
+  /** Importo originale (es. NOK), mostrato sotto l'equivalente in euro */
+  amount?: { amount: number; currency: string };
 }
 
 export interface FuelCost {
@@ -203,17 +208,20 @@ export function computeBudget(trip: Trip): BudgetSummary {
     roadKm += legTotals(leg).roadKm;
     for (const seg of leg.segments) {
       if (seg.coastalOptionId) continue;
-      if (seg.mode === 'traghetto' && !seg.cost) missingIn('traghetti', `Costo traghetto mancante: ${seg.label}`);
+      // Traghetto del catalogo: voce «Traghetto A → B · con/senza auto»; senza prezzo «prezzo da cercare», mai zero
+      const ferryLabel = seg.ferryRouteId ? `Traghetto ${seg.label}${seg.withCar ? ' · con auto' : ' · senza auto'}` : seg.label;
+      if (seg.mode === 'traghetto' && !seg.cost) missingIn('traghetti', `Traghetto ${seg.label}: prezzo da cercare`);
       if (!seg.cost) continue;
       const category: BudgetCategory =
         seg.mode === 'traghetto' ? 'traghetti' : seg.mode === 'treno' || seg.mode === 'bus' ? 'treni_bus' : seg.mode === 'aereo' ? 'voli' : 'carburante_pedaggi';
       lines.push({
         key: `s-${seg.id}`,
         category,
-        label: seg.label,
-        eur: eurOf(category, seg.label, seg.cost),
+        label: ferryLabel,
+        eur: eurOf(category, ferryLabel, seg.cost),
         status: seg.costStatus,
         origin: 'trasporti',
+        ...(seg.ferryRouteId ? { legId: leg.id, segId: seg.id, amount: seg.cost } : {}),
       });
     }
   }

@@ -20,7 +20,7 @@ import { BookingsView } from './ui/BookingsView';
 import { BudgetView } from './ui/BudgetView';
 import { CatalogView } from './ui/CatalogView';
 import { ConfiguratorView } from './ui/ConfiguratorView';
-import { CoastalView } from './ui/CoastalView';
+import { SeaView } from './ui/SeaView';
 import { DaysView } from './ui/DaysView';
 import { FlightsView } from './ui/FlightsView';
 import { HytteView } from './ui/HytteView';
@@ -64,7 +64,7 @@ const SECTIONS: Section[] = [
     views: [
       { id: 'prenotazioni', label: 'Riepilogo' },
       { id: 'voli', label: 'Voli' },
-      { id: 'crociere', label: 'Crociere' },
+      { id: 'crociere', label: 'Trasporti via mare' },
       { id: 'hytte', label: 'Alloggi' },
     ],
   },
@@ -245,7 +245,7 @@ function Shell() {
       {tab === 'giornate' && <DaysView />}
       {tab === 'catalogo' && <CatalogView />}
       {tab === 'prenotazioni' && <BookingsView />}
-      {tab === 'crociere' && <CoastalView />}
+      {tab === 'crociere' && <SeaView />}
       {tab === 'voli' && <FlightsView />}
       {tab === 'hytte' && <HytteView />}
       {tab === 'budget' && <BudgetView />}

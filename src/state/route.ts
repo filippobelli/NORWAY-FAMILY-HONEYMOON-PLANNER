@@ -23,12 +23,14 @@ export const VIEWS = [
 export type ViewId = (typeof VIEWS)[number];
 
 /**
- * Vecchi nomi e voci di menù: «viaggio» erano le impostazioni, «costiera» le crociere.
+ * Vecchi nomi e voci di menù: «viaggio» erano le impostazioni, «costiera» le crociere; «mare» = Trasporti via mare.
  * «itinerario» era la vista «Tappe e mappa», ora unita all'area di lavoro dell'itinerario: i link salvati continuano a funzionare.
  */
 export const ALIASES: Record<string, ViewId> = {
   viaggio: 'impostazioni',
   costiera: 'crociere',
+  // «Trasporti via mare»: crociere e traghetti (parte=traghetti)
+  mare: 'crociere',
   percorso: 'pianifica',
   trasporti: 'voli',
   itinerario: 'pianifica',
@@ -45,7 +47,7 @@ export const VIEW_PLACE: Record<ViewId, string> = {
   scenari: 'Itinerario › Versioni del percorso',
   prenotazioni: 'Prenotazioni',
   voli: 'Prenotazioni › Voli',
-  crociere: 'Prenotazioni › Crociere',
+  crociere: 'Prenotazioni › Trasporti via mare',
   hytte: 'Prenotazioni › Alloggi',
   giornate: 'Giornate',
   budget: 'Budget',

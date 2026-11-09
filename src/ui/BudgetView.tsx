@@ -8,6 +8,7 @@ import { formatRateDate } from '../state/autoRates';
 import { useTrip } from '../state/store';
 import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
 import { Icon } from './icons';
+import { FerryBudgetDetail } from './Ferries';
 
 const ORIGIN_LABEL = { manuale: 'Voce manuale', hytte: 'Da Alloggi', costiera: 'Da Crociere', voli: 'Da Voli', trasporti: 'Da Itinerario', giornate: 'Da Giornate', stime: 'Stima da parametri' } as const;
 
@@ -318,7 +319,10 @@ export function BudgetView() {
               )}
               {b.lines.map((l) => (
                 <tr key={l.key}>
-                  <td>{l.label}</td>
+                  <td>
+                    {l.label}
+                    {l.legId && l.segId && <FerryBudgetDetail legId={l.legId} segId={l.segId} />}
+                  </td>
                   <td>{BUDGET_CATEGORIES.find((c) => c.id === l.category)?.label}</td>
                   <td>
                     <Badge>{ORIGIN_LABEL[l.origin]}</Badge>

@@ -73,3 +73,21 @@ export function removeCountry(t: Trip, code: string, stopIds: string[], removeSt
   const next = stopIds.length ? removeStops(t, stopIds) : t;
   return { ...next, countries: list.filter((c) => c.code !== code) };
 }
+
+/** Numero di versione da un id del catalogo («NO-2» → 2); undefined se non si legge */
+export function releaseVersion(releaseId: string | undefined): number | undefined {
+  const m = releaseId?.match(/-(\d+)$/);
+  return m ? Number(m[1]) : undefined;
+}
+
+/**
+ * Cambia la versione del catalogo di una nazione (architettura §16.3), solo su richiesta esplicita dell'utente.
+ * Nulla si perde: la nuova versione contiene la vecchia (stesse chiavi). Tappe, idee, preferiti, attività e tratti
+ * restano come sono; un viaggio senza `countries` li rende espliciti. Il ritorno alla versione precedente è la
+ * stessa funzione.
+ */
+export function upgradeCatalog(t: Trip, code: string, releaseId: string): Trip {
+  const list = tripCountries(t);
+  if (!list.some((c) => c.code === code)) return t;
+  return { ...t, countries: list.map((c) => (c.code === code ? { ...c, releaseId } : c)) };
+}

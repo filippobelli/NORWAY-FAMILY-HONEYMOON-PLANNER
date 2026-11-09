@@ -37,7 +37,9 @@ export function SettingsView() {
 
   // «Prepara le esportazioni» dal prossimo passo porta direttamente alla sezione
   useEffect(() => {
-    if (parseRoute(window.location.hash).params.sezione === 'esporta') document.getElementById('esporta')?.scrollIntoView({ block: 'start' });
+    const sezione = parseRoute(window.location.hash).params.sezione;
+    // «Vai a Nazioni e cataloghi» (Trasporti via mare) porta al riquadro delle nazioni
+    if (sezione === 'esporta' || sezione === 'nazioni') document.getElementById(sezione)?.scrollIntoView({ block: 'start' });
   }, []);
 
   return (

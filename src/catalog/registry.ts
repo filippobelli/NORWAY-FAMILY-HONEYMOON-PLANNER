@@ -10,6 +10,7 @@ import { ATTRACTION_INFO } from '../data/attractions';
 import { COASTAL_CATALOG } from '../data/coastalCatalog';
 import { COASTAL_FACTS, COASTAL_PORTS_NORTHBOUND, COASTAL_SOURCES } from '../data/coastalPorts';
 import { FILE_COUNTRY } from '../data/country';
+import { FERRY_ROUTES, FERRY_SOURCES } from '../data/ferryRoutes';
 import { DESTINATIONS } from '../data/destinations';
 import { OFFICIAL_SITES } from '../data/officialSites';
 import { COUNTIES, REGION_COUNTIES } from '../data/regionShapes';
@@ -27,6 +28,8 @@ export interface CatalogState {
   regionCountry: Record<string, string>;
   voyageCountry: Record<string, string>;
   portCountry: Record<string, string>;
+  /** Versione del catalogo di ogni tratta traghetto caricata (route_key → release_id) */
+  ferryRelease: Record<string, string>;
   /** Cresce a ogni sostituzione: serve a ridisegnare le viste */
   version: number;
 }
@@ -54,6 +57,8 @@ const FILE_SNAPSHOT = {
   baseIds: [...BASE_IDS],
   notVisits: [...NOT_VISITS],
   rail: { ...RAIL },
+  ferryRoutes: [...FERRY_ROUTES],
+  ferrySources: { ...FERRY_SOURCES },
 };
 
 const fileState = (): CatalogState => ({
@@ -77,6 +82,8 @@ const fileState = (): CatalogState => ({
   regionCountry: Object.fromEntries(Object.keys(FILE_SNAPSHOT.regionCounties).map((r) => [r, FILE_COUNTRY.code])),
   voyageCountry: Object.fromEntries(FILE_SNAPSHOT.voyages.map((v) => [v.id, FILE_COUNTRY.code])),
   portCountry: Object.fromEntries(FILE_SNAPSHOT.ports.map((p) => [p.name, FILE_COUNTRY.code])),
+  // Il catalogo da file corrisponde a NO-2: le tratte valgono solo per i viaggi su quella versione
+  ferryRelease: Object.fromEntries(FILE_SNAPSHOT.ferryRoutes.map((r) => [r.key, FILE_COUNTRY.releaseId])),
   version: 0,
 });
 
@@ -100,7 +107,18 @@ export function installCatalog(c: AppCatalog): void {
   NOT_VISITS.clear();
   for (const id of c.notVisits) NOT_VISITS.add(id);
   replaceRecord(RAIL, c.rail);
-  state = { source: 'cloud', countries: c.countries, placeCountry: c.placeCountry, regionCountry: c.regionCountry, voyageCountry: c.voyageCountry, portCountry: c.portCountry, version: state.version + 1 };
+  replaceArray(FERRY_ROUTES, c.ferryRoutes ?? []);
+  replaceRecord(FERRY_SOURCES, c.ferrySources ?? {});
+  state = {
+    source: 'cloud',
+    countries: c.countries,
+    placeCountry: c.placeCountry,
+    regionCountry: c.regionCountry,
+    voyageCountry: c.voyageCountry,
+    portCountry: c.portCountry,
+    ferryRelease: c.ferryRelease ?? {},
+    version: state.version + 1,
+  };
   emit();
 }
 
@@ -121,6 +139,8 @@ export function installFileCatalog(): void {
   NOT_VISITS.clear();
   for (const id of s.notVisits) NOT_VISITS.add(id);
   replaceRecord(RAIL, s.rail);
+  replaceArray(FERRY_ROUTES, s.ferryRoutes);
+  replaceRecord(FERRY_SOURCES, s.ferrySources);
   state = { ...fileState(), version: state.version + 1 };
   emit();
 }

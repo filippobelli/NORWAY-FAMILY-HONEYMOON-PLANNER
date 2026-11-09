@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup · Traghetti, aggiungi</title>
+<style>
+/* Copiati da src/styles.css (2026-11-09): solo token e classi usate nel mockup */
+:root {
+  --blu: #00205b;
+  --blu-hover: #0a2f75;
+  --rosso: #ba0c2f;
+  --rosso-testo: #9b0a27;
+  --rosso-tenue: #fbeaee;
+  --rosso-bordo: #f1c3cd;
+  --bianco: #ffffff;
+  --secondario: #4a5468;
+  --linea: #d5dce7;
+  --linea-forte: #7f8ba0;
+  --terra: #f5f7fa;
+  --regione: #e3eaf5;
+  --bg: var(--terra);
+  --surface: var(--bianco);
+  --surface-2: #edf1f7;
+  --ink: var(--blu);
+  --ink-2: var(--secondario);
+  --line: var(--linea);
+  --accent: var(--blu);
+  --accent-ink: var(--bianco);
+  --info: var(--blu);
+  --info-bg: var(--regione);
+  --warn-bg: var(--rosso-tenue);
+  --danger: var(--rosso-testo);
+  --radius: 10px;
+  --shadow: 0 1px 2px rgb(0 32 91 / 6%);
+  --shadow-float: 0 8px 28px rgb(0 32 91 / 18%);
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ease: 120ms ease-out;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.2; color: var(--blu); letter-spacing: -0.012em; }
+h2 { font-size: 1.12rem; margin-bottom: 0.6rem; }
+h3 { font-size: 1rem; }
+h4 { font-size: 0.92rem; margin: 12px 0 4px; }
+a { color: var(--info); text-underline-offset: 2px; }
+p { margin: 0 0 8px; }
+input, select, textarea { box-sizing: border-box; font: inherit; font-size: 16px; color: var(--ink); background: var(--surface); border: 1px solid var(--linea-forte); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0; }
+input:not([type='checkbox']):not([type='radio']), select { height: 42px; }
+input[type='radio'], input[type='checkbox'] { width: auto; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--blu); outline-offset: 2px; }
+.muted { color: var(--ink-2); }
+.small { font-size: 0.82rem; }
+.block { display: block; }
+.error { color: var(--danger); }
+.warn-text { color: var(--rosso-testo); font-weight: 600; }
+.row { display: flex; gap: 8px; align-items: center; }
+.row.wrap { flex-wrap: wrap; }
+.grid-2, .grid-3 { display: grid; gap: 10px 14px; margin: 8px 0; align-items: end; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label, .field .field-label { font-size: 0.8rem; font-weight: 600; color: var(--ink-2); }
+.hint { color: var(--ink-2); font-size: 0.75rem; }
+.check { display: inline-flex; gap: 6px; align-items: flex-start; font-size: 0.9rem; }
+.money { display: flex; gap: 4px; }
+.money select { width: 86px; flex: none; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 16px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.panel-head h2 { margin: 0; }
+.btn { font: inherit; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--linea-forte); background: var(--surface); color: var(--blu); border-radius: 8px; padding: 8px 14px; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover:not(:disabled) { background: var(--regione); }
+.btn:disabled { background: var(--surface-2); border-color: var(--line); color: var(--secondario); cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover:not(:disabled) { background: var(--blu-hover); border-color: var(--blu-hover); }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--ink-2); font-weight: 500; }
+.btn-small { padding: 5px 10px; font-size: 0.82rem; }
+.btn.danger { color: var(--danger); border-color: var(--rosso-testo); }
+.btn.danger:hover:not(:disabled) { background: var(--rosso-tenue); }
+.icon-btn { border: 1px solid transparent; background: transparent; color: var(--ink-2); border-radius: 6px; min-width: 32px; height: 32px; cursor: pointer; font-size: 1rem; }
+.link-btn { background: none; border: 0; color: var(--info); text-decoration: underline; cursor: pointer; font: inherit; padding: 0 4px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; vertical-align: middle; }
+.badge-tone-ok { background: var(--regione); color: var(--blu); border-color: transparent; }
+.badge-tone-info { background: var(--bianco); color: var(--secondario); border-color: var(--linea); }
+.badge-tone-warn { background: var(--rosso-tenue); color: var(--rosso-testo); border-color: var(--rosso-bordo); }
+.note-info, .note-warn { border-radius: 10px; padding: 10px 12px; margin: 0 0 12px; }
+.note-info { background: var(--info-bg); color: var(--ink); }
+.note-warn { background: var(--warn-bg); color: var(--ink); box-shadow: inset 0 0 0 1px var(--rosso-bordo); }
+p.note-warn.small, p.note-info.small { padding: 6px 10px; margin: 6px 0; }
+.empty { border: 1px dashed var(--line); border-radius: var(--radius); padding: 20px; text-align: center; color: var(--ink-2); display: grid; gap: 6px; margin: 10px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+.chip { position: relative; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; color: var(--ink); }
+.chip input[type='checkbox'] { position: absolute; opacity: 0; pointer-events: none; }
+.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chips-field { border: 0; padding: 0; margin: 14px 0 0; min-width: 0; }
+.chips-field legend { font-size: 0.8rem; font-weight: 600; color: var(--ink-2); padding: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.filters input[type='search'] { flex: 1 1 200px; }
+.filters select { width: auto; flex: 0 1 auto; }
+.ov-hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; padding: 22px 22px 20px; border-radius: var(--radius); background: var(--bianco); border: 1px solid var(--line); margin-bottom: 16px; }
+.ov-hero h2 { font-size: 1.5rem; margin: 2px 0 6px; }
+.ov-period { margin: 0; font-size: 1rem; font-weight: 600; }
+.ov-sub { margin: 4px 0 0; color: var(--ink-2); font-size: 0.88rem; }
+.ov-facts { display: flex; gap: 8px; margin: 0; flex-wrap: wrap; }
+.ov-facts div { padding: 2px 16px; min-width: 96px; border-left: 1px solid var(--line); }
+.ov-facts dt { font-size: 0.75rem; color: var(--ink-2); }
+.ov-facts dd { margin: 0; color: var(--blu); font-size: 1.5rem; font-weight: 700; }
+.ov-start { margin-bottom: 16px; }
+.ov-start h2 { margin: 0 0 10px; }
+.ov-start-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
+.ov-start-card { display: grid; gap: 8px; align-content: start; justify-items: start; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.ov-start-card.is-recommended { border: 2px solid var(--blu); }
+.ov-start-card h3, .ov-start-card p { margin: 0; }
+.ov-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--secondario); }
+.next-step { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 14px 16px; margin-bottom: 16px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--blu); border-radius: var(--radius); }
+.next-step.tier-1 { border-left-color: var(--rosso); }
+.next-step-kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--secondario); margin: 0; }
+.next-step.tier-1 .next-step-kicker { color: var(--rosso-testo); }
+.next-step-text { font-weight: 600; margin: 4px 0 0; }
+.next-step-why { margin: 4px 0 0; color: var(--ink-2); }
+.place-dialog { width: min(680px, calc(100% - 0px)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); padding: 18px; box-shadow: var(--shadow-float); }
+.dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin: -18px -18px 8px; padding: 14px 18px 8px; background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; }
+.dialog-head h2 { margin: 0; }
+.place-q { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin: 10px 0; min-width: 0; }
+.place-q legend { font-weight: 600; padding: 0 4px; }
+.place-opt { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
+.place-opt input { flex: none; margin-top: 3px; }
+.place-preview { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+.place-preview h3 { margin-bottom: 4px; }
+.place-actions { margin-top: 12px; flex-wrap: wrap; }
+.t-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 10px; }
+.t-card h1 { font-size: 1.3rem; margin-bottom: 6px; }
+.t-card h2 { font-size: 0.85rem; color: var(--ink-2); margin: 0 0 6px; font-weight: 600; }
+.t-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.diary-list, .diary-files { list-style: none; margin: 0; padding: 0; }
+.diary-files li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.diary-form { display: grid; gap: 8px; margin-top: 8px; }
+.save-state { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; text-decoration: none; border: 1px solid transparent; color: var(--secondario); }
+.save-state::before { content: '●'; font-size: 9px; }
+.save-attesa { background: var(--rosso-tenue); border-color: var(--rosso-bordo); color: var(--rosso-testo); }
+.toast { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--blu); color: #fff; border-radius: 10px; padding: 10px 14px; box-shadow: var(--shadow-float); font-size: 0.9rem; }
+.toast-action { background: transparent; color: #fff; border: 1px solid rgb(255 255 255 / 60%); border-radius: 6px; padding: 4px 10px; font: inherit; font-weight: 600; cursor: pointer; }
+.spinner { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; border: 2px solid var(--linea); border-top-color: var(--blu); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+progress, meter { width: 100%; height: 10px; accent-color: var(--blu); }
+.tabs { display: flex; gap: 2px; background: var(--blu); padding: 0 12px; overflow: hidden; }
+.tabs a { padding: 12px 14px; text-decoration: none; color: var(--bianco); white-space: nowrap; font-weight: 500; }
+.tabs a.active { background: var(--bianco); color: var(--blu); font-weight: 600; }
+@media (max-width: 700px) { .ov-start-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Solo mockup: cornici e didascalie (non fanno parte dell'app) ---------- */
+body { padding: 24px; }
+.mk-title { font-size: 1.5rem; margin-bottom: 4px; }
+.mk-intro { max-width: 900px; color: var(--ink-2); }
+.mk-section { margin: 32px 0 16px; padding-top: 16px; border-top: 2px solid var(--linea); }
+.mk-section > h2 { font-size: 1.25rem; }
+.mk-pair { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.mk-frame { background: var(--bg); border: 1px solid var(--linea-forte); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+.mk-desktop { width: 960px; max-width: 100%; }
+.mk-phone { width: 391px; /* 375 px utili + cornice */ flex: none; border-radius: 28px; border-width: 8px; border-color: #1d2533; }
+.mk-cap { font-size: 0.75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--secondario); margin: 0 0 6px; }
+.mk-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; background: rgb(255 255 255 / 87%); border-bottom: 1px solid var(--line); }
+.mk-bar strong { font-size: 1rem; }
+.mk-body { padding: 16px; }
+.mk-phone .mk-body { padding: 12px 16px; min-height: 520px; }
+.mk-bottom { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--blu); }
+.mk-bottom span { color: #fff; font-size: 13px; text-align: center; padding: 10px 2px; }
+.mk-bottom span.on { background: #fff; color: var(--blu); font-weight: 600; }
+.mk-note { font-size: 0.8rem; color: var(--ink-2); border-left: 3px solid var(--rosso); padding: 4px 10px; margin: 8px 0 0; max-width: 960px; background: var(--bianco); }
+.mk-backdrop { background: rgb(0 32 91 / 45%); padding: 24px 12px; }
+.mk-phone .mk-backdrop { padding: 12px 0; }
+.mk-phone .place-dialog { border-radius: 10px; }
+.mk-ph { background: var(--surface-2); border: 1px dashed var(--linea-forte); border-radius: 4px; padding: 0 4px; font-family: ui-monospace, monospace; font-size: 0.85em; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mk-phone .full { width: 100%; justify-content: center; }
+.mk-phone .btn { min-height: 44px; }
+.group-h { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin: 16px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.links { margin: 4px 0; padding-left: 18px; }
+.links li { margin: 4px 0; }
+.mini { margin: 4px 0; padding-left: 18px; }
+.more-fields > summary { cursor: pointer; font-weight: 600; color: var(--blu); padding: 6px 0; }
+/* Schede interne: stile di .stop-tabs (PlannerView) */
+.stop-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin: 0 0 14px; border-bottom: 1px solid var(--line); }
+.stop-tabs button { padding: 8px 12px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-2); font: inherit; font-size: 0.92rem; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.stop-tabs button.active { color: var(--blu); border-bottom-color: var(--rosso); }
+.mk-phone .stop-tabs button { flex: 1 1 50%; }
+/* Catalogo: classi di oggi (.cat-list, .cat-item, .cat-price) */
+.cat-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cat-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(200px, 260px); gap: 8px 16px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
+.cat-main h4 { margin: 0 0 4px; font-size: 1rem; }
+.cat-main p { margin: 2px 0; }
+.cat-price { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.mk-phone .cat-item { grid-template-columns: minmax(0, 1fr); }
+.title-btn { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--blu); cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--linea-forte); }
+/* Seg chips e segmento: classi di oggi */
+.seg-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; }
+.seg-chip { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 0.82rem; }
+.seg-chip em { color: var(--ink-2); font-style: normal; }
+.seg-src { font-size: 0.72rem; color: var(--secondario); border-left: 1px solid var(--line); padding-left: 6px; margin-left: 2px; }
+.segment { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 8px 0; background: var(--surface); }
+.segment-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 6px; }
+.leg { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; background: var(--surface); }
+.leg-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.leg-num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--blu); color: #fff; font-size: 0.75rem; font-weight: 700; }
+.table-wrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.table th, .table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.table th { color: var(--ink-2); font-size: 0.78rem; font-weight: 600; }
+.num { text-align: right !important; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ---------- Classi nuove (proposta): solo token esistenti ---------- */
+/* Fatti della tratta: come .stop-facts */
+.ferry-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; margin: 10px 0; }
+.ferry-facts div { min-width: 0; }
+.ferry-facts dt { font-size: 0.78rem; font-weight: 600; color: var(--ink-2); }
+.ferry-facts dd { margin: 2px 0 0; }
+.mk-phone .ferry-facts { grid-template-columns: minmax(0, 1fr); }
+/* Tappe in ordine con linea verticale decorativa */
+.ferry-stops { list-style: none; margin: 8px 0; padding: 0; }
+.ferry-stops li { position: relative; display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; padding: 6px 0 6px 22px; }
+.ferry-stops li::before { content: ''; position: absolute; left: 5px; top: 12px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--blu); background: var(--surface); }
+.ferry-stops li::after { content: ''; position: absolute; left: 10px; top: 24px; bottom: -8px; border-left: 2px dashed var(--linea-forte); }
+.ferry-stops li:last-child::after { display: none; }
+.ferry-stops li.is-end::before { background: var(--blu); }
+.ferry-stops li.is-pass::before { border-style: dotted; border-color: var(--linea-forte); }
+.ferry-stops li.is-chosen::before { background: var(--rosso); border-color: var(--rosso); }
+.ferry-stops .when { color: var(--ink-2); font-size: 0.85rem; white-space: nowrap; }
+/* Conto della famiglia */
+.cost-lines { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 6px 0; }
+.cost-lines th, .cost-lines td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.cost-lines thead th { font-size: 0.75rem; color: var(--ink-2); font-weight: 600; }
+.cost-lines td.num, .cost-lines th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cost-lines tfoot td, .cost-lines tfoot th { border-bottom: 0; }
+.cost-lines tr.is-total th, .cost-lines tr.is-total td { font-weight: 700; border-top: 2px solid var(--blu); font-size: 0.95rem; }
+.cost-lines tr.is-alt td, .cost-lines tr.is-alt th { color: var(--ink-2); }
+.dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.mk-phone .dialog-actions { position: sticky; bottom: 0; background: var(--surface); }
+.mk-phone .dialog-actions .btn { flex: 1 1 100%; justify-content: center; }
+.dep-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.dep-chips button { font: inherit; font-size: 0.82rem; border: 1px solid var(--linea-forte); background: var(--surface); color: var(--blu); border-radius: 999px; padding: 4px 10px; min-height: 32px; cursor: pointer; }
+.suggest li { padding: 10px 0; border-top: 1px solid var(--line); list-style: none; }
+.suggest li:first-child { border-top: 0; }
+.suggest ul { margin: 0; padding: 0; }
+.mk-states { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 960px; }
+@media (max-width: 700px) { .cat-item { grid-template-columns: minmax(0, 1fr); } .ferry-facts { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<h1 class="mk-title">Mockup · Traghetti: aggiungi al percorso, percorso e Budget</h1>
+<p class="mk-intro">Riferimento: <code>docs/design-trasporti-mare.md</code> §5–§8. Famiglia: 2 adulti, bambini di 8 e 5 anni. Prezzi da <code>docs/ricerca-traghetti.json</code>; cambio 10,3885 NOK per 1 € (valore iniziale delle Impostazioni). Tappe, numeri delle tappe e giorni sono <strong>di esempio</strong>; <span class="mk-ph">n km</span> e <span class="mk-ph">n h</span> sono segnaposto del calcolo stradale.</p>
+
+<!-- ============ A. Con auto ============ -->
+<section class="mk-section">
+  <h2>A · Geiranger → Hellesylt con l'auto, nel collegamento Geiranger → Ålesund</h2>
+  <div class="mk-pair">
+    <div>
+      <p class="mk-cap">Desktop · stesso Modal della scheda</p>
+      <div class="mk-frame mk-desktop"><div class="mk-backdrop">
+        <div class="place-dialog" role="dialog" aria-modal="true" aria-labelledby="add-a" style="margin:0 auto">
+          <div class="dialog-head">
+            <div>
+              <button class="link-btn small" style="padding:0">← Torna alla scheda</button>
+              <h2 id="add-a" tabindex="-1">Aggiungi al percorso: Geiranger → Hellesylt</h2>
+            </div>
+            <button class="icon-btn" aria-label="Chiudi">✕</button>
+          </div>
+
+          <div class="field">
+            <label for="a-leg">Collegamento del percorso</label>
+            <select id="a-leg">
+              <optgroup label="Collegati a questa tratta"><option selected>3 Geiranger → 4 Ålesund · giorno 6</option></optgroup>
+              <optgroup label="Altri collegamenti"><option>1 Bergen → 2 Flåm · giorno 2</option><option>2 Flåm → 3 Geiranger · giorno 4</option></optgroup>
+            </select>
+          </div>
+          <p class="small muted">Diretta, senza fermate intermedie: si imbarca a Geiranger e si sbarca a Hellesylt. 1 h 05 (da verificare: Fjord1 circa 65 min, Entur 45 min). <button class="link-btn small">Verso opposto</button></p>
+
+          <fieldset class="place-q">
+            <legend>Con l'auto?</legend>
+            <label class="place-opt"><input type="radio" name="a-car" checked><span><strong>Con l'auto a bordo</strong><span class="small block muted">Proposto perché questo collegamento è in auto.</span></span></label>
+            <label class="place-opt"><input type="radio" name="a-car"><span><strong>Senza auto (solo passeggeri)</strong></span></label>
+          </fieldset>
+
+          <fieldset class="place-q">
+            <legend>La strada del collegamento</legend>
+            <label class="place-opt"><input type="radio" name="a-road" checked><span><strong>Ricalcola la strada fino all'imbarco e dallo sbarco</strong><span class="small block muted">Geiranger → molo di Geiranger, poi molo di Hellesylt → Ålesund. Coordinate dei moli dal registro nazionale.</span></span></label>
+            <label class="place-opt is-disabled"><input type="radio" name="a-road" disabled aria-describedby="a-road-why"><span><strong>Il traghetto sostituisce la strada</strong><span class="small block" id="a-road-why">Solo senza auto e se imbarco e sbarco sono collegati alle due tappe.</span></span></label>
+            <label class="place-opt"><input type="radio" name="a-road"><span><strong>Lascia la strada com'è</strong><span class="small block muted">Strada e traghetto insieme: i tempi si sommano, controlla il collegamento.</span></span></label>
+          </fieldset>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="a-time">Partenza</label>
+              <input id="a-time" type="time" value="10:00" aria-describedby="a-time-h">
+              <div class="dep-chips" role="group" aria-label="Partenze pubblicate da Geiranger, 2026">
+                <button type="button">10:00</button><button type="button">11:30</button><button type="button">13:00</button><button type="button">14:30</button><button type="button">16:00</button><button type="button">17:30</button><button type="button">18:45</button>
+              </div>
+              <span class="hint" id="a-time-h">Partenze pubblicate 1/6–13/9/2026: da verificare per il 2027.</span>
+            </div>
+            <div class="field">
+              <label for="a-wait">Attesa e imbarco (min)</label>
+              <input id="a-wait" type="number" min="0" inputmode="numeric" aria-describedby="a-wait-h">
+              <span class="hint" id="a-wait-h">La fonte non indica quando presentarsi. Vuoto: nel percorso vale l'ipotesi delle Impostazioni (30 min), segnata come «ipotizzata».</span>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox"> È il ritorno di un biglietto comprato con l'andata (−50%)</label>
+
+          <section class="place-preview" aria-labelledby="a-cost">
+            <h3 id="a-cost">Costo per la famiglia</h3>
+            <table class="cost-lines">
+              <caption class="sr">Dettaglio del costo, NOK</caption>
+              <thead><tr><th scope="col">Voce</th><th scope="col">Regola</th><th scope="col" class="num">NOK</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Auto fino a 6 m</th><td>conducente incluso (un adulto)</td><td class="num">810</td></tr>
+                <tr><th scope="row">Adulto</th><td>passeggero</td><td class="num">420</td></tr>
+                <tr><th scope="row">Bambino 8 anni</th><td>tariffa bambino · fascia d'età non indicata dalla fonte</td><td class="num">210</td></tr>
+                <tr><th scope="row">Bambino 5 anni</th><td>gratis solo sotto i 4 anni<span class="small block warn-text">! Controlla l'età il giorno della traversata: soglia 4 anni</span></td><td class="num">210</td></tr>
+              </tbody>
+              <tfoot>
+                <tr class="is-alt"><th scope="row" colspan="2">Conto per persona</th><td class="num">1650</td></tr>
+                <tr class="is-alt"><th scope="row" colspan="2">Pacchetto auto + 4 persone</th><td class="num">1650</td></tr>
+                <tr class="is-total"><th scope="row" colspan="2">Si usa: conto per persona (stesso importo del pacchetto)</th><td class="num">1650 NOK<span class="small block muted" style="font-weight:400">≈ 159 €</span></td></tr>
+              </tfoot>
+            </table>
+            <p class="small"><span class="badge badge-tone-warn">! Tariffa 2026 · da verificare per il 2027</span> Fonte: Fjord1 – prezzi e orario Geiranger–Hellesylt 2026 (PDF), letto il 09/11/2026.</p>
+          </section>
+
+          <section class="place-preview" aria-labelledby="a-route">
+            <h3 id="a-route">Come diventa il collegamento</h3>
+            <p class="small"><strong>3 Geiranger → 4 Ålesund</strong> · tappe e notti invariate.</p>
+            <p class="small">Prima: Strada <span class="mk-ph">n km</span>, guida <span class="mk-ph">n h</span> (calcolata).</p>
+            <p class="small">Dopo: Strada fino al molo (da ricalcolare) · Traghetto: Geiranger → Hellesylt 1 h 05, con auto · Strada Hellesylt → Ålesund (da ricalcolare).</p>
+          </section>
+
+          <div class="dialog-actions">
+            <button class="btn btn-primary">Applica al percorso</button>
+            <button class="btn btn-ghost">Annulla</button>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div>
+      <p class="mk-cap">Telefono · 375 px</p>
+      <div class="mk-frame mk-phone"><div class="mk-backdrop">
+        <div class="place-dialog" role="dialog" aria-modal="true" aria-labelledby="add-p" style="margin:0 12px;width:auto;padding:14px">
+          <button class="link-btn small" style="padding:0">← Torna alla scheda</button>
+          <h2 id="add-p">Aggiungi: Geiranger → Hellesylt</h2>
+          <div class="field"><label for="p-leg">Collegamento del percorso</label><select id="p-leg"><option>3 Geiranger → 4 Ålesund · g. 6</option></select></div>
+          <fieldset class="place-q">
+            <legend>Con l'auto?</legend>
+            <label class="place-opt"><input type="radio" name="p-car" checked><span>Con l'auto a bordo</span></label>
+            <label class="place-opt"><input type="radio" name="p-car"><span>Senza auto</span></label>
+          </fieldset>
+          <details class="more-fields"><summary>La strada: ricalcola fino ai moli</summary><p class="small">…</p></details>
+          <div class="field"><label for="p-time">Partenza</label><input id="p-time" type="time" value="10:00"></div>
+          <div class="dep-chips"><button type="button">10:00</button><button type="button">11:30</button><button type="button">13:00</button><button type="button">14:30</button><button type="button">16:00</button><button type="button">17:30</button><button type="button">18:45</button></div>
+          <div class="field"><label for="p-wait">Attesa e imbarco (min)</label><input id="p-wait" type="number"></div>
+          <section class="place-preview">
+            <h3>Costo per la famiglia</h3>
+            <table class="cost-lines">
+              <caption class="sr">Dettaglio del costo, NOK</caption>
+              <tbody>
+                <tr><th scope="row">Auto ≤6 m <span class="small block muted" style="font-weight:400">conducente incluso</span></th><td class="num">810</td></tr>
+                <tr><th scope="row">Adulto</th><td class="num">420</td></tr>
+                <tr><th scope="row">Bambino 8 anni</th><td class="num">210</td></tr>
+                <tr><th scope="row">Bambino 5 anni <span class="small block warn-text">! soglia 4 anni: controlla l'età</span></th><td class="num">210</td></tr>
+                <tr class="is-alt"><th scope="row">Pacchetto auto + 4</th><td class="num">1650</td></tr>
+                <tr class="is-total"><th scope="row">Totale</th><td class="num">1650 NOK<span class="small block muted" style="font-weight:400">≈ 159 €</span></td></tr>
+              </tbody>
+            </table>
+            <p class="small"><span class="badge badge-tone-warn">! Tariffa 2026 · da verificare</span></p>
+          </section>
+          <div class="dialog-actions">
+            <button class="btn btn-primary">Applica al percorso</button>
+            <button class="btn btn-ghost">Annulla</button>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <p class="mk-note">Il pulsante «Applica» resta disabilitato finché manca il collegamento o imbarco e sbarco non sono validi; il motivo è scritto accanto. Dopo: toast «Traghetto aggiunto: Geiranger → Hellesylt nel collegamento Geiranger → Ålesund» con «Annulla» e «Apri nel percorso».</p>
+</section>
+
+<!-- ============ B. Sottotratta ============ -->
+<section class="mk-section">
+  <h2>B · Tromsø → Finnsnes senza auto (parte di Tromsø → Harstad), collegamento Tromsø → Senja</h2>
+  <div class="mk-frame mk-desktop"><div class="mk-backdrop">
+    <div class="place-dialog" role="dialog" aria-modal="true" aria-labelledby="add-b" style="margin:0 auto">
+      <div class="dialog-head"><div><button class="link-btn small" style="padding:0">← Torna alla scheda</button><h2 id="add-b">Aggiungi al percorso: Tromsø → Harstad</h2></div><button class="icon-btn" aria-label="Chiudi">✕</button></div>
+      <div class="field"><label for="b-leg">Collegamento del percorso</label><select id="b-leg"><optgroup label="Collegati a questa tratta"><option>5 Tromsø → 6 Senja · giorno 9</option></optgroup></select></div>
+      <div class="grid-2">
+        <div class="field"><label for="b-from">Imbarco</label><select id="b-from"><option selected>Tromsø Prostneset (partenza)</option><option>Finnsnes kai</option><option>Brøstadbotn</option><option>Engenes kai</option></select></div>
+        <div class="field"><label for="b-to">Sbarco</label><select id="b-to"><option>Tromsø Prostneset</option><option selected>Finnsnes kai (→ Senja)</option><option>Brøstadbotn</option><option>Engenes kai</option><option>Harstad (arrivo)</option></select></div>
+      </div>
+      <ol class="ferry-stops small" aria-label="Tratto scelto">
+        <li class="is-chosen"><span>Tromsø Prostneset · imbarco</span><span class="when">partenza</span></li>
+        <li class="is-chosen"><span>Finnsnes kai · sbarco</span><span class="when">dopo 1 h 15</span></li>
+      </ol>
+      <p class="small muted">Tratto scelto: Tromsø → Finnsnes · 1 h 15 · 3 fermate prima di Harstad non usate.</p>
+
+      <fieldset class="place-q">
+        <legend>Con l'auto?</legend>
+        <label class="place-opt is-disabled"><input type="radio" name="b-car" disabled aria-describedby="b-car-why"><span><strong>Con l'auto a bordo</strong><span class="small block" id="b-car-why">Questa tratta non porta veicoli.</span></span></label>
+        <label class="place-opt"><input type="radio" name="b-car" checked><span><strong>Senza auto (solo passeggeri)</strong></span></label>
+      </fieldset>
+      <fieldset class="place-q">
+        <legend>La strada del collegamento</legend>
+        <label class="place-opt"><input type="radio" name="b-road"><span><strong>Ricalcola la strada fino all'imbarco e dallo sbarco</strong></span></label>
+        <label class="place-opt"><input type="radio" name="b-road" checked><span><strong>Il battello sostituisce la strada</strong><span class="small block muted">L'auto non fa questo collegamento: decidi tu dove resta (riconsegna o ritorno).</span></span></label>
+        <label class="place-opt"><input type="radio" name="b-road"><span><strong>Lascia la strada com'è</strong></span></label>
+      </fieldset>
+      <div class="grid-2">
+        <div class="field"><label for="b-time">Partenza</label><input id="b-time" type="time"><span class="hint">La fonte non pubblica gli orari estivi: inseriscilo quando lo trovi.</span></div>
+        <div class="field"><label for="b-wait">Attesa e imbarco (min)</label><input id="b-wait" type="number"><span class="hint">Biglietto per una partenza precisa (posto garantito).</span></div>
+      </div>
+      <section class="place-preview" aria-labelledby="b-cost">
+        <h3 id="b-cost">Costo per la famiglia</h3>
+        <table class="cost-lines">
+          <caption class="sr">Dettaglio del costo, NOK</caption>
+          <thead><tr><th scope="col">Voce</th><th scope="col">Regola</th><th scope="col" class="num">NOK</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Adulto × 2</th><td>prezzo Tromsø → Finnsnes: 295 × 2</td><td class="num">590</td></tr>
+            <tr><th scope="row">Bambino 8 anni</th><td>bambino 6–17 anni</td><td class="num">98</td></tr>
+            <tr><th scope="row">Bambino 5 anni</th><td>gratis sotto i 6 anni<span class="small block warn-text">! Controlla l'età il giorno della traversata: soglia 6 anni</span></td><td class="num">0</td></tr>
+            <tr><th scope="row">Auto</th><td>non scelta</td><td class="num">—</td></tr>
+          </tbody>
+          <tfoot><tr class="is-total"><th scope="row" colspan="2">Totale</th><td class="num">688 NOK<span class="small block muted" style="font-weight:400">≈ 66 €</span></td></tr></tfoot>
+        </table>
+        <p class="small"><span class="badge badge-tone-warn">! Tariffa 2026 · da verificare per il 2027</span> Fonte: Svipper – tabella prezzi linea 2, letto il 09/11/2026. Tariffa del sabato per questo tratto: non pubblicata.</p>
+      </section>
+      <div class="dialog-actions"><button class="btn btn-primary">Applica al percorso</button><button class="btn btn-ghost">Annulla</button></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ C. Non calcolabile ============ -->
+<section class="mk-section">
+  <h2>C · Costo non calcolabile: Bodø → Svolvær (battello veloce, prezzi non pubblicati)</h2>
+  <div class="mk-frame mk-desktop" style="max-width:720px"><div class="mk-body">
+    <section class="place-preview" aria-labelledby="c-cost">
+      <h3 id="c-cost">Costo per la famiglia</h3>
+      <table class="cost-lines">
+        <caption class="sr">Dettaglio del costo, NOK</caption>
+        <thead><tr><th scope="col">Voce</th><th scope="col">Regola</th><th scope="col" class="num">NOK</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Adulto × 2</th><td>prezzo non pubblicato</td><td class="num">— assente</td></tr>
+          <tr><th scope="row">Bambino 8 anni</th><td>bambino 6–15 anni, prezzo non pubblicato</td><td class="num">— assente</td></tr>
+          <tr><th scope="row">Bambino 5 anni</th><td>gratis sotto i 6 anni<span class="small block warn-text">! soglia 6 anni: controlla l'età</span></td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+      <p class="note-warn small" role="status"><strong>Costo non calcolabile: mancano i prezzi adulto e bambino.</strong> Reis Nordland li mostra solo nella sua app. Nel Budget il traghetto comparirà tra i costi da cercare, senza importo.</p>
+      <details class="more-fields" open>
+        <summary>Ho trovato il prezzo</summary>
+        <div class="grid-3">
+          <div class="field"><label for="c-price">Prezzo totale per la famiglia</label><div class="money"><input id="c-price" type="number" inputmode="decimal"><select aria-label="Valuta"><option>NOK</option><option>EUR</option></select></div></div>
+          <div class="field"><label for="c-st">Stato del prezzo</label><select id="c-st"><option>Da verificare</option><option>Verificato sulla fonte</option><option>Prenotato</option><option>Pagato</option></select></div>
+          <div class="field"><label for="c-url">Link alla fonte</label><input id="c-url" type="url" placeholder="https://…"></div>
+        </div>
+        <p class="hint">Vale solo per questo tratto e si legge «inserito da te».</p>
+      </details>
+    </section>
+  </div></div>
+</section>
+
+<!-- ============ D. Nel percorso ============ -->
+<section class="mk-section">
+  <h2>D · Come appare nel percorso (Itinerario)</h2>
+  <div class="mk-frame mk-desktop"><div class="mk-body">
+    <div class="leg">
+      <div class="leg-head">
+        <span><span class="leg-num">3</span> Geiranger → <span class="leg-num">4</span> Ålesund</span>
+        <span class="muted small">giorno 6</span>
+      </div>
+      <p class="small" style="margin:4px 0"><strong><span class="mk-ph">n km</span> su strada</strong> · guida <span class="mk-ph">n h</span> · 1 traghetto · traversate 1 h 05 · totale teorico <span class="mk-ph">n h</span></p>
+      <ul class="seg-chips" aria-label="Componenti del tratto">
+        <li class="seg-chip">Strada · <span class="mk-ph">n km</span> · <span class="mk-ph">n min</span> <span class="seg-src">calcolato</span></li>
+        <li class="seg-chip">Traghetto: Geiranger → Hellesylt · 1 h 05 <em>· ore 10:00 · orario da verificare</em> · con auto · 1650 NOK <span class="seg-src">dal catalogo traghetti</span></li>
+        <li class="seg-chip">Strada · <span class="mk-ph">n km</span> · <span class="mk-ph">n h</span> <span class="seg-src">calcolato</span></li>
+      </ul>
+      <p class="muted small" style="margin-top:6px">Attesa ai traghetti ipotizzata (30 min): inserisci quella reale con l'orario.</p>
+      <details class="more-fields" open>
+        <summary>Dettaglio tratti</summary>
+        <div class="segment">
+          <div class="segment-head"><span>Traghetto: <strong>Geiranger → Hellesylt</strong> <span class="small muted">Fjord1 · battello turistico</span></span><button class="icon-btn" aria-label="Rimuovi tratto">✕</button></div>
+          <div class="grid-3">
+            <div class="field"><label for="d-t">Partenza</label><input id="d-t" type="time" value="10:00"></div>
+            <div class="field"><label for="d-w">Attesa (min)</label><input id="d-w" type="number" placeholder="ipotesi 30"></div>
+            <div class="field"><label for="d-d">Durata (min)</label><input id="d-d" type="number" value="65"></div>
+          </div>
+          <p class="small"><strong>Costo per la famiglia: 1650 NOK</strong> (≈ 159 €) · con auto · <span class="badge badge-tone-warn">! Tariffa 2026 · da verificare per il 2027</span></p>
+          <details class="more-fields"><summary>Come è calcolato</summary><p class="small">Auto ≤6 m con conducente 810 · adulto 420 · bambino 8 anni 210 · bambino 5 anni 210 · pacchetto auto + 4: 1650 (stesso importo).</p></details>
+          <div class="row wrap"><button class="btn btn-small">Cambia imbarco, auto e opzioni</button><button class="btn btn-small">Scheda della tratta</button></div>
+        </div>
+      </details>
+    </div>
+    <div class="leg" style="margin-top:12px">
+      <div class="leg-head"><span><span class="leg-num">1</span> Bergen → <span class="leg-num">2</span> Flåm</span><span class="muted small">giorno 2</span></div>
+      <p class="small" style="margin:4px 0"><strong><span class="mk-ph">n km</span> su strada</strong> · guida <span class="mk-ph">n h</span></p>
+      <p class="muted small">C'è anche un battello: Bergen → Flåm, 5 h 40 · <a href="#">Vedi</a></p>
+    </div>
+  </div></div>
+  <p class="mk-note">Sulla mappa: linea tratteggiata blu tra i moli (coordinate del registro nazionale) con etichetta «via mare»; il tratto via mare non ha km e non entra nei km su strada. Senza coordinate: nessuna linea e la nota «senza linea sulla mappa: mancano le coordinate del molo». La seconda card mostra il suggerimento discreto: solo un link alla scheda, nessun pulsante che cambia il percorso.</p>
+</section>
+
+<!-- ============ E. Budget ============ -->
+<section class="mk-section">
+  <h2>E · Come appare nel Budget</h2>
+  <div class="mk-frame mk-desktop"><div class="mk-body">
+    <section class="panel">
+      <h2>Voci</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th scope="col">Voce</th><th scope="col">Categoria</th><th scope="col">Origine</th><th scope="col">Stato</th><th scope="col" class="num">Importo</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Traghetto Geiranger → Hellesylt · con auto</strong><span class="small muted block">Tariffa 2026, da verificare per il 2027 · 2 adulti, bambini 8 e 5</span><details class="more-fields small"><summary>Dettaglio</summary>Auto ≤6 m con conducente 810 · adulto 420 · bambini 210 + 210 · pacchetto 1650</details><a class="small" href="#">Apri nel percorso</a></td>
+              <td>Traghetti</td>
+              <td><span class="badge">Da Itinerario</span></td>
+              <td><span class="badge badge-tone-warn">Da verificare</span></td>
+              <td class="num">1.650 NOK<span class="small muted block">≈ 159 €</span></td>
+            </tr>
+            <tr>
+              <td><strong>Traghetto Tromsø → Finnsnes · senza auto</strong><span class="small muted block">Tariffa 2026, da verificare per il 2027 · 2 adulti, bambini 8 e 5</span><a class="small" href="#">Apri nel percorso</a></td>
+              <td>Traghetti</td>
+              <td><span class="badge">Da Itinerario</span></td>
+              <td><span class="badge badge-tone-warn">Da verificare</span></td>
+              <td class="num">688 NOK<span class="small muted block">≈ 66 €</span></td>
+            </tr>
+            <tr>
+              <td><strong>Traghetto Bodø → Moskenes · senza auto</strong><span class="small muted block">Passeggeri gratis per regola della tratta · tariffa 2026, da verificare per il 2027</span></td>
+              <td>Traghetti</td>
+              <td><span class="badge">Da Itinerario</span></td>
+              <td><span class="badge badge-tone-warn">Da verificare</span></td>
+              <td class="num">0 NOK</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Costi non ancora quantificati (esclusi dal totale)</h2>
+      <ul class="mini">
+        <li>Traghetto Bodø → Svolvær: prezzo da cercare (mancano adulto e bambino) · <a href="#">Apri nel percorso</a></li>
+      </ul>
+    </section>
+  </div></div>
+  <p class="mk-note">Le crociere Hurtigruten/Havila restano nella loro categoria come oggi. Un tratto non calcolabile non ha importo né zero: compare solo qui e nel riquadro «Cosa manca», e il KPI «costi senza importo» lo conta. Lo 0 di Bodø → Moskenes senza auto è un valore della fonte («passeggeri gratis»), scritto come tale.</p>
+</section>
+</body>
+</html>

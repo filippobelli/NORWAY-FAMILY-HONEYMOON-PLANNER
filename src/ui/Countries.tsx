@@ -4,7 +4,7 @@ import { countryInfo, placeCountry, useCatalog } from '../catalog/registry';
 import { COASTAL_CATALOG } from '../data/coastalCatalog';
 import { FILE_COUNTRY } from '../data/country';
 import { DESTINATIONS } from '../data/destinations';
-import { addCountry, countryUsage, removeCountry, tripCountries, usageEmpty } from '../domain/countries';
+import { addCountry, countryUsage, releaseVersion, removeCountry, tripCountries, upgradeCatalog, usageEmpty } from '../domain/countries';
 import { removeStops } from '../domain/itinerary';
 import type { AvailableCountry, CatalogLoadState } from '../services/catalog/catalogService';
 import { useTripCatalog } from '../state/catalog';
@@ -29,9 +29,12 @@ function useAvailable(): { list?: AvailableCountry[]; error?: string } {
     asked.current = true;
     void loadAvailable();
   }, [fileMode, loadAvailable]);
-  if (fileMode) return { list: [{ code: FILE_COUNTRY.code, name: FILE_COUNTRY.name, currency: FILE_COUNTRY.currency, timezone: FILE_COUNTRY.timezone, releaseId: FILE_COUNTRY.releaseId, version: FILE_COUNTRY.version, placeCount: DESTINATIONS.length }] };
+  if (fileMode) return { list: [fileAvailable()] };
   return { list: available, error: availableError };
 }
+
+/** Catalogo da file come «nazione disponibile» (versione contenuta nell'app) */
+const fileAvailable = (): AvailableCountry => ({ code: FILE_COUNTRY.code, name: FILE_COUNTRY.name, currency: FILE_COUNTRY.currency, timezone: FILE_COUNTRY.timezone, releaseId: FILE_COUNTRY.releaseId, version: FILE_COUNTRY.version, placeCount: DESTINATIONS.length });
 
 function loadState(code: string, states: Record<string, CatalogLoadState>, fileMode: boolean): CatalogLoadState {
   if (fileMode) return 'sul_dispositivo';
@@ -40,7 +43,9 @@ function loadState(code: string, states: Record<string, CatalogLoadState>, fileM
 
 function describe(info: CatalogCountry | undefined, releaseId: string): string {
   if (!info) return `Catalogo ${releaseId}`;
-  return `Catalogo versione ${info.version} · pubblicato il ${date(info.publishedAt)} · ${info.placeCount} luoghi · valuta ${info.currency}`;
+  // La versione è quella scelta dal viaggio (senza cloud i file valgono per tutte le versioni che contengono)
+  const version = info.releaseId === releaseId ? info.version : (releaseVersion(releaseId) ?? info.version);
+  return `Catalogo versione ${version} · pubblicato il ${date(info.publishedAt)} · ${info.placeCount} luoghi · valuta ${info.currency}`;
 }
 
 /** Riga «Nazioni» della Panoramica */
@@ -52,7 +57,7 @@ export function CountriesLine() {
   const names = list.map((c) => countryInfo(c.code)?.name ?? c.code);
   return (
     <p className="ov-sub">
-      Nazioni: {list.length === 1 ? `${names[0]} (catalogo versione ${countryInfo(list[0]!.code)?.version ?? list[0]!.releaseId.split('-')[1]})` : names.join(', ')}
+      Nazioni: {list.length === 1 ? `${names[0]} (catalogo versione ${releaseVersion(list[0]!.releaseId) ?? countryInfo(list[0]!.code)?.version})` : names.join(', ')}
       {' · '}
       <button type="button" className="link-btn" onClick={() => setOpen(true)}>
         Gestisci le nazioni
@@ -64,19 +69,25 @@ export function CountriesLine() {
 
 /** Riquadro «Nazioni e cataloghi» delle Impostazioni */
 export function CountriesPanel() {
-  useCatalog();
   const { trip } = useTrip();
   const { states, fileMode } = useTripCatalog();
-  const { list: available } = useAvailable();
+  const { list: listed } = useAvailable();
+  const cat = useCatalog();
+  // Senza l'elenco del server (non collegati) e con il catalogo dei file in uso, la versione proposta è quella
+  // contenuta nell'app (NO-2): il passaggio resta una scelta esplicita con conferma
+  const available = listed ?? (cat.source === 'file' ? [fileAvailable()] : undefined);
   const [open, setOpen] = useState(false);
+  const [upgrading, setUpgrading] = useState<AvailableCountry>();
   return (
-    <section className="panel" aria-labelledby="nazioni-titolo">
+    <section className="panel" id="nazioni" aria-labelledby="nazioni-titolo">
+      {upgrading && <UpgradeDialog target={upgrading} onClose={() => setUpgrading(undefined)} />}
       <h2 id="nazioni-titolo">Nazioni e cataloghi</h2>
       <ul className="plain-list">
         {tripCountries(trip).map((c) => {
           const info = countryInfo(c.code);
           const st = loadState(c.code, states, fileMode);
-          const newer = available?.find((a) => a.code === c.code && info && a.version > info.version);
+          const current = releaseVersion(c.releaseId) ?? info?.version ?? 0;
+          const newer = available?.find((a) => a.code === c.code && a.version > current);
           return (
             <li key={c.code}>
               <strong>{info?.name ?? c.code}</strong> <Badge tone={STATE_TONE[st]}>{STATE_LABEL[st]}</Badge>
@@ -86,10 +97,15 @@ export function CountriesPanel() {
                 {info ? ` · fuso ${info.timezone}` : ''}
               </span>
               {newer && (
-                <p className="small">
-                  <Badge tone="info">versione {newer.version} disponibile</Badge> È uscita la versione {newer.version} del catalogo ({date(newer.publishedAt)}). Il viaggio resta sulla
-                  versione {info?.version}: l'aggiornamento arriverà con una prossima versione dell'app.
-                </p>
+                <div className="small catalog-upgrade">
+                  <p>
+                    <Badge tone="info">versione {newer.version} disponibile</Badge> È uscita la versione {newer.version} del catalogo{newer.publishedAt ? ` (${date(newer.publishedAt)})` : ''}
+                    {c.code === 'NO' && newer.version >= 2 ? ', con le tratte dei traghetti (Trasporti via mare)' : ''}. Il viaggio resta sulla versione {current} finché non scegli di passare.
+                  </p>
+                  <button className="btn btn-small" onClick={() => setUpgrading(newer)}>
+                    Passa a {newer.releaseId}
+                  </button>
+                </div>
               )}
             </li>
           );
@@ -101,6 +117,42 @@ export function CountriesPanel() {
       </button>
       {open && <CountriesDialog onClose={() => setOpen(false)} />}
     </section>
+  );
+}
+
+/**
+ * Passaggio a una versione più recente del catalogo (architettura §16.3), con conferma esplicita: la nuova contiene
+ * la vecchia (stesse chiavi), nulla del viaggio cambia tranne la versione; si può annullare.
+ */
+function UpgradeDialog({ target, onClose }: { target: AvailableCountry; onClose: () => void }) {
+  const { trip, update, replace, toast } = useTrip();
+  const from = tripCountries(trip).find((c) => c.code === target.code);
+  const confirm = () => {
+    const before = trip;
+    update((t) => upgradeCatalog(t, target.code, target.releaseId));
+    toast(`${target.name}: catalogo ${target.releaseId} in uso`, 'ok', { label: 'Annulla', run: () => replace(before) });
+    onClose();
+  };
+  return (
+    <Modal title={`Passare al catalogo ${target.releaseId}?`} onClose={onClose}>
+      <p>
+        Il viaggio usa il catalogo {target.name} {from?.releaseId ?? ''}. La versione {target.version} contiene tutti i luoghi della versione precedente, con le stesse
+        chiavi{target.code === 'NO' && target.version >= 2 ? ', più le tratte dei traghetti (Prenotazioni › Trasporti via mare › Traghetti)' : ''}.
+      </p>
+      <ul className="small">
+        <li>Tappe, notti, idee, preferiti, attività, crociere e costi restano come sono.</li>
+        <li>Cambia solo la versione del catalogo del viaggio: puoi annullare subito dopo.</li>
+        <li>Le tariffe dei traghetti lette nel 2026 restano «da verificare» per il viaggio.</li>
+      </ul>
+      <div className="row wrap place-actions">
+        <button className="btn btn-primary" onClick={confirm}>
+          Passa a {target.releaseId}
+        </button>
+        <button className="btn btn-ghost" onClick={onClose}>
+          Annulla
+        </button>
+      </div>
+    </Modal>
   );
 }
 

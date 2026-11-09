@@ -28,6 +28,8 @@ import { segmentInfo, INFO_STATE_LABEL } from '../domain/verification';
 import { ACCOMMODATION_STATUS_LABEL } from '../domain/bookings';
 import { BreakLegDialog } from './DraftDialogs';
 import { VerificationControl } from './Verification';
+import { ferrySuggestions } from '../domain/ferries';
+import { ferryChipText, FerryHint, FerrySegmentBlock, useTripFerries } from './Ferries';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
@@ -95,7 +97,7 @@ export function useLegRouting() {
         ...cur,
         legs: cur.legs.map((l) =>
           pending.includes(l) && !isRoutableLeg(l, cur.stops)
-            ? { ...l, routingError: 'Tratto con notte a bordo: aggiungi la crociera dalla sezione Crociere (Aggiungi al percorso).' }
+            ? { ...l, routingError: 'Tratto con notte a bordo: aggiungi la crociera da Prenotazioni › Trasporti via mare › Crociere (Aggiungi al percorso).' }
             : l,
         ),
       }));
@@ -451,6 +453,8 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
   const [breaking, setBreaking] = useState(false);
   const timing = legTiming(leg, trip);
   const dt = day ? dayTransfer(trip, day) : undefined;
+  const ferryRoutes = useTripFerries();
+  const boatHints = useMemo(() => ferrySuggestions({ ...trip, legs: [leg] }, ferryRoutes, { includeHidden: true }), [trip, leg, ferryRoutes]);
 
   const addSegment = (mode: TransportMode) => {
     const seg: Segment = { id: newId(), mode, label: MODE_LABEL[mode], status: 'da_verificare', costStatus: 'da_verificare' };
@@ -531,7 +535,8 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
                       {s.departureTime ? ` · ore ${s.departureTime}` : ' · orario non inserito'} · orario {INFO_STATE_LABEL[segmentInfo(s, trip.settings)?.state ?? 'da_verificare'].toLowerCase()}
                     </em>
                   )}
-                  <span className="seg-src">{isAutoSegment(s) ? 'calcolato' : 'inserito a mano'}</span>
+                  {s.ferryRouteId && ferryChipText(s)}
+                  <span className="seg-src">{isAutoSegment(s) ? 'calcolato' : s.ferryRouteId ? 'dal catalogo traghetti' : 'inserito a mano'}</span>
                 </li>
               ))}
             </ul>
@@ -539,10 +544,11 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
           {t.estimatedWaitMin > 0 && (
             <span className="muted small">Attesa ai traghetti ipotizzata ({formatDuration(t.estimatedWaitMin)}): inserisci quella reale con l'orario.</span>
           )}
+          <FerryHint leg={leg} routes={boatHints} />
           {t.mixedModes && <span className="note-warn small">Strada e treno/nave/aereo nello stesso tratto: tienili solo se sono in sequenza.</span>}
           {t.possibleDuplicateFerry && <span className="note-warn small">Traghetto calcolato e traghetto manuale insieme: probabile doppio conteggio.</span>}
           {!routable && t.hasUncalculated && (
-            <span className="muted small">Tratto in nave: scegli la crociera nella sezione Crociere (Aggiungi al percorso) oppure aggiungi un tratto "Navigazione costiera".</span>
+            <span className="muted small">Tratto in nave: scegli la crociera in Prenotazioni › Trasporti via mare › Crociere (Aggiungi al percorso) oppure aggiungi un tratto "Navigazione costiera".</span>
           )}
           {leg.routingError && (
             <span className="error small" role="alert">
@@ -589,6 +595,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
           <SegmentEditor
             key={s.id}
             seg={s}
+            leg={leg}
             trip={trip}
             onChange={(patch) => setLeg((l) => ({ ...l, segments: l.segments.map((x) => (x.id === s.id ? { ...x, ...patch } : x)) }))}
             onRemove={() =>
@@ -624,7 +631,7 @@ export function LegCard({ leg, fromNum, day, busy, onCalc, expanded }: { leg: Le
   );
 }
 
-function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: Trip; onChange: (p: Partial<Segment>) => void; onRemove: () => void }) {
+function SegmentEditor({ seg, leg, trip, onChange, onRemove }: { seg: Segment; leg: Leg; trip: Trip; onChange: (p: Partial<Segment>) => void; onRemove: () => void }) {
   if (seg.mode === 'non_calcolato') {
     return <p className="muted small">Nessun tratto: usa "Calcola strada" o aggiungi un tratto manuale (traghetto, treno, nave…).</p>;
   }
@@ -640,6 +647,7 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
         </button>
       </div>
       {seg.note && <p className="muted small">{seg.note}</p>}
+      {seg.ferryRouteId && <FerrySegmentBlock seg={seg} leg={leg} onChange={onChange} />}
       <div className="grid-4">
         <Field label="Descrizione">{(id) => <input id={id} value={seg.label} onChange={(e) => onChange({ label: e.target.value })} />}</Field>
         {seg.mode === 'costiera' && (
@@ -674,7 +682,7 @@ function SegmentEditor({ seg, trip, onChange, onRemove }: { seg: Segment; trip: 
         )}
         {seg.mode !== 'costiera' && (
           <Field label="Costo" hint={seg.mode === 'strada' ? 'Pedaggi/parcheggi' : 'Famiglia, con auto se serve'}>
-            {(id) => <MoneyInput id={id} value={seg.cost} onChange={(m) => onChange({ cost: m })} />}
+            {(id) => <MoneyInput id={id} value={seg.cost} onChange={(m) => onChange(seg.ferryRouteId ? { cost: m, costByUser: true } : { cost: m })} />}
           </Field>
         )}
         {seg.mode !== 'costiera' && (

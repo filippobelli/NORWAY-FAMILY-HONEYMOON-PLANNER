@@ -10,7 +10,7 @@ import { InfoBadge, SourceLine } from './Verification';
 
 const GROUPS: { id: BookingGroup; icon: IconName; href: string; manage: string }[] = [
   { id: 'voli', icon: 'plane', href: '#/voli', manage: 'Cerca e gestisci i voli' },
-  { id: 'trasporti', icon: 'ship', href: '#/crociere', manage: 'Gestisci le crociere' },
+  { id: 'trasporti', icon: 'ship', href: '#/crociere', manage: 'Crociere e traghetti' },
   { id: 'alloggi', icon: 'bed', href: '#/hytte', manage: 'Cerca e confronta gli alloggi' },
 ];
 

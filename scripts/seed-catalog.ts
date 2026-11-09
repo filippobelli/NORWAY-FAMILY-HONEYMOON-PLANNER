@@ -1,7 +1,10 @@
 // Seed del catalogo di una nazione: dai file dell'app a SQL ripetibile per Supabase.
 //
 //   npx tsx scripts/seed-catalog.ts                 → supabase/seed/catalogo-norvegia-v1.sql
+//   npx tsx scripts/seed-catalog.ts --version 2     → supabase/seed/catalogo-norvegia-v2.sql (NO-1 + traghetti)
 //   npx tsx scripts/seed-catalog.ts --country NO --out percorso.sql
+//   npx tsx scripts/seed-catalog.ts --version 2 --bundle   → JSON nella forma di catalog_bundle (verify/e2e)
+// Prima di --version 2, se la ricerca è cambiata: npx tsx scripts/build-ferry-routes.ts (rigenera src/data/ferryRoutes.ts).
 //
 // Nessuna chiamata di rete, nessuna chiave: legge solo src/data/* (e poche costanti di src/domain) e scrive un file.
 // Il file generato è deterministico (nessuna data di generazione): rieseguire lo script non cambia nulla se i dati non cambiano.
@@ -24,6 +27,8 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { FERRY_CHECKED_AT, FERRY_ROUTES, FERRY_SOURCES } from '../src/data/ferryRoutes';
+import type { FerryRoute, FerrySource } from '../src/data/ferryTypes';
 import { ATTRACTION_INFO } from '../src/data/attractions';
 import { COASTAL_CATALOG } from '../src/data/coastalCatalog';
 import { COASTAL_FACTS, COASTAL_PORTS_NORTHBOUND, COASTAL_SOURCES } from '../src/data/coastalPorts';
@@ -102,8 +107,16 @@ export interface CatalogSeed {
     roadCalibrated: boolean;
     roadNote: string;
     airportRadiusKm?: number;
+    /**
+     * Versione precedente della stessa nazione. Se presente, il seed controlla che la versione precedente sia
+     * pubblicata e che tutto il suo contenuto sia anche in questa (righe identiche per chiave): la nuova versione
+     * la contiene, così un viaggio può passarci senza perdere nulla.
+     */
+    previousReleaseId?: string;
   };
-  regions: { key: string; name: string; areas: unknown[]; sources: SourceSeed[] }[];
+  /** Tratte traghetto (da NO-2): tabelle ferry_* */
+  ferries?: { sources: FerrySource[]; routes: FerryRoute[] };
+  regions:{ key: string; name: string; areas: unknown[]; sources: SourceSeed[] }[];
   places: PlaceSeed[];
   operators: { key: string; name: string; kind: string; url?: string; sources: unknown[]; texts: Record<string, unknown> }[];
   voyages: {
@@ -409,7 +422,169 @@ export function buildNorway(): CatalogSeed {
   };
 }
 
-const BUILDERS: Record<string, () => CatalogSeed> = { NO: buildNorway };
+/**
+ * Norvegia, versione 2: tutto NO-1 (stessi file, stesse chiavi) + tratte traghetto (src/data/ferryRoutes.ts,
+ * generato da docs/ricerca-traghetti.json). NO-1 resta pubblicata e immutabile; il seed controlla che NO-2 la contenga.
+ */
+export function buildNorwayV2(): CatalogSeed {
+  const v1 = buildNorway();
+  return {
+    ...v1,
+    release: {
+      ...v1.release,
+      version: 2,
+      dataCheckedUntil: FERRY_CHECKED_AT,
+      notes: 'Seconda versione: tutto NO-1 (stessi luoghi, stesse chiavi) più le tratte traghetto interne alla Norvegia (ferje, battelli veloci, battelli turistici).',
+      sourceNotes: [
+        ...v1.release.sourceNotes,
+        {
+          label: 'Tratte traghetto: Entur (orari invernali 2026/27, registro NSR), siti di compagnie ed enti regionali; fergeruter.info solo dove la fonte primaria mancava',
+          checkedAt: FERRY_CHECKED_AT,
+          note: 'Tariffe 2026 da verificare per il 2027 (solo Bergen–Flåm ha prezzi 2027). Coordinate solo NSR.',
+        },
+      ],
+      previousReleaseId: 'NO-1',
+    },
+    ferries: { sources: Object.values(FERRY_SOURCES), routes: FERRY_ROUTES },
+    outFile: 'catalogo-norvegia-v2.sql',
+  };
+}
+
+/** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
+const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2 } };
+
+// ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
+
+type Row = Record<string, unknown>;
+export interface FerryRows {
+  ferry_sources: Row[];
+  ferry_routes: Row[];
+  ferry_route_stops: Row[];
+  ferry_route_places: Row[];
+  ferry_fares: Row[];
+}
+/** Colonne jsonb per tabella (nel SQL vanno come ::jsonb) */
+const FERRY_JSON_COLUMNS = new Set(['fare_rules', 'source_keys', 'notes', 'entur_line']);
+export const FERRY_TABLES = ['ferry_sources', 'ferry_routes', 'ferry_route_stops', 'ferry_route_places', 'ferry_fares'] as const;
+
+export function ferryRows(rel: string, f: CatalogSeed['ferries']): FerryRows {
+  const out: FerryRows = { ferry_sources: [], ferry_routes: [], ferry_route_stops: [], ferry_route_places: [], ferry_fares: [] };
+  if (!f) return out;
+  const n = <T,>(v: T | undefined): T | null => (v === undefined ? null : v);
+  [...f.sources].sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)).forEach((s, i) => {
+    out.ferry_sources.push({ release_id: rel, source_key: s.key, position: i, title: s.title, url: s.url, checked_at: s.checkedAt });
+  });
+  f.routes.forEach((r, i) => {
+    out.ferry_routes.push({
+      release_id: rel,
+      route_key: r.key,
+      position: i,
+      name: r.name,
+      operator_name: r.operator,
+      mode: r.mode,
+      zone: r.zone,
+      region_key: slug(r.region),
+      road: n(r.road),
+      carries_car: r.carriesCar,
+      round_trip: r.roundTrip,
+      from_name: r.fromName,
+      to_name: r.toName,
+      duration_min: n(r.duration.min),
+      duration_max: n(r.duration.max),
+      duration_status: r.duration.status,
+      duration_note: n(r.duration.note),
+      duration_source_key: n(r.duration.sourceKey),
+      season_text: r.season.text,
+      season_status: r.season.status,
+      season_source_key: n(r.season.sourceKey),
+      frequency_text: r.summerFrequency.text,
+      frequency_status: r.summerFrequency.status,
+      frequency_source_key: n(r.summerFrequency.sourceKey),
+      frequency_year: n(r.summerFrequency.year),
+      currency: 'NOK',
+      fare_status: r.fare.status,
+      fare_year: n(r.fare.year),
+      fare_year_label: n(r.fare.yearLabel),
+      fare_valid_from: n(r.fare.validFrom),
+      fare_period: n(r.fare.period),
+      fare_source_key: n(r.fare.sourceKey),
+      fare_note: n(r.fare.note),
+      fare_verify_for_trip_year: r.fare.verifyForTripYear,
+      passenger_rule: r.fare.passengerRule,
+      passengers_text: n(r.fare.passengersText),
+      free_under_age: n(r.fare.freeUnderAge),
+      child_age_text: n(r.fare.childAgeText),
+      adult_age_text: n(r.fare.adultAgeText),
+      child_cap_amount: n(r.fare.childCapNok),
+      return_discount_pct: n(r.fare.returnDiscountPct),
+      fare_rules: r.fare.rules,
+      fare_general_rules: n(r.fare.generalRules),
+      source_keys: r.sourceKeys,
+      notes: r.notes,
+      entur_line: n(r.enturLine),
+      checked_at: r.checkedAt,
+    });
+    for (const s of r.stops) {
+      out.ferry_route_stops.push({
+        release_id: rel,
+        route_key: r.key,
+        seq: s.seq,
+        name: s.name,
+        minutes_min: n(s.minutesMin),
+        minutes_max: n(s.minutesMax),
+        call_type: s.call,
+        nsr_id: n(s.nsrId),
+        lat: n(s.lat),
+        lng: n(s.lng),
+        coords_source_key: s.lat !== undefined ? 'nsr' : null,
+      });
+    }
+    const places: [string, string | undefined][] = [['partenza', r.places.from], ['arrivo', r.places.to], ...r.places.along.map((k): [string, string] => ['lungo', k])];
+    let pos = 0;
+    for (const [role, key] of places) {
+      if (key) out.ferry_route_places.push({ release_id: rel, route_key: r.key, role, position: pos++, place_key: key });
+    }
+    r.fare.fares.forEach((x, j) => {
+      out.ferry_fares.push({
+        release_id: rel,
+        route_key: r.key,
+        position: j,
+        category: x.category,
+        trip_kind: x.trip,
+        amount: x.amountNok,
+        currency: 'NOK',
+        age_min: n(x.ageMin),
+        age_max: n(x.ageMax),
+        age_text: n(x.ageText),
+        vehicle_class: n(x.vehicleClass),
+        driver_included: x.driverIncluded === undefined ? null : x.driverIncluded,
+        passengers_included: n(x.passengersIncluded),
+        adults_included: n(x.adultsIncluded),
+        children_included: n(x.childrenIncluded),
+        from_stop: n(x.fromStop),
+        to_stop: n(x.toStop),
+        day_type: n(x.dayType),
+        period: n(x.period),
+        optional: x.optional === true,
+        fare_year: n(x.year),
+        status: x.status,
+        source_key: n(x.sourceKey),
+        note: n(x.note),
+      });
+    });
+  });
+  return out;
+}
+
+function ferryInsert(table: keyof FerryRows, rows: Row[]): string {
+  if (rows.length === 0) return `-- ${table}: nessuna riga\n`;
+  const cols = Object.keys(rows[0]!);
+  return insert(table, cols, rows.map((r) => cols.map((c) => {
+    const v = r[c];
+    if (FERRY_JSON_COLUMNS.has(c) && v !== null) return { json: v };
+    return v as Val;
+  })), '');
+}
 
 // ---------- Generazione SQL ----------
 
@@ -459,22 +634,53 @@ export function generateSql(c: CatalogSeed): string {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(p.key)) throw new Error(`Chiave non valida: ${p.key}`);
   }
 
+  const prev = c.release.previousReleaseId;
+  const ferries = ferryRows(rel, c.ferries);
+  const hasFerries = Boolean(c.ferries);
+
   out.push(`-- Catalogo ${c.country.name}, versione ${c.release.version} (${rel}).`);
-  out.push('-- GENERATO da scripts/seed-catalog.ts: non modificare a mano, rigenerare con `npx tsx scripts/seed-catalog.ts`.');
-  out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500.');
+  if (c.release.version === 1) {
+    out.push('-- GENERATO da scripts/seed-catalog.ts: non modificare a mano, rigenerare con `npx tsx scripts/seed-catalog.ts`.');
+    out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500.');
+  } else {
+    out.push(`-- GENERATO da scripts/seed-catalog.ts: non modificare a mano, rigenerare con \`npx tsx scripts/seed-catalog.ts --country ${c.country.code} --version ${c.release.version}\`.`);
+    out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500' + (hasFerries ? ' e 20261109000000_traghetti.sql.' : '.'));
+    if (prev) out.push(`-- Contiene tutta la versione ${prev} (controllo finale: righe identiche per chiave) e la indica come versione precedente.`);
+  }
   out.push('-- Idempotente: con la versione già pubblicata non scrive nulla e controlla solo i conteggi.');
   out.push('-- Tocca solo le tabelle del catalogo: nessun viaggio, nessun dato di auth.');
   out.push('');
   out.push('begin;');
   out.push('');
+  if (prev || hasFerries) {
+    out.push('-- Prerequisiti: versione precedente pubblicata, tabelle dei traghetti presenti');
+    out.push('do $pre$');
+    out.push('begin');
+    if (prev) {
+      out.push(`  if not exists (select 1 from public.catalog_releases where release_id = ${q(prev)} and status in ('pubblicata', 'ritirata')) then`);
+      out.push(`    raise exception 'La versione precedente ${prev} non è pubblicata: applicare prima il suo seed';`);
+      out.push('  end if;');
+    }
+    if (hasFerries) {
+      out.push(`  if to_regclass('public.ferry_routes') is null then`);
+      out.push(`    raise exception 'Mancano le tabelle dei traghetti: applicare prima supabase/migrations/20261109000000_traghetti.sql';`);
+      out.push('  end if;');
+    }
+    out.push('end $pre$;');
+    out.push('');
+  }
   out.push(insert('countries', ['code', 'name', 'names', 'currency', 'timezone', 'language'],
     [[c.country.code, c.country.name, { json: c.country.names }, c.country.currency, c.country.timezone, c.country.language]],
     'on conflict (code) do nothing'));
-  out.push(insert('catalog_releases',
-    ['release_id', 'country_code', 'version', 'status', 'data_checked_until', 'notes', 'source_notes', 'road_factor', 'avg_kmh', 'road_calibrated', 'road_note', 'airport_radius_km'],
-    [[rel, c.country.code, c.release.version, 'bozza', c.release.dataCheckedUntil, c.release.notes, { json: c.release.sourceNotes.map(src) },
-      c.release.roadFactor, c.release.avgKmh, c.release.roadCalibrated, c.release.roadNote, c.release.airportRadiusKm]],
-    'on conflict (release_id) do nothing'));
+  const relCols = ['release_id', 'country_code', 'version', 'status', 'data_checked_until', 'notes', 'source_notes', 'road_factor', 'avg_kmh', 'road_calibrated', 'road_note', 'airport_radius_km'];
+  const relVals: Val[] = [rel, c.country.code, c.release.version, 'bozza', c.release.dataCheckedUntil, c.release.notes, { json: c.release.sourceNotes.map(src) },
+    c.release.roadFactor, c.release.avgKmh, c.release.roadCalibrated, c.release.roadNote, c.release.airportRadiusKm];
+  // La colonna si scrive solo se serve: il seed di NO-1 resta identico byte per byte
+  if (prev) {
+    relCols.push('previous_release_id');
+    relVals.push(prev);
+  }
+  out.push(insert('catalog_releases', relCols, [relVals], 'on conflict (release_id) do nothing'));
   out.push(insert('place_keys', ['place_key', 'country_code'], c.places.map((p) => [p.key, c.country.code]), 'on conflict (place_key) do nothing'));
   if (c.homeAirports?.length) {
     out.push(insert('home_airports', ['iata', 'name', 'country_code', 'position', 'default_rank'],
@@ -507,6 +713,9 @@ export function generateSql(c: CatalogSeed): string {
     c.routePorts.map((r) => [rel, r.routeKey, r.seq, r.placeKey, r.northboundOnly, r.seasonal]), ''));
   body.push(insert('place_links', ['release_id', 'kind', 'from_place_key', 'to_place_key', 'label', 'note', 'sources'],
     c.links.map((l) => [rel, l.kind, l.from, l.to, l.label, l.note, { json: l.sources }]), ''));
+  if (hasFerries) {
+    for (const t of FERRY_TABLES) body.push(ferryInsert(t, ferries[t]));
+  }
 
   out.push(`-- Contenuto della versione: si scrive solo se è ancora in bozza`);
   out.push(`do ${DO_TAG}`);
@@ -536,6 +745,16 @@ export function generateSql(c: CatalogSeed): string {
     ['places', `release_id = ${R} and wikidata_qid is not null`, c.places.filter((p) => p.wiki).length],
     ['places', `release_id = ${R} and base_place_key is not null`, c.places.filter((p) => p.details).length],
   ];
+  if (hasFerries) {
+    for (const t of FERRY_TABLES) expect.push([t, `release_id = ${R}`, ferries[t].length]);
+    expect.push(['ferry_route_stops', `release_id = ${R} and lat is not null`, ferries.ferry_route_stops.filter((s) => s.lat !== null).length]);
+    expect.push(['ferry_fares', `release_id = ${R} and amount is not null`, ferries.ferry_fares.filter((x) => x.amount !== null).length]);
+  }
+  if (prev) {
+    expect.push(['catalog_releases', `release_id = ${R} and previous_release_id = ${q(prev)}`, 1]);
+  }
+  // Tutto il contenuto della versione precedente è anche in questa (righe identiche tranne release_id)
+  const inherited = ['regions', 'places', 'place_texts', 'place_sources', 'operators', 'voyages', 'route_ports', 'place_links'];
 
   out.push('-- Controllo finale: se fallisce, la transazione si annulla');
   out.push('do $check$');
@@ -557,7 +776,19 @@ export function generateSql(c: CatalogSeed): string {
   out.push(`  if v_n <> 0 then raise exception 'Chiavi di luogo registrate per un''altra nazione: %', v_n; end if;`);
   out.push(`  select count(*) into v_n from public.places p where p.release_id = ${R} and not exists (select 1 from public.place_texts t where t.release_id = p.release_id and t.place_key = p.place_key and t.lang = 'it');`);
   out.push(`  if v_n <> 0 then raise exception 'Luoghi senza testo italiano: %', v_n; end if;`);
-  out.push(`  raise notice 'Catalogo ${rel} pubblicato e controllato: ${c.places.length} luoghi, ${c.voyages.length} crociere, ${c.routePorts.length} porti in rotta';`);
+  if (prev) {
+    for (const t of inherited) {
+      out.push(`  select count(*) into v_n from (select to_jsonb(x) - 'release_id' from public.${t} x where x.release_id = ${q(prev)}`);
+      out.push(`    except select to_jsonb(x) - 'release_id' from public.${t} x where x.release_id = ${R}) d;`);
+      out.push(`  if v_n <> 0 then raise exception '${t}: % righe di ${prev} mancano o sono diverse in ${rel} (la nuova versione deve contenere tutta la precedente)', v_n; end if;`);
+    }
+  }
+  if (hasFerries) {
+    out.push(`  select count(*) into v_n from public.ferry_routes r where r.release_id = ${R} and not exists (select 1 from public.ferry_route_stops s where s.release_id = r.release_id and s.route_key = r.route_key);`);
+    out.push(`  if v_n <> 0 then raise exception 'Tratte senza tappe: %', v_n; end if;`);
+  }
+  const ferryNote = hasFerries ? `, ${ferries.ferry_routes.length} tratte traghetto` : '';
+  out.push(`  raise notice 'Catalogo ${rel} pubblicato e controllato: ${c.places.length} luoghi, ${c.voyages.length} crociere, ${c.routePorts.length} porti in rotta${ferryNote}';`);
   out.push('end $check$;');
   out.push('');
   out.push('commit;');
@@ -597,7 +828,7 @@ export function seedBundle(c: CatalogSeed, opts: { status?: string; publishedAt?
       road_calibrated: c.release.roadCalibrated,
       road_note: c.release.roadNote,
       airport_radius_km: nn(c.release.airportRadiusKm),
-      previous_release_id: null,
+      previous_release_id: nn(c.release.previousReleaseId),
     },
     country: { ...c.country },
     regions: c.regions.map((r, i) => ({ release_id: rel, region_key: r.key, position: i, name: r.name, texts: {}, areas: r.areas, sources: r.sources.map(srcRow) })),
@@ -687,6 +918,21 @@ export function seedBundle(c: CatalogSeed, opts: { status?: string; publishedAt?
     })),
     route_ports: c.routePorts.map((r) => ({ release_id: rel, route_key: r.routeKey, seq: r.seq, place_key: r.placeKey, northbound_only: r.northboundOnly, seasonal: r.seasonal })),
     place_links: c.links.map((l) => ({ release_id: rel, kind: l.kind, from_place_key: l.from, to_place_key: l.to, label: l.label, note: l.note, sources: l.sources })),
+    // Tabelle dei traghetti (da NO-2): sempre presenti, vuote nelle versioni senza traghetti. Stesso ordine di catalog_bundle.
+    ...ferryBundle(rel, c.ferries),
+  };
+}
+
+/** Parte del bundle con le tabelle ferry_*, nell'ordine di catalog_bundle (chiavi per byte: collate "C") */
+export function ferryBundle(rel: string, f: CatalogSeed['ferries']): FerryRows {
+  const r = ferryRows(rel, f);
+  const byte = (a: unknown, b: unknown) => (String(a) < String(b) ? -1 : String(a) > String(b) ? 1 : 0);
+  return {
+    ferry_sources: [...r.ferry_sources].sort((a, b) => Number(a.position) - Number(b.position)),
+    ferry_routes: [...r.ferry_routes].sort((a, b) => Number(a.position) - Number(b.position)),
+    ferry_route_stops: [...r.ferry_route_stops].sort((a, b) => byte(a.route_key, b.route_key) || Number(a.seq) - Number(b.seq)),
+    ferry_route_places: [...r.ferry_route_places].sort((a, b) => byte(a.route_key, b.route_key) || Number(a.position) - Number(b.position)),
+    ferry_fares: [...r.ferry_fares].sort((a, b) => byte(a.route_key, b.route_key) || Number(a.position) - Number(b.position)),
   };
 }
 
@@ -699,8 +945,11 @@ function main(): void {
     return i >= 0 ? args[i + 1] : undefined;
   };
   const code = (opt('--country') ?? 'NO').toUpperCase();
-  const build = BUILDERS[code];
-  if (!build) throw new Error(`Nessun catalogo per ${code}. Disponibili: ${Object.keys(BUILDERS).join(', ')}`);
+  const versions = BUILDERS[code];
+  if (!versions) throw new Error(`Nessun catalogo per ${code}. Disponibili: ${Object.keys(BUILDERS).join(', ')}`);
+  const version = Number(opt('--version') ?? 1);
+  const build = versions[version];
+  if (!build) throw new Error(`Nessuna versione ${version} per ${code}. Disponibili: ${Object.keys(versions).join(', ')}`);
   const seed = build();
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
   if (args.includes('--bundle')) {
@@ -714,7 +963,8 @@ function main(): void {
   const outPath = resolve(root, opt('--out') ?? `supabase/seed/${seed.outFile}`);
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, generateSql(seed), 'utf8');
-  console.log(`Scritto ${outPath}: ${seed.places.length} luoghi, ${seed.regions.length} regioni, ${seed.voyages.length} crociere, ${seed.routePorts.length} porti in rotta, ${seed.links.length} collegamenti in treno.`);
+  const ferryNote = seed.ferries ? `, ${seed.ferries.routes.length} tratte traghetto` : '';
+  console.log(`Scritto ${outPath}: ${seed.places.length} luoghi, ${seed.regions.length} regioni, ${seed.voyages.length} crociere, ${seed.routePorts.length} porti in rotta, ${seed.links.length} collegamenti in treno${ferryNote}.`);
 }
 
 const invokedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);

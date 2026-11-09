@@ -118,6 +118,23 @@ export interface Segment {
   source?: SourceRef;
   status: DataStatus;
   coastalOptionId?: ID;
+  // Traghetto del catalogo (mode 'traghetto', catalogo NO-2+). Campi facoltativi: nei viaggi a righe vanno in
+  // segments.extra senza colonne nuove (docs/architettura.md «Trasporti via mare (NO-2)»). Il conto si calcola, non si salva.
+  /** route_key della tratta (stabile tra le versioni del catalogo); nessuna chiave esterna */
+  ferryRouteId?: string;
+  /** Versione del catalogo da cui è stata scelta la tratta, es. «NO-2» */
+  ferryReleaseId?: string;
+  /** seq delle fermate di imbarco e sbarco (sottotratta) */
+  ferryBoardStop?: number;
+  ferryAlightStop?: number;
+  /** Con auto: si paga il veicolo (conducente incluso se la fonte lo dice) */
+  withCar?: boolean;
+  /** Ritorno acquistato con l'andata: sconto ritorno se la tratta lo prevede */
+  ferryReturnBought?: boolean;
+  /** Prenotazione facoltativa (es. plassgaranti) aggiunta al costo */
+  ferryBookingAdded?: boolean;
+  /** Costo inserito a mano: il calcolo dal catalogo non si usa */
+  costByUser?: boolean;
   /** Volo interno della sezione Voli che copre questo tratto: il costo è conteggiato lì */
   flightId?: ID;
   /** [lat, lng] */
@@ -498,6 +515,8 @@ export interface Trip {
    * Assente nei viaggi salvati prima: vale Norvegia, catalogo NO-1 (vedi ensureCountries).
    */
   countries?: TripCountry[];
+  /** Suggerimenti di traghetto nascosti dall'utente (design trasporti via mare, DU14); nei viaggi a righe in trips.extra */
+  hiddenFerrySuggestions?: { legId: ID; ferryRouteId: string }[];
   /** Cambi delle valute diverse da EUR e NOK (il cambio NOK resta in settings.nokPerEur per compatibilità) */
   rates?: Record<string, CurrencyRate>;
 }

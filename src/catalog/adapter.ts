@@ -6,6 +6,7 @@
 import type { AttractionInfo, Setting } from '../data/attractions';
 import type { CatalogDay, CatalogPrice, CoastalCatalogVoyage } from '../data/coastalCatalog';
 import type { CoastalPort } from '../data/coastalPorts';
+import type { FerryCall, FerryDataStatus, FerryFare, FerryMode, FerryPassengerRule, FerryRoute, FerrySource, FerryStop } from '../data/ferryTypes';
 import type { OfficialKind, OfficialSite } from '../data/officialSites';
 import type { County } from '../data/regionShapes';
 import type { WikiRef } from '../data/wiki';
@@ -26,6 +27,12 @@ export interface CatalogBundle {
   voyages: Rows;
   route_ports: Rows;
   place_links: Rows;
+  /** Tabelle dei traghetti (da NO-2). Facoltative: le copie offline di NO-1 scaricate prima della migrazione non le hanno */
+  ferry_sources?: Rows;
+  ferry_routes?: Rows;
+  ferry_route_stops?: Rows;
+  ferry_route_places?: Rows;
+  ferry_fares?: Rows;
 }
 
 /** Dati di una nazione e della versione del catalogo caricata (per le schermate «Nazioni») */
@@ -74,6 +81,11 @@ export interface AppCatalog {
   baseIds: string[];
   notVisits: string[];
   rail: Record<string, { label: string; note: string }>;
+  /** Tratte traghetto (vuoto nelle versioni senza traghetti, es. NO-1) */
+  ferryRoutes: FerryRoute[];
+  ferrySources: Record<string, FerrySource>;
+  /** Versione del catalogo di ogni tratta (route_key → release_id): il viaggio vede solo quelle della sua versione */
+  ferryRelease: Record<string, string>;
 }
 
 export class CatalogError extends Error {
@@ -124,6 +136,108 @@ export function countryOf(b: CatalogBundle): CatalogCountry {
     roadNote: String(r.road_note ?? ''),
     airportRadiusKm: num(r.airport_radius_km),
   });
+}
+
+const rowsOf = (v: unknown): Rows => (Array.isArray(v) ? (v as Rows) : []);
+const nullable = <T,>(v: unknown, f: (x: unknown) => T): T | undefined => (v === null || v === undefined ? undefined : f(v));
+const byPos = (k: string) => (x: Obj, y: Obj) => Number(x[k]) - Number(y[k]);
+
+/**
+ * Tratte traghetto dalle righe ferry_* (inverso di ferryRows in scripts/seed-catalog.ts). Chiavi facoltative:
+ * senza tabelle (NO-1, copie offline vecchie) nessuna tratta e nessun errore.
+ */
+export function adaptFerries(b: CatalogBundle, regionName: Map<string, string>): { routes: FerryRoute[]; sources: Record<string, FerrySource> } {
+  const sources: Record<string, FerrySource> = {};
+  for (const r of [...rowsOf(b.ferry_sources)].sort(byPos('position'))) {
+    sources[String(r.source_key)] = { key: String(r.source_key), title: String(r.title), url: String(r.url), checkedAt: String(r.checked_at) };
+  }
+  const group = (rows: Rows) => {
+    const m = new Map<string, Rows>();
+    for (const x of rows) m.set(String(x.route_key), [...(m.get(String(x.route_key)) ?? []), x]);
+    return m;
+  };
+  const stops = group(rowsOf(b.ferry_route_stops));
+  const places = group(rowsOf(b.ferry_route_places));
+  const fares = group(rowsOf(b.ferry_fares));
+  const S = (v: unknown) => nullable(v, String);
+  const N = (v: unknown) => nullable(v, Number);
+  const routes = [...rowsOf(b.ferry_routes)].sort(byPos('position')).map((r): FerryRoute => {
+    const key = String(r.route_key);
+    const pl = [...(places.get(key) ?? [])].sort(byPos('position'));
+    return clean({
+      key,
+      name: String(r.name),
+      operator: String(r.operator_name),
+      mode: r.mode as FerryMode,
+      zone: String(r.zone),
+      region: (regionName.get(String(r.region_key)) ?? String(r.region_key)) as Region,
+      road: S(r.road),
+      carriesCar: Boolean(r.carries_car),
+      roundTrip: Boolean(r.round_trip),
+      fromName: String(r.from_name),
+      toName: String(r.to_name),
+      stops: [...(stops.get(key) ?? [])]
+        .sort(byPos('seq'))
+        .map((s): FerryStop => clean({ seq: Number(s.seq), name: String(s.name), minutesMin: N(s.minutes_min), minutesMax: N(s.minutes_max), call: s.call_type as FerryCall, nsrId: S(s.nsr_id), lat: N(s.lat), lng: N(s.lng) })),
+      duration: clean({ min: N(r.duration_min), max: N(r.duration_max), status: r.duration_status as FerryDataStatus, note: S(r.duration_note), sourceKey: S(r.duration_source_key) }),
+      summerFrequency: clean({ text: String(r.frequency_text ?? ''), status: r.frequency_status as FerryDataStatus, sourceKey: S(r.frequency_source_key), year: N(r.frequency_year) }),
+      season: clean({ text: String(r.season_text ?? ''), status: r.season_status as FerryDataStatus, sourceKey: S(r.season_source_key) }),
+      fare: clean({
+        status: r.fare_status as FerryDataStatus,
+        year: N(r.fare_year),
+        yearLabel: S(r.fare_year_label),
+        validFrom: S(r.fare_valid_from),
+        period: S(r.fare_period),
+        sourceKey: S(r.fare_source_key),
+        note: S(r.fare_note),
+        verifyForTripYear: Boolean(r.fare_verify_for_trip_year),
+        passengerRule: r.passenger_rule as FerryPassengerRule,
+        passengersText: S(r.passengers_text),
+        freeUnderAge: N(r.free_under_age),
+        childAgeText: S(r.child_age_text),
+        adultAgeText: S(r.adult_age_text),
+        childCapNok: N(r.child_cap_amount),
+        returnDiscountPct: N(r.return_discount_pct),
+        rules: Array.isArray(r.fare_rules) ? (r.fare_rules as string[]) : [],
+        generalRules: S(r.fare_general_rules),
+        fares: [...(fares.get(key) ?? [])].sort(byPos('position')).map((x): FerryFare => {
+          const vehicle = x.category === 'veicolo' || x.category === 'pacchetto_veicolo';
+          return clean({
+            category: x.category as FerryFare['category'],
+            amountNok: x.amount === null || x.amount === undefined ? null : Number(x.amount),
+            trip: x.trip_kind as FerryFare['trip'],
+            ageMin: N(x.age_min),
+            ageMax: N(x.age_max),
+            ageText: S(x.age_text),
+            vehicleClass: S(x.vehicle_class) as FerryFare['vehicleClass'],
+            // null = «la fonte non lo dice» per i veicoli; per le altre voci il campo non esiste
+            driverIncluded: x.driver_included === null || x.driver_included === undefined ? (vehicle ? null : undefined) : Boolean(x.driver_included),
+            passengersIncluded: N(x.passengers_included),
+            adultsIncluded: N(x.adults_included),
+            childrenIncluded: N(x.children_included),
+            fromStop: S(x.from_stop),
+            toStop: S(x.to_stop),
+            dayType: S(x.day_type) as FerryFare['dayType'],
+            period: S(x.period),
+            optional: x.optional ? true : undefined,
+            year: N(x.fare_year),
+            status: x.status as FerryDataStatus,
+            sourceKey: S(x.source_key),
+            note: S(x.note),
+          });
+        }),
+      }),
+      places: {
+        ...clean({ from: S(pl.find((x) => x.role === 'partenza')?.place_key), to: S(pl.find((x) => x.role === 'arrivo')?.place_key) }),
+        along: pl.filter((x) => x.role === 'lungo').map((x) => String(x.place_key)),
+      },
+      sourceKeys: Array.isArray(r.source_keys) ? (r.source_keys as string[]) : [],
+      notes: Array.isArray(r.notes) ? (r.notes as string[]) : [],
+      enturLine: isObj(r.entur_line) ? (r.entur_line as unknown as FerryRoute['enturLine']) : undefined,
+      checkedAt: String(r.checked_at),
+    });
+  });
+  return { routes, sources };
 }
 
 const srcRef = (s: Obj): SourceRef => clean({ label: String(s.label), url: str(s.url), checkedAt: str(s.checkedAt ?? s.checked_at) });
@@ -272,6 +386,7 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
   const rail: Record<string, { label: string; note: string }> = {};
   for (const l of b.place_links) if (l.kind === 'treno') rail[[String(l.from_place_key), String(l.to_place_key)].sort().join('|')] = { label: String(l.label), note: String(l.note ?? '') };
 
+  const ferries = adaptFerries(b, regionName);
   const voyageCountry = Object.fromEntries(voyages.map((v) => [v.id, code]));
   const portCountry = Object.fromEntries(ports.map((p) => [p.name, code]));
   return {
@@ -293,6 +408,9 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
     baseIds,
     notVisits,
     rail,
+    ferryRoutes: ferries.routes,
+    ferrySources: ferries.sources,
+    ferryRelease: Object.fromEntries(ferries.routes.map((r) => [r.key, country.releaseId])),
   };
 }
 
@@ -301,6 +419,7 @@ export function combineCatalogs(list: AppCatalog[]): AppCatalog {
   const out: AppCatalog = {
     countries: [], destinations: [], placeCountry: {}, attractions: {}, officialSites: {}, wiki: {}, voyages: [], ports: [],
     operatorFacts: {}, operatorSources: {}, counties: [], regionCounties: {}, regionCountry: {}, voyageCountry: {}, portCountry: {}, baseIds: [], notVisits: [], rail: {},
+    ferryRoutes: [], ferrySources: {}, ferryRelease: {},
   };
   for (const c of list) {
     out.countries.push(...c.countries);
@@ -321,6 +440,9 @@ export function combineCatalogs(list: AppCatalog[]): AppCatalog {
     Object.assign(out.voyageCountry, c.voyageCountry);
     Object.assign(out.portCountry, c.portCountry);
     Object.assign(out.rail, c.rail);
+    out.ferryRoutes.push(...c.ferryRoutes);
+    Object.assign(out.ferrySources, c.ferrySources);
+    Object.assign(out.ferryRelease, c.ferryRelease);
   }
   return out;
 }
