@@ -451,3 +451,49 @@ Nessun riferimento con chiave esterna dal viaggio al catalogo (come `place_key`,
 5. **Operatore Bergen–Sogn** (Norled → Fjord1 dal 1/12/2026) e durate in conflitto (Geiranger–Hellesylt 65 vs 45): restano testo e stato `da_verificare`, nessuna scelta automatica.
 6. **Nomi Entur con caratteri rovinati** nella ricerca (es. «TromsÃ¸»): ricodificati dallo script (stessa stringa, non dati nuovi).
 7. **Gratuità passeggeri in Møre og Romsdal** non scritta: «non calcolabile» senza auto finché una fonte non la conferma (DU9).
+
+## 17. Luoghi del nord, foto e consigli (NO-3)
+
+Aggiunta del 2026-11-10. Piano `docs/piano-2026-11-10-catalogo-nord.md`, dati `docs/ricerca-luoghi-nord.json` (84 candidati, letti il 2026-11-10). **Nulla è applicato al database** finché Filippo non dà l'ok.
+
+### 17.1 File
+
+| File | Cosa fa |
+|---|---|
+| `scripts/harvest-places.mjs` | Raccolta: elemento Wikidata scelto per nome e distanza da un punto indicativo (mai salvato), coordinate P625, riscontro OpenStreetMap (Nominatim), voci di Wikipedia, sito ufficiale P856, fino a 3 foto di Commons con autore e licenza. `--resume`, `--only chiave,…`, `--existing` (foto dei luoghi già in catalogo) |
+| `scripts/build-nord.mjs` | JSON della ricerca → `src/data/nordFonti.ts` (**generato**), con il filtro delle foto (niente scansioni d'archivio, niente file senza autore) |
+| `src/data/nordSchede.ts` | Schede scritte a mano (nome, categoria, descrizione, come arrivare, stagione, note) e `NORD_CONSIGLI`: consigli solo da pagine ufficiali, con indirizzo e data |
+| `src/data/placesNord.ts` | Unisce i due file sopra. Usato solo da `buildNorwayV3()`: i file dell'app (`DESTINATIONS`, `WIKI`…) restano quelli di NO-1/NO-2 |
+| `src/data/placeExtras.ts` | `PLACE_PHOTOS` e `PLACE_TIPS`: vuoti con i file (NO-2), riempiti dal registro quando arriva NO-3 |
+| `supabase/migrations/20261110000100_foto_consigli.sql` | Tabelle `place_photos` e `place_tips`, guardie, RLS, `catalog_bundle` con due chiavi in più. Solo aggiunte, idempotente |
+| `supabase/rollback/20261110_annulla_foto_consigli.sql` | Toglie NO-3 e le due tabelle, rimette `catalog_bundle` di prima. Si ferma se un viaggio usa NO-3 |
+| `supabase/seed/catalogo-norvegia-v3.sql` | Seed generato: NO-3 = tutto NO-2 + 83 luoghi + foto + consigli, `previous_release_id = 'NO-2'` |
+| `src/domain/placeMatch.ts` | Proposta «Collega alla scheda» per le tappe messe a mano |
+| `src/ui/PlaceCard.tsx` | Scheda del luogo dentro la tappa e proposta di collegamento |
+
+Comandi: `node scripts/harvest-places.mjs --resume` (se cambia l'elenco dei candidati), `node scripts/build-nord.mjs`, poi `npx tsx scripts/seed-catalog.ts --version 3` (SQL) o `--version 3 --bundle` (JSON). I seed di NO-1 e NO-2 rigenerati restano identici byte per byte.
+
+### 17.2 Tabelle
+
+Stesse regole delle altre tabelle del catalogo: `release_id` nella chiave, guardia `catalog_child_guard`, policy `catalogo_lettura`, nulla per `anon`.
+
+| Tabella | Chiave | Contenuto |
+|---|---|---|
+| `place_photos` | `(release_id, place_key, position)` | File di Wikimedia Commons, autore, licenza, indirizzo della licenza, data di lettura. Al massimo 3 per luogo. `places.commons_image` resta la foto principale |
+| `place_tips` | `(release_id, place_key, lang, position)` | Testo del consiglio, nome e indirizzo `https` della fonte, data di lettura |
+
+`catalog_bundle` aggiunge `place_photos` e `place_tips`; per NO-1 e NO-2 sono elenchi vuoti. L'adattatore le tratta come facoltative (copie offline vecchie).
+
+### 17.3 Regole dei dati
+
+- Coordinate: solo Wikidata P625 o OpenStreetMap, con fonte e data in `place_sources` (`coordinate`). `coords_status = 'verificate'`.
+- Quando l'elemento Wikidata trovato è un'altra cosa vicina (la chiesa del villaggio, il faro dell'isola), la scheda lo dichiara (`entity: false`): niente voce di Wikipedia né sito ufficiale suoi.
+- Testi: scritti per l'app dalle voci lette e da conoscenza generale, `reliability = 'da_verificare'`. Nessun prezzo, orario o disponibilità.
+- Consigli: 28, tutti dalle pagine delle strade turistiche nazionali (Statens vegvesen), lette il 2026-11-10. Servizi e aperture valgono alla data di lettura.
+- Il seed di NO-3 controlla che tutte le righe di NO-2 (luoghi, testi, fonti, crociere, traghetti) siano presenti e identiche.
+
+### 17.4 Nell'app
+
+- I file dell'app valgono ancora come NO-2: senza cloud non ci sono i luoghi nuovi. Con il viaggio su NO-3 il registro installa luoghi, foto e consigli.
+- `StopCard` mostra «Scheda del luogo» (foto con autore e licenza, descrizione, come arrivare, stagione, consigli con fonte e data, sito ufficiale, Wikipedia). Senza foto nel catalogo usa la foto principale con i crediti letti da Commons, come prima.
+- Tappa senza scheda: se nel catalogo c'è un luogo con lo stesso nome entro 8 km, o un luogo entro 1 km, compare «Collega alla scheda». La distanza è in linea d'aria e serve solo a riconoscere il luogo. Il collegamento imposta `destinationId` e lo fa solo l'utente.

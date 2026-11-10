@@ -30,6 +30,7 @@ import { BreakLegDialog } from './DraftDialogs';
 import { VerificationControl } from './Verification';
 import { ferrySuggestions } from '../domain/ferries';
 import { ferryChipText, FerryHint, FerrySegmentBlock, useTripFerries } from './Ferries';
+import { PlaceCard, PlaceLinkHint } from './PlaceCard';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
@@ -383,6 +384,8 @@ export function StopCard({
         </div>
       )}
       {dest?.augustNote && <p className="note-warn small"><Icon name="warning" /> {dest.augustNote}</p>}
+      {dest && <PlaceCard dest={dest} open={expanded} />}
+      {!dest && stop.kind === 'luogo' && <PlaceLinkHint stop={stop} onLink={(destinationId) => setStop({ destinationId })} />}
       {!hideDetails && (
       <details open={expanded}>
         <summary>

@@ -1,0 +1,2963 @@
+{
+ "generatedAt": "2026-11-10",
+ "partial": true,
+ "places": [
+  {
+   "key": "bodo",
+   "query": "Bodø",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.28443,
+    "lng": 14.38175,
+    "osm": "relation/409037",
+    "name": "Bodø",
+    "kind": "boundary/administrative",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q221119",
+    "label": "Bodø",
+    "description": "municipality in Nordland, Norway",
+    "lat": 67.28306,
+    "lng": 14.38306,
+    "distKm": 0.8,
+    "it": "Bodø",
+    "en": "Bodø Municipality",
+    "nb": "Bodø",
+    "official": "https://bodo.kommune.no/",
+    "commonsCategory": "Bodø",
+    "others": [
+     "Q39164 Bodø lufthavn (1.9 km)",
+     "Q39383 Bodø (1.1 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Bodø 2006.jpg",
+     "author": "Røed 20:41, 24 July 2006 (UTC)",
+     "license": "CC BY-SA 2.5",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+     "width": 2272,
+     "height": 1704
+    },
+    {
+     "file": "Bodø 20170722 133158.jpg",
+     "author": "Sergei Gussev",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 12988,
+     "height": 3762
+    },
+    {
+     "file": "Leaving Bodø - Bodø, Norway - Ca. June 26, 1989.jpg",
+     "author": "Giorgio Galeotti",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 7500,
+     "height": 5000
+    }
+   ],
+   "reading": {
+    "it": "Bodø è un comune e una città della Norvegia settentrionale situata nella contea di Nordland, della quale è capoluogo amministrativo. È stata scelta per essere capitale europea della cultura nel 2024 insieme a Tartu e Bad Ischl.",
+    "en": "Bodø (Lule Sami: Bådåddjo, Swedish: Bodö) is a municipality in Nordland county, Norway. It is part of the traditional region of Salten. The administrative centre of the municipality is the town of Bodø (which is also the capital of Nordland county). Some of the notable villages in Bodø include Misvær, Skjerstad, Saltstraumen, Løding, Løpsmarka, Kjerringøy, Sørvær, and Fenes. The 1,395-square-kilometre (539 sq mi) municipality is the 66th largest by area out of the 357 municipalities in Norway. Bodø Municipality is the 19th most populous municipality in Norway with a population of 53,712. The municipality's population density is 38.5 inhabitants per square kilometre (100/sq mi) and its population has increased by 8% over the previous 10-year period. The municipality of Bodø is located just north of the Arctic Circle and the town of Bodø (population: 42,831; about 80% of the residents of the...",
+    "nb": "Bodø er en by og kommune i landskapet Salten i Nordland fylke. Bodø er Nordlands største by og kommune, målt etter antall innbyggere, og er administrasjonssenter i Nordland fylke. I Nord-Norge har kun Tromsø kommune større folketall, mens Bodø er det mest folkerike tettstedet i landsdelen, etter SSB sin definisjon. Byen Bodø har 43 504 innbyggere per 1. januar 2025 og er således kun såvidt større enn Nord-Norges nest største, Tromsø. Bodøregionen dekker kommunene Bodø, Gildeskål og Beiarn. Den hadde 56 694 innbyggere per 1. januar 2026, og er dermed Norges 15. mest befolkede byregion. Bodø kommune ligger sentralt midt i fylket og ute ved kysten. Bodø er en del av landskapet og regionen Salten, som dekker ni kommuner. Fem av disse grenser til Bodø. Sørfold ligger nordøst for Bodø, Fauske grenser i øst, Saltdal ligger mot sørvest, mens Beiarn og Gildeskål grenser begge mot Bodøs sørlige kommunegrense…"
+   }
+  },
+  {
+   "key": "kjerringoy",
+   "query": "Kjerringøy",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.51927,
+    "lng": 14.75836,
+    "osm": "node/5342118844",
+    "name": "Kjerringøy",
+    "kind": "highway/bus_stop",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q15623695",
+    "label": "Kjerringøy handelssted",
+    "description": "museum in Nordland, Norway",
+    "lat": 67.52063,
+    "lng": 14.76163,
+    "distKm": 0.1,
+    "en": "Kjerringøy trading post",
+    "nb": "Kjerringøy handelssted",
+    "official": "http://nordlandsmuseet.no/kjerringoy_handelssted/",
+    "commonsCategory": "Kjerringøy handelssted",
+    "others": [
+     "Q4577275 Kjerringøy kirke (0.1 km)",
+     "Q2559268 Kjerringøy (0.2 km)",
+     "Q56636775 Kjerringøy (0.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Kjerringøy Handelssted.jpg",
+     "author": "Øyvind Nohr Søderbom",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 4768,
+     "height": 2645
+    },
+    {
+     "file": "Kjerringøy handelssted, Nordland - Riksantikvaren-T414 01 0047.jpg",
+     "author": "Halvor Vreim",
+     "license": "Public domain",
+     "width": 3566,
+     "height": 2439
+    },
+    {
+     "file": "Kjerringøy handelssted, Nordland - Riksantikvaren-T414 01 0043.jpg",
+     "author": "Halvor Vreim",
+     "license": "Public domain",
+     "width": 3647,
+     "height": 2378
+    }
+   ],
+   "reading": {
+    "en": "Kjerringøy trading post (Kjerringøy handelssted) is an open-air museum at Kjerringøy in Nordland, Norway. It is operated as part of the Nordland Museum of cultural history.",
+    "nb": "Kjerringøy handelssted ligger ved ei naturlig havn på Kjerringøy i Bodø kommune i Nordland fylke. Handelsstedet er fredet av Riksantikvaren og fremstår som komplett med 15 bevarte bygninger. Driften ble avviklet på slutten av 1950-tallet og kjøpt av Nordland fylkesmuseum i 1959. Nordlandsmuseet driver nå handelsstedet som museum, med omvisninger og arrangementer i sommersesongen."
+   }
+  },
+  {
+   "key": "luftfartsmuseum",
+   "query": "Norsk Luftfartsmuseum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.27608,
+    "lng": 14.4137,
+    "osm": "way/153340863",
+    "name": "Norsk Luftfartsmuseum",
+    "kind": "tourism/museum",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q6515356",
+    "label": "Norsk Luftfartsmuseum",
+    "description": "aviation museum in Bodø, Norway",
+    "lat": 67.27667,
+    "lng": 14.41167,
+    "distKm": 0.1,
+    "en": "Norwegian Aviation Museum",
+    "nb": "Norsk Luftfartsmuseum",
+    "official": "http://luftfartsmuseum.no/en/",
+    "commonsCategory": "Norsk Luftfartsmuseum",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Old Bodø control tower.jpg",
+     "author": "Soldatnytt from Oslo, Norway",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 4256,
+     "height": 2832
+    },
+    {
+     "file": "7.5 cm L45 M16 anti-aircraft gun.jpg",
+     "author": "Manxruler",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 2650,
+     "height": 2448
+    },
+    {
+     "file": "Norsk luftfartsmuseum.jpg",
+     "author": "Lars Røed Hansen",
+     "license": "Public domain",
+     "width": 2272,
+     "height": 1704
+    }
+   ],
+   "reading": {
+    "en": "The Norwegian Aviation Museum (Norwegian: Norsk luftfartsmuseum) was opened by King Harald V on May 15, 1994. It is the Norwegian national museum of aviation and also the largest aviation museum in the Nordic countries, covering around 10,000 square metres (110,000 sq ft). Situated in the town of Bodø, in Bodø Municipality in Nordland county, the building is shaped like a huge propeller and contains both civilian and military aircraft.",
+    "nb": "Norsk Luftfartsmuseum er Norges nasjonale museum for luftfart. Museet omfatter militær og sivil luftfartshistorie fordelt på rundt 12 000 m², og utstillingen er Nordens største innen luftfart. Museet, som ligger i Bodø og er formet som en gigantisk propell, er tegnet av det lokale arkitektfirmaet Boarch arkitekter. Museet ble åpnet av Kong Harald V den 15. mai 1994."
+   }
+  },
+  {
+   "key": "mjelle",
+   "query": "Mjelle",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.40928,
+    "lng": 14.62709,
+    "osm": "node/267751021",
+    "name": "Mjelde",
+    "kind": "place/hamlet",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q31211628",
+    "label": "Mjelletinden",
+    "description": "hill in Nordland, Norway",
+    "lat": 67.41793,
+    "lng": 14.65754,
+    "distKm": 1.5,
+    "others": [
+     "Q31473574 Mjellefjellet (1.9 km)"
+    ]
+   },
+   "photos": [],
+   "reading": {}
+  },
+  {
+   "key": "keiservarden",
+   "query": "Keiservarden",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.31496,
+    "lng": 14.47832,
+    "osm": "node/3172289041",
+    "name": "Keiservarden",
+    "kind": "natural/peak",
+    "distKm": 0.6
+   },
+   "match": {
+    "qid": "Q11980475",
+    "label": "Keiservarden",
+    "description": "mountain in Norway",
+    "lat": 67.31482,
+    "lng": 14.4785,
+    "distKm": 0.5,
+    "en": "Keiservarden",
+    "nb": "Keiservarden",
+    "commonsCategory": "Keiservarden",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Keiservarden Gedenktafel.jpg",
+     "author": "Brunost16",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 3024,
+     "height": 4032
+    },
+    {
+     "file": "Bodø seen from Keiservarden.jpeg",
+     "author": "kallerna",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 3835,
+     "height": 2688
+    },
+    {
+     "file": "Keiservarden.JPG",
+     "author": "KaarloNorge",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 3264,
+     "height": 2448
+    }
+   ],
+   "reading": {
+    "en": "Keiservarden is a mountain plateau on top of Veten hill near Bodø, Nordland in northern Norway (not to be confused with Veten near Bergen). It lies 366 meters (1,201 feet) above sea level and is named after German Emperor Wilhelm II, who supposedly climbed the mountain on one of his many visits to Norway on 19 July 1899. It is disputed though whether Wilhelm II really visited the place. The second half of the designation, varden is a Norwegian word for a pile of stones that indicate a mountaintop as well as the way up there. The plateau offers a great view to every direction. Under good weather conditions the silhouette of Lofoten mountainline can be seen behind Vestfjorden. During Nordland music festival week (musikkfestuke) Keiservarden is also used as a venue for concerts. In the year 2016 stone stairs were built, thus an easy climb from Bodø turisthytta is guaranteed.",
+    "nb": "Keiservarden er toppen av fjellet Veten i Bodø kommune i Nordland. Fjellet har en høyde på 366 meter over havet, og er kjent for sin utsikt blant annet til Landegode, Børvasstindene og Lofotveggen. Keiservarden er oppkalt etter keiser Wilhelm II av Tyskland som besøkte fjelltoppen 19. juli 1891. Fjellet er ett av de mest populære utfartsstedene i kommunen og er en av Norges mest besøkte fjelltopper Er også kjent for sine årlige konserter i forbindelse med Nordland Musikkfestuke."
+   }
+  },
+  {
+   "key": "moskenes",
+   "query": "Moskenes",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.90234,
+    "lng": 13.04187,
+    "osm": "relation/408478",
+    "name": "Moskenes",
+    "kind": "boundary/administrative",
+    "distKm": 0.4
+   },
+   "match": {
+    "qid": "Q4583742",
+    "label": "Moskenes kirke",
+    "description": "church in Moskenes, Norway",
+    "lat": 67.9004,
+    "lng": 13.0463,
+    "distKm": 0.2,
+    "en": "Moskenes Church",
+    "nb": "Moskenes kirke",
+    "commonsCategory": "Moskenes kirke",
+    "others": [
+     "Q487636 Moskenes (4.7 km)",
+     "Q28719647 Moskenes Fiskeindustri kraftverk (0.2 km)",
+     "Q30504146 Moskeneshaugen (0.1 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Moskenes Church 2009.JPG",
+     "author": "User:Sveter (Please credit as \"Petr Šmerkl, Wikipedia\" in case you use this outside WMF projects.)",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 2000,
+     "height": 3008
+    },
+    {
+     "file": "Moskenes kirke 141.jpg",
+     "author": "rob Stoeltje from loenen, netherlands",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 6000,
+     "height": 4000
+    },
+    {
+     "file": "Moskenes kirke.jpg",
+     "author": "Henny stokseth",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4443,
+     "height": 3694
+    }
+   ],
+   "reading": {
+    "en": "Moskenes Church (Norwegian: Moskenes kirke) is a parish church of the Church of Norway in Moskenes Municipality in Nordland county, Norway. It is located in the village of Moskenes, located immediately north of the village of Sørvågen. It is one of the two churches for the Moskenes parish which is part of the Lofoten prosti (deanery) in the Diocese of Sør-Hålogaland. The white, wooden church was built in a cruciform style in 1819 using plans drawn up by the architect Kirsten Wleügel Knutssøn. The church seats about 280 people.",
+    "nb": "Moskenes kirke ligger i Moskenes sokn på stedet Moskenes i Moskenes kommune i Nordland. Kirka er ei korskirke i tømmer med 280 plasser, bygd i 1819. Kirka ble innviet 1. august 1821. Moskenes kirke ligger ikonisk til ved fergeleiet på Moskenes, godt synlig for de som kommer sjøveien til Lofoten."
+   }
+  },
+  {
+   "key": "sorvagen",
+   "query": "Sørvågen",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.88944,
+    "lng": 13.02684,
+    "osm": "way/552912915",
+    "name": "Sørvågen",
+    "kind": "natural/bay",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q2298359",
+    "label": "Sørvågen",
+    "description": "settlement in Moskenes Municipality, Norway",
+    "lat": 67.89056,
+    "lng": 13.02528,
+    "distKm": 0.2,
+    "it": "Sørvågen",
+    "en": "Sørvågen, Moskenes",
+    "nb": "Sørvågen",
+    "commonsCategory": "Sørvågen",
+    "others": [
+     "Q5573674 Glåpen fyr (0.4 km)",
+     "Q140459726 Sørvågen (0.5 km)",
+     "Q33503335 Sørvågen (0.6 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Moskenes view 2009.JPG",
+     "author": "User:Sveter (Please credit as \"Petr Šmerkl, Wikipedia\" in case you use this outside WMF projects.)",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 3008,
+     "height": 2000
+    },
+    {
+     "file": "Sørvågen, Northeast view 20150608 2.jpg",
+     "author": "DXR",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 7080,
+     "height": 4425
+    },
+    {
+     "file": "Sørvågen, Northeast view 20150608 1.jpg",
+     "author": "DXR",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6293,
+     "height": 4192
+    }
+   ],
+   "reading": {
+    "it": "Sørvågen è un villaggio di pescatori situato nel comune di Moskenes sulle isole Lofoten (Norvegia). Il centro abitato (416 abitanti nell'ottobre del 2020) si sviluppa lungo la Strada europea E10 che percorre la costa orientale dell'isola Moskenesøya. Il villaggio ospita una sezione del Norsk Telemuseum (Museo delle telecomunicazioni norvegese). Sørvågen, inoltre, fu la seconda località europea a dotarsi di un sistema telegrafico senza fili che cominciò ad operare il 2 maggio 1906 dopo tre anni di prove (il primo era in Italia) collegando Sørvågen e Røst.",
+    "en": "Sørvågen is a fishing village in Moskenes Municipality in Nordland county, Norway. It is located on the island of Moskenesøya in the Lofoten archipelago. The village of Å lies just to the south. Moskenes Church is located in the northern part of the village along European route E10, in an area that is known as the village of Moskenes (although the two villages have grown together by conurbation and are now considered one urban area by Statistics Norway). The 0.62-square-kilometre (150-acre) village has a population (2023) of 403 and a population density of 650 inhabitants per square kilometre (1,700/sq mi).",
+    "nb": "Sørvågen er et tettsted og et fiskevær i Moskenes kommune i Lofoten i Nordland. Tettstedet har 395 innbyggere per 1. januar 2025, og ligger på sørøstsiden av Moskenesøya. Næringsvirksomhet er hovedsakelig fiskeri og turisme. Stedet er et skolesenter og har dagligvarebutikker, fiskebruk, post, restaurant og en av de faste utstillingene til Norsk Telemuseum. Det går bilferje fra kirkestedet Moskenes til Bodø og Værøy/Røst. I 1906 åpnet en radiotelegrafisamband mellom Sørvågen og Røst. Dette var det andre trådløse telegrafisambandet i verden og etablerte Sørvågen radiotelegrafstasjon som et viktig senter. Siste soloppgang før mørketida er 10. desember og første soloppgang etter mørketida er 2. januar."
+   }
+  },
+  {
+   "key": "reinebringen",
+   "query": "Reinebringen",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.92784,
+    "lng": 13.0714,
+    "osm": "node/886650679",
+    "name": "Reinebringen",
+    "kind": "natural/peak",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q31652043",
+    "label": "Reinebringen",
+    "description": "mountain in Norway",
+    "lat": 67.9261,
+    "lng": 13.07532,
+    "distKm": 0.5,
+    "nb": "Reinebringen",
+    "commonsCategory": "Reinebringen",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Fjellet Reinebringen i høstfarger.jpg",
+     "author": "Lofotenfriluftsrad",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4000,
+     "height": 2250
+    },
+    {
+     "file": "Reinebringen by Night, Lofoten, Norway.jpg",
+     "author": "Christoph Strässler",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 8245,
+     "height": 4638
+    },
+    {
+     "file": "Hamnøya, Toppøya, Olenilsøya and other islands of Reinefjorden in Moskenes, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6000,
+     "height": 3002
+    }
+   ],
+   "reading": {
+    "nb": "Reinebringen (484 moh.) er et fjell i Moskenes kommune lengst vest i Lofoten. Fjellet er et av de mest besøkte fjellene i Norge, med 215 000 besøkende i 2023. På grunn av slitasjeskader er fjellet tilrettelagt med en steintrapp. Dette til tross, er det en krevende og bratt tur. Det har vært flere dødsfall og mange redningsaksjoner, og det frarådes å gå der på høsten, vinteren og våren på grunn av fare for stein og snøras."
+   }
+  },
+  {
+   "key": "kvalvika",
+   "query": "Kvalvika",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.07997,
+    "lng": 13.08043,
+    "osm": "node/12365548524",
+    "name": "Kvalvika",
+    "kind": "natural/bay",
+    "distKm": 3.5
+   },
+   "match": {
+    "qid": "Q11982594",
+    "label": "Kvalvika",
+    "description": "vik i Flakstad kommune",
+    "lat": 68.079,
+    "lng": 13.08,
+    "distKm": 3.5,
+    "nb": "Kvalvika (Flakstad)",
+    "commonsCategory": "Kvalvika (Lofoten)",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Nordnorwegen 2019 0215 (48651841428).jpg",
+     "author": "Markus Trienke",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 8516,
+     "height": 3167
+    },
+    {
+     "file": "Nordnorwegen 2019 0198 (48652089081).jpg",
+     "author": "Markus Trienke",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 6130,
+     "height": 4087
+    },
+    {
+     "file": "Kvalvika - view.jpg",
+     "author": "Raf24~commonswiki",
+     "license": "CC BY 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+     "width": 5184,
+     "height": 3888
+    }
+   ],
+   "reading": {
+    "nb": "Kvalvika er ei vik på nordøstsida av Moskenesøya i Flakstad kommune i Nordland. Vika ligger omgitt av fjellene Ryten i nord og Kjerringa i sør. Måltinden og Torsfjordtinden ligger på sørøstsiden mens Kvalvikgrunnen og Norskehavet ligger i nordvest. I bunnen av Kvalvika ligger de to sandstrendene i Nordvika og Vestervika adskilt av den bratte skråningen Hellan. Sti fra Nordvika til Torsfjord ved Torsfjorden (ca. 2 km) og fra Vestervika til Markjorda ved Selfjorden (ca. 3,5 km). Stien mellom strendene over den ulendte Kuhella ble sikret med kjetting sommeren 2011. Området er et av de mest populære turmålene i Flakstad om sommeren. Kvalvika er et av flere steder på vest- og nordsida («yttersida») av Moskenesøya som tidligere var bebodd, men som i dag er fraflyttet. Sterke brottsjøer og dårlige havneforhold gjorde Kvalvika uegnet til å drive fiske fra, så i likhet med folk fra de fleste andre…"
+   }
+  },
+  {
+   "key": "ryten",
+   "query": "Ryten",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.08933,
+    "lng": 13.0929,
+    "osm": "node/1814108322",
+    "name": "Ryten",
+    "kind": "natural/peak",
+    "distKm": 3
+   },
+   "match": {
+    "qid": "Q31657540",
+    "label": "Ryten",
+    "description": "mountain in Flakstad Municipality, Lofoten, Norway",
+    "lat": 68.08908,
+    "lng": 13.09298,
+    "distKm": 3,
+    "commonsCategory": "Ryten",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Ryten and Torsfjordtinden in Flakstad, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5000,
+     "height": 3333
+    },
+    {
+     "file": "Hiking Trail to Ryten, Lofoten, Norway.jpg",
+     "author": "Christoph Strässler",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 8219,
+     "height": 4623
+    },
+    {
+     "file": "View towards Ryten and Middagstinden over Kåkersundet in Flakstad, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5850,
+     "height": 2669
+    }
+   ],
+   "reading": {}
+  },
+  {
+   "key": "fredvang",
+   "query": "Fredvang",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.08406,
+    "lng": 13.16669,
+    "osm": "node/1599256706",
+    "name": "Fredvang",
+    "kind": "place/village",
+    "distKm": 0.5
+   },
+   "match": {
+    "qid": "Q1777230",
+    "label": "Fredvangbruene",
+    "description": "group of bridges in Flakstad, Norway",
+    "lat": 68.08111,
+    "lng": 13.19056,
+    "distKm": 0.9,
+    "en": "Fredvang Bridges",
+    "nb": "Fredvangbruene",
+    "commonsCategory": "Fredvangbruene",
+    "others": [
+     "Q3087236 Fredvang (0.5 km)",
+     "Q141754204 Fredvang gravsted (1.9 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Fredvang Bridges 2006.jpg",
+     "author": "bittidjz",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 1024,
+     "height": 683
+    },
+    {
+     "file": "Wide view over Hovdanvika, Selfjorden and Torsfjorden at Fredvang in Flakstad, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 9160,
+     "height": 2800
+    },
+    {
+     "file": "Strandveien road via the Fredvang Bridges, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 3600,
+     "height": 2398
+    }
+   ],
+   "reading": {
+    "en": "The Fredvang Bridges (Norwegian: Fredvangbruene) are two cantilever bridges that connect the fishing village of Fredvang on the island of Moskenesøya with the neighboring island of Flakstadøya — in Flakstad Municipality, Nordland county, Norway. The south bridge is called Kubholmleia Bridge (Norwegian: Kubholmleia bru) and the north bridge is Røssøystraumen Bridge (Norwegian: Røssøystraumen bru). The two bridges are each 240 metres (790 ft) long, with a cantilevered center span of 115 metres (377 ft). The bridges, which opened in 1988, are among many bridges that interconnect the islands of the Lofoten archipelago. The only other bridge connecting these two islands is the Kåkern Bridge.",
+    "nb": "Fredvangbruene er to fritt frambygg-bruer som forbinder fiskeværet Fredvang på Moskenesøya med resten av Flakstad kommune på Flakstadøya i Nordland. Bruene er del av fylkesvei 7708. Både Kubbholmleia bru og Røssøystraumen bru er 240 meter lange og har hovedspenn på 115 meter. Begge bruene har 3 spenn og seilingshøyde på 16 meter. Bruene ble åpnet 3. desember 1988 og erstattet fergestrekningen mellom Finnbyen og Fredvang. Fergeforbindelsen ble satt i drift i 1965."
+   }
+  },
+  {
+   "key": "ramberg",
+   "query": "Ramberg",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.08991,
+    "lng": 13.22989,
+    "osm": "node/1384274312",
+    "name": "Ramberg",
+    "kind": "place/village",
+    "distKm": 0
+   },
+   "match": {
+    "qid": "Q1771286",
+    "label": "Ramberg",
+    "description": "settlement in Flakstad Municipality, Norway",
+    "lat": 68.09083,
+    "lng": 13.23167,
+    "distKm": 0.1,
+    "en": "Ramberg, Flakstad",
+    "nb": "Ramberg (Flakstad)",
+    "commonsCategory": "Ramberg, Flakstad",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Ramberg (Lofoten).jpg",
+     "author": "Æøå",
+     "license": "Public domain",
+     "width": 2816,
+     "height": 2112
+    },
+    {
+     "file": "Nordnorwegen 2019 0112 (48616856787).jpg",
+     "author": "Markus Trienke",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 16689,
+     "height": 5990
+    },
+    {
+     "file": "Nordnorwegen 2019 0301 (49222468382).jpg",
+     "author": "Markus Trienke",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 6720,
+     "height": 4480
+    }
+   ],
+   "reading": {
+    "en": "Ramberg is the administrative centre of Flakstad Municipality in Nordland county, Norway. The village is located on the island of Flakstadøya in the Lofoten archipelago. It has approximately 350 inhabitants. The European route E10 highway passes through Ramberg. Ramberg has a library, a small shopping centre with a supermarkets that includes postal services, an unmanned petrol station, a restaurant and pub, and a bank. The youth club regularly shows films in the community hall, which is also used for functions. Ramberg school, located by the beach, caters for students from 1st to 10th grade and has both a swimming pool and a high-standard synthetic grass soccer field. Ramberg is also famous for its white sand beach. Norway's Crown Prince Haakon (later Haakon VIII) kited at Ramberg beach during the Easter holidays in 2012. Flakstad Church is located about 4 kilometres (2.5 mi) northeast of...",
+    "nb": "Ramberg er administrasjonssenteret i Flakstad kommune i Lofoten i Nordland. Ramberg ligger på Flakstadøya. På stedet Flakstad ved Ramberg ligger Flakstad kirke, som er bygget i 1780. Navnet Ramberg er satt sammen av ram (ramn/ravn) og berg, og betyr altså Ravneberget. Siste soloppgang før mørketida er 8. desember og første soloppgang etter mørketida er 4. januar. Historisk har fiskeri vært det viktigste næringsgrunnlaget på Ramberg, ofte i kombinasjon med jordbruk. I de senere årene har reiseliv fått økende betydning, med blant annet Rambergstranda og Volandstinden (457 m.o.h.) som populære turistmål. Stedet har også flere lokale servicetilbud, herunder barne- og ungdomsskole og bibliotek."
+   }
+  },
+  {
+   "key": "flakstad-kirke",
+   "query": "Flakstad kirke",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.10482,
+    "lng": 13.30625,
+    "osm": "way/169718277",
+    "name": "Flakstad kirke",
+    "kind": "amenity/place_of_worship",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q4582019",
+    "label": "Flakstad kirke",
+    "description": "church in Flakstad, Norway",
+    "lat": 68.1048,
+    "lng": 13.3063,
+    "distKm": 0.9,
+    "en": "Flakstad Church",
+    "nb": "Flakstad kirke",
+    "commonsCategory": "Flakstad kirke",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Flakstad kyrkje.jpg",
+     "author": "Jon Olav Eikenes from Oslo, Norway",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 1600,
+     "height": 1149
+    },
+    {
+     "file": "Flakstad kirke, Nordland - Riksantikvaren-T424 01 0130.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 6790,
+     "height": 3886
+    },
+    {
+     "file": "Flakstad kirkested.jpg",
+     "author": "Mikkoau",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6000,
+     "height": 4000
+    }
+   ],
+   "reading": {
+    "en": "Flakstad Church (Norwegian: Flakstad kirke) is a parish church of the Church of Norway in Flakstad Municipality in Nordland county, Norway. It is located in the village of Flakstad. It is the church for the Flakstad parish which is part of the Lofoten prosti (deanery) in the Diocese of Sør-Hålogaland. The red, wooden church was built in a cruciform style in 1780. The church seats about 300 people. It is the millennium site for Flakstad Municipality. The long, low church building is a cog-jointed construction using timbers clad externally with red-painted wooden paneling, as was usual at the end of the eighteenth century. The small-paned windows have white frames. The roof is covered with tiles and a ridge turret with an onion dome and spire crowns the intersection of the cross arms.",
+    "nb": "Flakstad kirke ligger på stedet Flakstad i Flakstad kommune i Nordland. Kirka er ei korskirke i tre med 300 plasser. Den ble bygd i 1780, og restaurert i 1872 og 1938."
+   }
+  },
+  {
+   "key": "skagsanden",
+   "query": "Skagsanden",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.10343,
+    "lng": 13.28533,
+    "osm": "node/8402345777",
+    "name": "Skagsanden",
+    "kind": "tourism/viewpoint",
+    "distKm": 0.4
+   },
+   "match": null,
+   "photos": []
+  },
+  {
+   "key": "vikten",
+   "query": "Vikten",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.14294,
+    "lng": 13.31497,
+    "osm": "node/9161763458",
+    "name": "Vikten",
+    "kind": "highway/bus_stop",
+    "distKm": 2.3
+   },
+   "match": {
+    "qid": "Q3558284",
+    "label": "Vikten",
+    "description": "settlement in Flakstad Municipality, Norway",
+    "lat": 68.14013,
+    "lng": 13.31629,
+    "distKm": 2.3,
+    "nb": "Vikten",
+    "commonsCategory": "Vikten",
+    "others": [
+     "Q35445845 Viktendalen (4.3 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Vikten-02-Strand-2019-gje.jpg",
+     "author": "Gerd Eichmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5184,
+     "height": 3456
+    },
+    {
+     "file": "Costa de Napp, Lofoten, Noruega, 2019-09-05, DD 21.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 8322,
+     "height": 5670
+    },
+    {
+     "file": "Costa de Napp, Lofoten, Noruega, 2019-09-05, DD 26-29 PAN.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 11029,
+     "height": 4218
+    }
+   ],
+   "reading": {
+    "nb": "Vikten er også det tidligere navnet til Vikna kommune. Vikten er ei bygd i Flakstad kommune i Nordland. Stedet ligger nord på den østlige delen av Flakstadøya, 4,2 kilometer fra Vareid, i enden av fylkesvei 811, som er en del av Nasjonal turistvei Lofoten. Et flertall av innbyggerne i Vikten er medlemmer av trossamfunnet Guds menighet. Åsvar og Åse Tangrand driver brukskunstsenteret Lofoten Design på Vikten, med glassproduksjon i Glasshytta (bygd 1992) og keramikkproduksjon i Keramikktårnet (bygd 2000). På moreneplatået ovenfor bebyggelsen ble det i 2011 startet bygging av en ny bygning til reiselivsbruk, Rahula. Utbedring av veien opp til Rahula blir finansiert av Vegvesenet som en del av prosjektet Nasjonal turistvei. Vikten skole er privat og drives av sekten Guds Menighet. Ifølge Oluf Ryghs Norske Gaardnavne er navnet Vikten i slekt med navnet Vikna (som tidligere het Vikten), og er…"
+   }
+  },
+  {
+   "key": "ballstad",
+   "query": "Ballstad",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.06885,
+    "lng": 13.53276,
+    "osm": "node/9840554355",
+    "name": "Ballstad",
+    "kind": "place/farm",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q2148025",
+    "label": "Ballstad",
+    "description": "settlement in Vestvågøy Municipality, Norway",
+    "lat": 68.07431,
+    "lng": 13.54515,
+    "distKm": 0.8,
+    "en": "Ballstad",
+    "nb": "Ballstad",
+    "commonsCategory": "Ballstad",
+    "others": [
+     "Q11960098 Ballstad fyr (2.4 km)",
+     "Q49632295 Ballstadøya (0.9 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Ballstad-winter.jpg",
+     "author": "Algkalv (talk)",
+     "license": "CC BY 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+     "width": 3872,
+     "height": 2176
+    },
+    {
+     "file": "Kanstadsamlingen - NMF010005-00271.jpg",
+     "author": "Kristian Magnus Kanstad",
+     "license": "Public domain",
+     "width": 8741,
+     "height": 8687
+    },
+    {
+     "file": "Kanstadsamlingen - NMF010005-00265b.jpg",
+     "author": "Kristian Magnus Kanstad",
+     "license": "Public domain",
+     "width": 8695,
+     "height": 7259
+    }
+   ],
+   "reading": {
+    "en": "Ballstad is a village in Vestvågøy Municipality in Nordland county, Norway. It is located on a small island off the southwestern tip of the island of Vestvågøya in the Lofoten archipelago. It is one of the largest fishing villages in Lofoten. Ballstad is a coastal village situated near the mouth of Buksnesfjorden, where it meets Vestfjorden. The mountain Skottinden lies just west of the village and the village of Gravdal lies about 5 kilometres (3.1 mi) to the north and the town of Leknes lies just north of Gravdal. The 0.78-square-kilometre (190-acre) village has a population (2023) of 848 and a population density of 1,087 inhabitants per square kilometre (2,820/sq mi).",
+    "nb": "Ballstad er også navnet på en gård i Tjeldsund, se Ballstad (Tjeldsund). Ballstad er et fiskevær og et tettsted i Vestvågøy kommune i Lofoten i Nordland. Tettstedet har 1 142 innbyggere 1. januar 2020 (fordelt på grunnkretsene Ballstad 541, Reine 265, Skotnes/Skarsjø 210 og Gjerstad 126), og ligger på sydspissen av Vestvågøya ytterst ut mot Vestfjorden. Navnet kommer visstnok fra det norrøne mannsnavnet Baldrekr. Fiskeværet er skjermet mot storhavet av store og små øyer."
+   }
+  },
+  {
+   "key": "leknes",
+   "query": "Leknes",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.14746,
+    "lng": 13.61153,
+    "osm": "node/31264104",
+    "name": "Leknes",
+    "kind": "place/town",
+    "distKm": 0.3
+   },
+   "match": {
+    "qid": "Q1993766",
+    "label": "Leknes",
+    "description": "leknes er en by med kongen isak og mange av hannes medhjelpere. Noen av hannes medhjelpere er Imre, jens, liam og morgan.",
+    "lat": 68.1475,
+    "lng": 13.6115,
+    "distKm": 0.3,
+    "it": "Leknes",
+    "en": "Leknes",
+    "nb": "Leknes",
+    "commonsCategory": "Leknes",
+    "others": [
+     "Q2673185 Leknes lufthavn (0.5 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Leknes-winter.jpg",
+     "author": "Algkalv (talk)",
+     "license": "CC BY 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+     "width": 3872,
+     "height": 2176
+    },
+    {
+     "file": "Vista de Leknes, Lofoten, Noruega, 2019-09-05, DD 10-18 PAN.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 25901,
+     "height": 3185
+    },
+    {
+     "file": "Vista de Leknes, Lofoten, Noruega, 2019-09-05, DD 09.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6395,
+     "height": 3557
+    }
+   ],
+   "reading": {
+    "it": "Leknes è una città e centro amministrativo del comune di Vestvågøy ed il centro urbano più popolato delle Lofoten e delle Vesterålen, nella contea del Nordland in Norvegia. Fornita di un proprio aeroporto, contende a Svolvær il ruolo di centro abitato principale delle Lofoten. È una delle poche città dell'arcipelago a non fondare la propria economia sulla pesca e che non si affaccia, con il proprio centro, sul mare.",
+    "en": "Leknes () is a town in Vestvågøy Municipality in Nordland county, Norway. The town is also the administrative centre of Vestvågøy Municipality (with 11,619 inhabitants, it is the most populous municipality in Lofoten and Vesterålen). Leknes was designated a \"town\" (Norwegian: by) in 2002. The 2.7-square-kilometre (670-acre) town has a population (2023) of 3,763 and a population density of 1,394 inhabitants per square kilometre (3,610/sq mi). The town is situated in the geographical middle of the Lofoten archipelago on the island of Vestvågøya. It is approximately 68 kilometres (42 mi) west of the town of Svolvær and 65 kilometres (40 mi) east of the village of Å in Moskenes Municipality. Leknes is one of the few towns in Lofoten that does not depend on fisheries and does not have its town centre by the sea. Because of this, and because of its rapid growth in recent years, it does not have...",
+    "nb": "Leknes er en by og administrasjonssenteret i Vestvågøy kommune i Nordland. Leknes fikk bystatus etter vedtak i kommunestyret 14. september 2002, og er nå sammen med Svolvær en av to byer i Lofoten. Tettstedet Leknes har 3 776 innbyggere per 1. januar 2025, og er tettstedet med størst befolkningsvekst i Lofoten og Vesterålen i perioden 2000 til 2008."
+   }
+  },
+  {
+   "key": "uttakleiv",
+   "query": "Uttakleiv",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.20934,
+    "lng": 13.50499,
+    "osm": "way/283663152",
+    "name": "Uttakleiv",
+    "kind": "amenity/parking",
+    "distKm": 0.2
+   },
+   "match": null,
+   "photos": []
+  },
+  {
+   "key": "unstad",
+   "query": "Unstad",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.26735,
+    "lng": 13.58749,
+    "osm": "node/3644081451",
+    "name": "Unstad",
+    "kind": "place/hamlet",
+    "distKm": 0.4
+   },
+   "match": {
+    "qid": "Q19393966",
+    "label": "Unstad",
+    "description": "settlement in Vestvågøy municipality, Norway",
+    "lat": 68.267,
+    "lng": 13.588,
+    "distKm": 0.5,
+    "nb": "Unstad",
+    "commonsCategory": "Unstad",
+    "others": [
+     "Q19393967 Unstadtunnelen (2.1 km)",
+     "Q141754454 Unstad gravsted (0.6 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Unstad-10-Strand-2019-gje.jpg",
+     "author": "Gerd Eichmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5184,
+     "height": 3456
+    },
+    {
+     "file": "Mountain view at Unstadsjøveien road in Vestvågøy, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 8260,
+     "height": 3610
+    },
+    {
+     "file": "Unstad in Vestvågøy, Nordland, Norway, 2022 June - 2.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5000,
+     "height": 3333
+    }
+   ],
+   "reading": {
+    "nb": "Unstad, også skrevet Unnstad, er en bygd i Vestvågøy kommune i Nordland. Bygden ligger på vestsiden av Vestvågøya, på en kyststripe som lokalt også kalles «Yttersida». Stedet har 19 innbyggere (2015). Unstad ligger i bunnen av Unstadvika og er omgitt av fjell på 300–650 meters høyde. Stedet er endepunkt for fylkesvei 992. Stedets sandstrand er kjent i Norge og internasjonalt som et sted for surfing og har blitt omtalt med reportasjer blant annet i tidsskriftet Surfer. I 2016 ble surfekonkurransen «Lofoten Masters» arrangert på stranden."
+   }
+  },
+  {
+   "key": "eggum",
+   "query": "Eggum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.30018,
+    "lng": 13.63293,
+    "osm": "way/683265967",
+    "name": "Eggum naturreservat",
+    "kind": "leisure/nature_reserve",
+    "distKm": 1.3
+   },
+   "match": {
+    "qid": "Q3049167",
+    "label": "Eggum",
+    "description": "settlement in Vestvågøy municipality, Norway",
+    "lat": 68.308,
+    "lng": 13.685,
+    "distKm": 1.5,
+    "nb": "Eggum",
+    "commonsCategory": "Eggum (Vestvågøy)",
+    "others": [
+     "Q11966627 Eggum naturreservat (1.0 km)",
+     "Q108708008 Eggum (0.3 km)",
+     "Q31248721 Eggumaksla (0.8 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Eggum Vestvågøy.jpg",
+     "author": "Sberla_",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 3072,
+     "height": 2304
+    },
+    {
+     "file": "Admiralty Chart No 3690 Eggum to Fuglehuk, Published 1908.jpg",
+     "author": "United Kingdom Hydrographic Office",
+     "license": "Public domain",
+     "width": 13633,
+     "height": 10878
+    },
+    {
+     "file": "Naustene, Eggum, Nordlands amt - fo30141510260006.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9536,
+     "height": 7360
+    }
+   ],
+   "reading": {
+    "nb": "Eggum er et fiskevær i Vestvågøy kommune i Nordland. Det ligger på nordsida av Vestvågøya i Lofoten, rundt 8 kilometer nord for Borge. Grunnkretsen Eggum hadde 74 innbyggere pr. 1. januar 2017. Eggum har veiforbindelse med fylkesvei 994 til E10 ved Bøstad (9,8 km). Vest for Eggum ligger Eggum naturreservat."
+   }
+  },
+  {
+   "key": "borg-lofoten",
+   "query": "Borg",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.23976,
+    "lng": 13.75033,
+    "osm": "node/249162255",
+    "name": "Bøstad",
+    "kind": "place/quarter",
+    "distKm": 0
+   },
+   "match": {
+    "qid": "Q2930166",
+    "label": "Bøstad",
+    "description": "village in Vestvågøy Municipality, Norway",
+    "lat": 68.25167,
+    "lng": 13.76861,
+    "distKm": 1.5,
+    "en": "Bøstad",
+    "nb": "Bøstad",
+    "others": [
+     "Q11962910 Bøstad skole (0.1 km)"
+    ]
+   },
+   "photos": [],
+   "reading": {
+    "en": "Bøstad is a village in Vestvågøy Municipality in Nordland county, Norway. It is located along the European route E10 highway just next to the hamlet of Borg (and the Lofotr museum) in the central part of the island of Vestvågøya in the Lofoten archipelago. Borge Church is located in Borg, very close to the village of Bøstad. Historically, this village was the administrative centre of the old Borge Municipality which existed from 1838 until 1963.",
+    "nb": "Bøstad på Vestvågøya i Vestvågøy kommune i Lofoten er rikt på kulturminner fra forhistorisk tid og middelalderen. På Borg har arkeologiske utgravinger brakt for dagen spor og levninger etter en stor bygning fra Vikingtiden som har fungert som høvdingsete. Bygningen er rekonstruert i full størrelse og blir benyttet til museumet Lofotr Vikingmuseum. Ikke langt fra stedet der vikingtidsbygningen sto, ligger Borge kirke, som er den siste i en rekke av minst fem kirker som har stått på samme stedet gjennom tidene. I området er det også registrert flere andre fornminner. På Borg ligger Bøstad skole."
+   }
+  },
+  {
+   "key": "stamsund",
+   "query": "Stamsund",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.12107,
+    "lng": 13.84071,
+    "osm": "node/171244415",
+    "name": "Stamsund",
+    "kind": "amenity/ferry_terminal",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q786301",
+    "label": "Stamsund",
+    "description": "settlement in Vestvågøy Municipality, Norway",
+    "lat": 68.13,
+    "lng": 13.84917,
+    "distKm": 1.2,
+    "it": "Stamsund",
+    "en": "Stamsund",
+    "nb": "Stamsund",
+    "commonsCategory": "Stamsund",
+    "others": [
+     "Q4583035 Stamsund kirke (2.7 km)",
+     "Q19390234 Stamsund fyr (0.5 km)",
+     "Q140459541 Stamsund (1.4 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Stamsund Hafen.jpg",
+     "author": "Clemensfranz",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "width": 4048,
+     "height": 3040
+    },
+    {
+     "file": "Havnen, Stamsund, Nordlands amt - fo30141512110007.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9893,
+     "height": 7475
+    },
+    {
+     "file": "Stamsund - Vestvågøy Municipality, Nordland, Norway - August 1989.jpg",
+     "author": "Giorgio Galeotti",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6000,
+     "height": 4000
+    }
+   ],
+   "reading": {
+    "it": "Stamsund è un villaggio norvegese del comune di Vestvågøy, situato nell'arcipelago delle isole Lofoten. Ha circa 1 400 abitanti e si trova nei pressi di un'importante area di pesca del merluzzo.",
+    "en": "Stamsund is a fishing village in Vestvågøy Municipality in Nordland county, Norway. It is located on the southern side of the island of Vestvågøya in the Lofoten archipelago, along the Vestfjorden. The village is located about 12 kilometres (7.5 mi) east of the town of Leknes. Historically, the village was the administrative centre of Hol Municipality from 1919 until 1963. The 1.03-square-kilometre (250-acre) village has a population (2023) of 1,104 and a population density of 1,072 inhabitants per square kilometre (2,780/sq mi). The Hurtigruten Coastal Express service stops twice a day at the Stamsund port, southbound from Svolvær and northbound from Bodø. Stamsund Church is located in this village and it serves the whole Stamsund region.",
+    "nb": "Stamsund er et tettsted i Vestvågøy kommune i Lofoten i Nordland. Tettstedet har 1 107 innbyggere per 1. januar 2025. Stamsund er et viktig fiskevær med Lerøy Seafoods as som viktigste bedrift. Nordland Havfiske A/S er det største trålselskapet i Nord-Norge. Stamsund har et stort kulturliv med to frie teatergrupper Teaternor samt Figurteateret i Nordland, kunstgalleri og flere kunstnere, samt alpinbakke. Overnattingsmuligheter er flere rorbuanlegg og et vandrehjem. Hotellet i Stamsund var asylmottak fra 1. september 2009. Hotellet ble renovert og gjenåpnet i juni 2018 under navnet «Live Lofoten Hotel». Ettersom Stamsund ligger nord for Polarsirkelen, opplever stedet både midnattssol og mørketid. Midnattsolen varer i perioden 27. mai til 17. juli, mens siste soloppgang før mørketidens inntreden er 7. desember og første soloppgang etter er 5. januar. På sitt laveste er Solen ca 1,6° under…"
+   }
+  },
+  {
+   "key": "gimsoy",
+   "query": "Gimsøya",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.30133,
+    "lng": 14.2083,
+    "osm": "relation/4148162",
+    "name": "Gimsøya",
+    "kind": "place/island",
+    "distKm": 2.4
+   },
+   "match": {
+    "qid": "Q1524834",
+    "label": "Gimsøya",
+    "description": "island in Vågan Municipality, Norway",
+    "lat": 68.30056,
+    "lng": 14.2075,
+    "distKm": 2.4,
+    "it": "Gimsøya",
+    "en": "Gimsøya",
+    "nb": "Gimsøya",
+    "commonsCategory": "Gimsøy",
+    "others": [
+     "Q4582588 Gimsøy kirke (4.4 km)",
+     "Q3355840 Gimsøystraumen bru (6.0 km)",
+     "Q11971997 Gimsøy kommune (4.4 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Gimsoy kirke.jpg",
+     "author": "Own work",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "width": 1730,
+     "height": 1168
+    },
+    {
+     "file": "View at Gimsøystraumen in Vågan, Lofoten, Norway, 2015 April.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 8500,
+     "height": 1867
+    },
+    {
+     "file": "Gimsøy-02-2019-gje.jpg",
+     "author": "Gerd Eichmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5184,
+     "height": 3456
+    }
+   ],
+   "reading": {
+    "it": "Gimsøya è un'isola facente parte dell'arcipelago delle Lofoten in Norvegia. L'isola fa parte del comune di Vågan nella contea di Nordland, ha una superficie di 46,4 km² e una popolazione di 181 persone (2016). Gimsøya è situata tra le isole di Austvågøy a est e Vestvågøy a ovest dalle quali è separata dagli stretti di Gimsøystraumen e Sundklakkstraumen entrambi caratterizzati da forti correnti di marea. I ponti di Gimsøystraumen (1981) e Sundklakkstraumen (1976), attraversati dalla Strada europea E10, che percorre la costa meridionale dell'isola, la collegano via terra con le isole circostanti. L'isola è parzialmente costituita da torbiere, nella parte più meridionale è prevalentemente rocciosa e raggiunge la massima elevazione nella parte sudorientale con il monte Svarttinden, 768 m s.l.m. la costa nordoccidentale presenta lunghe spiagge sabbiose. Sull'isola si trova la chiesa di Gimsøysand...",
+    "en": "Gimsøya is an island in Vågan Municipality in Nordland county, Norway. Gimsøya is situated between the islands of Austvågøya and Vestvågøya in the Lofoten archipelago. The 46.4-square-kilometre (17.9 sq mi) island has a population (2016) of 181. The European route E10 highway passes through Gimsøya linking the island to Austvågøya by the Gimsøystraumen Bridge and to the island of Vestvågøya by the Sundklakkstraumen Bridge. The main population centres on Gimsøya include Vinje (where Gimsøy Elementary school is located), Hov (where the golf course is located), Hovsund (where the marina and the abandoned fish factory is located), Barstrand (where some fishing industry is located), Gimsøysand (where Gimsøy Church is located), and Årrstranda. Historically, the island made up a large part of the old Gimsøy Municipality which existed from 1856 until its dissolution in 1964.",
+    "nb": "Gimsøya er ei øy i Lofoten. Øya ligger mellom Austvågøya og Vestvågøya med Gimsøystraumen i øst og Sundklakkstraumen i vest, og tilhører Vågan kommune. Øya har et areal på 46,4 km². Den sørlige og østlige delen av Gimsøya er kupert. Høyeste punkt er Svarttinden på 767 moh. I nord og vest er øya flat og myrlendt, med unntak av fjellet Hoven på 368 moh. Det er store vernede områder på Gimsøy knyttet til særskilt fauna og fugleliv. Gimsøymyrene naturreservat ligger på øya. Herfra kommer også Gimsøysteinen; en av de tre kjente runesteinene fra Nordland. Den står i dag på Tromsø museum. På Gimsøya ligger stedene Vinje (hvor butikk, barnehage og Gimsøy barne- og ungdomsskole ligger), Saupstad, Hov (hvor golfbane og hyttefelt mot Hovsund befinner seg), Hovsund (hvor småbåthavna og det nedlagte fiskebruket befinner seg), Vik , Årstrand, Sundklakk, Barstrand (hvor en del fiskeindustri er lokalisert…"
+   }
+  },
+  {
+   "key": "kabelvag",
+   "query": "Kabelvåg",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.21012,
+    "lng": 14.47738,
+    "osm": "node/220018283",
+    "name": "Kabelvåg",
+    "kind": "place/village",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q1719658",
+    "label": "Kabelvåg",
+    "description": "settlement in Vågan Municipality, Norway",
+    "lat": 68.21667,
+    "lng": 14.48333,
+    "distKm": 0.8,
+    "en": "Kabelvåg",
+    "nb": "Kabelvåg",
+    "commonsCategory": "Kabelvåg",
+    "others": [
+     "Q140459687 Kabelvåg (0.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Kabelvåg fra sjøsiden.jpg",
+     "author": "Henrik Dvergsdal",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5616,
+     "height": 3159
+    },
+    {
+     "file": "Kabelvåg, Lofoten, Noruega, 2019-09-05, DD 36-40 PAN.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 12987,
+     "height": 3711
+    },
+    {
+     "file": "Marked, Kabelvåg, Nordlands amt - fo30141512100005.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9917,
+     "height": 7319
+    }
+   ],
+   "reading": {
+    "en": "Kabelvåg (Norwegian), Gábelváhke (Lule Sami), or Gávvalváhki (Northern Sami) is a village in Vågan Municipality in Nordland county, Norway. It is located on the southern shore of the island of Austvågøya in the Lofoten archipelago. Kabelvåg lies about 5 kilometres (3.1 mi) to the southwest of the town of Svolvær, the administrative centre of Vågan Municipality. The 1.37-square-kilometre (340-acre) village has a population (2023) of 2,291 and a population density of 1,672 inhabitants per square kilometre (4,330/sq mi). The village was founded as \"Vågan\" in the early 12th century by King Øystein Magnusson, who built a church and a fishermen's hostel there. According to the Heimskringla, there was something resembling a town there several centuries earlier — the first known town in North Norway, known as \"Vågar\". There are several attractions in Kabelvåg: the Lofoten Museum, Lofoten Aquarium...",
+    "nb": "Kabelvåg (nordsamisk: Gávvalváhki, lulesamisk: Kabelváhke eller Gábelváhke) er et fiskevær og et tettsted i Vågan kommune i Lofoten i Nordland. Tettstedet har 2 337 innbyggere per 1. januar 2025 og ligger på sørkysten av Austvågøy. Navnet kan være avledet av «kapell». Det gamle navnet på Kabelvåg er Vágar (Vågar) som bestod av tre viktige bukter («våger»); Storvågan, Kabelvåg og Kirkevågen (Kjerkevågen). Se Vágar i Hålogaland. Kabelvåg er en meget gammel handels- og markedsplass og kirkested; kong Øystein (Øystein I Magnusson) skal ha bygd kirke og rorbuer i Kabelvåg tidlig på 1100-tallet. Kabelvåg var administrasjonssentrum i den gamle Vågan kommune før kommunesammenslåingen med Gimsøy kommune og Svolvær kommune i 1964. Enkelte lokalhistorikere, deriblant Håkon Brun, har også omtalt Kabelvåg som byen mellom fjellene i Lofoten, der ligger Kabelvåg."
+   }
+  },
+  {
+   "key": "lofotakvariet",
+   "query": "Lofotakvariet",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.2075,
+    "lng": 14.44894,
+    "osm": "node/5870439785",
+    "name": "Lofotakvariet",
+    "kind": "tourism/museum",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q1867915",
+    "label": "Lofotakvariet",
+    "description": "aquarium in Norway",
+    "lat": 68.2074,
+    "lng": 14.4495,
+    "distKm": 0.9,
+    "nb": "Lofotakvariet",
+    "commonsCategory": "Lofotakvariet",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Lofotakvariet 2004.jpg",
+     "author": "Stahlkocher",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "width": 1288,
+     "height": 966
+    },
+    {
+     "file": "Lofoten Aquarium in Vågan, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5000,
+     "height": 3334
+    },
+    {
+     "file": "Lofoten Aquarium in Vågan, Nordland, Norway, 2022 June - 2.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4200,
+     "height": 3150
+    }
+   ],
+   "reading": {
+    "nb": "Lofotakvariet er et saltvannsakvarium som ligger i Storvågan ved Kabelvåg i Vågan kommune, Nordland. Det ble åpnet i 1989 og har over 30 000 besøkende hvert år. Det første akvariet ble bygget i 1931, ved moloen i Kabelvåg. Siden 1989 har Lofotakvariet vært lokalisert i Storvågan. Lofotakvariet har store og små akvarier hvor man kan studere Lofotens undersjøiske verden, og har egne bassenger for sel og oter. Akvariet har også kafé og multimedia-fremvisninger. Akvariet har også en utstilling dedikert til kaldtvannskoraller, samt et visningssenter for norsk havbruk. I mai 2008 ble Lofotakvariet rammet av giftalgen Chrychromulina leadbeateri, noe som resulterte i at store deler av fiskene døde."
+   }
+  },
+  {
+   "key": "lofotmuseet",
+   "query": "Lofotmuseet",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.2068,
+    "lng": 14.45331,
+    "osm": "relation/7450282",
+    "name": "Lofotmuseet",
+    "kind": "tourism/museum",
+    "distKm": 0.8
+   },
+   "match": {
+    "qid": "Q15051545",
+    "label": "Lofotmuseet",
+    "lat": 68.20697,
+    "lng": 14.45292,
+    "distKm": 0.8,
+    "nb": "Lofotmuseet",
+    "commonsCategory": "Lofotmuseet",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Lofoten Museum, Kabelvåg, Lofoten (15226703298).jpg",
+     "author": "Christoph Strässler from Oberdorf BL, Schweiz",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 3888,
+     "height": 2187
+    },
+    {
+     "file": "Lofotmuseet in Vågan, Nordland, Norway, 2022 June.jpg",
+     "author": "Ximonic (Simo Räsänen)",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5000,
+     "height": 3019
+    },
+    {
+     "file": "Lofotmuseet 21 BG.jpg",
+     "author": "Bingar1234",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4896,
+     "height": 3672
+    }
+   ],
+   "reading": {
+    "nb": "Lofotmuseet ligger i det tidligere fiskeværet Storvågan ved Kabelvåg i Lofoten. Museet ble grunnlagt i 1976 og er en del av Museum Nord og Kystverkmusea. Anlegget består av en væreiergård med våningshus fra 1815, gårdsbygninger, rorbuer, naust med nordlandsbåter og hage med historiske stauder. Museet har i tillegg utstillinger om lofotfisket, havner og fyr langs kysten og om middelalderbyen Vágar som lå like ved museumsområdet."
+   }
+  },
+  {
+   "key": "lofotkatedralen",
+   "query": "Vågan kirke",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.21565,
+    "lng": 14.48373,
+    "osm": "way/71865264",
+    "name": "Vågan kirke",
+    "kind": "amenity/place_of_worship",
+    "distKm": 0.5
+   },
+   "match": {
+    "qid": "Q1474775",
+    "label": "Vågan kirke",
+    "description": "church in Vågan, Norway",
+    "lat": 68.2157,
+    "lng": 14.4832,
+    "distKm": 0.6,
+    "en": "Vågan Church",
+    "nb": "Vågan kirke",
+    "commonsCategory": "Vågan kirke",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Kabelvåg-Kirche-14-2019-gje.jpg",
+     "author": "Gerd Eichmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5106,
+     "height": 3296
+    },
+    {
+     "file": "Kanstadsamlingen - NMF010005-00258.jpg",
+     "author": "Kristian Magnus Kanstad",
+     "license": "Public domain",
+     "width": 8565,
+     "height": 8556
+    },
+    {
+     "file": "Finnespollen, Kabelvåg, Nordlands amt - fo30141512100008.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9583,
+     "height": 7346
+    }
+   ],
+   "reading": {
+    "en": "Vågan Church (Norwegian: Vågan kirke; nickname: Lofoten Cathedral) is a parish church of the Church of Norway in Vågan Municipality in Nordland county, Norway. It is located in the village of Kabelvåg on the island of Austvågøya. It is the church for the Vågan parish which is part of the Lofoten prosti (deanery) in the Diocese of Sør-Hålogaland. The yellow, wooden church was built in a cruciform style in 1898 using plans drawn up by the architect Carl J. Bergstrøm. The church seats about 1,200 people, making it the largest wooden building in Northern Norway, hence the nickname Lofoten Cathedral.",
+    "nb": "Vågan kirke, også kjent som Lofotkatedralen, er en korskirke i Kabelvåg i Nordland. Bygget er oppført i tømmer og utformet i nygotisk stil. Det er en langstrakt kirke med korte og brede korsarmer, og en lang vestarm. Den ble innviet 9. oktober 1898 og er med 1100–1200 plasser en av landets største. Arkitekt for kirka var Carl Julius Bergstrøm."
+   }
+  },
+  {
+   "key": "svolvaergeita",
+   "query": "Svolværgeita",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.24623,
+    "lng": 14.58847,
+    "osm": "node/1649780256",
+    "name": "Svolværgeita",
+    "kind": "natural/peak",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q7652784",
+    "label": "Svolværgeita",
+    "description": "mountain peak in Vågan, Norway",
+    "lat": 68.24611,
+    "lng": 14.58833,
+    "distKm": 0.9,
+    "en": "Svolværgeita",
+    "nb": "Svolværgeita",
+    "commonsCategory": "Svolværgeita",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Svolværgeita 01.jpg",
+     "author": "David Torras from Igualada, Catalunya",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 768,
+     "height": 1024
+    },
+    {
+     "file": "Svolværgeita.jpg",
+     "author": "Sonia Marotta",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 2304,
+     "height": 1728
+    },
+    {
+     "file": "Svolvær Svolværgeita.jpg",
+     "author": "Cyril Doussin from Brisbane, Australia",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 2048,
+     "height": 1536
+    }
+   ],
+   "reading": {
+    "en": "Geita or Svolværgeita (Northern Sami: Spålla) is a 150-metre (490 ft) tall pinnacle at the southwest face of the mountain Fløyfjellet on the island of Austvågøya in the Lofoten archipelago. The 569-metre (1,867 ft) high Fløyfjellet is located on the edge of the town of Svolvær in Vågan Municipality in Nordland county, Norway. The first recorded time a climber reached the summit of Svolværgeita was on 1 August 1910 by Ferdinand Schjelderup, Alf Bonnevie Bryn, and Carl Wilhelm Rubenson.",
+    "nb": "Svolværgeita er en 150 meter (356 moh) høy fjelltopp på sørvestsiden av Fløyfjellet, like utenfor Svolvær på Austvågøy i Lofoten. Toppen ble første gang registrert besteget 1. august 1910 av Ferdinand Schjelderup, Alf Bonnevie Bryn og Carl Wilhelm Rubenson. I sommervarmen i august 1998 opplevde Svolvær en luftspeiling som overbeviste lokalbefolkningen om at Svolværgeita var begynt å rase sammen. Den dramatiske meldingen ble sendt ut på NRK radio, og fjernsynsstasjoner og avisfolk ble flydd inn til Lofoten. Siden kunne statsmeteorologen berolige folk med at det dreide seg om en luftspeiling fremkalt av lysbrytning mellom varm og kald luft, fordi solen skinte på en svært varm fjellvegg. Dermed så det for betrakteren virkelig ut som om «geitens» venstre horn lente seg inn mot det høyre. Ansvarlig i Vågan kommune hadde allerede sendt en alpin redningsgruppe opp i fjellet og fått stanset alle…"
+   }
+  },
+  {
+   "key": "krigsminnemuseum",
+   "query": "Lofoten Krigsminnemuseum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.23116,
+    "lng": 14.56482,
+    "osm": "node/6301902085",
+    "name": "Lofoten Krigsminnemuseum",
+    "kind": "tourism/museum",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q11986678",
+    "label": "Lofoten Krigsminnemuseum",
+    "description": "world War II Museum in Svolvær, Norway",
+    "lat": 68.23111,
+    "lng": 14.56472,
+    "distKm": 0.3,
+    "en": "Lofoten War Memorial Museum",
+    "nb": "Lofoten Krigsminnemuseum",
+    "commonsCategory": "Lofoten Krigsminnemuseum",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Lofoten Krigsminnemuseum (World War 2 Memorial Museum 1940-1945), Fiskergata 3, Svolvær, Norway 2019-05-08 DSC09819.jpg",
+     "author": "Wolfmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4883,
+     "height": 3255
+    },
+    {
+     "file": "Handicraft fish made of wood by a Russian POW in a German camp in Norway. Lofoten World War II Memorial Museum (Lofoten Krigsminnemuseum) Svolvær, Norway 2008.jpg",
+     "author": "Juanjo Marin",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 3648,
+     "height": 2736
+    },
+    {
+     "file": "Himmler Card.jpg",
+     "author": "Lyonel Perabo",
+     "license": "Public domain",
+     "width": 2316,
+     "height": 1529
+    }
+   ],
+   "reading": {
+    "en": "The Lofoten War Memorial Museum (Norwegian: Lofoten Krigsminnemuseum) is a World War II museum located in Svolvær, Norway. It focuses on providing informative content about the Second World War, with a particular emphasis on events that took place in the Lofoten area and Northern Norway during the German occupation of Norway (1940–1945). The non-partisan museum officially opened on June 15, 1996, after a lengthy period of collection and planning by William Hakvaag (born 1948). The previously privately owned museum has been part of Museum Nord since 2010.",
+    "nb": "Lofoten Krigsminnemuseum (på engelsk kalt Lofoten War Memorial Museum) er et militærhistorisk museum i Svolvær i Vågan kommune i Nordland. Det rommer Norges største utstilling av krigsminner, uniformer, militaria og andre gjenstander fra andre verdenskrig. Museet driver også opplysningsarbeid om krigen med særlig vekt på hendelsene i Lofoten og Nord-Norge. Utstillingen åpnet 15. juni 1996 etter langvarig privat samlervirksomhet av William Hakvaag. 1. januar 2010 ble det private museet en del av Museum Nord. Lofoten Krigsminnemuseum hadde 10 000 besøkende i 2017."
+   }
+  },
+  {
+   "key": "trollfjord",
+   "query": "Trollfjorden",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.36394,
+    "lng": 14.97604,
+    "osm": "node/6447858085",
+    "name": "trollfjorden",
+    "kind": "tourism/viewpoint",
+    "distKm": 0.5
+   },
+   "match": {
+    "qid": "Q1029073",
+    "label": "Trollfjorden",
+    "description": "fjord in Hadsel, Norway",
+    "lat": 68.36417,
+    "lng": 14.9775,
+    "distKm": 0.6,
+    "it": "Trollfjord",
+    "en": "Trollfjord",
+    "nb": "Trollfjorden",
+    "commonsCategory": "Trollfjorden",
+    "others": [
+     "Q5409153 Trollfjordtindan (3.2 km)",
+     "Q18691469 Trollfjordvatnet (4.1 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Fiordo de Troll, Lofoten, Noruega, 2019-09-05, DD 67.jpg",
+     "author": "Diego Delso",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 7991,
+     "height": 5339
+    },
+    {
+     "file": "Trollfjorden - Hadsel, Norway 2023-07-15 (12).jpg",
+     "author": "Ryan Hodnett",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5889,
+     "height": 3926
+    },
+    {
+     "file": "Trollfjorden - Hadsel, Norway 2023-07-15 (01).jpg",
+     "author": "Ryan Hodnett",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5763,
+     "height": 3842
+    }
+   ],
+   "reading": {
+    "it": "Il Trollfjord è un fiordo della Norvegia. È un braccio di mare di due chilometri di lunghezza, derivante da Raftsund, lo stretto che separa le due isole settentrionali della Norvegia, le Lofoten e le Vesterålen.",
+    "en": "The Trollfjord or Trollfjorden is a fjord in Hadsel Municipality in Nordland county, Norway. The 2-kilometre (1.2 mi) long fjord cuts into the island of Austvågøya and flows out into the Raftsundet strait. The fjord has a narrow entrance and steep-sided mountains surrounding it. The name is derived from troll, a figure from Norse mythology. The fjord is a popular tourist attraction due to the beauty of its natural setting. It is only accessible by boat or by a nearby 10 kilometres (6.2 mi) hike over very rugged terrain. The Hurtigruten's ships on the route between Bergen and Kirkenes detour into Trollfjorden. It is also popular with other cruise lines.",
+    "nb": "For andre fjorder med samme navn, se Trollfjorden (andre betydninger). Trollfjorden er en fjord i Hadsel kommune i Nordland. Den ligger helt øst på Austvågøya, og vest for Ulvøya i Raftsundet. Den rundt 2,5 kilometer lange fjorden er bare 200 meter bred i munningen og 100 meter ved den smale innsnevringen, men vider seg ut i botnen der den danner et basseng som er 350 meter bredt og 60 meter på det dypeste. Ved det smale partiet ligger et rev av nedrast stein og dybden er bare 30 meter. Den glattpolerte veggen på nordsiden består av monzonitt - Norges eldste bergart. Trollfjorden besøkes daglig av Hurtigruten i både nord- og sørgående rute. Hurtigruteskipet MS «Trollfjord» er oppkalt etter fjorden. Det arrangeres også daglige turer med utgangspunkt fra flere steder i Vesterålen og Lofoten. Hadsel kommune regnes administrativt sett som en del av Vesterålen, mens Austvågøya regnes som del av…"
+   }
+  },
+  {
+   "key": "skrova",
+   "query": "Skrova",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.167,
+    "lng": 14.66106,
+    "osm": "node/274648683",
+    "name": "Skrova",
+    "kind": "place/village",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q7536657",
+    "label": "Skrova fyr",
+    "description": "lighthouse in Norway",
+    "lat": 68.15306,
+    "lng": 14.64889,
+    "distKm": 0.8,
+    "en": "Skrova Lighthouse",
+    "nb": "Skrova fyr",
+    "commonsCategory": "Skrova fyr",
+    "others": [
+     "Q2062763 Skrova (0.9 km)",
+     "Q108715586 Skrova fyrstasjon (0.8 km)",
+     "Q68204484 Skrova (0.9 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Lofoten - 20120601 051.JPG",
+     "author": "Johan Leide",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 2848,
+     "height": 4288
+    },
+    {
+     "file": "Skrova, Skjåholmen, Vågan - S-1602U3 068.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 4000,
+     "height": 3142
+    },
+    {
+     "file": "Skrova, Skjåholmen, Vågan - S-1602U3 067.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 4000,
+     "height": 3071
+    }
+   ],
+   "reading": {
+    "en": "Skrova Lighthouse (Norwegian: Skrova fyr) is a coastal lighthouse in Vågan Municipality in Nordland county, Norway. It is located on a small skerry southwest of the island of Skrova which is in the Vestfjorden south of the island of Austvågøya.",
+    "nb": "Skrova fyr ligger på den lille Saltværsøya ved Skrova i Vågan kommune i Lofoten. Fyret ble bygd i 1922. Før det faste fyret ble bygd, hadde et mindre fiskefyr stått på Skjåholmen. Skrova fyr var et av de siste fyrene i Norge som ble avfolket. Det ble automatisert og avbemannet 29. juli 2005. Fyret har et støpejernstårn på 24,5 meter. Skrova fyr ble i 1932 utstyrt med radiofyr. Mastene til radiofyret står fremdeles. Fyret ble elektrifisert i 1951. Skrova fyr er kjent som værstasjon på kysten. Den automatiske værstasjonen ble lagt ned da fyret ble avfolket, men manuelle værobservasjoner blir nå foretatt av en person på selve Skrova. Det tidligere fiskefyret på Skjåholmen ble opprettet i 1856 og erstattet med ei fyrlykt da dagens fyr ble bygd. Dette fyret hadde fra starten av brennetid mellom 1. januar og 14. april. Fra 1860 ble brennetida utvidet til 1. september–14. april. Den tidligere ishavsskipperen…"
+   }
+  },
+  {
+   "key": "laukvik",
+   "query": "Laukvik",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.38809,
+    "lng": 14.41787,
+    "osm": "node/9502139818",
+    "name": "Laukvik",
+    "kind": "highway/bus_stop",
+    "distKm": 0.8
+   },
+   "match": {
+    "qid": "Q3218626",
+    "label": "Laukvik",
+    "description": "village in Vågan, Norway",
+    "lat": 68.3881,
+    "lng": 14.4177,
+    "distKm": 0.8,
+    "en": "Laukvik, Nordland",
+    "nb": "Laukvik (Vågan)",
+    "others": [
+     "Q11983446 Laukvikøyene naturreservat (4.5 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Kanstadsamlingen - NMF010005-00004b.jpg",
+     "author": "Kristian Magnus Kanstad",
+     "license": "Public domain",
+     "width": 5650,
+     "height": 3708
+    }
+   ],
+   "reading": {
+    "en": "Laukvika is a village in Vågan Municipality in Nordland county, Norway. The fishing village is located along the Norwegian Sea on the northwestern shore of the island of Austvågøya, just west of the village of Straumnes. Together, Laukvik and Straumnes have about 350 residents.",
+    "nb": "Laukvik (Laukvika) er et lite fiskevær på Austvågøya i Vågan kommune i Nordland, ca. 35 km til Svolvær. Tettstedet hadde 379 innbyggere per 1. januar 2025. Stedsnavnet Laukvik henger sammen med det norrøne ordet laukr (og fra der det nynorske ordet lauk) og som trolig viser til de lokale forekomstene av ville løkvekster. Bygda er kjent for Laukvik-dagene. Stedet fikk nasjonal oppmerksomhet i forbindelse med TV 2s dokusåpe Da damene dro i 2011. I Laukvik ligger Stangerholmen, et hus oppført på slutten av 1800-tallet i sveitserstil. Bygningen ble dekorert med veggmalerier av kunstneren Henning Welford rundt 1905–1906. Huset omtales som et sjeldent kunstverk, og er et av få gjenværende eksempler på denne typen dekorert trehus i Nord-Norge. Om sommeren arrangeres det omvisninger for besøkende. Bygda har en butikk, kafé, et samfunnshus, nordlysobservatorium en barnehage, en barne- og ungdomsskole…"
+   }
+  },
+  {
+   "key": "vaeroy",
+   "query": "Værøy",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.66556,
+    "lng": 12.69766,
+    "osm": "node/1833539992",
+    "name": "Sørland",
+    "kind": "place/village",
+    "distKm": 0.7
+   },
+   "match": {
+    "qid": "Q48629",
+    "label": "Værøy",
+    "description": "municipality in Nordland, Norway",
+    "lat": 67.67306,
+    "lng": 12.66917,
+    "distKm": 1.7,
+    "it": "Værøy",
+    "en": "Værøy Municipality",
+    "nb": "Værøy",
+    "official": "https://varoy.kommune.no/",
+    "commonsCategory": "Værøy",
+    "others": [
+     "Q4583835 Værøy nye kirke (0.6 km)",
+     "Q12010279 Værøy fyr (1.8 km)",
+     "Q1781474 Værøy flyplass (3.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Værøy DSCF1963 Norway.jpg",
+     "author": "Ian Cochrane from Melbourne, Australia",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 4336,
+     "height": 2438
+    },
+    {
+     "file": "Værøy lub 2025-07-24 img07.jpg",
+     "author": "Lukas Beck",
+     "license": "CC BY 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+     "width": 7952,
+     "height": 5304
+    },
+    {
+     "file": "Værøy lub 2025-07-24 img14.jpg",
+     "author": "Lukas Beck",
+     "license": "CC BY 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+     "width": 7952,
+     "height": 5304
+    }
+   ],
+   "reading": {
+    "it": "Værøy è un'isola (una delle Lofoten) e un comune norvegese della contea di Nordland.",
+    "en": "Værøy is an island municipality in Nordland county, Norway. It is part of the traditional district of Lofoten. The administrative centre of the municipality is the village of Sørland on the main island of Værøya. The other village in Værøy is Nordland. Most of the residents live in the Sørland area surrounding the main harbor. The old Værøy Lighthouse sits at the end of that harbor. The 19-square-kilometre (7.3 sq mi) municipality is the 352nd largest by area out of the 357 municipalities in Norway. Værøy Municipality is the 348th most populous municipality in Norway with a population of only 683. The municipality's population density is 36.6 inhabitants per square kilometre (95/sq mi) and its population has decreased by 12.1% over the previous 10-year period.",
+    "nb": "Værøy er en øykommune i Lofoten i Nordland. Kommunen har sitt administrasjonssenter på Sørland på Værøy, som er den største av øyene. De nærmeste nabokommunene er Moskenes i nord, på motsatt side av Moskstraumen, og Røst, som ligger over Røsthavet i sørvest. Værøy er den nest minste og den nest ytterste av kommunene i Lofoten, med et areal på 18,6 km² og 679 innbyggere pr. 1. kvartal 2022. Gamle fortellinger omtaler den beryktede malstrømmen Moskstraumen som går mellom Værøy og Lofotodden. «Den store Male» har gjennom tidene vært et av verdens mest beryktede havområder. Her i den store Male endte Jules Verne romanen En verdensomseiling under havet, som handler om kaptein Nemo og undervannsbåten «Nautilius». Mange oldtidsfunn forteller om tidlig bosetting på Værøy. Hulemaleriene som ble oppdaget i 1994 er over 3 000 år gamle."
+   }
+  },
+  {
+   "key": "rost",
+   "query": "Røst",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.5172,
+    "lng": 12.1169,
+    "osm": "node/8291494238",
+    "name": "Røst",
+    "kind": "place/village",
+    "distKm": 0.8
+   },
+   "match": {
+    "qid": "Q130048",
+    "label": "Røst",
+    "description": "municipality in Nordland, Norway",
+    "lat": 67.52,
+    "lng": 12.09889,
+    "distKm": 0,
+    "it": "Røst",
+    "en": "Røst Municipality",
+    "nb": "Røst",
+    "official": "https://rost.kommune.no/",
+    "commonsCategory": "Røst",
+    "others": [
+     "Q58831889 Røstlandet (0.8 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Røst Islands, Hernyken, Trenyken, Storfjellet.jpg",
+     "author": "Adamlebaigue",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 3936,
+     "height": 2624
+    },
+    {
+     "file": "Zeekoet - common murre - Uria aalge 2.jpg",
+     "author": "Bouke ten Cate",
+     "license": "CC BY 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+     "width": 3247,
+     "height": 2417
+    },
+    {
+     "file": "Zwarte zeekoet - black guillemot - Cepphus grylle.jpg",
+     "author": "Bouke ten Cate",
+     "license": "CC BY 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+     "width": 2748,
+     "height": 2033
+    }
+   ],
+   "reading": {
+    "it": "Røst è un comune della contea di Nordland, in Norvegia, oltre il Circolo polare artico al largo dell'estremità sudoccidentale dell'arcipelago delle Isole Lofoten. Il comune è stato costituito nel 1928 scorporandolo dal comune di Værøy ed è il più piccolo comune della Norvegia per estensione e il terzo più piccolo per numero di abitanti. La sede amministrativa del comune è nel villaggio di Røstlandet sull'isola omonima che con una superficie di 3,6 km² è la più grande dell'arcipelago composto da 304 tra isole, isolotti e scogli.",
+    "en": "Røst is a small island municipality in Nordland county, Norway. It is part of the traditional district of Lofoten. The administrative centre of the municipality is the village of Røstlandet on the island of Røstlandet. The island municipality is very small and is essentially a large fishing village centered around Røstlandet. Many of the residents are involved in the fishing industry or support the industry. There are six fish farms in Røst. During the main fishing season, there can be up to 600 fishing boats based out of Røst. The 10-square-kilometre (3+3⁄4 sq mi) municipality is the 354th largest by area out of the 357 municipalities in Norway. Røst Municipality is the 353rd most populous municipality in Norway with a population of 460. The municipality's population density is 45.5 inhabitants per square kilometre (118/sq mi), and its population has decreased by 18.7% over the previous...",
+    "nb": "Røst er en øykommune som ligger værhardt til, ytterst og lengst sørvest i Lofoten i Nordland, omtrent der Vestfjorden møter Norskehavet. Innbyggerne i kommunen kalles røstværinger. Kommunesenteret ligger på øya Røstlandet, der også de langt fleste røstværingene bor. Røsts kommunevåpen viser tre stiliserte sorte toppskarver på hvit bunn og har sammenheng med sagnet om tre bønder som bodde på fabeløya Utrøst og hadde evnen til å kunne gjøre seg om til skarver."
+   }
+  },
+  {
+   "key": "fiskevaersmuseum",
+   "query": "Norsk Fiskeværsmuseum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.88137,
+    "lng": 12.98206,
+    "osm": "way/75281923",
+    "name": "Norsk Fiskeværsmuseum",
+    "kind": "tourism/museum",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q7061110",
+    "label": "Norsk Fiskeværsmuseum",
+    "description": "Fishing museum in Å, Norway",
+    "lat": 67.8814,
+    "lng": 12.982,
+    "distKm": 0.2,
+    "en": "Norwegian Fishing Village Museum",
+    "nb": "Norsk Fiskeværsmuseum",
+    "commonsCategory": "Norsk Fiskeværsmuseum",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Norsk Fiskevaersmuseum in Aa (1).jpg",
+     "author": "Tournasol7",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5685,
+     "height": 3379
+    },
+    {
+     "file": "Norsk Fiskeværsmuseum - cod liver oil facility.JPG",
+     "author": "Toxophilus",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 5184,
+     "height": 3456
+    },
+    {
+     "file": "Norsk Fiskeværsmuseum - housing.JPG",
+     "author": "Toxophilus",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 5184,
+     "height": 3456
+    }
+   ],
+   "reading": {
+    "en": "The Norwegian Fishing Village Museum (Norsk Fiskeværsmuseum) is a museum devoted to Norwegian fishing in the village of Å in Moskenes Municipality in Lofoten in northern Norway.",
+    "nb": "Norsk Fiskeværsmuseum (på engelsk Norwegian Fishing Village Museum) er et museum på Å i Moskenes i Nordland. Museet omfatter en rekke bygninger og en fiskeskøyte i det nedlagte fiskeværet. Utstillingene viser livet i fiskeværene langs norskekysten og arbeidet i lofotfisket de siste 250 åra. Kystmuseet åpnet 1988 og har mottatt offentlig støtte siden 1990. På Å finnes også Lofoten Tørrfiskmuseum."
+   }
+  },
+  {
+   "key": "torrfiskmuseum",
+   "query": "Lofoten Tørrfiskmuseum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 67.88227,
+    "lng": 12.98415,
+    "osm": "node/889028492",
+    "name": "Lofoten tørrfiskmuseum",
+    "kind": "tourism/museum",
+    "distKm": 0.3
+   },
+   "match": {
+    "qid": "Q3868164",
+    "label": "Lofoten Tørrfiskmuseum",
+    "description": "museum in the Lofoten Islands, Norway",
+    "lat": 67.8823,
+    "lng": 12.9841,
+    "distKm": 0.3,
+    "it": "Museo dello stoccafisso delle Lofoten",
+    "en": "Lofoten Stockfish Museum",
+    "nb": "Lofoten Tørrfiskmuseum",
+    "official": "http://www.datadesign.ws/stockfish.htm",
+    "commonsCategory": "Lofoten Tørrfiskmuseum",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Sztokfisz muzeum A.jpg",
+     "author": "Jojo, Original uploader was Jojo at pl.wikipedia",
+     "license": "Public domain",
+     "width": 1024,
+     "height": 685
+    },
+    {
+     "file": "Tran Damperi, Lofoten Tørrfiskmuseum, Å, Moskenes, West view 20150608 1.jpg",
+     "author": "DXR",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 7234,
+     "height": 4521
+    },
+    {
+     "file": "Lofoten Tørrfiskmuseum, Å, Moskenes, Southwest view 20150608 1.jpg",
+     "author": "DXR",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 6966,
+     "height": 4354
+    }
+   ],
+   "reading": {
+    "it": "Il Lofoten Tørrfiskmuseum (Museo dello stoccafisso delle Lofoten in norvegese) è un piccolo museo situato nel villaggio di Å, nella municipalità di Moskenes, nelle isole Lofoten nel nord-ovest della Norvegia. Il museo, allestito in un antico magazzino del pesce, è dedicato alla pesca del merluzzo e alla produzione dello stoccafisso. All'interno del museo si trovano antiche imbarcazioni usate per la pesca del merluzzo e diverse specie di stoccafisso pescato nell'arcipelago delle Lofoten.",
+    "en": "Lofoten Stockfish Museum (Norwegian: Lofoten Tørrfiskmuseum) is located in the village of Å in Moskenes Municipality which is located in the Lofoten islands of Nordland county, Norway. The Lofoten Stockfish Museum is devoted to the production of Norwegian stockfish, one of Norway's oldest export commodities. The Museum is located in an old fish landing station. The museum displays the process from when the fish is brought ashore until it is finally packaged and ready for export. There are two museums located at Å in Lofoten, the other being the Norwegian Fishing Village Museum (Norsk Fiskeværsmuseum).",
+    "nb": "Lofoten Tørrfiskmuseum (på engelsk Lofoten Stockfish Museum) er et museum i Å i Moskenes i Nordland. Museet formidler historien om tørrfisk gjennom en utstilling av redskaper og filmvisning i den gamle fiskebrygga på Å. På det tidligere fiskeværet og nåværende turistsenteret Å finnes også Norsk Fiskeværsmuseum."
+   }
+  },
+  {
+   "key": "galleri-espolin",
+   "query": "Galleri Espolin",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.20814,
+    "lng": 14.45147,
+    "osm": "node/849064538",
+    "name": "Galleri Espolin",
+    "kind": "amenity/arts_centre",
+    "distKm": 1
+   },
+   "match": {
+    "qid": "Q47477608",
+    "label": "Galleri Espolin",
+    "description": "Art gallery in Storvågan, Norway",
+    "lat": 68.20806,
+    "lng": 14.45139,
+    "distKm": 1,
+    "en": "Espolin Gallery",
+    "nb": "Galleri Espolin",
+    "others": []
+   },
+   "photos": [],
+   "reading": {
+    "en": "The Espolin Gallery (Norwegian: Galleri Espolin) is an art gallery in Storvågan near Kabelvåg in Vågan Municipality, Norway. The gallery was established in 1992 to display the works of the artist Kaare Espolin Johnson. In addition to Espolin Johnson's works, the gallery also displays works by other artists. The gallery is now part of the SKREI Heritage Center (SKREI Opplevelsessenter) at Museum Nord.",
+    "nb": "Galleri Espolin er et kunstgalleri i Storvågan i Nordland. Galleriet ble opprettet i 1992 for å vise kunstverkene til billedkunstneren Kaare Espolin Johnson. I tillegg viser galleriet temporære utstillinger med andre kunstnere. Galleriet vil fra 2026 bli en del av SKREI Opplevelsessenter, og er i dag tilknyttet Museum Nord."
+   }
+  },
+  {
+   "key": "sortland",
+   "query": "Sortland",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.69513,
+    "lng": 15.41483,
+    "osm": "node/31264141",
+    "name": "Sortland",
+    "kind": "place/town",
+    "distKm": 0.6
+   },
+   "match": {
+    "qid": "Q48844",
+    "label": "Sortland",
+    "description": "municipality in Nordland, Norway",
+    "lat": 68.69583,
+    "lng": 15.41306,
+    "distKm": 0.7,
+    "it": "Sortland",
+    "en": "Sortland Municipality",
+    "nb": "Sortland",
+    "official": "https://www.sortland.kommune.no/",
+    "commonsCategory": "Sortland Municipality",
+    "others": [
+     "Q1821203 Sortland (0.7 km)",
+     "Q6513667 Sortland kirke (1.1 km)",
+     "Q1769742 Sortlandbrua (2.0 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Cottongrass (Myrull) (Eriophorum sp.) - Sortland, Norway 2023-07-14.jpg",
+     "author": "Ryan Hodnett",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5820,
+     "height": 3880
+    },
+    {
+     "file": "Hurtigruten 2015 21945.jpg",
+     "author": "juergend2 from Berlin, Deutschland",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+     "width": 5760,
+     "height": 3840
+    },
+    {
+     "file": "Dogwood (Vårkornellslekta) (Cornus sp.) and Twinflower (Linnea) (Linnaea borealis) - Sortland, Norway 2023-07-14.jpg",
+     "author": "Ryan Hodnett",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5678,
+     "height": 3785
+    }
+   ],
+   "reading": {
+    "it": "Sortland è un comune norvegese della contea di Nordland. Il comune di Sortland nacque nel 1841, quando venne separato da quello di Hadsel, ed è parte del distretto tradizionale delle isole Vesterålen. Il centro amministrativo del comune è Sortland. Tra gli altri centri abitati nel distretto, abbiamo Bø, Holand, Holmstad, Liland, Sigerfjord, Strand e Vik. La Guardia Costiera norvegese ha la sua base nord a Sortland, chiamata Kystvaktskvadron Nord. Sortland è la città più grande delle Vesterålen. Sorge vicina al Sortland Bridge che attraversa lo stretto di Sortlandsundet e connette le isole di Langøya e Hinnøya.",
+    "en": "(Norwegian) or Suortá (Northern Sami) is a municipality in Nordland county, Norway. It is part of the traditional region of Vesterålen. The administrative centre of the municipality is the town of Sortland. Other population centres in Sortland include the villages of Bø, Holand, Holmstad, Liland, Sigerfjord, Strand, and Vik. The Norwegian Coast Guard has its northern base in Sortland, called Kystvaktskvadron Nord. In 1997, the municipal council declared \"town status\" for the urban area of Sortland. Sortland is the largest town and commercial centre in Vesterålen. The town of Sortland is located close to the Sortland Bridge which crosses the Sortlandsundet strait and connects the two large islands of Langøya and Hinnøya by road. Since a lot of houses in the town are painted blue, Sortland is sometimes referred to as \"the blue city\". The 722-square-kilometre (279 sq mi) municipality is the...",
+    "nb": "Sortland er en kommune og en by i Vesterålen i Nordland. Kommunen omfatter områder på øyene Langøya og Hinnøya. Mellom øyene går Sortlandssundet. Kommunen grenser i nord mot Øksnes og Andøy, i øst mot Kvæfjord, i sør mot Lødingen og Hadsel, og i vest mot Bø. De viktigste næringer er handel og tjenesteyting, men også landbruk, fiske og havbruk er viktig. Kommunesenteret Sortland er også regionsenter for Vesterålen. Sortland profileres som «Den blå byen ved sundet» etter et initiativ om å male alle bygninger i nyanser av blått. I dag er det et tyvetalls bygninger i sentrum som er blå. Sortland er den eneste kommunen i Vesterålen som har hatt stabil økning i folketallet de siste 25 årene."
+   }
+  },
+  {
+   "key": "stokmarknes",
+   "query": "Stokmarknes",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.567,
+    "lng": 14.91335,
+    "osm": "node/31264146",
+    "name": "Stokmarknes",
+    "kind": "place/town",
+    "distKm": 0.8
+   },
+   "match": {
+    "qid": "Q288577",
+    "label": "Stokmarknes",
+    "description": "settlement in Hadsel Municipality, Norway",
+    "lat": 68.56556,
+    "lng": 14.90583,
+    "distKm": 0.6,
+    "it": "Stokmarknes",
+    "en": "Stokmarknes",
+    "nb": "Stokmarknes",
+    "commonsCategory": "Stokmarknes",
+    "others": [
+     "Q1703543 Stokmarknes lufthavn, Skagen (5.3 km)",
+     "Q12003329 Nordlandssykehuset Vesterålen (0.1 km)",
+     "Q141754233 Stokmarknes gravsted (0.5 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Stokmarknes winter.jpg",
+     "author": "Janter",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "width": 3504,
+     "height": 2336
+    },
+    {
+     "file": "Vesteralen (5) (13508018114).jpg",
+     "author": "Martin de Lusenet from Heemskerk, Netherlands",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 5373,
+     "height": 3582
+    },
+    {
+     "file": "Vesteralen (2), Norway (13364812755).jpg",
+     "author": "Martin de Lusenet from Heemskerk, Netherlands",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 5314,
+     "height": 3543
+    }
+   ],
+   "reading": {
+    "it": "Stokmarknes è un villaggio della Norvegia, situato nella municipalità di Hadsel, nella contea di Nordland. Esso è localizzato sull'isola di Hadseløya.",
+    "en": "(Norwegian) or Njárga (Northern Sami) is a town and the administrative centre of Hadsel Municipality in Nordland county, Norway. It is located on the northern coast of the island of Hadseløya and on the small, neighboring island of Børøya. The 2.57-square-kilometre (640-acre) town has a population (2023) of 3,496 and a population density of 1,360 inhabitants per square kilometre (3,500/sq mi). In 2000, Stokmarknes received \"town status\". Stokmarknes is the headquarters to the Hurtigruten coastal express company and also the Coastal Express Museum. The local hospital for the whole Vesterålen region (Nordland Hospital Vesterålen) is located in the town as well. Stokmarknes is the home town of Norwegian band Madrugada. The historic Hadsel Church is located about 5 kilometres (3.1 mi) east of Stokmarknes. The Børøy Bridge and Hadsel Bridge connect Stokmarknes to the islands of Børøya and Langøya...",
+    "nb": "Stokmarknes (nordsamisk: Njárga) er en by og administrasjonssenteret i Hadsel kommune i Nordland. Tettstedet Stokmarknes fikk bystatus 1. januar 2000 etter vedtak i kommunestyret. Byen er en av to byer i Vesterålen (sammen med Sortland). Byen er hurtigrutas hjemsted, og ved hurtigrutekaia ligger Hurtigrutemuseet. I tilknytning til museet ligger den gamle hurtigruta MS «Finnmarken» på land og utgjør et av flere landemerker."
+   }
+  },
+  {
+   "key": "hurtigrutemuseet",
+   "query": "Hurtigrutemuseet",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.56931,
+    "lng": 14.91255,
+    "osm": "way/979358194",
+    "name": "Hurtigrutemuseet",
+    "kind": "tourism/museum",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q1638752",
+    "label": "Hurtigrutemuseet",
+    "description": "Maritime museum in Stokmarknes, Norway",
+    "lat": 68.56969,
+    "lng": 14.91253,
+    "distKm": 0.1,
+    "en": "Norwegian Coastal Express Museum",
+    "nb": "Hurtigrutemuseet",
+    "official": "http://www.hurtigrutemuseet.no/",
+    "commonsCategory": "Hurtigruten Museum",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Hurtigrutemuseet 23 BG.jpg",
+     "author": "Bingar1234",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4271,
+     "height": 3101
+    },
+    {
+     "file": "The Former MS Finnmarken.jpg",
+     "author": "Larry Lamsa",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 5571,
+     "height": 3133
+    },
+    {
+     "file": "Hurtigrutemuseet 1.jpg",
+     "author": "Sandwort",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4608,
+     "height": 3456
+    }
+   ],
+   "reading": {
+    "en": "The Norwegian Coastal Express Museum (Norwegian: Hurtigrutemuseet) is located at Richard Withs plass (Richard With Square) in Stokmarknes in Nordland county—a natural location because the Coastal Express was \"born\" here. The museum is operated by the Coastal Express Museum Association and it includes the former coastal express ship MS Finnmarken from the Vesterålen Steamship Company. The museum was officially opened by Transport Minister Kjell Opseth on July 2, 1993—the 100th anniversary of the first coastal express voyage. The museum then received its premises in the old administration building of the Vesterålen Steamship Company. In 1999 the museum was relocated to a new location in the Coastal Express Building (Hurtigrutens Hus) next to the Coastal Express dock.",
+    "nb": "Hurtigrutemuseet ligger på Nordnes (Richard Withs plass) i Stokmarknes i Nordland fylke, en naturlig lokalitet da hurtigruten ble «født» her. Museet er en del av Museum Nord og drives av stiftelsen Hurtigrutemuseets forening, og omfatter det tidligere hurtigruteskipet MS «Finnmarken» fra Vesteraalens Dampskibsselskab (VDS). Museet ble offisielt åpnet av samferdselsminister Kjell Opseth 2. juli 1993 – på 100-årsdagen for den første hurtigruteseilingen. Museet disponerte da lokalene i Vesteraalens Dampskibsselskabs gamle direktørbolig. I 1999 flyttet muséet til nye lokaler i Hurtigrutens hus ved hurtigrutekaia og i 2021 ble et 3600 kvadratmeter stort bygg rundt MS «Finnmarken» åpnet."
+   }
+  },
+  {
+   "key": "melbu",
+   "query": "Melbu",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.50126,
+    "lng": 14.80094,
+    "osm": "node/885289555",
+    "name": "Melbu",
+    "kind": "place/village",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q577137",
+    "label": "Melbu",
+    "description": "settlement in Hadsel Municipality, Norway",
+    "lat": 68.5025,
+    "lng": 14.7996,
+    "distKm": 0.3,
+    "it": "Melbu",
+    "en": "Melbu",
+    "nb": "Melbu",
+    "commonsCategory": "Melbu",
+    "others": [
+     "Q1777826 Melbu kirke (0.4 km)",
+     "Q11988929 Melbu hovedgård (0.6 km)",
+     "Q141754226 Melbu gravsted (0.4 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Melbu.jpg",
+     "author": "Blue Elf",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 3456,
+     "height": 2304
+    },
+    {
+     "file": "Melbu Butikksenter.jpg",
+     "author": "Patrice78500",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4000,
+     "height": 3000
+    },
+    {
+     "file": "Melbu̠ - Bassin de plaisance.jpg",
+     "author": "Patrice78500",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 4000,
+     "height": 3000
+    }
+   ],
+   "reading": {
+    "it": "Melbu è un villaggio dell'arcipelago Vesterålen della municipalità di Hadsel nella contea di Nordland (Norvegia). Melbu è uno dei due abitati dell'isola di Hadseløya (l'altro è Stokmarknes). A Melbu si tiene un festival annuale estivo.",
+    "en": "Melbu is a village in Hadsel Municipality in Nordland county, Norway. The village is located on the island of Hadseløya on the northern shore of the Hadselfjorden. Melbu is one of the two main population centres on the island of Hadseløya, and it is called \"The Pearl of Vesteraalen\". The other population centre is the town of Stokmarknes in the north. Melbu is host to the annual Sommer-Melbu festival. Its economy heavily relies on the fishing industry. The 1.68-square-kilometre (420-acre) village has a population (2023) of 2,257 and a population density of 1,343 inhabitants per square kilometre (3,480/sq mi). Melbu Church is located in this village. Melbu is also a school centre in Vesterålen, and has a ferry connection to the village of Fiskebøl on the island of Austvågøya to the south via the Melbu-Fiskebøl Ferry. The nearest airport, Stokmarknes Airport, Skagen, is about 25 kilometres...",
+    "nb": "Melbu (nordsamisk: Mealbuvda eller Mealbuođđa) er et tettsted i Hadsel kommune i Nordland fylke. Tettstedet hadde 2 326 innbyggere per 1. januar 2025. Geografisk ligger tettstedet Melbu på sørsiden av Hadseløya i Vesterålen og på nordsiden av Hadselfjorden – i det geografiske skjæringspunktet mellom Lofoten og Vesterålen. Melbu er for øvrig listet i kategorien Verdens nordligste byer med mer enn 2000 innbyggere. Stedsnavnet, som uttales «Mællbo» eller «Mællbu», ble en periode skrevet Melbo. Melbu kommer fra gammelnorsk Meðalbú som betyr Mellomgarden."
+   }
+  },
+  {
+   "key": "nyksund",
+   "query": "Nyksund",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.9952,
+    "lng": 15.00978,
+    "osm": "node/6372387457",
+    "name": "Nyksund",
+    "kind": "highway/bus_stop",
+    "distKm": 0.6
+   },
+   "match": {
+    "qid": "Q1011569",
+    "label": "Nyksund",
+    "description": "village in Øksnes, Norway",
+    "lat": 68.99556,
+    "lng": 15.01333,
+    "distKm": 0.6,
+    "it": "Nyksund",
+    "en": "Nyksund",
+    "nb": "Nyksund",
+    "commonsCategory": "Nyksund",
+    "others": [
+     "Q108711922 Nyksund kirkested (0.7 km)",
+     "Q49665032  (0.8 km)",
+     "Q49144994  (3.0 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Nyksund Norway.jpg",
+     "author": "Arnejohs at English Wikipedia",
+     "license": "Public domain",
+     "width": 1000,
+     "height": 722
+    },
+    {
+     "file": "Været, Nyksund - fo30141511180007.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9359,
+     "height": 7210
+    },
+    {
+     "file": "Innerside av molo, Nyksund - fo30141511180001.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9334,
+     "height": 7198
+    }
+   ],
+   "reading": {
+    "it": "Nyksund è un piccolo villaggio di pescatori della Norvegia, nelle isole Vesterålen, nella contea di Nordland, a circa 10 chilometri da Myre.",
+    "en": "Nyksund is a coastal fishing village in Øksnes Municipality in Nordland county, Norway. It is located on the northern part of the island of Langøya in the Vesterålen archipelago about 5 kilometres (3.1 mi) southeast of the village of Stø (although there is no direct road connection). The only road connection to the isolated village of Nyksund is from the south, coming from the village of Myre, about 10 kilometres (6.2 mi) away.",
+    "nb": "Nyksund er et fiskevær i Øksnes kommune i Nordland. Stedet ligger nord på Langøya, ei drøy mil nord for Myre. Bebyggelsen i Nyksund er spredt på to øyer, Nyksundøya og Ungsmaløya. Disse øyene er forbundet med en 65 meter lang molo. En molo forbinder også Nyksundøya med Langøya. En kommunal grusvei går mellom Nyksund og Høydalen, og derfra asfaltvei (fylkesvei 938) inn til Myre. Nyksund var på begynnelsen av 1900-tallet det nest største fiskeværet i Vesterålen. Nærheten til fiskefeltene utenfor Vesterålen gjorde stedet til et attraktivt fiskevær. Men etter 2. verdenskrig ble nærheten til fiskefeltene mindre viktig, da ny teknologi i form av motorer og større båter ble tatt i bruk. Havna i Nyksund ble for lita, og tettstedet Myre tok over som viktigste havn i området. Fiskeværet ble avfolket, og etter at de siste fastboende hadde fått fraflyttingstilskudd fra staten, var Nyksund helt fraflyttet…"
+   }
+  },
+  {
+   "key": "sto",
+   "query": "Stø",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.01883,
+    "lng": 15.12397,
+    "osm": "node/4756068889",
+    "name": "Stø",
+    "kind": "place/village",
+    "distKm": 0.6
+   },
+   "match": {
+    "qid": "Q991431",
+    "label": "Stø",
+    "description": "village in Øksnes, Norway",
+    "lat": 69.01731,
+    "lng": 15.11925,
+    "distKm": 0.5,
+    "en": "Stø",
+    "nb": "Stø",
+    "commonsCategory": "Stø (Øksnes)",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Stø.jpg",
+     "author": "Guilhem Boyer",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 9042,
+     "height": 2000
+    },
+    {
+     "file": "Stø DSCF1018 Norway.jpg",
+     "author": "Ian Cochrane from Melbourne, Australia",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 4608,
+     "height": 2592
+    },
+    {
+     "file": "Stø 01.jpg",
+     "author": "Blue Elf",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 3456,
+     "height": 2248
+    }
+   ],
+   "reading": {
+    "en": "Stø is a fishing village in Øksnes Municipality in Nordland county, Norway. It is located on the northern tip of the island of Langøya, along the Gavlfjorden in the Vesterålen archipelago. In 2001, there were about 175 residents. This village was the administrative centre of the old Langenes Municipality which existed from 1919 until 1964.",
+    "nb": "Stø er et fiskevær i Øksnes kommune, på nordspissen av Langøya i Nordland. Stø har et aktivt næringsliv med fiskemottak, butikk, kafé og restaurant på stedet. Om sommeren er turismen blomstrende med bl.a. hvalsafari og sel- og fuglesafarier. Mellom Stø og Nyksund går turløypa «Dronningruta», oppkalt etter dronning Sonja, som har gått denne ruta."
+   }
+  },
+  {
+   "key": "bleik",
+   "query": "Bleik",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.27188,
+    "lng": 15.95846,
+    "osm": "way/38286999",
+    "name": "Bleik",
+    "kind": "landuse/residential",
+    "distKm": 0.9
+   },
+   "match": {
+    "qid": "Q2378793",
+    "label": "Bleik",
+    "description": "settlement in Andøy Municipality, Norway",
+    "lat": 69.27262,
+    "lng": 15.95544,
+    "distKm": 0.8,
+    "en": "Bleik",
+    "nb": "Bleik",
+    "commonsCategory": "Bleik",
+    "others": [
+     "Q1773574 Bleiksvatnet (3.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Bleik village and Bleik island, seen from Mount Royken.jpg",
+     "author": "No machine-readable author provided. Ovuigner~commonswiki assumed (based on copyright claims).",
+     "license": "Public domain",
+     "width": 3072,
+     "height": 2304
+    },
+    {
+     "file": "Panorama I, Bleik, Nordlands amt - fo30141510200002.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9850,
+     "height": 7029
+    },
+    {
+     "file": "Panorama II, Bleik, Nordlands amt - fo30141510200003.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9842,
+     "height": 6470
+    }
+   ],
+   "reading": {
+    "en": "Bleik is a fishing village in Andøy Municipality in Nordland county, Norway.The village is located on the northwestern part of the island of Andøya, about 10 kilometres (6.2 mi) southwest of the village of Andenes. The 0.38-square-kilometre (94-acre) village has a population (2023) of 456 and a population density of 1,200 inhabitants per square kilometre (3,100/sq mi). The triangle-shaped island off the coast is called Bleiksøya. This island is the biggest resort of puffins in all of Norway. The lake Bleiksvatnet lies just south of the village. Bleik has one of the longest beaches in Norway, and it is said that the beach is the reason for the village's name. The beach is white, and bleik is a word for white/pale in the Norwegian language. In the village, there is a horse barn, an elementary school, and a grocery store. Tourist information, puffin safari, campsite and a local pub are also...",
+    "nb": "Bleik er et tettsted og fiskevær i Andøy kommune, Norge. Tettstedet har 443 innbyggere per 1. januar 2025, og ligger på nordvestsiden av Andøya omtrent ti kilometer fra Andenes. Navnet kommer antagelig av gammelnorsk bleikr – lys, etter den lyse sandstranden. Det gammelnorske adjektivet bleikr har samme betydning som dagens norske ord bleik, men betydde også mer konkret «lys»."
+   }
+  },
+  {
+   "key": "bleiksoya",
+   "query": "Bleiksøya",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.27399,
+    "lng": 15.87661,
+    "osm": "node/1259999388",
+    "name": "Bleiksøya",
+    "kind": "natural/peak",
+    "distKm": 0.7
+   },
+   "match": {
+    "qid": "Q11219242",
+    "label": "Bleiksøya",
+    "description": "island nature reserve of Norway",
+    "lat": 69.27392,
+    "lng": 15.87831,
+    "distKm": 0.7,
+    "en": "Bleiksøya",
+    "nb": "Bleiksøya",
+    "others": [
+     "Q11961552 Bleiksøya naturreservat (0.7 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Bleiksøya.jpg",
+     "author": "Sondrekv",
+     "license": "Public domain",
+     "width": 2813,
+     "height": 1836
+    }
+   ],
+   "reading": {
+    "en": "Bleiksøya or Bleiksøy is a small (15 ha) uninhabited island and nature reserve in near the fishing village of Bleik on the island of Andøya in Andøy Municipality of Nordland county in Arctic northern Norway. It is a steep pyramidal island with grassy slopes and cliffs surrounded by gullies and boulder scree. It, with its adjacent marine waters, has been designated a 530 ha Important Bird Area (IBA) by BirdLife International (BLI) because it supports a large breeding colony of Atlantic puffins. A 2016 assessment by BLI found that the puffin population was threatened by climate change and severe weather and had declined by over 90% from a historical estimate of 75,000 breeding pairs.",
+    "nb": "Bleiksøya er ei ubebodd øy vest for Bleik på Andøya i Nordland. Høyeste punkt på Bleiksøya er 160 moh. Hoveddelen av øya er bratt fjell, men den sørvestlige delen av øya er flatere. I likhet med Torghatten har Bleiksøya et hull tvers gjennom øya. Bleiksøya er Nordlands nordligste fuglefjell. På øya er det gode bestander av blant annet lunde, krykkje, alke, lomvi, havhest, havsvale, toppskarv og havørn. Øya er vernet som naturreservat. I juni og første halvdel av juli er det forbudt å gå i land på øya. Bleiksøya er et gammelt egg- og dunvær. Bleiksøya er et vernet naturreservat og godt synlig fuglefjell som stiger 160 meter rett opp fra havet, én kilometer fra fastlandet. Øya er en del av Bleiksøya naturreservat og har et rikt fugleliv med arter som lunde (Fratercula arctica), lomvi, krykkje, skarv og havhest. Øya er fri for landrovdyr og har gode forhold for hekkende fugl. Bruken av øya er…"
+   }
+  },
+  {
+   "key": "andenes-fyr",
+   "query": "Andenes fyr",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.32401,
+    "lng": 16.11591,
+    "osm": "way/37865155",
+    "name": "Andenes fyr",
+    "kind": "man_made/lighthouse",
+    "distKm": 0.5
+   },
+   "match": {
+    "qid": "Q4753689",
+    "label": "Andenes fyr",
+    "description": "lighthouse in Norway",
+    "lat": 69.324,
+    "lng": 16.1159,
+    "distKm": 0.5,
+    "en": "Andenes Lighthouse",
+    "nb": "Andenes fyr",
+    "commonsCategory": "Andenes fyr",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Andenes fyr.jpg",
+     "author": "Røed",
+     "license": "CC BY-SA 2.5",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+     "width": 2272,
+     "height": 1704
+    },
+    {
+     "file": "Et seilskip, Andenes - fo30141510060016.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9874,
+     "height": 7255
+    },
+    {
+     "file": "Kran og lastepram, Andenes - fo30141510060014.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9830,
+     "height": 7253
+    }
+   ],
+   "reading": {
+    "en": "Andenes Lighthouse (Norwegian: Andenes fyr) is a coastal lighthouse in Andøy Municipality in Nordland county, Norway. It is located in the village of Andenes at the northern end of the island of Andøya in the Vesterålen archipelago. It was established in 1859 and automated in 1978. The lighthouse was listed as a protected site in 1999. The lighthouse emits a continuous white light with a more intense flash every 30 seconds. The light sits atop a 40-metre (130 ft) tall red round cast iron tower. The light can be seen for about 18 nautical miles (33 km; 21 mi). The light burns from August 10 until April 26 each year, but there is no light the rest of the year due to the midnight sun at this location. The lighthouse is managed by the nearby Andøy Museum (Andøymuseet), which offers guided tours during the summer season. As a result, this is the best known and most visited lighthouse of Norway...",
+    "nb": "Andenes fyr ligger på Andenes i Nordland. Fyret ble bygd i 1859. Det bedret sikkerheten for skip til havs, men ga ikke tryggere havneforhold. Fra 1867 til 1958 ble det gjort meteorologiske observasjoner fra fyret. i 1978 ble fyrtårnet automatisert og avfolket."
+   }
+  },
+  {
+   "key": "spaceship-aurora",
+   "query": "Andøya Space",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.29454,
+    "lng": 16.0233,
+    "osm": "way/569433118",
+    "name": "Andøya Space",
+    "kind": "aeroway/spaceport",
+    "distKm": 0.5
+   },
+   "match": {
+    "qid": "Q528446",
+    "label": "Andøya Space",
+    "description": "Norwegian space company",
+    "lat": 69.29417,
+    "lng": 16.02083,
+    "distKm": 0.5,
+    "it": "Centro spaziale di Andøya",
+    "en": "Andøya Space",
+    "nb": "Andøya Space",
+    "official": "https://andoyaspace.no",
+    "commonsCategory": "Andøya Space Center",
+    "others": [
+     "Q124478301 Andøya rakettskytefelt (0.5 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Rocketrangesummer.JPG",
+     "author": "MM2sp",
+     "license": "Public domain",
+     "width": 640,
+     "height": 481
+    },
+    {
+     "file": "VS-40M-SHEFEX-II-prepared.jpg",
+     "author": "DLR",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "width": 5184,
+     "height": 3456
+    },
+    {
+     "file": "NASAMS Andøya.jpg",
+     "author": "U.S. Naval Forces Europe-Africa/U.S. Sixth Fleet",
+     "license": "Public domain",
+     "width": 4096,
+     "height": 2730
+    }
+   ],
+   "reading": {
+    "it": "Il centro spaziale di Andøya (in norvegese Andøya Rakettskytefelt) è un cosmodromo situato sull'isola di Andøya, appartenente all'arcipelago di Vesterålen, nella Norvegia settentrionale. Più di 1200 razzi-sonda sono stati lanciati da questo sito dal 1962. Il centro spaziale è un'installazione civile di proprietà del Ministero per il commercio e l’industria per il 90% e della compagnia Kongsberg Defence & Aerospace per il 10%.",
+    "en": "Andøya Space, formerly Andøya Space Center, is a rocket launch site, rocket range, and spaceport on Andøya island (the northernmost in the Vesterålen archipelago) in Andøy Municipality in Nordland county, Norway. Since 1962, over 1,200 sounding and sub-orbital rockets of various configurations have been launched from the site. In September 2026, the site hosted its first successful orbital launch, when Isar Aerospace launched its Spectrum rocket from Andøya Spaceport, making it first launch from Northern Europe, making it second active spaceport in Europe after Plesetsk Cosmodrome and third European spaceport in history after Plesetsk and Kapustin Yar. Andøya Space is a civilian, limited liability company with its ownership split between two groups: 90% by the Royal Norwegian Ministry of Trade and Industry, and 10% by Kongsberg Defence Systems company. It operates on a commercial basis....",
+    "nb": "Andøya Space AS, tidligere Andøya Rakettskytefelt og Andøya Space Center, er et norsk aksjeselskap som driver virksomhet innen romforskning, teknologitesting, forsvarsrelaterte tjenester, utdanning og oppskyting av satellitter. Selskapet har hovedanlegg på Andøya i Andøy kommune i Nordland. Virksomheten har sin bakgrunn i oppskytingen av forskningsraketter fra Andøya, som startet i 1962. Siden den gang er virksomheten utvidet til blant annet bakkebaserte forskningsinstrumenter, vitenskapelige ballonger, ubemannede luftfartssystemer, testing av forsvarsteknologi og romrelatert utdanning. Andøya Space driver med oppskytingsvirksomhet fra Andøya og Svalbard, forsvarsrelatert test- og treningsvirksomhet og Andøya Spaceport for oppskyting av småsatellitter til bane."
+   }
+  },
+  {
+   "key": "moysalen",
+   "query": "Møysalen nasjonalpark",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.51123,
+    "lng": 15.54495,
+    "osm": "relation/241698",
+    "name": "Møysalen nasjonalpark",
+    "kind": "boundary/national_park",
+    "distKm": 4
+   },
+   "match": {
+    "qid": "Q1276455",
+    "label": "Møysalen nasjonalpark",
+    "description": "national park in Nordland, Norway",
+    "lat": 68.51667,
+    "lng": 15.5,
+    "distKm": 2.1,
+    "it": "Parco nazionale Møysalen",
+    "en": "Møysalen National Park",
+    "nb": "Møysalen nasjonalpark",
+    "official": "https://www.norgesnasjonalparker.no/nasjonalparker/moysalen/",
+    "commonsCategory": "Møysalen national park",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Moysalen 2.jpg",
+     "author": "Nomen nescio",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 1287,
+     "height": 929
+    },
+    {
+     "file": "Sebortinden-2016.jpg",
+     "author": "Bjørn Christian Tørrissen",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5184,
+     "height": 3888
+    },
+    {
+     "file": "Moysalen 3.jpg",
+     "author": "Wolfgang Hägele",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5184,
+     "height": 3456
+    }
+   ],
+   "reading": {
+    "it": "Il parco nazionale Møysalen è un parco nazionale della Norvegia, nella contea di Nordland sul monte omonimo. È stato istituito nel 2003 e occupa una superficie di 51,2 km².",
+    "en": "Møysalen National Park (Norwegian: Møysalen nasjonalpark) is a national park located on the island of Hinnøya in Nordland county, Norway. The park was established in 2003 to preserve undisturbed coastal alpine landscape. The scenery is characterized by peaks jutting out of the ocean and fjords, the highest point is the 1,262-metre (4,140 ft) tall Møysalen mountain. The park mostly lies in Lødingen Municipality, but the far northern part crosses over into Sortland Municipality. The park is largely undisturbed from its natural state. This is one of very few national parks in Norway that goes all the way down to sea level; the Vestpollen fjord branch of the Øksfjorden is included inside the national park. The park thus also includes areas with undisturbed birch forest in addition to the mountains. There are many fens and bogs in the park, but most are not large. The steep mountains and rich...",
+    "nb": "Møysalen nasjonalpark er en norsk nasjonalpark som ligger i fjellandskap på Hinnøya i Vesterålen i Nordland. Parken ble opprettet i 2003, for å «bevare et intakt utsnitt av et kystalpint landskap, sikre det biologiske mangfoldet med økosystemer, arter og bestander, og sikre kulturminner mot skader og ødeleggelser» og den dekker 51,2 km². Nasjonalparken ligger i kommunene Lødingen, Hadsel og Sortland, og den grenser i sør og vest opp til Møysalen landskapsvernområde. Nordland nasjonalparksenter i ved Europavei 6 i Saltdal kommune dekker informasjonsfunksjoner for alle nasjonalparker i Nordland fylke."
+   }
+  },
+  {
+   "key": "harstad",
+   "query": "Harstad",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.79994,
+    "lng": 16.54403,
+    "osm": "relation/407767",
+    "name": "Harstad",
+    "kind": "boundary/administrative",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q62140",
+    "label": "Harstad",
+    "description": "municipality in Troms County, Norway",
+    "lat": 68.79878,
+    "lng": 16.53927,
+    "distKm": 0.1,
+    "it": "Harstad",
+    "en": "Harstad Municipality",
+    "nb": "Harstad",
+    "official": "https://www.harstad.kommune.no/",
+    "commonsCategory": "Harstad",
+    "others": [
+     "Q1034159 Harstad (0.4 km)",
+     "Q140459329 Harstad (0.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Harstad Wikipedia CreativeCommons v2 SteveNilsen 01.jpg",
+     "author": "Stevenilsen",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 3864,
+     "height": 2170
+    },
+    {
+     "file": "USS Gunston Hall Arrives in Harstad, Norway, concluding its participation in Steadfast Defender 24 (8287583).jpg",
+     "author": "U.S. Navy photo by Petty Officer 1st Class Danielle Serocki",
+     "license": "Public domain",
+     "width": 6720,
+     "height": 4480
+    },
+    {
+     "file": "USS Gunston Hall Arrives in Harstad, Norway, in Support of Steadfast Defender 24 (8248612).jpg",
+     "author": "U.S. Navy photo by Petty Officer 1st Class Danielle Serocki",
+     "license": "Public domain",
+     "width": 6720,
+     "height": 4480
+    }
+   ],
+   "reading": {
+    "it": "Harstad (Hárštá, in Sami) è un comune e una città della contea di Troms, in Norvegia. Ha ricevuto lo status di città nel 1904.",
+    "en": "Harstad (Norwegian: [ˈhɑ̂ʂːʈɑ] ; Northern Sami: Hárstták) is the second-most populated municipality in Troms county, Norway. It is mostly located on the large island of Hinnøya. The municipal center is the town of Harstad, which is the most populous town in Central Hålogaland and the third-largest in all of Northern Norway. The town was incorporated in 1904. Villages in the municipality include Elgsnes, Fauskevåg, Gausvika, Grøtavær, Kasfjord, Lundenes, Nergården and Sørvika. The 445-square-kilometre (172 sq mi) municipality is the 225th largest by area out of Norway's 357 municipalities and the 49th most populous, with a population of 25,056. The municipality's population density is 56.3 inhabitants per square kilometre (146/sq mi) and the population has increased by 2.5% over the previous 10-year period.",
+    "nb": "Harstad er nest største kommune i Troms, etter folketall. Kommunen hadde 25 204 innbyggere per 1. januar 2026, hvorav 21 602 bor i kommunesenteret, tettstedet Harstad. Kommunen har en vekst i folketallet på omkring 2 % per tiår. Harstad by er tredje størst i Nord-Norge etter folketall. Storregionen Midtre Hålogaland med Lofoten (Svolvær), Vesterålen (Sortland), Harstadregionen og Ofoten (Narvik) utgjør Nord-Norges tettest befolkede område med omkring 120 000 innbyggere. Kommunen omfatter den nordøstlige delen av Hinnøya, og fra 1. januar 2013 også tidligere Bjarkøy kommune. Harstad grenser til Senja i nordøst, Andøy ute på Andfjorden i nordvest, Kvæfjord i vest og Tjeldsund i sør. I sørøst forbinder Tjeldsundbrua Hinnøya med fastlandet over Tjeldsundet, og i øst ligger Vågsfjorden hvor Harstad grenser til Ibestad. Selve byen ligger nordøst på Hinnøya. Her møtes den nord- og sørgående Hurtigruten…"
+   }
+  },
+  {
+   "key": "trondenes-kirke",
+   "query": "Trondenes kirke",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.82134,
+    "lng": 16.55922,
+    "osm": "node/7099802138",
+    "name": "Trondenes kirke",
+    "kind": "highway/bus_stop",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q574695",
+    "label": "Trondenes kirke",
+    "description": "church in Harstad, Norway",
+    "lat": 68.822,
+    "lng": 16.5622,
+    "distKm": 0.2,
+    "en": "Trondenes Church",
+    "nb": "Trondenes kirke",
+    "commonsCategory": "Trondenes kirke",
+    "others": [
+     "Q140087646 Trondenes kirkegård (0.4 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Harstad Kirche von Trondenes.jpg",
+     "author": "Own work",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+     "width": 4048,
+     "height": 3040
+    },
+    {
+     "file": "Trondenes kirke medieval church ca 1440 Harstad Norway Distorted panoramic photo 2019-05-09 Vågsfjorden Fjæra shoreline etc IMG 8602.jpg",
+     "author": "Wolfmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 16378,
+     "height": 3850
+    },
+    {
+     "file": "Trondenes kirke 85673 2024-5.jpg",
+     "author": "Bjørn Erik Pedersen",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 9504,
+     "height": 6336
+    }
+   ],
+   "reading": {
+    "en": "Trondenes Church (Norwegian: Trondenes kirke) is the northernmost medieval stone church of Norway and the world's northernmost surviving medieval building. It is a parish church of the Church of Norway in Harstad Municipality in Troms county, Norway. It is located on the northern edge of the town of Harstad. It is the main church for the Trondenes parish which is part of the Trondenes prosti (deanery) in the Diocese of Nord-Hålogaland. The white, stone church was built in a long church style around the year 1435 using plans drawn up by an unknown architect. The church seats about 300 people. Though frequently referred to as a 13th-century church, dating based on dendrochronology places its completion shortly after 1434. Compared to the other ten north Norwegian medieval stone churches, Trondenes Church is well preserved, the exterior condition still close to the original state. The nave is...",
+    "nb": "Trondenes kirke ligger ca. 3 km nord for sentrum av Harstad på Trondenes, et historisk sted med spor tilbake til vikingtiden. Årstallet for bygging har inntil nylig vært satt til rundt 1250, men nyere forskning heller mot at kirken er av nyere dato. Den ble trolig fullført rundt 1440. Kirken er bygd på et område der det tidligere har vært trekirker fra 1100-tallet. Rundt kirken finnes det rester av befestninger fra 1100-tallet, som skulle beskytte en tidligere trekirke mot angrep."
+   }
+  },
+  {
+   "key": "trondenes-senter",
+   "query": "Trondenes Historiske Senter",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.82019,
+    "lng": 16.55871,
+    "osm": "way/109974356",
+    "name": "Trondenes historiske senter",
+    "kind": "tourism/museum",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q7845463",
+    "label": "Trondenes Historiske Senter",
+    "description": "museum in Harstad, Troms, Norway",
+    "lat": 68.8203,
+    "lng": 16.5575,
+    "distKm": 0.1,
+    "en": "Trondenes Historical Center",
+    "nb": "Trondenes Historiske Senter",
+    "commonsCategory": "Trondenes Historiske Senter",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Trondenes Historical Center.jpg",
+     "author": "Manxruler",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 3648,
+     "height": 2232
+    },
+    {
+     "file": "Trondenes historiske senter Harstad Troms Norway 2019-05-19 evening Vågfjorden etc DSC01268.jpg",
+     "author": "Wolfmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5472,
+     "height": 3648
+    },
+    {
+     "file": "Trondenes historiske senter Harstad Troms Norway 2019-05-19 evening Vågfjorden etc DSC01266.jpg",
+     "author": "Wolfmann",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+     "width": 5472,
+     "height": 3648
+    }
+   ],
+   "reading": {
+    "en": "Trondenes Historical Center (Norwegian: Trondenes Historiske Senter) is a museum located in Trondenes, in the town of Harstad, in Troms county, Norway. The museum covers the history of Trondenes and the surrounding areas. The museum displaying more than 2,000 years of history in the region, which was once a Viking Age power centre. Local chieftains included Thorir Hund, who killed Norway's Patron Saint, Saint Olav during the Battle of Stiklestad in 1030. The Trondenes Historical Centre tells the history of the area from the early Viking settlement to the 1940-1945 Nazi German occupation, with paintings, artifacts and statues depicting their history. The museum is situated near the historic, stone Trondenes Church. The exhibition is permanent, the main focus being on the Medieval age period. The museum building contains a cafeteria and conference rooms, amounting to 1,860 m2 in total. Trondenes...",
+    "nb": "Trondenes Historiske Senter (THS) er et kulturhistorisk senter i Harstad. Senteret er plassert i historiske omgivelser med Trondenes kirke (ca. 1200–1450) som naturlig midtpunkt, og med skiltet kultur- og natursti til Altevågen – der det fortsatt finnes spor av nausttufter og gravsteder fra vikingtid. THS ble innviet i mai 1997, og er en avdeling av Sør-Troms museum. Den historiske museumsutstillingen «Med plog, kors og sverd gjennom 1000 år» viser nordnorsk historie fra vikingtid og middelalder, frem til 2. verdenskrig og dagens bysamfunn. Utstillinga er tekstet på norsk, engelsk og tysk og inkluderer bildespill med norsk og engelsk tale. Trondenes Middelaldergård er bygget i tilknytning til den historiske utstillingen inne på museet. Dette er et rekonstruert gårdsanlegg fra ca. år 1200 basert på Trondenes historie slik den er kjent gjennom arkeologiske utgravninger og skriftlige kilder…"
+   }
+  },
+  {
+   "key": "narvik",
+   "query": "Narvik",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.43838,
+    "lng": 17.4272,
+    "osm": "node/20981180",
+    "name": "Narvik",
+    "kind": "place/town",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q59101",
+    "label": "Narvik",
+    "description": "settlement in Narvik Municipality, Norway",
+    "lat": 68.43828,
+    "lng": 17.42777,
+    "distKm": 0.2,
+    "it": "Narvik",
+    "en": "Narvik (town)",
+    "nb": "Narvik",
+    "commonsCategory": "Narvik (town)",
+    "others": [
+     "Q3097173 Narvik stasjon (0.5 km)",
+     "Q26514 Narvik lufthavn, Framnes (1.8 km)",
+     "Q1215658 Narvik (1.2 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Norway Narvik 3.jpg",
+     "author": "Tom Corser",
+     "license": "CC BY-SA 2.0 uk",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/uk/deed.en",
+     "width": 1600,
+     "height": 1200
+    },
+    {
+     "file": "Narvik town 2022-09-05 01.jpg",
+     "author": "Leonhard Lenz",
+     "license": "CC0",
+     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "width": 8384,
+     "height": 5612
+    },
+    {
+     "file": "Narvik town 2022-09-05 02.jpg",
+     "author": "Leonhard Lenz",
+     "license": "CC0",
+     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+     "width": 8384,
+     "height": 5612
+    }
+   ],
+   "reading": {
+    "it": "Narvik è un comune e una città della Norvegia, situata nella contea di Nordland. Ha ricevuto lo status di città nel 1902.",
+    "en": "(Norwegian) or Áhkánjárga (Northern Sami) is a town and the administrative centre of Narvik Municipality in Nordland county, Norway. The town is located along the Ofotfjorden in the Ofoten region. The town lies on a peninsula located between the Rombaken fjord and the Beisfjorden. The European route E06 highway runs through the Beisfjord Bridge and Hålogaland Bridge crossing the two small fjords surrounding the town. The 6.93-square-kilometre (1,710-acre) town has a population (2023) of 14,051 which gives the town a population density of 2,028 inhabitants per square kilometre (5,250/sq mi). Narvik Church is the main church for the town. Narvik is a commercial centre for the region. The Narvik campus of the University of Tromsø has approximately 1,200 students in the town. There are some high-tech businesses in Narvik (among them Natech).",
+    "nb": "Narvik er tredje største by og kommune i Nordland, og Nord-Norges syvende største by og kommune etter folketall. Per 1. januar 2025 er antall innbyggere i tettstedet Narvik 14 199, og i hele kommunen er det ca. 22 000 etter sammenslåingen mellom Narvik kommune, Ballangen kommune og deler av Tysfjord kommune. Kommunen ligger i Ofoten, og grenser i sørvest til Hamarøy og i nordvest til Evenes. I nord grenser kommunen til Troms fylke, med kommunene Tjeldsund, Gratangen, Lavangen og Bardu. I sørøst grenser kommunen til de to svenske kommunene Kiruna og Gällivare. Narvik kommune omfatter også de tidligere kommunene Ankenes (1884–1974), Ballangen (1925–2019) og deler av Tysfjord (1869–2019). Bergverk har stått sentralt for området som i dag utgjør Narvik kommune. I Ballangen er det spor av bergverk tilbake til 1600-tallet, og utvinning av svovel, kobber, sink og nikkel har gjennom hundreårene satt…"
+   }
+  },
+  {
+   "key": "narvik-krigsmuseum",
+   "query": "Narvik Krigsmuseum",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.43778,
+    "lng": 17.42537,
+    "osm": "node/1891043046",
+    "name": "Narvik krigsmuseum",
+    "kind": "tourism/museum",
+    "distKm": 0.1
+   },
+   "match": {
+    "qid": "Q17305301",
+    "label": "Nordland Røde Kors krigsminnemuseum",
+    "lat": 68.4378,
+    "lng": 17.42546,
+    "distKm": 0.1,
+    "nb": "Narvik Krigsmuseum",
+    "official": "https://narviksenteret.no",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "Anchor of Norge in Narvik.jpg",
+     "author": "Manxruler",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 2448,
+     "height": 3264
+    }
+   ],
+   "reading": {
+    "nb": "Narvik Krigsmuseum, tidligere kalt Nordland Røde Kors krigsminnemuseum og ofte omtalt som Narvik krigsminnemuseum, er et militærhistorisk museum som ligger i Det 4. hjørnet i Narvik sentrum i Nordland. Museet har et utstillingsareal på 2 500 kvadratmeter og viser slaget om Narvik 1940 og situasjonen i Nord-Norge under andre verdenskrig ved hjelp av fotografier, plansjer og ulike gjenstander. I 2015 og 2016 hadde museet i overkant av 20 000 besøkende årlig. Musset har en særlig oppgave i å fortelle historien om Beisfjord fangeleir, en av de mest brutale fangeleirene i Nord-Norge."
+   }
+  },
+  {
+   "key": "ofotbanen",
+   "query": "Ofotbanen",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 68.4339,
+    "lng": 18.05305,
+    "osm": "node/4308614634",
+    "name": "Ofotbanen 1903-1928",
+    "kind": "tourism/artwork",
+    "distKm": 10.4
+   },
+   "match": {
+    "qid": "Q1082916",
+    "label": "Ofotbanen",
+    "description": "railway line in Narvik, Norway",
+    "lat": 68.4,
+    "lng": 17.5,
+    "distKm": 13.1,
+    "it": "Ferrovia Narvik-Bjørnfjell",
+    "en": "Ofoten Line",
+    "nb": "Ofotbanen",
+    "commonsCategory": "Ofotbanen",
+    "others": []
+   },
+   "photos": [
+    {
+     "file": "H. M. Kongen aabner Ofotbanen - no-nb digifoto 20151221 00010 bldsa fFA00011.jpg",
+     "author": "Creator:Olaus Olsen",
+     "license": "Public domain",
+     "width": 6670,
+     "height": 5508
+    },
+    {
+     "file": "Bjørnfjell mountain and cottages.jpg",
+     "author": "Harald Groven",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 5184,
+     "height": 3456
+    },
+    {
+     "file": "Narvik - provisorisk malmutskipningskai 1903 (cropped).jpg",
+     "author": "Thorstein Eliasson Brændmo",
+     "license": "Public domain",
+     "width": 5132,
+     "height": 3373
+    }
+   ],
+   "reading": {
+    "it": "La ferrovia Narvik–Bjørnfjell, anche nota come Ofotbanen, è una linea ferroviaria norvegese di proprietà statale, parte della Malmbanan che collega Narvik a Luleå.",
+    "en": "The Ofoten Line (Norwegian: Ofotbanen) is a 43-kilometre (27 mi) railway line in Narvik Municipality, Norway. It runs from the Port of Narvik to Riksgränsen on the Norway–Sweden border, where the line continues as the Ore Line via Kiruna and Gällivare to Luleå. The Ofoten Line is single track, electrified at 15 kV 16.7 Hz AC and has seven stations. The line only connects to the rest of the Norwegian railway network via Sweden. The main traffic is up to 12 daily freight trains operated by Malmtrafik that haul iron ore from Sweden to Narvik. In addition, CargoNet operates container trains, branded as the Arctic Rail Express (ARE), and SJ operates passenger trains, including a night train to Stockholm. Construction of the Ofoten Line started in 1898 along with the Ore Line from Riksgränsen to Kiruna. They were completed in 1902, allowing LKAB to haul ore from their mines in Kiruna to the ice...",
+    "nb": "Ofotbanen er en jernbanestrekning mellom Narvik og den svenske grensen. Driftsmessig er den en del av Malmbanan som går mellom Luleå og Narvik. Ofotbanen er 43 km lang fra Narvik til Riksgrensen, og har 20 tunneler. Hoveddelen av trafikken på banen er malmtog som kommer med malm og pellets fra gruvene i Kiruna. Det transporteres 15,9 millioner tonn gods årlig på Ofotbanen, og målt i antall tonn det er mer enn all annen godstrafikk med jernbane i Norge til sammen. Malmtrafikken begynte høsten 1902 og banen ble offisielt innviet av kong Oscar II 14. juli 1903. Malmtogene går døgnet rundt, hele året. Utenom disse går det to daglige persontogpar til og fra Sverige og dessuten godstog mellom Narvik og Alnabruterminalen ved Oslo via Sverige; de såkalte Arctic Rail Express-togene. Schenker kjører også egne godstog. Ofotbanen eies og vedlikeholdes av Bane NOR og har et stort vedlikeholdsbehov på…"
+   }
+  },
+  {
+   "key": "gryllefjord",
+   "query": "Gryllefjord",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.36221,
+    "lng": 17.0498,
+    "osm": "node/10204238085",
+    "name": "Gryllefjorden - Grullefierda",
+    "kind": "place/farm",
+    "distKm": 0.2
+   },
+   "match": {
+    "qid": "Q1817061",
+    "label": "Gryllefjord",
+    "description": "settlement in Senja Municipality, Norway",
+    "lat": 69.36278,
+    "lng": 17.05278,
+    "distKm": 0.3,
+    "it": "Gryllefjord",
+    "en": "Gryllefjord",
+    "nb": "Gryllefjord",
+    "commonsCategory": "Gryllefjord",
+    "others": [
+     "Q322870 Gryllefjord kapell (0.4 km)",
+     "Q17779112 Gryllefjordbrua (3.0 km)",
+     "Q3446207 Gryllefjorden (1.0 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Gryllefjord-From-Ballesvikskaret.jpg",
+     "author": "Bjørn Christian Tørrissen",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 4608,
+     "height": 2919
+    },
+    {
+     "file": "Panorama II, Gryllefjord, Tromsø amt - fo30141511020007.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9517,
+     "height": 6930
+    },
+    {
+     "file": "Panorama I, Gryllefjord, Tromsø amt - fo30141511020006.jpg",
+     "author": "Unknown authorUnknown author",
+     "license": "Public domain",
+     "width": 9512,
+     "height": 6925
+    }
+   ],
+   "reading": {
+    "it": "Gryllefjord è un villaggio della Norvegia, situato nella municipalità di Senja, nella contea di Troms.",
+    "en": "Gryllefjord (Norwegian) or Grullefierda (Northern Sami) is a fishing village in Senja Municipality in Troms county, Norway. It is located on the island of Senja, along the Gryllefjorden in the northern part of the municipality. The 0.25-square-kilometre (62-acre) village has a population (2023) of 325 and a population density of 1,300 inhabitants per square kilometre (3,400/sq mi). The Andenes–Gryllefjord Ferry, is a car ferry service that runs during the summer to Andenes on the island of Andøya. The village is connected by road to the village of Torsken, about 4 kilometres (2.5 mi) south, and to the town of Finnsnes, about 60 kilometres (37 mi) east. The village was the administrative centre of the old Torsken Municipality which existed until 1 January 2020 when it was merged into Senja Municipality. There is one nursing home in the village (as of 2021).",
+    "nb": "Gryllefjord er et tettsted i Senja kommune i Troms. Tettstedet har 311 innbyggere per 1. januar 2025, og er et viktig fiskevær som ligger innenfor Svennsgrunnen og Malangsgrunnen. I sommersesongen har Gryllefjord fergeforbindelse med Andenes. Gryllefjord var administrasjonssenter i tidligere Torsken kommune."
+   }
+  },
+  {
+   "key": "torsken",
+   "query": "Torsken",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.33943,
+    "lng": 17.10274,
+    "osm": "node/10204238331",
+    "name": "Torsken - Doasku",
+    "kind": "place/locality",
+    "distKm": 1.2
+   },
+   "match": {
+    "qid": "Q322825",
+    "label": "Torsken kirke",
+    "description": "church building in Torsken, Northern Norway",
+    "lat": 69.3373,
+    "lng": 17.0975,
+    "distKm": 1.4,
+    "en": "Torsken Church",
+    "nb": "Torsken kirke",
+    "commonsCategory": "Torsken kirke",
+    "others": [
+     "Q48581 Torsken (6.5 km)",
+     "Q7827212 Torsken (1.3 km)",
+     "Q31503755 Torsken (1.4 km)"
+    ]
+   },
+   "photos": [
+    {
+     "file": "Torsken-Old-Church.jpg",
+     "author": "Bjørn Christian Tørrissen",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "width": 4608,
+     "height": 3456
+    }
+   ],
+   "reading": {
+    "en": "Torsken Church (Norwegian: Torsken kirke) is a parish church of the Church of Norway in Senja Municipality in Troms county, Norway. It is located in the village of Torsken on the west coast of the island of Senja. It is the main church for the Torsken parish which is part of the Senja prosti (deanery) in the Diocese of Nord-Hålogaland. The red, wooden church was built in a cruciform style in 1784 by an unknown architect. The church seats about 100 people.",
+    "nb": "Torsken kirke er en korskirke fra 1784 i Senja kommune i Troms fylke. Kirken er i tømmer og har 100 plasser. I kirken befinner det seg flere gamle klenodier, blant annet et krusifiks som antakelig er lagd i Lübeck i 1550-årene og en av Norges eldste messehagler. Det har sannsynligvis stått kirke på Torsken siden første halvdel av 1400-tallet, men det er sikre bevis for kirke der fra 1589. Utover 1600- og 1700-tallet var det tunge økonomiske tider for fiskerne i området, og kirkevedlikeholdet led som følge av dette. I 1770-årene ble det derfor bestemt å bygge en ny kirke. Mellom 1781 og 1784 plukket man derfor ned den gamle kirken og satte den opp igjen et stykke vekke. I prosessen bytten man ut de som var ødelagt. I 1866 ble kirken bygget om. De gamle, lukkede kirkebenkene ble byttet ut og to votivskip og en døpefont ble solgt. Sannsynligvis ble kirken samtidig malt både innvendig og utvendig…"
+   }
+  },
+  {
+   "key": "tungeneset",
+   "query": "Tungeneset",
+   "checkedAt": "2026-11-10",
+   "osm": {
+    "lat": 69.48886,
+    "lng": 17.33411,
+    "osm": "node/7099804806",
+    "name": "Tungeneset",
+    "kind": "highway/bus_stop",
+    "distKm": 0.2
+   },
+   "match": null,
+   "photos": []
+  }
+ ]
+}

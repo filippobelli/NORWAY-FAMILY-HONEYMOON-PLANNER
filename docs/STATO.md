@@ -260,3 +260,14 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Riserva**: da file locale, senza WebGL2 o se stile e librerie non arrivano entro 10 secondi si usa lo sfondo OSM di prima. Se il servizio cade dopo l'apertura, le parti non ancora scaricate restano vuote.
 - **Mappa delle regioni**: fondo senza scritte, perché le località scelte hanno già la loro etichetta.
 - Verifiche: 139 test ok, build ok; provata su build locale a 1400 e 390 px, con zoom, trascinamento e servizio bloccato. Non provata su telefono reale né nella mappa della modalità viaggio.
+
+## 10/11/2026 — catalogo del nord, foto e consigli (NO-3, non ancora nel database)
+
+- **Catalogo**: 83 luoghi nuovi tra Bodø, Lofoten, Vesterålen, Narvik, Senja e Tromsø (da 82 a 165 schede). Coordinate da Wikidata o OpenStreetMap, con fonte e data. Testi scritti per l'app, «da verificare».
+- **Foto**: fino a 3 per luogo da Wikimedia Commons, con autore e licenza: 208 foto per 90 luoghi (76 nuovi e 14 già presenti). 7 luoghi nuovi restano senza foto.
+- **Consigli**: 28, per 14 luoghi, solo dalle pagine ufficiali delle strade turistiche nazionali (Lofoten, Senja, Andøya), con fonte e data.
+- **Itinerario**: ogni tappa collegata al catalogo ha «Scheda del luogo». Una tappa messa a mano vicino a un luogo del catalogo propone «Collega alla scheda».
+- **Database**: migrazione `20261110000100_foto_consigli.sql` e seed `catalogo-norvegia-v3.sql` pronti, **non applicati**. Serve l'ok di Filippo. Dopo, il viaggio passa a NO-3 da Impostazioni › Nazioni e cataloghi.
+- **Verifiche**: typecheck, 262 test, lint e build ok. Nel browser (dati di prova, catalogo NO-3 caricato a mano nel server di sviluppo): scheda con 3 foto e 3 consigli, «Collega alla scheda», 1024 e 375 px senza scorrimento orizzontale e senza errori in console.
+- **Non provato**: NO-3 scaricato dal database vero; gli script `verify/e2e/*.cjs` non sono stati rieseguiti.
+- **Limiti**: fuori dal nord il catalogo è quello di prima. Helgeland e Finnmark non sono coperti. Mjelle (Bodø) esclusa: nessuna fonte adatta. Consigli solo dove esiste una pagina ufficiale letta. Senza cloud l'app usa ancora i file di NO-2.

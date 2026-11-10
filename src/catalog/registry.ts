@@ -14,6 +14,7 @@ import { FERRY_ROUTES, FERRY_SOURCES } from '../data/ferryRoutes';
 import { DESTINATIONS } from '../data/destinations';
 import { OFFICIAL_SITES } from '../data/officialSites';
 import { COUNTIES, REGION_COUNTIES } from '../data/regionShapes';
+import { PLACE_PHOTOS, PLACE_TIPS } from '../data/placeExtras';
 import { WIKI } from '../data/wiki';
 import { BASE_IDS, NOT_VISITS, RAIL } from '../domain/configurator';
 import type { AppCatalog, CatalogCountry } from './adapter';
@@ -109,6 +110,8 @@ export function installCatalog(c: AppCatalog): void {
   replaceRecord(RAIL, c.rail);
   replaceArray(FERRY_ROUTES, c.ferryRoutes ?? []);
   replaceRecord(FERRY_SOURCES, c.ferrySources ?? {});
+  replaceRecord(PLACE_PHOTOS, c.photos ?? {});
+  replaceRecord(PLACE_TIPS, c.tips ?? {});
   state = {
     source: 'cloud',
     countries: c.countries,
@@ -141,6 +144,9 @@ export function installFileCatalog(): void {
   replaceRecord(RAIL, s.rail);
   replaceArray(FERRY_ROUTES, s.ferryRoutes);
   replaceRecord(FERRY_SOURCES, s.ferrySources);
+  // I file valgono come NO-2: nessuna foto aggiuntiva e nessun consiglio
+  replaceRecord(PLACE_PHOTOS, {});
+  replaceRecord(PLACE_TIPS, {});
   state = { ...fileState(), version: state.version + 1 };
   emit();
 }

@@ -37,6 +37,8 @@ import { FILE_COUNTRY } from '../src/data/country';
 import { DESTINATIONS } from '../src/data/destinations';
 import { OFFICIAL_CHECKED_AT, OFFICIAL_KIND_LABEL, OFFICIAL_SITES } from '../src/data/officialSites';
 import { COUNTIES, REGION_COUNTIES } from '../src/data/regionShapes';
+import { NORD_CHECKED_AT, NORD_PHOTOS, NORD_PLACES, NORD_TIPS } from '../src/data/placesNord';
+import type { PlacePhoto, PlaceTip } from '../src/data/placeExtras';
 import { WIKI } from '../src/data/wiki';
 import { AIRPORT_RADIUS_KM, AVG_KMH, BASE_IDS, ROAD_FACTOR, railFor } from '../src/domain/configurator';
 import { DEFAULT_HOME_AIRPORTS, ITALIAN_AIRPORTS } from '../src/domain/flightAdvisor';
@@ -91,6 +93,12 @@ export interface PlaceSeed {
     seasonalNote?: string;
     outsideNote?: string;
   }>;
+  /** Foto di Wikimedia Commons con autore e licenza (da NO-3): tabella place_photos */
+  photos?: PlacePhoto[];
+  /** Consigli da fonti ufficiali, in italiano (da NO-3): tabella place_tips */
+  tips?: PlaceTip[];
+  /** Data di lettura di foto e licenze */
+  photosCheckedAt?: string;
   /** Fonti per campo */
   sources: Partial<Record<'coordinate' | 'scheda' | 'sito_ufficiale' | 'wikidata' | 'testi' | 'generale', SourceSeed[]>>;
 }
@@ -450,8 +458,87 @@ export function buildNorwayV2(): CatalogSeed {
   };
 }
 
+/**
+ * Norvegia, versione 3: tutto NO-2 (stesse righe) + i luoghi della zona nord (src/data/placesNord.ts, da
+ * docs/ricerca-luoghi-nord.json) + foto e consigli (tabelle place_photos e place_tips), anche per luoghi già presenti.
+ * NO-1 e NO-2 restano pubblicate e immutabili; il seed controlla che NO-3 contenga NO-2.
+ */
+export function buildNorwayV3(): CatalogSeed {
+  const v2 = buildNorwayV2();
+  const regionKey = new Map(v2.regions.map((r) => [r.name, r.key]));
+  const known = new Set(v2.places.map((p) => p.key));
+  const extras = (key: string) => ({
+    photos: NORD_PHOTOS[key]?.length ? NORD_PHOTOS[key] : undefined,
+    tips: NORD_TIPS[key]?.length ? NORD_TIPS[key] : undefined,
+    photosCheckedAt: NORD_CHECKED_AT,
+  });
+  const added: PlaceSeed[] = NORD_PLACES.map((n) => {
+    if (known.has(n.key)) throw new Error(`Luogo del nord già presente in NO-2: ${n.key}`);
+    known.add(n.key);
+    const rk = regionKey.get(n.region);
+    if (!rk) throw new Error(`Regione sconosciuta per ${n.key}: ${n.region}`);
+    return {
+      key: n.key,
+      category: n.category,
+      regionKey: rk,
+      lat: n.lat,
+      lng: n.lng,
+      coordsStatus: 'verificate',
+      localName: n.localName,
+      visitHours: n.visitHours,
+      difficulty: n.difficulty,
+      kidScore: n.kidScore,
+      reliability: 'da_verificare',
+      isBase: false,
+      dayVisit: true,
+      official: n.official ? { url: n.official, kind: 'attrazione', via: 'Wikidata' } : undefined,
+      wiki: n.wiki ? { qid: n.wiki.qid, it: n.wiki.it, en: n.wiki.en, image: n.wiki.image } : undefined,
+      texts: { it: { name: n.name, description: n.description, access: n.access, season: n.season, augustNote: n.augustNote } },
+      sources: {
+        coordinate: [{ label: n.coordSource.label, url: n.coordSource.url, checkedAt: NORD_CHECKED_AT, license: n.coordSource.license, method: n.coordSource.method }],
+        sito_ufficiale: n.official
+          ? [{ label: OFFICIAL_KIND_LABEL.attrazione, url: n.official, checkedAt: NORD_CHECKED_AT, method: 'Wikidata', note: 'Solo il collegamento: nessun contenuto copiato' }]
+          : undefined,
+        wikidata: n.wiki
+          ? [{
+              label: `Wikidata ${n.wiki.qid}`,
+              url: `https://www.wikidata.org/wiki/${n.wiki.qid}`,
+              checkedAt: NORD_CHECKED_AT,
+              license: 'CC0 1.0',
+              method: 'Abbinamento per nome e distanza da un punto indicativo (scripts/harvest-places.mjs)',
+              note: 'Foto di Commons con autore e licenza; i testi di Wikipedia non sono copiati',
+            }]
+          : undefined,
+        testi: [{ label: 'Testi scritti per l\'app (voci di Wikipedia lette il ' + NORD_CHECKED_AT + ' e conoscenza generale), da verificare', method: 'redazione' }],
+      },
+      ...extras(n.key),
+    };
+  });
+  for (const key of [...Object.keys(NORD_PHOTOS), ...Object.keys(NORD_TIPS)]) {
+    if (!known.has(key)) throw new Error(`Foto o consigli per un luogo che non esiste: ${key}`);
+  }
+  return {
+    ...v2,
+    release: {
+      ...v2.release,
+      version: 3,
+      dataCheckedUntil: NORD_CHECKED_AT,
+      notes: 'Terza versione: tutto NO-2 più i luoghi della zona nord (Bodø, Lofoten, Vesterålen, Senja, Tromsø), con foto e consigli.',
+      sourceNotes: [
+        ...v2.release.sourceNotes,
+        { label: 'Luoghi del nord: coordinate da Wikidata (P625) o OpenStreetMap (Nominatim)', checkedAt: NORD_CHECKED_AT, license: 'CC0 1.0 / ODbL 1.0' },
+        { label: 'Foto: Wikimedia Commons, solo licenze libere, con autore e licenza', checkedAt: NORD_CHECKED_AT },
+        { label: 'Consigli: solo da fonti ufficiali (Nasjonale turistveger, Statens vegvesen)', checkedAt: NORD_CHECKED_AT, note: 'Servizi e aperture come pubblicati alla data di lettura: da verificare prima di partire' },
+      ],
+      previousReleaseId: 'NO-2',
+    },
+    places: [...v2.places.map((p) => ({ ...p, ...extras(p.key) })), ...added],
+    outFile: 'catalogo-norvegia-v3.sql',
+  };
+}
+
 /** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
-const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2 } };
+const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3 } };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 
@@ -637,6 +724,9 @@ export function generateSql(c: CatalogSeed): string {
   const prev = c.release.previousReleaseId;
   const ferries = ferryRows(rel, c.ferries);
   const hasFerries = Boolean(c.ferries);
+  const photos = c.places.flatMap((p) => (p.photos ?? []).map((f, i) => ({ key: p.key, i, f, at: p.photosCheckedAt ?? c.release.dataCheckedUntil })));
+  const tips = c.places.flatMap((p) => (p.tips ?? []).map((t, i) => ({ key: p.key, i, t })));
+  const hasExtras = photos.length + tips.length > 0;
 
   out.push(`-- Catalogo ${c.country.name}, versione ${c.release.version} (${rel}).`);
   if (c.release.version === 1) {
@@ -644,7 +734,7 @@ export function generateSql(c: CatalogSeed): string {
     out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500.');
   } else {
     out.push(`-- GENERATO da scripts/seed-catalog.ts: non modificare a mano, rigenerare con \`npx tsx scripts/seed-catalog.ts --country ${c.country.code} --version ${c.release.version}\`.`);
-    out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500' + (hasFerries ? ' e 20261109000000_traghetti.sql.' : '.'));
+    out.push('-- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500' + (hasFerries ? ' e 20261109000000_traghetti.sql' : '') + (hasExtras ? ' e 20261110000100_foto_consigli.sql.' : '.'));
     if (prev) out.push(`-- Contiene tutta la versione ${prev} (controllo finale: righe identiche per chiave) e la indica come versione precedente.`);
   }
   out.push('-- Idempotente: con la versione già pubblicata non scrive nulla e controlla solo i conteggi.');
@@ -664,6 +754,11 @@ export function generateSql(c: CatalogSeed): string {
     if (hasFerries) {
       out.push(`  if to_regclass('public.ferry_routes') is null then`);
       out.push(`    raise exception 'Mancano le tabelle dei traghetti: applicare prima supabase/migrations/20261109000000_traghetti.sql';`);
+      out.push('  end if;');
+    }
+    if (hasExtras) {
+      out.push(`  if to_regclass('public.place_photos') is null or to_regclass('public.place_tips') is null then`);
+      out.push(`    raise exception 'Mancano le tabelle di foto e consigli: applicare prima supabase/migrations/20261110000100_foto_consigli.sql';`);
       out.push('  end if;');
     }
     out.push('end $pre$;');
@@ -716,6 +811,12 @@ export function generateSql(c: CatalogSeed): string {
   if (hasFerries) {
     for (const t of FERRY_TABLES) body.push(ferryInsert(t, ferries[t]));
   }
+  if (hasExtras) {
+    body.push(insert('place_photos', ['release_id', 'place_key', 'position', 'commons_file', 'author', 'license', 'license_url', 'checked_at'],
+      photos.map(({ key, i, f, at }) => [rel, key, i, f.file, f.author, f.license, f.licenseUrl, at]), ''));
+    body.push(insert('place_tips', ['release_id', 'place_key', 'lang', 'position', 'body', 'source_label', 'source_url', 'checked_at'],
+      tips.map(({ key, i, t }) => [rel, key, 'it', i, t.text, t.source, t.url, t.checkedAt]), ''));
+  }
 
   out.push(`-- Contenuto della versione: si scrive solo se è ancora in bozza`);
   out.push(`do ${DO_TAG}`);
@@ -750,11 +851,17 @@ export function generateSql(c: CatalogSeed): string {
     expect.push(['ferry_route_stops', `release_id = ${R} and lat is not null`, ferries.ferry_route_stops.filter((s) => s.lat !== null).length]);
     expect.push(['ferry_fares', `release_id = ${R} and amount is not null`, ferries.ferry_fares.filter((x) => x.amount !== null).length]);
   }
+  if (hasExtras) {
+    expect.push(['place_photos', `release_id = ${R}`, photos.length]);
+    expect.push(['place_tips', `release_id = ${R}`, tips.length]);
+  }
   if (prev) {
     expect.push(['catalog_releases', `release_id = ${R} and previous_release_id = ${q(prev)}`, 1]);
   }
   // Tutto il contenuto della versione precedente è anche in questa (righe identiche tranne release_id)
-  const inherited = ['regions', 'places', 'place_texts', 'place_sources', 'operators', 'voyages', 'route_ports', 'place_links'];
+  const inherited: string[] = ['regions', 'places', 'place_texts', 'place_sources', 'operators', 'voyages', 'route_ports', 'place_links'];
+  // Da NO-3 anche le tratte traghetto della versione precedente (il seed di NO-2 resta identico byte per byte)
+  if (c.release.version >= 3 && hasFerries) inherited.push(...FERRY_TABLES);
 
   out.push('-- Controllo finale: se fallisce, la transazione si annulla');
   out.push('do $check$');
@@ -920,6 +1027,13 @@ export function seedBundle(c: CatalogSeed, opts: { status?: string; publishedAt?
     place_links: c.links.map((l) => ({ release_id: rel, kind: l.kind, from_place_key: l.from, to_place_key: l.to, label: l.label, note: l.note, sources: l.sources })),
     // Tabelle dei traghetti (da NO-2): sempre presenti, vuote nelle versioni senza traghetti. Stesso ordine di catalog_bundle.
     ...ferryBundle(rel, c.ferries),
+    // Foto e consigli (da NO-3): sempre presenti, vuoti nelle versioni precedenti. Stesso ordine di catalog_bundle.
+    place_photos: c.places
+      .flatMap((p) => (p.photos ?? []).map((f, i) => ({ release_id: rel, place_key: p.key, position: i, commons_file: f.file, author: f.author, license: f.license, license_url: nn(f.licenseUrl), checked_at: p.photosCheckedAt ?? c.release.dataCheckedUntil })))
+      .sort((a, b) => (a.place_key < b.place_key ? -1 : a.place_key > b.place_key ? 1 : a.position - b.position)),
+    place_tips: c.places
+      .flatMap((p) => (p.tips ?? []).map((t, i) => ({ release_id: rel, place_key: p.key, lang: 'it', position: i, body: t.text, source_label: t.source, source_url: t.url, checked_at: t.checkedAt })))
+      .sort((a, b) => (a.place_key < b.place_key ? -1 : a.place_key > b.place_key ? 1 : a.position - b.position)),
   };
 }
 

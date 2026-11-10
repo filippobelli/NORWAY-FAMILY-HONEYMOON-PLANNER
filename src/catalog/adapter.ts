@@ -8,6 +8,7 @@ import type { CatalogDay, CatalogPrice, CoastalCatalogVoyage } from '../data/coa
 import type { CoastalPort } from '../data/coastalPorts';
 import type { FerryCall, FerryDataStatus, FerryFare, FerryMode, FerryPassengerRule, FerryRoute, FerrySource, FerryStop } from '../data/ferryTypes';
 import type { OfficialKind, OfficialSite } from '../data/officialSites';
+import type { PlacePhoto, PlaceTip } from '../data/placeExtras';
 import type { County } from '../data/regionShapes';
 import type { WikiRef } from '../data/wiki';
 import type { Category, CoastalOption, Destination, Region, SourceRef } from '../domain/types';
@@ -33,6 +34,9 @@ export interface CatalogBundle {
   ferry_route_stops?: Rows;
   ferry_route_places?: Rows;
   ferry_fares?: Rows;
+  /** Foto e consigli dei luoghi (da NO-3). Facoltative: le versioni precedenti e le copie offline vecchie non le hanno */
+  place_photos?: Rows;
+  place_tips?: Rows;
 }
 
 /** Dati di una nazione e della versione del catalogo caricata (per le schermate «Nazioni») */
@@ -86,6 +90,10 @@ export interface AppCatalog {
   ferrySources: Record<string, FerrySource>;
   /** Versione del catalogo di ogni tratta (route_key → release_id): il viaggio vede solo quelle della sua versione */
   ferryRelease: Record<string, string>;
+  /** Foto dei luoghi con autore e licenza (vuoto nelle versioni senza foto, es. NO-1 e NO-2) */
+  photos: Record<string, PlacePhoto[]>;
+  /** Consigli dei luoghi con fonte e data (vuoto nelle versioni senza consigli) */
+  tips: Record<string, PlaceTip[]>;
 }
 
 export class CatalogError extends Error {
@@ -387,6 +395,14 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
   for (const l of b.place_links) if (l.kind === 'treno') rail[[String(l.from_place_key), String(l.to_place_key)].sort().join('|')] = { label: String(l.label), note: String(l.note ?? '') };
 
   const ferries = adaptFerries(b, regionName);
+  const photos: Record<string, PlacePhoto[]> = {};
+  for (const r of [...rowsOf(b.place_photos)].sort(byPos('position'))) {
+    (photos[String(r.place_key)] ??= []).push(clean({ file: String(r.commons_file), author: String(r.author), license: String(r.license), licenseUrl: str(r.license_url) }));
+  }
+  const tips: Record<string, PlaceTip[]> = {};
+  for (const r of [...rowsOf(b.place_tips)].filter((x) => x.lang === 'it').sort(byPos('position'))) {
+    (tips[String(r.place_key)] ??= []).push({ text: String(r.body), source: String(r.source_label), url: String(r.source_url), checkedAt: String(r.checked_at) });
+  }
   const voyageCountry = Object.fromEntries(voyages.map((v) => [v.id, code]));
   const portCountry = Object.fromEntries(ports.map((p) => [p.name, code]));
   return {
@@ -411,6 +427,8 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
     ferryRoutes: ferries.routes,
     ferrySources: ferries.sources,
     ferryRelease: Object.fromEntries(ferries.routes.map((r) => [r.key, country.releaseId])),
+    photos,
+    tips,
   };
 }
 
@@ -419,7 +437,7 @@ export function combineCatalogs(list: AppCatalog[]): AppCatalog {
   const out: AppCatalog = {
     countries: [], destinations: [], placeCountry: {}, attractions: {}, officialSites: {}, wiki: {}, voyages: [], ports: [],
     operatorFacts: {}, operatorSources: {}, counties: [], regionCounties: {}, regionCountry: {}, voyageCountry: {}, portCountry: {}, baseIds: [], notVisits: [], rail: {},
-    ferryRoutes: [], ferrySources: {}, ferryRelease: {},
+    ferryRoutes: [], ferrySources: {}, ferryRelease: {}, photos: {}, tips: {},
   };
   for (const c of list) {
     out.countries.push(...c.countries);
@@ -443,6 +461,8 @@ export function combineCatalogs(list: AppCatalog[]): AppCatalog {
     out.ferryRoutes.push(...c.ferryRoutes);
     Object.assign(out.ferrySources, c.ferrySources);
     Object.assign(out.ferryRelease, c.ferryRelease);
+    Object.assign(out.photos, c.photos ?? {});
+    Object.assign(out.tips, c.tips ?? {});
   }
   return out;
 }

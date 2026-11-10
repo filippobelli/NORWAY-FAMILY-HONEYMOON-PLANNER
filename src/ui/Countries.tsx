@@ -67,6 +67,15 @@ export function CountriesLine() {
   );
 }
 
+/** Novità del catalogo della Norvegia tra due versioni: NO-2 ha portato i traghetti, NO-3 i luoghi del nord con foto e consigli */
+function whatsNew(from: number, to: number, where: 'invito' | 'conferma'): string {
+  const parts: string[] = [];
+  if (from < 2 && to >= 2) parts.push(where === 'invito' ? 'le tratte dei traghetti (Trasporti via mare)' : 'le tratte dei traghetti (Prenotazioni › Trasporti via mare › Traghetti)');
+  if (from < 3 && to >= 3) parts.push('molti luoghi in più nel nord (Bodø, Lofoten, Vesterålen, Senja, Tromsø), con foto e consigli nella scheda di ogni tappa');
+  if (!parts.length) return '';
+  return `${where === 'invito' ? ', con ' : ', più '}${parts.join(' e ')}`;
+}
+
 /** Riquadro «Nazioni e cataloghi» delle Impostazioni */
 export function CountriesPanel() {
   const { trip } = useTrip();
@@ -100,7 +109,7 @@ export function CountriesPanel() {
                 <div className="small catalog-upgrade">
                   <p>
                     <Badge tone="info">versione {newer.version} disponibile</Badge> È uscita la versione {newer.version} del catalogo{newer.publishedAt ? ` (${date(newer.publishedAt)})` : ''}
-                    {c.code === 'NO' && newer.version >= 2 ? ', con le tratte dei traghetti (Trasporti via mare)' : ''}. Il viaggio resta sulla versione {current} finché non scegli di passare.
+                    {c.code === 'NO' ? whatsNew(current, newer.version, 'invito') : ''}. Il viaggio resta sulla versione {current} finché non scegli di passare.
                   </p>
                   <button className="btn btn-small" onClick={() => setUpgrading(newer)}>
                     Passa a {newer.releaseId}
@@ -137,7 +146,7 @@ function UpgradeDialog({ target, onClose }: { target: AvailableCountry; onClose:
     <Modal title={`Passare al catalogo ${target.releaseId}?`} onClose={onClose}>
       <p>
         Il viaggio usa il catalogo {target.name} {from?.releaseId ?? ''}. La versione {target.version} contiene tutti i luoghi della versione precedente, con le stesse
-        chiavi{target.code === 'NO' && target.version >= 2 ? ', più le tratte dei traghetti (Prenotazioni › Trasporti via mare › Traghetti)' : ''}.
+        chiavi{target.code === 'NO' ? whatsNew(releaseVersion(from?.releaseId ?? '') ?? 1, target.version, 'conferma') : ''}.
       </p>
       <ul className="small">
         <li>Tappe, notti, idee, preferiti, attività, crociere e costi restano come sono.</li>
