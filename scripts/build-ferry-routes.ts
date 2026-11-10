@@ -271,6 +271,8 @@ export function buildFerryData(json: unknown): { sources: FerrySource[]; routes:
   const sources: FerrySource[] = Object.keys(fonti).sort().map((key) => {
     const s = fonti[key];
     if (!isObj(s) || !str(s.url) || !str(s.lettoIl)) throw new Error(`Fonte ${key}: url o data mancanti`);
+    // Solo https (CHECK di ferry_sources.url nella migrazione 20261109000000_traghetti.sql)
+    if (!/^https:\/\//.test(String(s.url))) throw new Error(`Fonte ${key}: l'url deve iniziare con https://`);
     return { key, title: String(s.titolo), url: String(s.url), checkedAt: String(s.lettoIl) };
   });
   const sourceKeys = new Set(sources.map((s) => s.key));

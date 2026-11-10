@@ -188,3 +188,40 @@ test('Elenco: ricerca senza accenti, filtri combinabili, zone (Andenes–Gryllef
   assert.ok(['geiranger-hellesylt', 'eidsdal-linge', 'alesund-geiranger'].includes(more.routes[0]!.key), 'prima le tratte collegate alle tappe');
   assert.equal(new Set(groups.flatMap((g) => g.routes.map((r) => r.key))).size, 58);
 });
+
+test('Review B1: il conto cambia con la data (Tromsø → Harstad mercoledì 1469 → sabato 708): avviso, aggiornamento solo su richiesta', async () => {
+  const { costDrift, refreshCost, segmentCost } = await import('../src/domain/ferries');
+  const r = route('tromso-harstad-express');
+  // Collegamento s0 → s1: parte dopo le 2 notti della prima tappa
+  const t = { ...trip(['tromso', 'senja']), startDate: '2027-08-09' };
+  const leg = t.legs[0]!;
+  assert.equal(legDate(t, leg), '2027-08-11', 'mercoledì');
+  const seg = ferrySegment({ route: r, board: 1, alight: 5, withCar: false }, segmentCost(t, leg, { ferryRouteId: r.key } as Segment, r));
+  assert.deepEqual(seg.cost, { amount: 1469, currency: 'NOK' });
+  assert.equal(costDrift(seg, segmentCost(t, leg, seg, r)), undefined, 'nessun avviso finché il conto è lo stesso');
+  // La partenza si sposta di un giorno: il collegamento cade di sabato
+  const moved = { ...t, startDate: '2027-08-12' };
+  assert.equal(legDate(moved, leg), '2027-08-14');
+  const now = segmentCost(moved, leg, seg, r);
+  assert.equal(now.totalNok, 708);
+  assert.deepEqual(costDrift(seg, now), { from: 1469, to: 708, locked: false });
+  assert.deepEqual(refreshCost(seg, now).cost, { amount: 708, currency: 'NOK' });
+  // Prenotato: l'avviso dice che è bloccato; l'aggiornamento (solo su conferma) tiene lo stato dell'utente
+  const booked = { ...seg, costStatus: 'prenotato' as const };
+  assert.equal(costDrift(booked, now)?.locked, true);
+  assert.equal(refreshCost(booked, now).costStatus, 'prenotato');
+  // Costo inserito a mano: nessun avviso
+  assert.equal(costDrift({ ...seg, costByUser: true }, now), undefined);
+  // Cambia l'età di un bambino (5 → 6 anni): il conto cambia anche di mercoledì
+  const older = { ...t, participants: { adults: 2, childrenAges: [8, 6] } };
+  assert.deepEqual(costDrift(seg, segmentCost(older, leg, seg, r)), { from: 1469, to: 1678, locked: false });
+});
+
+test('Senza anno del viaggio il periodo della tariffa non si sceglie: da verificare; fascia del biglietto famiglia dal periodo', () => {
+  const r = route('bergen-flam-express');
+  const c = ferryCost({ route: r, participants: { adults: 2, childrenAges: [8, 5] }, withCar: false });
+  assert.equal(c.status, 'da_verificare');
+  assert.ok(c.warnings.some((w) => /anno del viaggio non noti/.test(w)));
+  const aug = ferryCost({ route: r, participants: { adults: 2, childrenAges: [8, 5] }, withCar: false, tripYear: 2027 });
+  assert.equal(aug.options.find((o) => o.kind === 'famiglia')?.lines[0]?.rule.startsWith('bambini 6–17'), true);
+});

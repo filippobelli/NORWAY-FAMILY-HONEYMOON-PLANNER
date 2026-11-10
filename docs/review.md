@@ -323,3 +323,117 @@ Nessun bloccante. Restano i consigli non obbligatori:
 - le riserve «Importanti» della prima revisione ancora aperte (allegati con lo Storage vero, parti del design, tipi `Region`/`CoastalOperator`).
 
 Per Filippo valgono i passi della seconda revisione, tranne il punto 2 (non usare «Nuovo viaggio vuoto»): non serve più finché la variabile non è impostata.
+
+# Revisione Trasporti via mare (2026-11-09)
+
+Commit `28b773d` sul ramo `feature/trasporti-mare` (`git diff main...feature/trasporti-mare`, 39 file). Letti: piano, spec,
+design, architettura §16, `ricerca-traghetti.md/.json`, `sviluppo.md` «Trasporti via mare». Nessun codice dell'app
+modificato, nulla applicato al database, nessun commit.
+
+## Esito: **NON APPROVATO** — un solo bloccante (B1), correzione piccola; corretto B1 l'esito diventa APPROVATO CON RISERVE.
+
+## Problemi bloccanti
+
+**B1 — Il costo salvato del traghetto non si aggiorna e non avvisa quando cambiano data o famiglia: Budget e
+«Come è calcolato» mostrano due numeri diversi.**
+- `src/domain/ferries.ts:765` scrive `seg.cost` una volta sola, all'«Applica»; `src/domain/budget.ts:212-221` usa quel valore.
+- `src/ui/Ferries.tsx:811` ricalcola il conto (`segmentCost`, con la data del collegamento e i partecipanti di oggi) e
+  `Ferries.tsx:820` mostra il totale salvato sopra la tabella ricalcolata, senza confronto né avviso.
+- Scenario (le date del viaggio NON sono decise, CLAUDE.md): Tromsø → Harstad senza auto aggiunto quando il
+  collegamento cade di mercoledì = 1469 NOK. Si sposta la partenza di un giorno e il collegamento cade di sabato: il
+  Budget resta 1469, «Come è calcolato» dice 277 × 2 + 154 + 0 = 708. Succede lo stesso se cambia l'età di un bambino
+  (soglia dei 6 anni), se cambia il numero di adulti, se si passa dall'alta alla bassa stagione (Bergen–Flåm 18/5–31/8)
+  o se arriva una nuova versione del catalogo. Contraddice il criterio «si vede da dove viene ogni parte del costo» e
+  porta nel Budget un importo sbagliato senza segnalarlo.
+- Correzione minima: se `!seg.costByUser` e il totale ricalcolato è diverso da `seg.cost` (o cambia la calcolabilità),
+  mostrare nel blocco del tratto e nel dettaglio del Budget «Il conto è cambiato: X → Y · Aggiorna» (stessa azione di
+  `backToCalc`), senza aggiornare in silenzio i tratti «prenotato»/«pagato». Aggiungere un test di dominio sul caso del sabato.
+
+## Riserve non bloccanti
+
+1. **Cambio di opzioni su un tratto «prenotato/pagato»** (`ferries.ts:756-766`): lo stato resta «prenotato/pagato» ma
+   l'importo viene ricalcolato con le nuove scelte (auto, imbarco). Meglio tenere anche l'importo, o chiedere conferma.
+2. **Link alle fonti senza filtro** (`Ferries.tsx:408`): `href={s.url}` diretto, mentre il resto dell'app usa
+   `externalHref` (`src/domain/lodging.ts:52`). Oggi non è sfruttabile (36 fonti tutte `https://`, il CHECK SQL accetta
+   solo `^https?://`), ma il requisito è «solo https»: usare `externalHref` e restringere il CHECK di
+   `ferry_sources.url` a `^https://`. `rel="noreferrer"` implica `noopener`: va bene. Nessun `dangerouslySetInnerHTML`;
+   i testi delle fonti sono resi come testo. Il link inserito con «Ho trovato il prezzo» passa da `externalHref` (sicuro).
+3. **Spec §8 diversa dal codice su Eidsdal → Linge senza auto**: la spec dice 0, il codice dice «non calcolabile»
+   (la fonte non scrive la regola dei passeggeri, design DU9). La scelta del codice è la più prudente: allineare la spec.
+4. **Ordine di pubblicazione**: l'app contiene già NO-2 nei file e senza collegamento al cloud si può passare a NO-2.
+   Se poi si accede prima che NO-2 sia pubblicata sul server, il download della nazione fallisce. Applicare migrazione +
+   seed v2 **prima** della pubblicazione su `main` (o insieme).
+5. **`catalog_bundle('NO-1')`**: le chiavi esistenti restano identiche, ma il risultato ha 5 chiavi nuove `ferry_*` = `[]`.
+   L'adattatore le tratta come facoltative (test) e le copie offline vecchie restano valide: nessun effetto pratico.
+6. **Fonte Torghatten Bodø–Moskenes** (letta oggi): 605 per l'auto fino a 6 m, plassgaranti 65/35/130 e passeggeri
+   gratis sono confermati; la pagina però non dice né l'anno dei prezzi né «conducente incluso». Nel catalogo risultano
+   `2026` e `driverIncluded: true`: nessun effetto sul conto (passeggeri gratis; 2026 ≠ 2027 → «da verificare»), ma
+   l'anno andrebbe annotato come dedotto.
+7. Minori: `ferryCost` usa `2027` fisso se manca l'anno del viaggio (`ferries.ts:229`); la fascia d'età del biglietto
+   famiglia è presa dalla prima voce «bambino» senza filtro di periodo o sottotratta (`ferries.ts:448`; oggi le età
+   coincidono); una tariffa pubblicata solo nel verso B→A non vale mai per A→B (`ferries.ts:245`, scelta prudente);
+   per Bergen–Flåm manca il senior fuori stagione (999), che non serve per questa famiglia.
+
+## Verifiche fatte
+
+**Dati** — `scripts/build-ferry-routes.ts` rieseguito in memoria su `docs/ricerca-traghetti.json`: tratte e fonti
+**identiche** a `src/data/ferryRoutes.ts` (58 tratte, 36 fonti, tutte lette il 2026-11-09, tutte `https`). 200 fermate
+con coordinate, **tutte con id NSR**. Tariffe: una sola del 2027 (Bergen–Flåm) «confermata»; tutte le altre (anno 2026,
+2026/2027 o senza anno) risultano sempre «da verificare per il 2027» (`priceStatus`); 11 senza prezzo; nessuna voce
+`fergeruter` confermata. Campione di 10 tratte letto per intero (Bergen–Flåm, Flåm–Gudvangen, Lauvvik–Lysebotn,
+Geiranger–Hellesylt, Eidsdal–Linge, Bodø–Moskenes, Bodø–Svolvær, Andenes–Gryllefjord, Tromsø–Harstad con sottotratte).
+Fonti primarie lette oggi:
+- Fjord1 Bergen–Flåm 2027: adulto 1449 / 1349, bambino 6–17 719 / 649, 0–5 gratis, famiglia 3299 / 3099, alta
+  stagione 18/5–31/8, tetto di 209 per bambino con adulto pagante, 08:00 → 13:40 = 5 h 40 → **tutto coincide**.
+- Fjord1 Geiranger–Hellesylt 2026 (PDF): adulto 420, bambino 210, sotto i 4 anni gratis, auto fino a 6 m con conducente
+  810, pacchetto auto + conducente + 4 persone 1650, ritorno −50% → **coincide**.
+- Svipper linea 2 (PDF, dal 1/2/2026): Tromsø–Harstad 630 / giovane 377 / bambino 209, sabato 277 / 154,
+  Tromsø–Finnsnes 295 / 98, Finnsnes–Harstad 381 / 126 → **coincide**.
+- Torghatten 18-782 Bodø–Moskenes: vedi riserva 6.
+
+**Calcoli** (`src/domain/ferries.ts`) — età del viaggio, con avviso a ±1 anno dalla soglia; gratis sotto l'età della
+fonte; tetto bambino solo con adulto pagante; auto solo se scelta (`withCar=false` → nessuna voce veicolo); il
+conducente incluso toglie un adulto, se la fonte non lo dice → incluso + da verificare; `gratis` = 0, `non_indicata`
+senza auto = non calcolabile, con auto = solo l'auto + da verificare; pacchetto e famiglia calcolati a parte, vince il
+più basso (a parità il conto per persona); prezzo mancante → nessun totale, mai 0, nel Budget «prezzo da cercare»;
+anno ≠ viaggio → mai «confermato». Il tratto traghetto non ha `distanceKm`; la geometria esiste solo tra due moli con
+coordinate NSR, disegnata come tratto via mare (nessuna strada); km del Budget non toccati. Gli esempi della spec
+sono nei test (1469, 1650, 1990, 3107/3299, 1365, 81, 0/605/735, non calcolabili).
+
+**Compatibilità** — i viaggi senza `countries` restano su NO-1 (`LEGACY_COUNTRY` invariato; `FILE_COUNTRY` = NO-2 non
+si applica ai viaggi vecchi) e non vedono tratte; crociere invariate (`CoastalView` dentro `SeaView`, e2e «come
+prima»); `upgradeCatalog` cambia solo `releaseId` della nazione, con conferma e «Annulla»; i campi nuovi del `Segment`
+e `hiddenFerrySuggestions` finiscono in `extra` (test righe); senza `VITE_PASSAGGIO_RIGHE` nessun viaggio a righe
+(`righe.cjs` con la build normale: documento, nessun `sync_push`).
+
+**SQL** — migrazione solo additiva e idempotente (5 tabelle, `if not exists`, nessun DROP di dati), RLS su tutte,
+`authenticated` in sola lettura sulle versioni pubblicate o ritirate, `anon` nulla (revoca + controlli finali),
+guardie `catalog_child_guard` sulle 5 tabelle, coordinate ammesse solo con `nsr_id` + fonte (CHECK), `catalog_bundle`
+con le chiavi di prima invariate. Rollback: si ferma se un viaggio usa NO-2, toglie solo NO-2 e le tabelle `ferry_*`,
+ripristina `catalog_bundle` identico a `20261106000100`. Seed rigenerati: v1 e v2 **identici** ai file (a meno dei fine
+riga CRLF); v2 controlla che ogni riga di NO-1 sia anche in NO-2 (`except`) e i conteggi.
+Database `norway-planner` (solo lettura): solo `NO-1` pubblicata, tabelle `ferry_*` assenti, `trips` tutti in formato
+`documento` e nessuno con `countries` → nulla applicato, il viaggio reale resta su NO-1.
+
+**Sicurezza** — nessun segreto nel diff; per i link vedi la riserva 2.
+
+## Comandi
+
+| Comando | Esito |
+|---|---|
+| `npm run typecheck` / `npm run lint` | puliti |
+| `npm test` | 255 / 255 |
+| `npm run build` | ok |
+| `traghetti.cjs` | 64 OK, 0 FAIL |
+| `e2e.cjs` · `planning.cjs` · `cosafare.cjs` | 60 · 16 · 30 OK, 0 FAIL |
+| `a11y.cjs` | 36 OK, 0 FAIL (anche `#/crociere?parte=traghetti`, 375 px) |
+| `sync.cjs` | 16 OK, 0 FAIL |
+| `righe.cjs` build normale / `VITE_PASSAGGIO_RIGHE=pulsante` | 8 OK / 34 OK, 0 FAIL |
+| `dist/` finale | ricostruita senza variabili |
+
+## UX (375 px, controllo a mano)
+Scheda Traghetti con nota, riepilogo (1 · 46 · 11), ricerca e «Filtri» raccolti, nessuno scorrimento orizzontale; con
+il viaggio su NO-1 un messaggio chiaro e «Vai a Nazioni e cataloghi»; dialogo di passaggio a NO-2 chiaro, con Annulla;
+scheda Bergen → Flåm (durata, stagione e frequenza con stato, tappe, nessun «Prenota»); passo «Aggiungi al percorso»
+con collegamento, imbarco e sbarco, auto disattivata se la tratta non porta veicoli, azioni fisse in basso. Nessun
+errore JavaScript.

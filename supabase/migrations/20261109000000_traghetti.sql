@@ -16,7 +16,7 @@ create table if not exists public.ferry_sources (
   source_key text not null check (source_key ~ '^[a-z0-9][a-z0-9-]*$'),
   position integer not null default 0,
   title text not null,
-  url text not null check (url ~ '^https?://'),
+  url text not null check (url ~ '^https://'),
   checked_at date not null,
   primary key (release_id, source_key)
 );

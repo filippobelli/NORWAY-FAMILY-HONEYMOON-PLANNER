@@ -284,3 +284,25 @@ nessuna variabile d'ambiente impostata; il viaggio reale non è stato toccato.
 - La crociera andata e ritorno (Stavanger–Lysefjord) rimanda alle Giornate, senza creare l'attività da sola.
 - Senza collegamento al cloud il passaggio a NO-2 si basa sui file dell'app: se NO-2 non fosse pubblicata sul server, il
   download fallirebbe con il messaggio d'errore della nazione (il piano prevede la pubblicazione di NO-2).
+
+### Correzioni dopo la revisione (2026-11-10, `docs/review.md` «Revisione Trasporti via mare»)
+- **B1 — costo salvato che invecchia**: `costDrift`/`refreshCost`/`isLockedCost` (`src/domain/ferries.ts`). Se data del
+  collegamento, età, partecipanti o catalogo cambiano il conto, il tratto (e la voce del Budget) mostra «Il conto è
+  cambiato: X → Y · Aggiorna»; si aggiorna solo con il clic. Tratti «prenotato»/«pagato»: l'importo non cambia mai da
+  solo, «Aggiorna…» chiede una seconda conferma e lo stato resta quello dell'utente; nel dialogo «Cambia imbarco, auto
+  e opzioni» un cambio d'importo su un tratto prenotato/pagato richiede la casella di conferma. Test: Tromsø → Harstad
+  mercoledì 1469 → sabato 708 (e bambino 5 → 6 anni: 1678), prenotato bloccato, costo a mano senza avviso.
+- **Link delle fonti**: solo `https` (`externalHref` + controllo `https://`); CHECK di `ferry_sources.url` ristretto a
+  `^https://` nella migrazione (non applicata); `scripts/build-ferry-routes.ts` rifiuta url non https (dati invariati,
+  seed v2 rigenerato identico).
+- **Spec allineata**: Eidsdal → Linge senza auto = non calcolabile (regola 3 e §8).
+- **Anno**: senza data si usa agosto dell'anno del viaggio; senza anno il periodo della tariffa non si sceglie e il conto
+  è «da verificare» (niente più 2027 fisso).
+- **Biglietto famiglia**: la fascia d'età viene dalla voce bambino dello stesso periodo/tratto.
+- Riserve 4–7 restanti (ordine di pubblicazione, chiavi `ferry_*` vuote in NO-1, anno Torghatten dedotto, tariffe solo
+  B→A, senior fuori stagione) non toccate: sono note per il capo progetto o senza effetto sul conto.
+- Verifiche rifatte: vedi sotto.
+- Esiti 2026-11-10: typecheck e lint puliti; `npm test` 257/257; build ok; `traghetti.cjs` 64 OK (aggiunta un'attesa di
+  un fotogramma dopo la freccia sulle schede: una volta era fallito per il tempo del focus, poi 2 esecuzioni su 2 pulite)
+  · `e2e` 60 · `planning` 16 · `cosafare` 30 · `a11y` 36 · `sync` 16 · `righe` 8 (build normale) e 34
+  (`VITE_PASSAGGIO_RIGHE=pulsante`, solo per quel comando), tutti 0 FAIL; `dist` ricostruita senza variabile.

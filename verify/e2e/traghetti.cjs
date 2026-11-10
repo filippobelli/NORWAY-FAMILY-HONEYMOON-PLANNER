@@ -75,6 +75,7 @@ const legOf = (t, a, b) => {
   // Tastiera sulle schede: freccia sinistra torna a Crociere
   await p.focus('[role=tab]#mare-traghetti');
   await p.keyboard.press('ArrowLeft');
+  await p.waitForTimeout(150); // il focus si sposta al fotogramma successivo
   check((await p.getAttribute('[role=tab]#mare-crociere', 'aria-selected')) === 'true' && (await p.evaluate(() => document.activeElement?.id)) === 'mare-crociere', 'schede: frecce della tastiera');
   await p.keyboard.press('End');
   check((await p.getAttribute('[role=tab]#mare-traghetti', 'aria-selected')) === 'true', 'schede: Fine porta all\'ultima');

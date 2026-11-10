@@ -225,8 +225,9 @@ export function ferryCost(input: FerryCostInput): FerryCost {
   const sub = subRoute(r, input.board, input.alight);
   const year = input.tripYear;
   const date = input.date;
-  // Senza data si usa il periodo che contiene agosto (mese del viaggio)
-  const refDate = date ?? `${year ?? 2027}-08-15`;
+  // Senza data si usa il periodo che contiene agosto (mese del viaggio) dell'anno del viaggio; senza anno il periodo
+  // non si può scegliere: tariffa da verificare
+  const refDate = date ?? (year !== undefined ? `${year}-08-15` : undefined);
   if (!sub) {
     return { computable: false, options: [], missing: ['imbarco e sbarco validi'], warnings, status: 'da_verificare', statusText: 'Imbarco e sbarco devono essere diversi', tone: 'none' };
   }
@@ -249,9 +250,20 @@ export function ferryCost(input: FerryCostInput): FerryCost {
   const usable = r.fare.fares.filter((f) => {
     if (f.trip !== 'andata' || f.optional || !matchesSub(f)) return false;
     if (f.period) {
+      if (!refDate) {
+        if (!periodNoted) {
+          periodNoted = true;
+          verify = true;
+          warnings.push(`Data e anno del viaggio non noti: periodo della tariffa da verificare (${f.period}).`);
+        }
+        return true;
+      }
       const inside = periodContains(f.period, refDate);
       if (inside === false) return false;
-      if (inside === undefined) warnings.push(`Periodo della tariffa non interpretato: «${f.period}».`);
+      if (inside === undefined) {
+        verify = true;
+        warnings.push(`Periodo della tariffa non interpretato: «${f.period}».`);
+      }
       if (!date && !periodNoted) {
         periodNoted = true;
         warnings.push(`Data del collegamento non nota: uso la tariffa del periodo che contiene agosto (${f.period}).`);
@@ -445,7 +457,8 @@ export function ferryCost(input: FerryCostInput): FerryCost {
     const fam = pick('famiglia');
     if (fam && fam.amountNok !== null && fam.adultsIncluded !== undefined && fam.childrenIncluded !== undefined) {
       const paying = ages.filter((a) => fare.freeUnderAge === undefined || a >= fare.freeUnderAge);
-      const childRange = r.fare.fares.find((f) => f.category === 'bambino' && f.trip === 'andata');
+      // Fascia d'età della stessa tariffa (periodo, giorno e tratto scelti)
+      const childRange = usable.find((f) => f.category === 'bambino' && !f.dayType) ?? usable.find((f) => f.category === 'bambino');
       const inRange = paying.every((a) => !childRange || inAge(childRange, a));
       if (p.adults <= fam.adultsIncluded && paying.length <= fam.childrenIncluded && inRange) {
         const free = ages.length - paying.length;
@@ -784,6 +797,40 @@ export function ferrySegment(c: FerryChoice, cost: FerryCost, prev?: Segment): S
   else delete seg.geometry;
   for (const k of Object.keys(seg) as (keyof Segment)[]) if (seg[k] === undefined) delete seg[k];
   return seg;
+}
+
+/** Stato «prenotato» o «pagato»: l'importo non cambia mai da solo */
+export const isLockedCost = (s: Pick<Segment, 'costStatus'>) => s.costStatus === 'prenotato' || s.costStatus === 'pagato';
+
+export interface CostDrift {
+  /** Totale salvato nel tratto (NOK) e totale di oggi dal catalogo; assenti = non calcolabile / non salvato */
+  from?: number;
+  to?: number;
+  /** Il tratto è prenotato o pagato: si aggiorna solo con conferma esplicita */
+  locked: boolean;
+}
+
+/**
+ * Conto cambiato rispetto al costo salvato nel tratto (date, età, partecipanti, catalogo): undefined se uguale,
+ * se il costo è inserito a mano o se non è un tratto del catalogo. Nulla si aggiorna da solo (review B1).
+ */
+export function costDrift(seg: Segment, cost: FerryCost): CostDrift | undefined {
+  if (!seg.ferryRouteId || seg.costByUser) return undefined;
+  const saved = seg.cost && seg.cost.currency === 'NOK' ? Math.round(seg.cost.amount) : undefined;
+  if (seg.cost && seg.cost.currency !== 'NOK') return undefined;
+  const now = cost.totalNok !== undefined ? Math.round(cost.totalNok) : undefined;
+  const statusChanged = !isLockedCost(seg) && now !== undefined && seg.costStatus !== cost.status;
+  if (saved === now && !statusChanged) return undefined;
+  return { from: saved, to: now, locked: isLockedCost(seg) };
+}
+
+/** Modifica del tratto per «Aggiorna»: nuovo importo; lo stato prenotato/pagato resta quello dell'utente */
+export function refreshCost(seg: Segment, cost: FerryCost): Partial<Segment> {
+  return {
+    cost: cost.totalNok !== undefined ? { amount: Math.round(cost.totalNok), currency: 'NOK' } : undefined,
+    costStatus: isLockedCost(seg) ? seg.costStatus : cost.status,
+    costByUser: undefined,
+  };
 }
 
 /** Il collegamento ha già la stessa tratta nello stesso verso? */

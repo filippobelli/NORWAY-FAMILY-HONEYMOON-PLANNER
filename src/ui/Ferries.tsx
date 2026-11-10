@@ -30,6 +30,9 @@ import {
   priceStatus,
   proposeCar,
   routePlaces,
+  costDrift,
+  isLockedCost,
+  refreshCost,
   segmentCost,
   stopName,
   subDuration,
@@ -41,6 +44,7 @@ import {
   type RoadChoice,
 } from '../domain/ferries';
 import { formatDuration, legSummary } from '../domain/itinerary';
+import { externalHref } from '../domain/lodging';
 import type { DataStatus, Leg, Money, Segment, Trip } from '../domain/types';
 import { getRoutingProvider, RoutingError } from '../services/routing';
 import { buildHash } from '../state/route';
@@ -73,6 +77,11 @@ export function Arrowed({ text }: { text: string }) {
 }
 
 export const nokText = (n: number) => `${Math.round(n).toLocaleString('it-IT')} NOK`;
+/** Link alle fonti: solo https (review, riserva 2) */
+const httpsHref = (url: string | undefined) => {
+  const h = externalHref(url);
+  return h?.startsWith('https://') ? h : undefined;
+};
 const dateIt = (iso: string) => (/^\d{4}-\d{2}-\d{2}/.test(iso) ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : iso);
 
 /** Tratte del catalogo che il viaggio vede: solo quelle della versione del catalogo scelta (NO-1 non ne ha) */
@@ -405,9 +414,13 @@ function FerrySheet({ r, onAdd, onClose, addRef }: { r: FerryRoute; onAdd: () =>
             <li key={k}>
               {s.title} · letto il {dateIt(s.checkedAt)}
               {isSecondarySource(k) && ' · fonte secondaria: aggregatore'}{' '}
-              <a href={s.url} target="_blank" rel="noreferrer">
-                Vai alla fonte ↗<span className="sr-only"> (si apre in una nuova scheda)</span>
-              </a>
+              {httpsHref(s.url) ? (
+                <a href={httpsHref(s.url)} target="_blank" rel="noreferrer">
+                  Vai alla fonte ↗<span className="sr-only"> (si apre in una nuova scheda)</span>
+                </a>
+              ) : (
+                <span className="muted">link non valido</span>
+              )}
             </li>
           );
         })}
@@ -512,7 +525,17 @@ function AddFerry({ r, legId: initialLeg, preset, edit, onDone }: { r: FerryRout
   const departures = r.summerFrequency.status !== 'assente' && r.summerFrequency.year ? [...r.summerFrequency.text.matchAll(/\b(\d{2}):(\d{2})\b/g)].map((m) => `${m[1]}:${m[2]}`) : [];
   const uniqueDepartures = [...new Set(departures)];
   const hasBooking = r.fare.fares.some((f) => f.optional);
-  const reason = !leg ? 'Scegli un collegamento.' : !sub ? 'Imbarco e sbarco devono essere diversi.' : undefined;
+  // Tratto prenotato o pagato: se le scelte cambiano l'importo, serve una conferma esplicita
+  const [lockOk, setLockOk] = useState(false);
+  const lockedChange =
+    editing && isLockedCost(editing) && !manual && (editing.cost?.amount ?? undefined) !== (cost.totalNok !== undefined ? Math.round(cost.totalNok) : undefined);
+  const reason = !leg
+    ? 'Scegli un collegamento.'
+    : !sub
+      ? 'Imbarco e sbarco devono essere diversi.'
+      : lockedChange && !lockOk
+        ? 'Conferma il cambio dell\'importo del tratto prenotato o pagato.'
+        : undefined;
   const dupAuto = leg?.segments.some((s) => s.mode === 'traghetto' && s.source?.label.startsWith('OSRM'));
 
   if (trip.stops.length < 2) {
@@ -770,6 +793,15 @@ function AddFerry({ r, legId: initialLeg, preset, edit, onDone }: { r: FerryRout
       )}
       {duplicate && <p className="note-warn small">Questo collegamento ha già {sub ? `${stopName(sub.board)} → ${stopName(sub.alight)}` : 'questa tratta'}. Aggiungerla di nuovo conta il costo due volte.</p>}
 
+      {lockedChange && (
+        <div className="note-warn small">
+          Il tratto è {editing!.costStatus === 'pagato' ? 'pagato' : 'prenotato'}: con queste scelte l'importo passa da {nokOrNone(editing!.cost ? Math.round(editing!.cost.amount) : undefined)} a{' '}
+          {nokOrNone(cost.totalNok)}.
+          <label className="check impact-confirm">
+            <input type="checkbox" checked={lockOk} onChange={(e) => setLockOk(e.target.checked)} /> Il biglietto è cambiato: aggiorna l'importo (lo stato resta «{editing!.costStatus}»)
+          </label>
+        </div>
+      )}
       <div className="row wrap place-actions ferry-actions">
         <button className="btn btn-primary" disabled={Boolean(reason)} onClick={apply} aria-describedby={reason ? `${carReason}-r` : undefined}>
           {editing ? 'Applica le modifiche' : 'Applica al percorso'}
@@ -802,6 +834,54 @@ export function ferryChipText(seg: Segment): string {
   return `${car}${seg.cost ? ` · ${Math.round(seg.cost.amount).toLocaleString('it-IT')} ${seg.cost.currency}` : ' · prezzo da cercare'}`;
 }
 
+const nokOrNone = (n: number | undefined) => (n === undefined ? 'non calcolabile' : nokText(n));
+
+/**
+ * Avviso «Il conto è cambiato: X → Y · Aggiorna» (review B1): date, età o partecipanti cambiati dopo l'aggiunta.
+ * Nulla si aggiorna da solo; per un tratto prenotato o pagato serve una seconda conferma.
+ */
+export function CostDriftNote({ seg, cost, onChange }: { seg: Segment; cost: FerryCost; onChange: (p: Partial<Segment>) => void }) {
+  const [asking, setAsking] = useState(false);
+  const d = costDrift(seg, cost);
+  if (!d) return null;
+  const same = d.from === d.to;
+  return (
+    <div className="note-warn small cost-drift" role="status">
+      {same ? (
+        <>Lo stato del prezzo è cambiato: ora «{cost.statusText}».</>
+      ) : (
+        <>
+          Il conto è cambiato: {nokOrNone(d.from)} → {nokOrNone(d.to)}.
+        </>
+      )}{' '}
+      {d.locked ? (
+        asking ? (
+          <>
+            Il tratto è {seg.costStatus === 'pagato' ? 'pagato' : 'prenotato'}: aggiorna l'importo solo se il biglietto è cambiato.{' '}
+            <button type="button" className="btn btn-small" onClick={() => onChange(refreshCost(seg, cost))}>
+              Sì, aggiorna l'importo
+            </button>{' '}
+            <button type="button" className="link-btn" onClick={() => setAsking(false)}>
+              Lascia com'è
+            </button>
+          </>
+        ) : (
+          <>
+            Il tratto è {seg.costStatus === 'pagato' ? 'pagato' : 'prenotato'}: l'importo non cambia da solo.{' '}
+            <button type="button" className="link-btn" onClick={() => setAsking(true)}>
+              Aggiorna…
+            </button>
+          </>
+        )
+      ) : (
+        <button type="button" className="btn btn-small" onClick={() => onChange(refreshCost(seg, cost))}>
+          Aggiorna
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Blocco «Costo per la famiglia» nel dettaglio del tratto (design §7) */
 export function FerrySegmentBlock({ seg, leg, onChange }: { seg: Segment; leg: Leg; onChange: (p: Partial<Segment>) => void }) {
   const { trip } = useTrip();
@@ -821,6 +901,7 @@ export function FerrySegmentBlock({ seg, leg, onChange }: { seg: Segment; leg: L
         {seg.withCar ? ' · con auto' : ' · senza auto'}
         {r ? ` · ${FERRY_MODE_LABEL[r.mode]} · ${r.operator}` : ' · tratta non presente nel catalogo caricato'}
       </p>
+      {cost && <CostDriftNote seg={seg} cost={cost} onChange={onChange} />}
       {seg.costByUser ? (
         <p className="small">
           Costo inserito da te: il calcolo del catalogo non si usa più.{' '}
@@ -857,7 +938,7 @@ export function FerrySegmentBlock({ seg, leg, onChange }: { seg: Segment; leg: L
 
 /** Dettaglio di una voce del Budget che arriva da un tratto traghetto del catalogo (design §8) */
 export function FerryBudgetDetail({ legId, segId }: { legId: string; segId: string }) {
-  const { trip } = useTrip();
+  const { trip, update } = useTrip();
   useCatalog();
   const leg = trip.legs.find((l) => l.id === legId);
   const seg = leg?.segments.find((s) => s.id === segId);
@@ -873,6 +954,13 @@ export function FerryBudgetDetail({ legId, segId }: { legId: string; segId: stri
       <a className="link-btn" href={buildHash('pianifica', { sel: `leg:${legId}` })}>
         Apri nel percorso
       </a>
+      {cost && (
+        <CostDriftNote
+          seg={seg}
+          cost={cost}
+          onChange={(patch) => update((t) => ({ ...t, legs: t.legs.map((l) => (l.id === legId ? { ...l, segments: l.segments.map((s) => (s.id === segId ? { ...s, ...patch } : s)) } : l)) }))}
+        />
+      )}
       {r && cost && !seg.costByUser && (
         <details className="more-fields">
           <summary>Dettaglio</summary>
