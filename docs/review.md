@@ -437,3 +437,40 @@ il viaggio su NO-1 un messaggio chiaro e «Vai a Nazioni e cataloghi»; dialogo 
 scheda Bergen → Flåm (durata, stagione e frequenza con stato, tappe, nessun «Prenota»); passo «Aggiungi al percorso»
 con collegamento, imbarco e sbarco, auto disattivata se la tratta non porta veicoli, azioni fisse in basso. Nessun
 errore JavaScript.
+
+# Seconda revisione Trasporti via mare (2026-11-10)
+
+Commit `bc13f1f` sul ramo `feature/trasporti-mare` (correzioni di B1 e delle riserve; `docs/sviluppo.md` «Correzioni dopo
+la revisione»). Nessun codice modificato dal revisore, nessun commit.
+
+## Esito finale: **APPROVATO CON RISERVE** — B1 chiuso, nessun bloccante.
+
+## B1 — chiuso
+- `costDrift` / `refreshCost` / `isLockedCost` in `src/domain/ferries.ts`: confronta il totale salvato con quello di oggi
+  (data del collegamento, età, partecipanti, catalogo); nessun avviso per i costi inseriti a mano o in altra valuta.
+- `CostDriftNote` in `src/ui/Ferries.tsx`, nel blocco del tratto e nel dettaglio del Budget: «Il conto è cambiato: X → Y»
+  con **Aggiorna**; nulla cambia senza clic. Tratto «prenotato»/«pagato»: «l'importo non cambia da solo», «Aggiorna…»
+  chiede una seconda conferma e lo stato resta quello dell'utente. Nel dialogo «Cambia imbarco, auto e opzioni» un cambio
+  d'importo su un tratto prenotato/pagato blocca «Applica» finché non si spunta la conferma (chiude anche la riserva 1).
+- Test `tests/traghetti-percorso.test.ts`: Tromsø → Harstad mercoledì 1469 → sabato 708, `refreshCost` = 708,
+  prenotato bloccato e stato conservato, costo a mano senza avviso, bambino 5 → 6 anni = 1678.
+
+## Riserve
+- Chiuse: 1 (prenotato/pagato), 2 (link solo `https` con `externalHref`, CHECK `^https://`, script dei dati che rifiuta
+  url non https — dati e seed v2 rigenerati identici, verificato), 3 (spec Eidsdal–Linge allineata), 7 in parte (anno
+  del viaggio al posto del 2027 fisso: senza anno il conto è «da verificare» con avviso; fascia del biglietto famiglia
+  dalla voce dello stesso periodo/tratto).
+- Restano aperte, non bloccanti: 4 (applicare migrazione + seed v2 prima o insieme alla pubblicazione su `main`),
+  5 (chiavi `ferry_*` vuote nel bundle di NO-1, senza effetto), 6 (anno Torghatten dedotto, da annotare), tariffe solo
+  B→A, senior fuori stagione Bergen–Flåm.
+- Nuova, minore: senza anno del viaggio tutte le voci con periodo restano utilizzabili e si prende la prima (alta
+  stagione); è segnalato «da verificare», quindi accettabile.
+
+## Comandi (rifatti dal revisore)
+| Comando | Esito |
+|---|---|
+| `npm run typecheck` / `npm run lint` | puliti |
+| `npm test` | 257 / 257 |
+| `npm run build` | ok (dist senza variabili) |
+| `traghetti.cjs` | 64 OK, 0 FAIL |
+| `a11y.cjs` | 36 OK, 0 FAIL |
