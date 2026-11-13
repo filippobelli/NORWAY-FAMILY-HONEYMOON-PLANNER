@@ -1,6 +1,8 @@
 // Raccolta dei dati di base per le schede nuove del catalogo (zona nord, NO-3).
 //   node scripts/harvest-places.mjs            → docs/ricerca-luoghi-nord.json
 //   node scripts/harvest-places.mjs --only nusfjord,ramberg   (aggiorna solo alcune voci)
+//   node scripts/harvest-places.mjs --set attrazioni [--resume] [--existing]
+//       → candidati da scripts/candidati-attrazioni.mjs, risultato in docs/ricerca-luoghi-attrazioni.json (NO-4)
 //
 // Per ogni candidato (nome + punto indicativo, usato SOLO per scegliere l'elemento giusto, mai salvato come coordinata):
 // - cerca l'elemento Wikidata per nome e tiene quello con coordinate P625 entro il raggio dal punto indicativo;
@@ -15,12 +17,16 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = resolve(root, 'docs/ricerca-luoghi-nord.json');
+const setArg = process.argv.indexOf('--set');
+const SET = setArg > 0 ? process.argv[setArg + 1] : 'nord';
+if (!/^[a-z]+$/.test(SET)) throw new Error('Nome del gruppo non valido');
+// HARVEST_OUT: file di uscita alternativo, per raccogliere una parte dei candidati in parallelo e unirla dopo
+const OUT = process.env.HARVEST_OUT ? resolve(process.env.HARVEST_OUT) : resolve(root, `docs/ricerca-luoghi-${SET}.json`);
 const UA = 'norway-family-planner-catalog/1.0 (https://github.com/filippobelli/NORWAY-FAMILY-HONEYMOON-PLANNER)';
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // [chiave, nome da cercare, lat, lng indicativi, raggio km, nomi alternativi]
-const CANDIDATES = [
+const CANDIDATES_NORD = [
   // Bodø e Salten
   ['bodo', 'Bodø', 67.28, 14.4, 8, ['Bodø (town)']],
   ['kjerringoy', 'Kjerringøy', 67.52, 14.76, 12, []],
@@ -113,6 +119,8 @@ const CANDIDATES = [
   ['malselvfossen', 'Målselvfossen', 69.03, 18.65, 8, []],
 ];
 
+const CANDIDATES = SET === 'nord' ? CANDIDATES_NORD : (await import(`./candidati-${SET}.mjs`)).default;
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function get(url) {
   for (let i = 0; i < 5; i++) {
@@ -124,7 +132,7 @@ async function get(url) {
         throw new Error(`HTTP ${res.status}`);
       }
       if (!res.ok) return null;
-      await sleep(700);
+      await sleep(SET === 'nord' ? 700 : 400);
       return await res.json();
     } catch (e) {
       if (process.env.DEBUG) console.error('  riprovo', i, url.slice(0, 90), String(e));
@@ -159,7 +167,7 @@ async function entities(ids) {
 const claim = (e, p) => e.claims?.[p]?.[0]?.mainsnak?.datavalue?.value;
 
 // Foto d'archivio, carte nautiche e riproduzioni: non descrivono il luogo com'è oggi
-const BAD_FILE = /(Riksantikvaren|Kanstadsamlingen|fo\d{8,}|Admiralty|S-1602U3|NMF\d|map|kart|locator|location|logo|coat|våpen|vapen|komm|flag|\.svg|\.png|\.gif|\.tif|\.webm|\.ogv|\.pdf|panoramio.*\(\d+\)|aerial|satellite|plan\b|skilt|sign\b)/i;
+const BAD_FILE = /(digifoto|bldsa|NB MS|Kroningsreisen|Riksantikvaren|an\d{10,}|\b1[89]\d\d\)?\.jpe?g|Expedition|postkor|komite|air attack|^USS |Sailors|Camping|Carta over|Distorted|Glomdalsmuseet|steam ship|Nygårdsparken|Höyteknologisenteret|Byparken|Dahl\.I\.C|Arkeologisk museum|UiS ARKEOL|lufthavn|Airport|Marta Kos|LaserJet|Cycle route|Motorcycle|Signs warning|Earth from Space|plastic-foil|under bygging|Rfid|Noticeboard|Magedans|Carsten Smith|library|Tempo Extra|ski poles|Costa Pacifica|Kanstadsamlingen|fo\d{8,}|Admiralty|S-1602U3|NMF\d|map|kart|locator|location|logo|coat|våpen|vapen|komm|flag|\.svg|\.png|\.gif|\.tif|\.webm|\.ogv|\.pdf|panoramio.*\(\d+\)|aerial|satellite|plan\b|skilt|sign\b)/i;
 const FREE = /^(cc[ -]by|cc0|public domain|pd\b|attribution|fal)/i;
 
 async function fileInfo(titles) {
@@ -182,13 +190,14 @@ async function fileInfo(titles) {
   }
   return out;
 }
-const usable = (f) => f.mime === 'image/jpeg' && f.width >= 1000 && FREE.test(f.license) && f.author && f.author.length < 160;
+const NO_AUTHOR = /^(unknown|anonymous|see below|no machine-readable|own work$)/i;
+const usable = (f) => f.mime === 'image/jpeg' && f.width >= 1000 && FREE.test(f.license) && f.author && f.author.length < 160 && !NO_AUTHOR.test(f.author);
 
 async function photosFor(p18, category) {
   const picked = [];
   if (p18) {
     const [main] = await fileInfo([p18]);
-    if (main && FREE.test(main.license) && main.author) picked.push(main);
+    if (main && FREE.test(main.license) && main.author && !NO_AUTHOR.test(main.author) && !BAD_FILE.test(main.file)) picked.push(main);
   }
   if (category) {
     const j = await get(`https://commons.wikimedia.org/w/api.php?${qs({ action: 'query', list: 'categorymembers', cmtitle: `Category:${category}`, cmtype: 'file', cmlimit: 80, format: 'json' })}`);
@@ -223,9 +232,10 @@ async function nominatim(name, lat, lng, radius) {
 }
 
 // `forcedCategory`: categoria di Commons indicata a mano per i luoghi senza elemento Wikidata (solo per le foto)
-async function harvest([key, name, lat, lng, radius, alts, forcedCategory]) {
-  const ids = [];
-  for (const n of [name, ...alts]) for (const id of await searchIds(n)) if (!ids.includes(id)) ids.push(id);
+// `forcedQid`: elemento Wikidata indicato a mano quando la ricerca per nome sceglie un omonimo vicino (resta il controllo di distanza)
+async function harvest([key, name, lat, lng, radius, alts, forcedCategory, forcedQid]) {
+  const ids = forcedQid ? [forcedQid] : [];
+  if (!forcedQid) for (const n of [name, ...alts]) for (const id of await searchIds(n)) if (!ids.includes(id)) ids.push(id);
   const ents = await entities(ids);
   const near = Object.values(ents)
     .map((e) => ({ e, c: claim(e, 'P625') }))
@@ -269,11 +279,16 @@ const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : { places:
 const byKey = new Map(prev.places.map((p) => [p.key, p]));
 
 // Luoghi già nel catalogo (zona nord): solo le foto, dall'elemento Wikidata già abbinato in src/data/wiki.ts
-const EXISTING = [
+const EXISTING_NORD = [
   ['tromso', 'Q26087'], ['reine', 'Q593597'], ['henningsvaer', 'Q1605649'], ['a-lofoten', 'Q258490'], ['svolvaer', 'Q145948'],
   ['nusfjord', 'Q1783413'], ['hamnoy', 'Q1776894'], ['andenes', 'Q167305'], ['senja', 'Q56249968'], ['saltstraumen', 'Q3470260'],
   ['polaria', 'Q28888'], ['lofotr', 'Q893523'], ['polar-park', 'Q1779978'], ['lofoten', 'Q186822'],
 ];
+// Negli altri gruppi: tutti i luoghi di src/data/wiki.ts che non hanno già le foto dal gruppo nord (aeroporti esclusi)
+const nordKeys = new Set(EXISTING_NORD.map((x) => x[0]));
+const EXISTING = SET === 'nord'
+  ? EXISTING_NORD
+  : [...readFileSync(resolve(root, 'src/data/wiki.ts'), 'utf8').matchAll(/^\s+'([a-z0-9-]+)': \{ qid: '(Q\d+)'/gm)].map((m) => [m[1], m[2]]).filter(([k]) => !nordKeys.has(k) && !/^[a-z]{3}$/.test(k));
 if (process.argv.includes('--existing')) {
   const existing = [];
   for (const [key, qid] of EXISTING) {
@@ -286,6 +301,18 @@ if (process.argv.includes('--existing')) {
     console.log(`${key.padEnd(20)} ${qid}, ${photos.length} foto`);
   }
   writeFileSync(OUT, `${JSON.stringify({ ...prev, existing }, null, 1)}\n`);
+  process.exit(0);
+}
+// --photos: rifà solo la scelta delle foto (stesso elemento Wikidata già abbinato), dopo aver cambiato le esclusioni
+if (process.argv.includes('--photos')) {
+  for (const p of prev.places) {
+    if ((only && !only.has(p.key)) || !p.match?.qid || p.photoCategory) continue;
+    const e = (await entities([p.match.qid]))[p.match.qid];
+    if (!e) { console.log(`${p.key.padEnd(20)} elemento non letto`); continue; }
+    p.photos = await photosFor(claim(e, 'P18'), p.match.commonsCategory);
+    writeFileSync(OUT, `${JSON.stringify(prev, null, 1)}\n`);
+    console.log(`${p.key.padEnd(20)} ${p.photos.length} foto`);
+  }
   process.exit(0);
 }
 for (const c of CANDIDATES) {

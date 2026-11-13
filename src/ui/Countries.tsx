@@ -67,13 +67,14 @@ export function CountriesLine() {
   );
 }
 
-/** Novità del catalogo della Norvegia tra due versioni: NO-2 ha portato i traghetti, NO-3 i luoghi del nord con foto e consigli */
+/** Novità del catalogo della Norvegia tra due versioni: NO-2 ha portato i traghetti, NO-3 i luoghi del nord con foto e consigli, NO-4 musei, parchi e attrazioni */
 function whatsNew(from: number, to: number, where: 'invito' | 'conferma'): string {
   const parts: string[] = [];
   if (from < 2 && to >= 2) parts.push(where === 'invito' ? 'le tratte dei traghetti (Trasporti via mare)' : 'le tratte dei traghetti (Prenotazioni › Trasporti via mare › Traghetti)');
   if (from < 3 && to >= 3) parts.push('molti luoghi in più nel nord (Bodø, Lofoten, Vesterålen, Senja, Tromsø), con foto e consigli nella scheda di ogni tappa');
+  if (from < 4 && to >= 4) parts.push('musei, parchi e attrazioni in tutta la Norvegia, con le foto');
   if (!parts.length) return '';
-  return `${where === 'invito' ? ', con ' : ', più '}${parts.join(' e ')}`;
+  return `${where === 'invito' ? ', con ' : ', più '}${[parts.slice(0, -1).join(', '), parts[parts.length - 1]].filter(Boolean).join(' e ')}`;
 }
 
 /** Riquadro «Nazioni e cataloghi» delle Impostazioni */

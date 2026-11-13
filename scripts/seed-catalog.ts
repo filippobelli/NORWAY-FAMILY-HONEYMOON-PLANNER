@@ -37,7 +37,8 @@ import { FILE_COUNTRY } from '../src/data/country';
 import { DESTINATIONS } from '../src/data/destinations';
 import { OFFICIAL_CHECKED_AT, OFFICIAL_KIND_LABEL, OFFICIAL_SITES } from '../src/data/officialSites';
 import { COUNTIES, REGION_COUNTIES } from '../src/data/regionShapes';
-import { NORD_CHECKED_AT, NORD_PHOTOS, NORD_PLACES, NORD_TIPS } from '../src/data/placesNord';
+import { ATTR_CHECKED_AT, ATTR_PHOTOS, ATTR_PLACES } from '../src/data/placesAttrazioni';
+import { NORD_CHECKED_AT, NORD_PHOTOS, NORD_PLACES, NORD_TIPS, type NordPlace } from '../src/data/placesNord';
 import type { PlacePhoto, PlaceTip } from '../src/data/placeExtras';
 import { WIKI } from '../src/data/wiki';
 import { AIRPORT_RADIUS_KM, AVG_KMH, BASE_IDS, ROAD_FACTOR, railFor } from '../src/domain/configurator';
@@ -458,6 +459,46 @@ export function buildNorwayV2(): CatalogSeed {
   };
 }
 
+/** Dalla scheda di un luogo (src/data/placesNord.ts) alla riga del seed: stessa forma per ogni gruppo di luoghi */
+function cardSeed(n: NordPlace, rk: string, checkedAt: string, extra: Pick<PlaceSeed, 'photos' | 'tips' | 'photosCheckedAt'>): PlaceSeed {
+  return {
+    key: n.key,
+    category: n.category,
+    regionKey: rk,
+    lat: n.lat,
+    lng: n.lng,
+    coordsStatus: 'verificate',
+    localName: n.localName,
+    visitHours: n.visitHours,
+    difficulty: n.difficulty,
+    kidScore: n.kidScore,
+    reliability: 'da_verificare',
+    isBase: false,
+    dayVisit: true,
+    official: n.official ? { url: n.official, kind: 'attrazione', via: 'Wikidata' } : undefined,
+    wiki: n.wiki ? { qid: n.wiki.qid, it: n.wiki.it, en: n.wiki.en, image: n.wiki.image } : undefined,
+    texts: { it: { name: n.name, description: n.description, access: n.access, season: n.season, augustNote: n.augustNote } },
+    sources: {
+      coordinate: [{ label: n.coordSource.label, url: n.coordSource.url, checkedAt, license: n.coordSource.license, method: n.coordSource.method }],
+      sito_ufficiale: n.official
+        ? [{ label: OFFICIAL_KIND_LABEL.attrazione, url: n.official, checkedAt, method: 'Wikidata', note: 'Solo il collegamento: nessun contenuto copiato' }]
+        : undefined,
+      wikidata: n.wiki
+        ? [{
+            label: `Wikidata ${n.wiki.qid}`,
+            url: `https://www.wikidata.org/wiki/${n.wiki.qid}`,
+            checkedAt,
+            license: 'CC0 1.0',
+            method: 'Abbinamento per nome e distanza da un punto indicativo (scripts/harvest-places.mjs)',
+            note: 'Foto di Commons con autore e licenza; i testi di Wikipedia non sono copiati',
+          }]
+        : undefined,
+      testi: [{ label: 'Testi scritti per l\'app (voci di Wikipedia lette il ' + checkedAt + ' e conoscenza generale), da verificare', method: 'redazione' }],
+    },
+    ...extra,
+  };
+}
+
 /**
  * Norvegia, versione 3: tutto NO-2 (stesse righe) + i luoghi della zona nord (src/data/placesNord.ts, da
  * docs/ricerca-luoghi-nord.json) + foto e consigli (tabelle place_photos e place_tips), anche per luoghi già presenti.
@@ -477,42 +518,7 @@ export function buildNorwayV3(): CatalogSeed {
     known.add(n.key);
     const rk = regionKey.get(n.region);
     if (!rk) throw new Error(`Regione sconosciuta per ${n.key}: ${n.region}`);
-    return {
-      key: n.key,
-      category: n.category,
-      regionKey: rk,
-      lat: n.lat,
-      lng: n.lng,
-      coordsStatus: 'verificate',
-      localName: n.localName,
-      visitHours: n.visitHours,
-      difficulty: n.difficulty,
-      kidScore: n.kidScore,
-      reliability: 'da_verificare',
-      isBase: false,
-      dayVisit: true,
-      official: n.official ? { url: n.official, kind: 'attrazione', via: 'Wikidata' } : undefined,
-      wiki: n.wiki ? { qid: n.wiki.qid, it: n.wiki.it, en: n.wiki.en, image: n.wiki.image } : undefined,
-      texts: { it: { name: n.name, description: n.description, access: n.access, season: n.season, augustNote: n.augustNote } },
-      sources: {
-        coordinate: [{ label: n.coordSource.label, url: n.coordSource.url, checkedAt: NORD_CHECKED_AT, license: n.coordSource.license, method: n.coordSource.method }],
-        sito_ufficiale: n.official
-          ? [{ label: OFFICIAL_KIND_LABEL.attrazione, url: n.official, checkedAt: NORD_CHECKED_AT, method: 'Wikidata', note: 'Solo il collegamento: nessun contenuto copiato' }]
-          : undefined,
-        wikidata: n.wiki
-          ? [{
-              label: `Wikidata ${n.wiki.qid}`,
-              url: `https://www.wikidata.org/wiki/${n.wiki.qid}`,
-              checkedAt: NORD_CHECKED_AT,
-              license: 'CC0 1.0',
-              method: 'Abbinamento per nome e distanza da un punto indicativo (scripts/harvest-places.mjs)',
-              note: 'Foto di Commons con autore e licenza; i testi di Wikipedia non sono copiati',
-            }]
-          : undefined,
-        testi: [{ label: 'Testi scritti per l\'app (voci di Wikipedia lette il ' + NORD_CHECKED_AT + ' e conoscenza generale), da verificare', method: 'redazione' }],
-      },
-      ...extras(n.key),
-    };
+    return cardSeed(n, rk, NORD_CHECKED_AT, extras(n.key));
   });
   for (const key of [...Object.keys(NORD_PHOTOS), ...Object.keys(NORD_TIPS)]) {
     if (!known.has(key)) throw new Error(`Foto o consigli per un luogo che non esiste: ${key}`);
@@ -537,8 +543,50 @@ export function buildNorwayV3(): CatalogSeed {
   };
 }
 
+/**
+ * Norvegia, versione 4: tutto NO-3 (stesse righe, foto e consigli compresi) + musei, parchi e attrazioni in tutta la
+ * Norvegia (src/data/placesAttrazioni.ts, da docs/ricerca-luoghi-attrazioni.json) + le foto dei luoghi che non ne avevano.
+ * NO-1, NO-2 e NO-3 restano pubblicate e immutabili; il seed controlla che NO-4 contenga NO-3.
+ */
+export function buildNorwayV4(): CatalogSeed {
+  const v3 = buildNorwayV3();
+  const regionKey = new Map(v3.regions.map((r) => [r.name, r.key]));
+  const known = new Set(v3.places.map((p) => p.key));
+  const added: PlaceSeed[] = ATTR_PLACES.map((n) => {
+    if (known.has(n.key)) throw new Error(`Luogo già presente in NO-3: ${n.key}`);
+    const rk = regionKey.get(n.region);
+    if (!rk) throw new Error(`Regione sconosciuta per ${n.key}: ${n.region}`);
+    return cardSeed(n, rk, ATTR_CHECKED_AT, { photos: ATTR_PHOTOS[n.key]?.length ? ATTR_PHOTOS[n.key] : undefined, photosCheckedAt: ATTR_CHECKED_AT });
+  });
+  const all = new Set([...known, ...added.map((p) => p.key)]);
+  if (all.size !== known.size + added.length) throw new Error('Chiavi doppie fra i luoghi nuovi');
+  for (const key of Object.keys(ATTR_PHOTOS)) {
+    if (!all.has(key)) throw new Error(`Foto per un luogo che non esiste: ${key}`);
+  }
+  return {
+    ...v3,
+    release: {
+      ...v3.release,
+      version: 4,
+      dataCheckedUntil: ATTR_CHECKED_AT,
+      notes: 'Quarta versione: tutto NO-3 più musei, parchi e attrazioni in tutta la Norvegia, con le foto; foto anche per i luoghi che non ne avevano.',
+      sourceNotes: [
+        ...v3.release.sourceNotes,
+        { label: 'Musei, parchi e attrazioni: coordinate da Wikidata (P625) o OpenStreetMap (Nominatim); foto di Wikimedia Commons con autore e licenza', checkedAt: ATTR_CHECKED_AT, license: 'CC0 1.0 / ODbL 1.0', note: "Testi scritti per l'app, da verificare; nessun prezzo e nessun orario" },
+      ],
+      previousReleaseId: 'NO-3',
+    },
+    // Le righe di NO-3 non cambiano: le foto nuove vanno solo ai luoghi che non ne avevano
+    places: [
+      ...v3.places.map((p) => (!p.photos?.length && ATTR_PHOTOS[p.key]?.length ? { ...p, photos: ATTR_PHOTOS[p.key], photosCheckedAt: ATTR_CHECKED_AT } : p)),
+      ...added,
+    ],
+    outFile: 'catalogo-norvegia-v4.sql',
+  };
+}
+
 /** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
-const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3 } };
+const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3, 4: buildNorwayV4 } };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 
@@ -862,6 +910,8 @@ export function generateSql(c: CatalogSeed): string {
   const inherited: string[] = ['regions', 'places', 'place_texts', 'place_sources', 'operators', 'voyages', 'route_ports', 'place_links'];
   // Da NO-3 anche le tratte traghetto della versione precedente (il seed di NO-2 resta identico byte per byte)
   if (c.release.version >= 3 && hasFerries) inherited.push(...FERRY_TABLES);
+  // Da NO-4 anche foto e consigli della versione precedente
+  if (c.release.version >= 4) inherited.push('place_photos', 'place_tips');
 
   out.push('-- Controllo finale: se fallisce, la transazione si annulla');
   out.push('do $check$');
