@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DESTINATIONS } from '../data/destinations';
 import { coastalRoute } from '../domain/coastal';
+import { formatDuration } from '../domain/itinerary';
 import type { TransportMode, Trip } from '../domain/types';
 import { addBaseMap, loadLeaflet, type LeafletApi, type LLayerGroup, type LMap } from '../services/map/leaflet';
 import { isAutoSegment } from '../domain/routeMerge';
@@ -116,6 +117,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       const ends = `${a.i + 1}. ${esc(a.s.name)} → ${b.i + 1}. ${esc(b.s.name)}`;
       let drewGeometry = false;
       for (const seg of leg.segments) {
+        const duration = seg.durationMin === undefined ? '' : ` · durata stimata ${formatDuration(seg.durationMin)}`;
         if (seg.geometry && seg.geometry.length > 1) {
           L.polyline(seg.geometry, {
             color: MODE_COLOR[seg.mode],
@@ -124,7 +126,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
             dashArray: MODE_DASH[seg.mode],
           })
             .bindTooltip(
-              `${ends}<br>${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''} · ${isAutoSegment(seg) ? 'calcolato (OSRM)' : 'tracciato inserito a mano'}`,
+              `${ends}<br>${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''}${duration} · ${isAutoSegment(seg) ? 'calcolato (OSRM)' : 'tracciato inserito a mano'}`,
             )
             .addTo(layer);
           drewGeometry = true;
@@ -136,7 +138,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
               r.ports.map((p) => [p.lat, p.lng] as [number, number]),
               { color: MODE_COLOR.costiera, weight: 4, dashArray: MODE_DASH.costiera, opacity: 0.9 },
             )
-              .bindTooltip(`${ends}<br>${esc(seg.label)} (tracciato indicativo tra i porti)`)
+              .bindTooltip(`${ends}<br>${esc(seg.label)}${duration} (tracciato indicativo tra i porti)`)
               .addTo(layer);
             drewGeometry = true;
           }
