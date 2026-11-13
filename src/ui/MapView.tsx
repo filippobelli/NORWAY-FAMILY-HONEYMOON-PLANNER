@@ -44,7 +44,15 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
     loadLeaflet()
       .then((L) => {
         if (cancelled || !el.current) return;
-        const map = L.map(el.current, { scrollWheelZoom: true, zoomControl: true, zoomAnimation: false }).setView([65, 15], 4);
+        const map = L.map(el.current, {
+          scrollWheelZoom: true,
+          zoomControl: true,
+          zoomSnap: 0,
+          zoomDelta: 0.5,
+          wheelPxPerZoomLevel: 180,
+          // Evita che una transizione Leaflet resti in corso uscendo dalla mappa.
+          zoomAnimation: false,
+        }).setView([65, 15], 4);
         void addBaseMap(L, map, () => cancelled);
         const layer = L.layerGroup().addTo(map);
         mapRef.current = { L, map, layer };
