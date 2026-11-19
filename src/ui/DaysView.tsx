@@ -83,21 +83,32 @@ export function DaysView() {
         </p>
         {suggestions.length > 0 && (
           <>
-            <h3>Proposte per alleggerire</h3>
-            <p className="muted small">Nessuna proposta viene applicata da sola: scegli tu.</p>
-            <ul className="suggestion-list">
-              {suggestions.map((sg) => (
-                <li key={sg.id}>
-                  <span>
-                    <strong>Giorno {(days.find((d) => d.key === sg.dayKey)?.index ?? 0) + 1}:</strong> {sg.text}
-                  </span>
-                  {sg.action && (
-                    <button className="btn btn-small" onClick={() => apply(sg)}>
-                      Applica
-                    </button>
-                  )}
-                </li>
-              ))}
+            <h3>Giornate con proposte per alleggerire</h3>
+            <p className="muted small">Le proposte sono dentro la scheda di ogni giornata, dove vedi anche il carico. Nessuna viene applicata da sola.</p>
+            <ul className="suggestion-index">
+              {days
+                .filter((d) => suggestions.some((sg) => sg.dayKey === d.key))
+                .map((d) => {
+                  const k = suggestions.filter((sg) => sg.dayKey === d.key).length;
+                  return (
+                    <li key={d.key}>
+                      <button
+                        type="button"
+                        className="link-btn"
+                        onClick={() => {
+                          const el = document.getElementById(`day-${d.key}`);
+                          el?.scrollIntoView({ behavior: 'smooth' });
+                          el?.querySelector<HTMLElement>('h2, h3, button')?.focus({ preventScroll: true });
+                        }}
+                      >
+                        Giorno {d.index + 1} · {formatDateIt(d.date)}
+                      </button>{' '}
+                      <span className="small muted">
+                        {LEVEL_LABEL[loads[d.index]!.level].label.toLowerCase()} · {k} {k === 1 ? 'proposta' : 'proposte'}
+                      </span>
+                    </li>
+                  );
+                })}
             </ul>
           </>
         )}

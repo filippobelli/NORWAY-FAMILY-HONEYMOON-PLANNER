@@ -3,7 +3,7 @@ import { DESTINATIONS, findDestination } from '../data/destinations';
 import { airKm } from './configurator';
 import { airportLabel, norwayAirports } from './flightAdvisor';
 import { newId } from './ids';
-import { addDays, computeDays, formatDateIt, isRoutableLeg, legTotals, syncLegs, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS, uncalculatedSegment } from './itinerary';
+import { addDays, computeDays, formatDateIt, isRoutableLeg, legTotals, syncLegs, totalDays, totalNights, tripTarget, uncalculatedSegment } from './itinerary';
 import type { CoastalOption, Flight, Leg, Segment, Stop, Trip } from './types';
 
 // Inserimento nel percorso di ciò che si decide altrove (crociere, voli, mete).
@@ -546,8 +546,9 @@ export function routeDiff(before: Trip, after: Trip): RouteDiff {
   const removed = before.stops.filter((s) => !stillThere.has(s.id)).map((s) => ({ name: s.name, nights: s.nights }));
   const daysAfter = totalDays(after.stops);
   const warnings: string[] = [];
-  if (daysAfter > TRIP_MAX_DAYS) warnings.push(`Il viaggio arriva a ${daysAfter} giorni, oltre l'obiettivo di ${TRIP_MAX_DAYS}.`);
-  else if (daysAfter > 0 && daysAfter < TRIP_MIN_DAYS && totalDays(before.stops) >= TRIP_MIN_DAYS) warnings.push(`Il viaggio scende a ${daysAfter} giorni, sotto l'obiettivo di ${TRIP_MIN_DAYS}.`);
+  const goal = tripTarget(before.settings);
+  if (daysAfter > goal.max) warnings.push(`Il viaggio arriva a ${daysAfter} giorni, oltre l'obiettivo di ${goal.max}.`);
+  else if (daysAfter > 0 && daysAfter < goal.min && totalDays(before.stops) >= goal.min) warnings.push(`Il viaggio scende a ${daysAfter} giorni, sotto l'obiettivo di ${goal.min}.`);
   return {
     rows,
     removed,

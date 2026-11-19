@@ -12,8 +12,8 @@ import {
   type Pace,
   type TravelMode,
 } from '../domain/configurator';
-import { formatDateIt, formatDuration, isRoutableLeg, legTotals } from '../domain/itinerary';
-import { applyVersion, draftMoveStop, draftRemoveStop, draftSetNights, planImpact, saveAlternative } from '../domain/planImpact';
+import { formatDateIt, formatDuration, isRoutableLeg, legTotals, targetLabel } from '../domain/itinerary';
+import { applyVersion, draftChanges, draftMoveStop, draftRemoveStop, draftSetNights, planImpact, removalPreview, saveAlternative } from '../domain/planImpact';
 import { reviewProposal, TRANSFER_KIND_LABEL, type TransferKind } from '../domain/proposal';
 import { mergeRouted } from '../domain/routeMerge';
 import { addScenarioWithPlan, ensureScenarios } from '../domain/scenarios';
@@ -68,7 +68,11 @@ export function ConfiguratorView() {
     mustSee: trip.favorites.filter((id) => findDestination(id)?.category !== 'aeroporti'),
     kidFriendly: saved.kidFriendly ?? true,
   }));
-  const [result, setResult] = useState<ConfiguratorResult | null>(null);
+  // Proposta in revisione: resta montata (con bozza, nome e calcoli) anche mentre si guardano le impostazioni
+  const [proposal, setProposal] = useState<{ gen: number; result: ConfiguratorResult; input: ConfiguratorInput; defaultName: string } | null>(null);
+  // Modifiche fatte a mano nella bozza: servono per avvisare prima di sostituirla
+  const [pending, setPending] = useState<string[]>([]);
+  const [confirmRegen, setConfirmRegen] = useState(false);
   const [error, setError] = useState('');
   const [extra, setExtra] = useState('');
   // Due fasi nella stessa vista: prima si scelgono le impostazioni, poi si controlla la proposta
@@ -89,16 +93,16 @@ export function ConfiguratorView() {
     }
     set({ regions: on ? input.regions.filter((x) => x !== r) : [...input.regions, r] });
   };
-  const set = (p: Partial<ConfiguratorInput>) => {
-    setInput((x) => ({ ...x, ...p }));
-    setResult(null);
-  };
+  // Cambiare un'impostazione non butta via la proposta: la si sostituisce solo creando di nuovo, con conferma
+  const set = (p: Partial<ConfiguratorInput>) => setInput((x) => ({ ...x, ...p }));
 
   const run = () => {
     try {
       setError('');
       const r = configureItinerary(input);
-      setResult(r);
+      setProposal((prev) => ({ gen: (prev?.gen ?? 0) + 1, result: r, input, defaultName }));
+      setPending([]);
+      setConfirmRegen(false);
       setReviewing(true);
       try {
         const keep: Partial<ConfiguratorInput> = { ...input };
@@ -127,10 +131,53 @@ export function ConfiguratorView() {
 
   const options = DESTINATIONS.filter((d) => d.category !== 'aeroporti' && !input.mustSee.includes(d.id)).sort((a, b) => a.name.localeCompare(b.name, 'it'));
 
-  if (reviewing && result) return <ProposalReviewPanel key={String(result.plan.stops[0]?.id)} result={result} input={input} defaultName={defaultName} onBack={() => setReviewing(false)} />;
+  const showReview = reviewing && Boolean(proposal);
+  const stale = Boolean(proposal) && JSON.stringify(proposal!.input) !== JSON.stringify(input);
 
   return (
-    <div className="configurator">
+    <>
+      {proposal && (
+        <ProposalReviewPanel
+          key={proposal.gen}
+          visible={showReview}
+          result={proposal.result}
+          input={proposal.input}
+          defaultName={proposal.defaultName}
+          onChanges={setPending}
+          onBack={() => setReviewing(false)}
+        />
+      )}
+      {confirmRegen && proposal && (
+        <Modal title="Sostituire la proposta in revisione?" onClose={() => setConfirmRegen(false)}>
+          <p className="small" tabIndex={-1} data-autofocus>
+            Creando una proposta nuova, quella che stai controllando viene sostituita e queste modifiche fatte a mano si perdono:
+          </p>
+          <ul className="facts-list small">
+            {pending.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+          <p className="small muted">Per conservarle torna alla proposta e usa «Salva come alternativa». L'itinerario attivo non cambia in nessun caso.</p>
+          <div className="row wrap place-actions">
+            <button className="btn btn-primary" onClick={run}>
+              Sostituisci la proposta
+            </button>
+            <button
+              className="btn"
+              onClick={() => {
+                setConfirmRegen(false);
+                setReviewing(true);
+              }}
+            >
+              Torna alla proposta
+            </button>
+            <button className="btn btn-ghost" onClick={() => setConfirmRegen(false)}>
+              Annulla
+            </button>
+          </div>
+        </Modal>
+      )}
+    <div className="configurator" hidden={showReview}>
       <ol className="flow-steps" aria-label="Come funziona">
         <li className="active" aria-current="step">1. Scegli le impostazioni</li>
         <li>2. Controlla la proposta</li>
@@ -144,7 +191,7 @@ export function ConfiguratorView() {
       <section className="panel">
         <h2>Impostazioni della proposta</h2>
         <div className="grid-4 cols-4">
-          <Field label="Giorni" hint="Obiettivo: 15–20">
+          <Field label="Giorni" hint={`Obiettivo: ${targetLabel(trip.settings)}`}>
             {(id) => <NumberInput id={id} value={input.days} min={5} onChange={(v) => v && set({ days: Math.min(30, Math.max(5, Math.round(v))) })} />}
           </Field>
           <Field label="Primo giorno">{(id) => <input id={id} type="date" value={input.startDate} onChange={(e) => e.target.value && set({ startDate: e.target.value })} />}</Field>
@@ -249,10 +296,10 @@ export function ConfiguratorView() {
         </fieldset>
 
         <div className="row">
-          <button className="btn btn-primary" onClick={run}>
-            Crea la proposta da controllare
+          <button className="btn btn-primary" onClick={() => (proposal && pending.length > 0 ? setConfirmRegen(true) : run())}>
+            {proposal ? 'Crea una proposta nuova' : 'Crea la proposta da controllare'}
           </button>
-          {result && (
+          {proposal && (
             <button className="btn" onClick={() => setReviewing(true)}>
               Torna alla proposta
             </button>
@@ -263,9 +310,16 @@ export function ConfiguratorView() {
             </span>
           )}
         </div>
+        {proposal && (
+          <p className="small muted" role="status">
+            La proposta in revisione è conservata{pending.length > 0 ? `, con ${pending.length} ${pending.length === 1 ? 'modifica fatta' : 'modifiche fatte'} a mano` : ''}.
+            {stale && ' È stata creata con le impostazioni di prima: per usare quelle nuove crea una proposta nuova.'}
+          </p>
+        )}
       </section>
 
     </div>
+    </>
   );
 }
 
@@ -319,11 +373,17 @@ function ProposalReviewPanel({
   result,
   input,
   defaultName,
+  visible,
+  onChanges,
   onBack,
 }: {
   result: ConfiguratorResult;
   input: ConfiguratorInput;
   defaultName: string;
+  /** false mentre si guardano le impostazioni: il pannello resta montato per non perdere bozza, nome e calcoli */
+  visible: boolean;
+  /** Modifiche fatte a mano rispetto alla proposta generata */
+  onChanges: (list: string[]) => void;
   onBack: () => void;
 }) {
   const { trip, update, toast } = useTrip();
@@ -333,21 +393,27 @@ function ProposalReviewPanel({
     addScenarioWithPlan(trip, defaultName, kind, { ...result.plan, coastalSelected: trip.coastalOptions.filter((o) => o.selected).map((o) => o.id) }),
   );
   const setDraft = useCallback((fn: (d: Trip) => Trip) => setDraftState(fn), []);
+  const [initial] = useState(draft);
+  const [removing, setRemoving] = useState<string>();
   const routing = useProposalRouting(draft, setDraft);
   const limitMin = Math.round(input.maxDriveHours * 60);
   const review = useMemo(() => reviewProposal(draft, limitMin), [draft, limitMin]);
   const [name, setName] = useState('');
   const [confirming, setConfirming] = useState(false);
   const scName = name.trim() || defaultName;
+  const changes = useMemo(() => [...draftChanges(initial, draft), ...(name.trim() ? [`Nome della versione: «${name.trim()}»`] : [])], [initial, draft, name]);
+  useEffect(() => onChanges(changes), [changes, onChanges]);
+  const actionsRef = useRef<HTMLDivElement>(null);
   const memo = [...result.notes, ...result.warnings.map((w) => `Da guardare: ${w}`)].join('\n');
   const activeName = ensureScenarios(trip).scenarios!.find((s) => s.id === ensureScenarios(trip).activeScenarioId)?.name ?? 'Scenario principale';
   const limitChanges = limitMin !== trip.settings.maxTravelMinPerDay;
   const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
+    if (!visible) return;
     // Cambia fase nella stessa pagina: si riparte dall'inizio e chi usa la tastiera o uno screen reader lo sente
     headingRef.current?.focus({ preventScroll: true });
     window.scrollTo({ top: 0 });
-  }, []);
+  }, [visible]);
 
   const saveOnly = () => {
     const r = saveAlternative(trip, scName, draft, memo, kind);
@@ -380,7 +446,18 @@ function ProposalReviewPanel({
   };
 
   return (
-    <section className="panel proposal-review" aria-labelledby="proposal-title">
+    <section className="panel proposal-review" aria-labelledby="proposal-title" hidden={!visible}>
+      {removing && (
+        <RemoveStopDialog
+          draft={draft}
+          stopId={removing}
+          onCancel={() => setRemoving(undefined)}
+          onConfirm={(mode) => {
+            setDraft((d) => draftRemoveStop(d, removing, mode));
+            setRemoving(undefined);
+          }}
+        />
+      )}
       {confirming && <ActivateDialog trip={trip} draft={draft} name={scName} activeName={activeName} limitMin={limitChanges ? limitMin : undefined} onCancel={() => setConfirming(false)} onConfirm={activate} />}
       <header className="panel-head">
         <div>
@@ -404,7 +481,7 @@ function ProposalReviewPanel({
           <dt>Durata</dt>
           <dd>
             {review.days} giorni · {review.nights} notti
-            {!review.inTarget && <span className="small warn-text block">Fuori dall'obiettivo di 15–20 giorni</span>}
+            {!review.inTarget && <span className="small warn-text block">Fuori dall'obiettivo di {targetLabel(trip.settings)} giorni</span>}
           </dd>
         </div>
         <div>
@@ -418,6 +495,23 @@ function ProposalReviewPanel({
           <dd>{formatDuration(review.limitMin)}</dd>
         </div>
       </dl>
+      <p className="small review-jump">
+        {changes.length > 0 && (
+          <span className="muted">
+            {changes.length} {changes.length === 1 ? 'modifica fatta' : 'modifiche fatte'} a mano ·{' '}
+          </span>
+        )}
+        <button
+          type="button"
+          className="link-btn"
+          onClick={() => {
+            actionsRef.current?.scrollIntoView({ block: 'start' });
+            actionsRef.current?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
+          }}
+        >
+          Vai alla decisione ↓
+        </button>
+      </p>
 
       <div className="review-legend small" aria-label="Che cosa significano i tempi">
         <span>
@@ -502,8 +596,8 @@ function ProposalReviewPanel({
                   <button className="icon-btn" aria-label={`Sposta giù ${s.name}`} disabled={i === draft.stops.length - 1} onClick={() => setDraft((d) => draftMoveStop(d, s.id, 1))}>
                     ↓
                   </button>
-                  <button className="btn btn-small" aria-label={`Togli ${s.name} dalla proposta`} onClick={() => setDraft((d) => draftRemoveStop(d, s.id, 'alla_precedente'))}>
-                    Togli
+                  <button className="btn btn-small" aria-label={`Togli ${s.name} dalla proposta`} onClick={() => setRemoving(s.id)}>
+                    Togli…
                   </button>
                 </span>
               </div>
@@ -538,14 +632,14 @@ function ProposalReviewPanel({
         </ul>
       </details>
 
-      <div className="review-actions">
+      <div className="review-actions" ref={actionsRef}>
         <Field label="Nome della versione">{(id) => <input id={id} value={name} placeholder={defaultName} onChange={(e) => setName(e.target.value)} />}</Field>
         <div className="row wrap">
           <button className="btn btn-primary" disabled={draft.stops.length === 0} onClick={() => setConfirming(true)}>
             Attiva questo itinerario
           </button>
           <button className="btn" disabled={draft.stops.length === 0} onClick={saveOnly}>
-            Salva senza attivare
+            Salva come alternativa
           </button>
           <button className="btn btn-ghost" onClick={onBack}>
             Torna alle impostazioni
@@ -556,6 +650,67 @@ function ProposalReviewPanel({
         </p>
       </div>
     </section>
+  );
+}
+
+/** Prima di togliere una tappa dalla bozza: dove vanno le sue notti e quali date si spostano. */
+function RemoveStopDialog({ draft, stopId, onCancel, onConfirm }: { draft: Trip; stopId: string; onCancel: () => void; onConfirm: (mode: 'togli' | 'alla_precedente') => void }) {
+  const give = useMemo(() => removalPreview(draft, stopId, 'alla_precedente'), [draft, stopId]);
+  const canGive = Boolean(give?.receiver);
+  const [choice, setChoice] = useState<'togli' | 'alla_precedente'>('alla_precedente');
+  const mode = canGive ? choice : 'togli';
+  const p = useMemo(() => removalPreview(draft, stopId, mode), [draft, stopId, mode]);
+  if (!p || !give) return null;
+  return (
+    <Modal title={`Togliere ${p.name} dalla proposta?`} onClose={onCancel}>
+      <p className="small" tabIndex={-1} data-autofocus>
+        {p.nights === 0
+          ? `${p.name} è una tappa di passaggio, senza notti: togliendola le date non cambiano.`
+          : `${p.name} ha ${p.nights} ${p.nights === 1 ? 'notte' : 'notti'}. Scegli che cosa farne.`}
+      </p>
+      {p.nights > 0 && (
+        <fieldset className="chips-field">
+          <legend>Le notti di {p.name}</legend>
+          {give.receiver && (
+            <label className="check">
+              <input type="radio" name="remove-nights" checked={mode === 'alla_precedente'} onChange={() => setChoice('alla_precedente')} /> Passano a {give.receiver.name} ({give.receiver.before} →{' '}
+              {give.receiver.after} notti): la durata del viaggio non cambia
+            </label>
+          )}
+          <label className="check">
+            <input type="radio" name="remove-nights" checked={mode === 'togli'} onChange={() => setChoice('togli')} /> Si tolgono: il viaggio si accorcia di {p.nights} {p.nights === 1 ? 'giorno' : 'giorni'}
+          </label>
+        </fieldset>
+      )}
+      <p className="small">
+        <strong>
+          {p.daysBefore} → {p.daysAfter} giorni
+        </strong>
+        {p.endBefore !== p.endAfter ? ` · ultimo giorno ${formatDateIt(p.endBefore)} → ${formatDateIt(p.endAfter)}` : ' · ultimo giorno invariato'}
+      </p>
+      {p.dateChanges.length > 0 ? (
+        <>
+          <p className="small">Arrivi che cambiano data:</p>
+          <ul className="facts-list small">
+            {p.dateChanges.map((c) => (
+              <li key={c.name + c.before}>
+                {c.name}: {formatDateIt(c.before)} → {formatDateIt(c.after)}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p className="small muted">Nessun'altra tappa cambia data di arrivo.</p>
+      )}
+      <div className="row wrap place-actions">
+        <button className="btn btn-primary" onClick={() => onConfirm(mode)}>
+          Togli {p.name}
+        </button>
+        <button className="btn btn-ghost" onClick={onCancel}>
+          Annulla
+        </button>
+      </div>
+    </Modal>
   );
 }
 

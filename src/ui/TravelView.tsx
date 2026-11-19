@@ -5,7 +5,7 @@ import { activityState, addDiaryEntry, editDiaryEntry, newDiaryEntry, removeDiar
 import { airKm } from '../domain/configurator';
 import { newId } from '../domain/ids';
 import { addDays, computeDays, formatDateIt, formatDuration } from '../domain/itinerary';
-import { defaultDayIndex, phaseNote, todayView, type BookingInfo } from '../domain/today';
+import { defaultDayIndex, phaseNote, todayView, tripPhase, type BookingInfo } from '../domain/today';
 import type { DiaryAttachment, DiaryEntry, StopVisitState } from '../domain/types';
 import { deleteBlob, getBlob, putBlob } from '../services/storage/blobs';
 import { ATTACHMENT_ACCEPT, attachmentProblem, formatMb } from '../domain/attachments';
@@ -20,6 +20,7 @@ import { loadLastPlanning, loadTravelContext, saveTravelContext } from '../state
 import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
 import { FlagMark, Icon, type IconName } from './icons';
 import { MapView } from './MapView';
+import { TransferSummary } from './TransferSummary';
 import { PlanBDialog } from './PlanBDialog';
 import { DataStatusCard } from './SyncStatus';
 import { ExportsPanel } from './ExportsPanel';
@@ -132,6 +133,8 @@ export function TodayScreen() {
       </Empty>
     );
   const note = phaseNote(trip, today);
+  const phase = tripPhase(trip, today);
+  const todayIndex = defaultDayIndex(trip, today);
 
   const markStop = (id: string, name: string, state: StopVisitState) => {
     const prev = stopState(trip, id);
@@ -151,6 +154,7 @@ export function TodayScreen() {
           ←
         </button>
         <div>
+          {phase === 'prima' && <p className="ov-eyebrow">Anteprima del viaggio</p>}
           <h1>
             Giorno {v.index + 1} di {v.total}
           </h1>
@@ -160,6 +164,14 @@ export function TodayScreen() {
           →
         </button>
       </div>
+      {phase === 'durante' && v.index !== todayIndex && (
+        <p className="small today-back">
+          Stai guardando un altro giorno.{' '}
+          <button type="button" className="btn btn-small" onClick={() => setIndex(todayIndex)}>
+            Torna a oggi
+          </button>
+        </p>
+      )}
       {note && <p className="note-info small">{note}</p>}
 
       <div className="t-card t-today">
@@ -173,6 +185,21 @@ export function TodayScreen() {
             <a href={`#/t/mappa?tappa=${encodeURIComponent(v.place.id)}`}>Sulla mappa</a>
             <a href={`#/t/itinerario?tappa=${encodeURIComponent(v.place.id)}`}>Nell'elenco</a>
           </p>
+        </section>
+      )}
+      {v.departures.length > 0 && (
+        <section className="t-today-row" aria-label="Partenze con orario">
+          <h2>Partenze con orario</h2>
+          <ul className="t-list">
+            {v.departures.map((d) => (
+              <li key={d.time + d.text}>
+                <span>
+                  <strong>{d.time}</strong> · {d.text}
+                </span>
+                {d.status && <span className="small muted">{bookingLabel(d.status)}</span>}
+              </li>
+            ))}
+          </ul>
         </section>
       )}
       <section className="t-today-row" aria-label="Prossima cosa da fare">
@@ -230,6 +257,7 @@ export function TodayScreen() {
                   {t.leg.segments.map((s) => <ModeIcon key={s.id} mode={s.mode} />)} {t.from} → {t.to}
                 </span>
                 <span className="small muted">{t.uncalculated ? 'Non calcolato: tempi non disponibili' : t.partial ? 'Durata incompleta' : `Circa ${formatDuration(t.realisticMin)} con soste (teorico ${formatDuration(t.theoreticalMin)})`}</span>
+                <TransferSummary trip={trip} leg={t.leg} heading={false} />
               </li>
             ))}
           </ul>
@@ -400,7 +428,10 @@ export function TravelMap() {
   const [busy, setBusy] = useState(false);
   const [selected, setSelectedState] = useState<string | undefined>(() => parseRoute(window.location.hash).params.tappa ?? loadTravelContext(localToday()).stopId);
   const mapBox = useRef<HTMLDivElement>(null);
+  const [legId, setLegId] = useState<string>();
+  const pickedLeg = trip.legs.find((l) => l.id === legId);
   const setSelected = (id: string) => {
+    setLegId(undefined);
     setSelectedState(id);
     saveTravelContext({ ...loadTravelContext(localToday()), stopId: id });
   };
@@ -429,8 +460,21 @@ export function TravelMap() {
   return (
     <div className="t-map">
       <div ref={mapBox}>
-        <MapView trip={{ ...trip, settings: { ...trip.settings, showCatalogOnMap: false } }} height={320} selectedStopId={selected} onSelectStop={setSelected} />
+        <MapView trip={{ ...trip, settings: { ...trip.settings, showCatalogOnMap: false } }} height={320} selectedStopId={pickedLeg ? undefined : selected} onSelectStop={setSelected} selectedLegId={pickedLeg?.id} onSelectLeg={setLegId} />
       </div>
+      {pickedLeg ? (
+        <section className="t-card" aria-label="Tratta selezionata" aria-live="polite">
+          <div className="row wrap">
+            <h2>Tratta selezionata</h2>
+            <button type="button" className="btn btn-small btn-ghost" onClick={() => setLegId(undefined)}>
+              Chiudi
+            </button>
+          </div>
+          <TransferSummary trip={trip} leg={pickedLeg} />
+        </section>
+      ) : (
+        trip.legs.length > 0 && <p className="small muted">Tocca una tratta sulla mappa per vedere guida, traversata, attese e aprirla in Google Maps.</p>
+      )}
       <div className="t-actions">
         <button className="btn" disabled={busy} onClick={locate}>
           <Icon name="pin" /> {busy ? 'Cerco la posizione…' : 'Trova la tappa più vicina'}

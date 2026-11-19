@@ -8,7 +8,7 @@ import { undoVersion } from '../domain/planImpact';
 import { newId } from '../domain/ids';
 import { findDestination } from '../data/destinations';
 import { googlePlaceUrl } from '../domain/googleMaps';
-import { addDays, computeDays, formatDateIt, formatDuration, legTotals, moveStopTo, TRIP_MAX_DAYS, TRIP_MIN_DAYS, totalDays, tripWarnings, type DayInfo } from '../domain/itinerary';
+import { addDays, computeDays, formatDateIt, formatDuration, legTotals, moveStopTo, targetLabel, totalDays, tripWarnings, type DayInfo } from '../domain/itinerary';
 import { planImpact } from '../domain/planImpact';
 import { defaultInsertIndex, insertStop } from '../domain/placement';
 import { formatSelection, parseSelection, selectionCosts, selectionExists, selectionStopId, type Selection } from '../domain/selection';
@@ -196,7 +196,7 @@ export function PlannerView() {
       {!narrow && <CenterSwitch center={center} setCenter={setCenter} />}
       {center === 'mappa' ? (
         <>
-          <MapView trip={trip} selectedStopId={selectionStopId(trip, days, current)} onSelectStop={(id) => selectFromSide({ kind: 'stop', id })} onAddDestination={(id) => addStop(stopFromDestination(id))} />
+          <MapView trip={trip} selectedStopId={current?.kind === 'leg' ? undefined : selectionStopId(trip, days, current)} selectedLegId={current?.kind === 'leg' ? current.id : undefined} onSelectLeg={(id) => selectFromSide({ kind: 'leg', id })} onSelectStop={(id) => selectFromSide({ kind: 'stop', id })} onAddDestination={(id) => addStop(stopFromDestination(id))} />
           <p className="muted small map-credits">
             Mappa: OpenFreeMap, © OpenMapTiles e contributori OpenStreetMap (o Esri aprendo il file locale). Percorsi: OSRM. Coordinate del catalogo approssimative. Le linee tratteggiate sottili indicano
             collegamenti senza tracciato e non rappresentano distanze.
@@ -228,12 +228,18 @@ export function PlannerView() {
           <div className="planner-toolbar-info">
             <VersionsControl />
             <p className="small muted">
-              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {TRIP_MIN_DAYS}–{TRIP_MAX_DAYS} giorni
+              {n === 0 ? 'Nessuna tappa' : `${n} giorni · ${trip.stops.length} ${trip.stops.length === 1 ? 'tappa' : 'tappe'}`} · obiettivo {targetLabel(trip.settings)} giorni
             </p>
           </div>
           <div className="row wrap">
             <a className="btn btn-small" href="#/configuratore">
               {hasStops ? 'Nuova proposta automatica' : 'Crea una proposta automatica'}
+            </a>
+            <button type="button" className="btn btn-small" onClick={() => setCatalog(true)}>
+              <Icon name="list" /> Catalogo
+            </button>
+            <a className="btn btn-small" href="#/scenari">
+              Versioni
             </a>
             {routing.busy ? (
               <button className="btn btn-small" onClick={() => routing.abort.current?.abort()}>
@@ -512,6 +518,22 @@ function Outline({
   const shown = trip.stops.filter((s) => !q || s.name.toLowerCase().includes(q));
   const is = (kind: Selection['kind'], id: string) => sel?.kind === kind && sel.id === id;
   const { readOnly } = useTrip();
+  // La selezione può arrivare da linea del percorso, mappa, vista Giorni o da un link: il suo dettaglio si apre sotto la
+  // riga dell'elenco, quindi se quella riga non è visibile (filtro, giornata senza tappa) va mostrato a parte
+  const owner = !sel ? undefined : sel.kind === 'stop' ? sel.id : sel.kind === 'leg' ? trip.legs.find((l) => l.id === sel.id)?.fromStopId : days.find((d) => d.key === sel.id)?.sleepStop?.id;
+  const ownerDays = owner ? days.filter((d) => d.sleepStop?.id === owner) : [];
+  const inList = Boolean(sel && owner && shown.some((x) => x.id === owner) && (sel.kind !== 'day' || ownerDays.some((d) => d.key === sel.id)));
+  const selLabel = !sel
+    ? ''
+    : sel.kind === 'stop'
+      ? (trip.stops.find((x) => x.id === sel.id)?.name ?? 'Tappa')
+      : sel.kind === 'day'
+        ? `Giorno ${(days.find((d) => d.key === sel.id)?.index ?? 0) + 1}`
+        : (() => {
+            const l = trip.legs.find((x) => x.id === sel.id);
+            const n = (id?: string) => trip.stops.find((x) => x.id === id)?.name ?? '—';
+            return `${n(l?.fromStopId)} → ${n(l?.toStopId)}`;
+          })();
   // Selezione di più tappe da eliminare insieme: finché è aperta le righe si spuntano e non si trascinano
   const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
@@ -566,12 +588,30 @@ function Outline({
       {canDrag && <p className="small muted">Tieni premuta una tappa e trascinala per cambiare l'ordine.</p>}
       {drag.ghost}
       <div className="ol-scroll" onKeyDown={onKey}>
+        {sel && detail && !inList && !picking && (
+          <section className="ol-outside" aria-label={`Dettaglio di ${selLabel}`}>
+            <p className="small" role="status">
+              <strong>{selLabel}</strong> è selezionata{q ? ' ma è fuori dal filtro' : ''}.{' '}
+              {q && (
+                <button type="button" className="link-btn" onClick={() => setFilter('')}>
+                  Azzera il filtro
+                </button>
+              )}
+            </p>
+            {detail}
+          </section>
+        )}
         {trip.stops.length === 0 ? (
           <Empty title="Inizia dall'arrivo">
             Cerca qui sopra l'aeroporto o la città di arrivo, poi le località dove dormire. Se preferisci partire da un percorso già pronto, <a href="#/configuratore">crea una proposta automatica</a>.
           </Empty>
         ) : shown.length === 0 ? (
-          <p className="muted small">Nessuna tappa corrisponde al filtro.</p>
+          <p className="muted small">
+            Nessuna tappa corrisponde al filtro.{' '}
+            <button type="button" className="link-btn" onClick={() => setFilter('')}>
+              Azzera il filtro
+            </button>
+          </p>
         ) : picking ? (
           <ol className="ol-list">
             {shown.map((s) => (
@@ -681,6 +721,33 @@ function TransferLine({ trip, day }: { trip: Trip; day: DayInfo }) {
       Trasferimento: {t.knownMin > 0 ? `circa ${formatDuration(t.knownMin)}` : 'tempo non disponibile'}
       {t.state !== 'entro' && ` · ${DAY_STATE_LABEL[t.state].toLowerCase()}`}
     </span>
+  );
+}
+
+/** Trasferimenti di una giornata: quanto pesa ogni tratta sul totale e sul limite impostato */
+function DayTransfers({ trip, day, onSelect }: { trip: Trip; day: DayInfo; onSelect: (s: Selection) => void }) {
+  const t = dayTransfer(trip, day);
+  if (t.legs.length === 0) return null;
+  return (
+    <section className={`day-transfers ${t.state === 'oltre' ? 'note-warn' : 'note-info'}`} aria-label="Trasferimenti della giornata">
+      <p className="small">
+        <strong>
+          Trasferimenti: {t.knownMin > 0 ? `circa ${formatDuration(t.knownMin)}` : 'tempo non disponibile'} su un limite di {formatDuration(t.limitMin)}
+        </strong>
+        {t.state !== 'entro' && ` · ${DAY_STATE_LABEL[t.state].toLowerCase()}`}
+      </p>
+      <ul className="plain-list small">
+        {t.legs.map((l) => (
+          <li key={l.legId}>
+            <button type="button" className="link-btn" onClick={() => onSelect({ kind: 'leg', id: l.legId })}>
+              {l.from} → {l.to}
+            </button>
+            {': '}
+            {l.missing ? `tempo non disponibile${l.reason ? ` (${l.reason})` : ''}${l.knownMin > 0 ? `, parti note ${formatDuration(l.knownMin)}` : ''}` : `${formatDuration(l.knownMin)}${t.knownMin > 0 ? ` · ${Math.round((l.knownMin / t.knownMin) * 100)}% della giornata` : ''}`}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -838,6 +905,7 @@ function Inspector({ sel, onSelect, onClear, routing }: { sel?: Selection; onSel
     const d = days.find((x) => x.key === sel.id)!;
     body = (
       <>
+        <DayTransfers trip={trip} day={d} onSelect={onSelect} />
         <DayCard day={d} load={loads[d.index]!} suggestions={suggestions.filter((sg) => sg.dayKey === d.key)} onApply={applySg} expanded />
         <CostPanel sel={sel} />
       </>

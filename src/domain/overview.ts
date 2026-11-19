@@ -1,6 +1,6 @@
 import { computeBudget } from './budget';
 import { computeDayLoads } from './dayLoad';
-import { addDays, computeDays, formatDateIt, formatDuration, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
+import { addDays, computeDays, formatDateIt, formatDuration, isRoutableLeg, legTotals, inTripTarget, totalDays, totalNights, tripTarget } from './itinerary';
 import { dayTransfers } from './dayTransfer';
 import type { AccommodationStatus, Trip } from './types';
 import { accommodationInfo, segmentInfo, type InfoState } from './verification';
@@ -167,7 +167,8 @@ export function tripOverview(trip: Trip): TripOverview {
   const missingPrices = budget.missing.filter((m) => !m.startsWith('Nessuna voce'));
   const emptyCategories = budget.missing.length - missingPrices.length;
   const firm = budget.byStatus.confermato + budget.byStatus.prenotato + budget.byStatus.pagato;
-  const inTarget = n >= TRIP_MIN_DAYS && n <= TRIP_MAX_DAYS;
+  const inTarget = inTripTarget(n, trip.settings);
+  const target = tripTarget(trip.settings);
 
   // Alloggi scelti, non prenotati, di cui la disponibilità non è controllata (o il controllo è vecchio)
   const lodgingUnchecked = lodging.filter((l) => l.accommodation && l.status !== 'prenotata' && l.status !== 'annullata' && !l.checked).length;
@@ -185,7 +186,7 @@ export function tripOverview(trip: Trip): TripOverview {
       id: 'tappe',
       label: 'Tappe e notti',
       state: n === 0 ? 'da_fare' : inTarget ? 'fatto' : 'in_corso',
-      detail: n === 0 ? 'Itinerario vuoto' : `${n} giorni su ${TRIP_MIN_DAYS}–${TRIP_MAX_DAYS} previsti`,
+      detail: n === 0 ? 'Itinerario vuoto' : `${n} giorni su ${target.min}–${target.max} previsti`,
       href: '#/pianifica',
     },
     {
@@ -272,14 +273,16 @@ export function tripOverview(trip: Trip): TripOverview {
   const limit = trip.settings.maxTravelMinPerDay;
   const over = transfers.filter((d) => d.state === 'oltre');
   const firstOverLeg = over[0]?.legs[0];
+  // Quando è la somma di più tratti a superare il limite si apre la giornata, non il primo tratto
+  const overHref = over[0] && over[0].legs.length > 1 ? `#/pianifica?sel=day%3A${encodeURIComponent(over[0].dayKey)}` : firstOverLeg ? `#/pianifica?sel=leg%3A${encodeURIComponent(firstOverLeg.legId)}` : '';
   if (firstOverLeg) {
     push({
       id: 'over-limit',
       tier: 1,
       text: `${over.length} ${plural(over.length, 'giornata di trasferimento supera', 'giornate di trasferimento superano')} il limite di ${formatDuration(limit)} al giorno che hai impostato. Controlla ${plural(over.length, 'il tratto', 'i tratti')} o aggiungi una tappa intermedia.`,
       why: 'Una giornata così lunga in viaggio con due bambini rischia di far saltare il resto del programma.',
-      href: `#/pianifica?sel=leg%3A${encodeURIComponent(firstOverLeg.legId)}`,
-      cta: plural(over.length, 'Controlla il trasferimento', 'Controlla i trasferimenti'),
+      href: overHref,
+      cta: over[0]!.legs.length > 1 ? `Apri il giorno ${over[0]!.dayIndex + 1}` : plural(over.length, 'Controlla il trasferimento', 'Controlla i trasferimenti'),
       brief: `controlla ${over.length} ${plural(over.length, 'trasferimento oltre il limite', 'trasferimenti oltre il limite')}`,
     });
   }
@@ -322,7 +325,7 @@ export function tripOverview(trip: Trip): TripOverview {
     push({
       id: 'length',
       tier: 1,
-      text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}. Aggiungi o togli notti.`,
+      text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${target.min} e ${target.max}. Aggiungi o togli notti, oppure cambia l'obiettivo nelle impostazioni.`,
       why: 'Le date di voli e alloggi dipendono dalla durata: conviene fissarla prima di prenotare.',
       href: '#/pianifica',
       cta: 'Modifica le notti',
@@ -338,8 +341,9 @@ export function tripOverview(trip: Trip): TripOverview {
       tier: 2,
       text: `Verifica orari di ${unverifiedCrossings.length} ${plural(unverifiedCrossings.length, 'traghetto, nave o mezzo pubblico', 'traghetti, navi o mezzi pubblici')} sul sito dell'operatore${stale > 0 ? ` (${stale} da ricontrollare)` : ''}.`,
       why: 'Un orario sbagliato fa perdere la coincidenza: verificato non vuol dire prenotato, ma serve saperlo prima di partire.',
-      href: '#/prenotazioni?verifica=da_fare',
-      cta: 'Apri le verifiche',
+      // Una sola verifica aperta: si apre direttamente quel tratto
+      href: unverifiedCrossings.length === 1 ? `#/pianifica?sel=leg%3A${encodeURIComponent(unverifiedCrossings[0]!.legId)}` : '#/prenotazioni?verifica=da_fare',
+      cta: unverifiedCrossings.length === 1 ? 'Apri il tratto da verificare' : 'Apri le verifiche',
       brief: 'verifica orari di traghetti e altri mezzi',
     });
   }
@@ -358,7 +362,8 @@ export function tripOverview(trip: Trip): TripOverview {
 
   // 3. Prenotazioni necessarie ancora mancanti
   const flights = trip.flights ?? [];
-  const missingFlights = trip.stops.length > 0 ? (['andata', 'ritorno'] as const).filter((d) => !flights.some((f) => f.selected && f.direction === d)) : [];
+  // I voli si chiedono solo se il viaggio li prevede (preferenza del viaggio; assente = sì)
+  const missingFlights = trip.stops.length > 0 && trip.settings.flightsNeeded !== false ? (['andata', 'ritorno'] as const).filter((d) => !flights.some((f) => f.selected && f.direction === d)) : [];
   if (missingFlights.length > 0) {
     push({
       id: 'flights',

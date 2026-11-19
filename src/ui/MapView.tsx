@@ -14,6 +14,10 @@ interface Props {
   /** Tappa evidenziata: la mappa la centra */
   selectedStopId?: string;
   onSelectStop?: (stopId: string) => void;
+  /** Tratta evidenziata */
+  selectedLegId?: string;
+  /** Tocco o clic su una tratta: apre il suo riepilogo */
+  onSelectLeg?: (legId: string) => void;
 }
 
 /** Legenda: i mezzi principali sempre, bus e aereo solo se presenti nel viaggio. */
@@ -26,7 +30,7 @@ function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
 }
 
-export function MapView({ trip, onAddDestination, height, selectedStopId, onSelectStop }: Props) {
+export function MapView({ trip, onAddDestination, height, selectedStopId, onSelectStop, selectedLegId, onSelectLeg }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const mapRef = useRef<{ L: LeafletApi; map: LMap; layer: LLayerGroup } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
@@ -38,6 +42,9 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
   addRef.current = onAddDestination;
   const selectRef = useRef(onSelectStop);
   selectRef.current = onSelectStop;
+  const legRef = useRef(onSelectLeg);
+  legRef.current = onSelectLeg;
+  const canPickLeg = Boolean(onSelectLeg);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,7 +120,14 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       const b = byId.get(leg.toStopId);
       if (!a || !b) continue;
       // Tratto collegato alla tappa selezionata: più spesso, così si vede dove entra ed esce
-      const touched = Boolean(selectedStopId) && (leg.fromStopId === selectedStopId || leg.toStopId === selectedStopId);
+      const touched = leg.id === selectedLegId || (Boolean(selectedStopId) && (leg.fromStopId === selectedStopId || leg.toStopId === selectedStopId));
+      // Una linea sottile è difficile da toccare su telefono: sopra ogni tratto c'è una fascia larga e trasparente
+      const pick = (lls: [number, number][]) => {
+        if (!canPickLeg) return;
+        L.polyline(lls, { color: '#000', weight: 22, opacity: 0, className: 'leg-hit' })
+          .on('click', () => legRef.current?.(leg.id))
+          .addTo(layer);
+      };
       const ends = `${a.i + 1}. ${esc(a.s.name)} → ${b.i + 1}. ${esc(b.s.name)}`;
       let drewGeometry = false;
       for (const seg of leg.segments) {
@@ -128,36 +142,38 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
             .bindTooltip(
               `${ends}<br>${esc(seg.label)}${seg.distanceKm ? ` · ${seg.distanceKm} km` : ''}${duration} · ${isAutoSegment(seg) ? 'calcolato (OSRM)' : 'tracciato inserito a mano'}`,
             )
+            .on('click', () => legRef.current?.(leg.id))
             .addTo(layer);
+          pick(seg.geometry);
           drewGeometry = true;
         } else if (seg.mode === 'costiera' && seg.coastalOptionId) {
           const o = trip.coastalOptions.find((x) => x.id === seg.coastalOptionId);
           const r = o ? coastalRoute(o.direction, o.fromPort, o.toPort) : undefined;
           if (r?.valid) {
-            L.polyline(
-              r.ports.map((p) => [p.lat, p.lng] as [number, number]),
-              { color: MODE_COLOR.costiera, weight: 4, dashArray: MODE_DASH.costiera, opacity: 0.9 },
-            )
+            const ports = r.ports.map((p) => [p.lat, p.lng] as [number, number]);
+            L.polyline(ports, { color: MODE_COLOR.costiera, weight: 4, dashArray: MODE_DASH.costiera, opacity: 0.9 })
               .bindTooltip(`${ends}<br>${esc(seg.label)}${duration} (tracciato indicativo tra i porti)`)
+              .on('click', () => legRef.current?.(leg.id))
               .addTo(layer);
+            pick(ports);
             drewGeometry = true;
           }
         }
       }
       if (!drewGeometry) {
         const mode = leg.segments[0]?.mode ?? 'non_calcolato';
-        L.polyline(
-          [
-            [a.s.lat, a.s.lng],
-            [b.s.lat, b.s.lng],
-          ],
-          { color: MODE_COLOR[mode], weight: touched ? 3 : 2, dashArray: '1 7', opacity: 0.9 },
-        )
+        const straight: [number, number][] = [
+          [a.s.lat, a.s.lng],
+          [b.s.lat, b.s.lng],
+        ];
+        pick(straight);
+        L.polyline(straight, { color: MODE_COLOR[mode], weight: touched ? 3 : 2, dashArray: '1 7', opacity: 0.9 })
           .bindTooltip(
             mode === 'non_calcolato'
               ? `${ends}<br>Collegamento non calcolato: linea indicativa, NON è una distanza stradale`
               : `${ends}<br>${MODE_LABEL[mode]}: tracciato non disponibile (linea indicativa)`,
           )
+          .on('click', () => legRef.current?.(leg.id))
           .addTo(layer);
       }
     }
@@ -184,7 +200,7 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
       }
     }
     if (pts.length === 0) fitted.current = false;
-  }, [trip, state, selectedStopId]);
+  }, [trip, state, selectedStopId, selectedLegId, canPickLeg]);
 
   // Centra la tappa selezionata (senza allontanare se si è già più vicini)
   useEffect(() => {

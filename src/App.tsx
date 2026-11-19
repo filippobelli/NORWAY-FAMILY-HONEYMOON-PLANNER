@@ -279,7 +279,10 @@ function Shell() {
     </div>
   );
 
-  if (isTravelView(tab) || mode === 'travel') {
+  // Catalogo, proposta automatica e versioni sono lavoro di pianificazione: un link che porta lì (anche da telefono, dove
+  // la modalità predefinita è «viaggio») si apre con la navigazione di pianificazione, non sotto la barra del viaggio
+  const planningOnly = tab === 'catalogo' || tab === 'configuratore' || tab === 'scenari';
+  if (isTravelView(tab) || (mode === 'travel' && !planningOnly)) {
     return (
       <TravelShell tab={tab} status={<SyncBadge compact />} online={online}>
         {banners}

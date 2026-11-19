@@ -111,6 +111,35 @@ export async function loadTripCatalogs(countries: TripCountry[], store: AsyncSto
   return { catalog: parts.length ? combineCatalogs(parts) : undefined, states, errors };
 }
 
+/**
+ * Prepara una versione PRIMA di associarla al viaggio: la prende dalla copia offline o la scarica, controlla che sia
+ * completa e leggibile dall'app e solo allora la lascia sul dispositivo. Se qualcosa non va lancia un errore e il
+ * viaggio resta sulla versione che aveva.
+ */
+export async function prepareRelease(store: AsyncStore, tx: CatalogTransport | undefined, releaseId: string): Promise<void> {
+  let b = await cachedBundle(store, releaseId);
+  if (!b) {
+    if (!tx) throw new Error('Per scaricare il catalogo serve essere collegati al cloud.');
+    b = await downloadBundle(store, tx, releaseId);
+  }
+  try {
+    adaptBundle(b);
+  } catch (e) {
+    await store.del('cataloghi', releaseId).catch(() => undefined);
+    throw e;
+  }
+}
+
+/**
+ * Versioni da tenere nella copia offline, oppure `undefined` se non è il momento di pulire: finché una nazione del
+ * viaggio non ha la sua versione sul dispositivo non si cancella nulla (la precedente resta consultabile), e le
+ * versioni usate in questa sessione restano per poter annullare un passaggio senza riscaricare.
+ */
+export function releasesToKeep(states: Record<string, CatalogLoadState>, current: TripCountry[], seen: Iterable<string>): string[] | undefined {
+  if (current.length === 0 || current.some((c) => states[c.code] !== 'sul_dispositivo')) return undefined;
+  return [...new Set([...current.map((c) => c.releaseId), ...seen])];
+}
+
 /** Toglie dalla copia offline i cataloghi che nessun viaggio sul dispositivo usa più */
 export async function pruneCatalogs(store: AsyncStore, keep: string[]): Promise<void> {
   for (const k of await store.keys('cataloghi')) if (!keep.includes(k)) await store.del('cataloghi', k);

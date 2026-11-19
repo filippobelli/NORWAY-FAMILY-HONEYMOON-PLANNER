@@ -271,3 +271,24 @@ Sezione Scenari: auto e hytte, auto con traghetti e navigazione, misto con treni
 - **Verifiche**: typecheck, 262 test, lint e build ok. Nel browser (dati di prova, catalogo NO-3 caricato a mano nel server di sviluppo): scheda con 3 foto e 3 consigli, «Collega alla scheda», 1024 e 375 px senza scorrimento orizzontale e senza errori in console.
 - **Non provato**: NO-3 scaricato dal database vero; gli script `verify/e2e/*.cjs` non sono stati rieseguiti.
 - **Limiti**: fuori dal nord il catalogo è quello di prima. Helgeland e Finnmark non sono coperti. Mjelle (Bodø) esclusa: nessuna fonte adatta. Consigli solo dove esiste una pagina ufficiale letta. Senza cloud l'app usa ancora i file di NO-2.
+
+## 16–19/11/2026 — revisione UX: bozza, contesto, trasferimenti, telefono
+
+Partenza: commit `dc314ad`. Nove interventi, in ordine di priorità.
+
+- **Proposta automatica**: bozza, nome e calcoli restano passando tra impostazioni e revisione; conferma prima di sostituire una bozza modificata; «Togli…» mostra dove vanno le notti e quali date cambiano; «Vai alla decisione»; «Salva come alternativa».
+- **Itinerario**: il dettaglio della selezione si vede anche fuori dal filtro, con «Azzera il filtro»; scorciatoie a Catalogo e Versioni; contributo di ogni tratta nella giornata selezionata.
+- **Catalogo (versioni)**: la versione nuova si scarica e si controlla prima di associarla al viaggio; errore con «Riprova»; la copia offline non si pulisce finché la versione del viaggio non è sul dispositivo.
+- **Trasferimenti**: tratte toccabili sulla mappa; riepilogo guida, traversata, attesa, soste, totale; «Apri in Google Maps» in Oggi e sulla mappa del viaggio.
+- **Prossimo passo**: giornata oltre il limite → si apre la giornata; durata obiettivo e «Il viaggio prevede voli» sono preferenze (assenti = 15–20 giorni, voli sì).
+- **Giornate e Oggi**: indice compatto delle giornate con proposte; «Anteprima del viaggio»; «Torna a oggi»; partenze con orario in evidenza.
+- **Navigazione e ricerca**: Catalogo, Proposta e Versioni si aprono con la navigazione di pianificazione anche su telefono; ricerca e filtri del catalogo conservati; «Azzera filtri».
+- **Telefono**: tabelle di Crociere e Budget a schede sotto i 600 px; nei dialoghi di conferma il focus parte dal riepilogo.
+- **Catalogo (luoghi)**: «Aggiungi come tappa», «Inserisci come sosta», «Pianifica come visita»; una sosta senza notti si pianifica nel giorno di passaggio; filtri «Vicino alla tappa» e «Lungo il percorso» (linea d'aria dichiarata, deviazione non nota).
+
+- **Verifiche**: typecheck, 276 test, lint, build. Script nel browser (`verify/e2e`, Chromium con Playwright, servizi esterni bloccati o simulati): e2e, planning, cosafare, a11y, traghetti, righe, sync e il nuovo `revisione-ux.cjs` (bozza e ritorno, rimozione con Escape e ritorno del focus, selezione fuori filtro e ritorno da un'altra schermata, passaggio di catalogo che fallisce e poi riesce con un server cloud finto, link diretti su telefono, tabelle a 375 e 320 px, «Anteprima» e «Torna a oggi»).
+- **Correzione dopo le prove**: il dialogo di passaggio del catalogo restava fermo su «Scaricamento in corso» in sviluppo; senza accesso al cloud la versione contenuta nei file dell'app ora vale come pronta.
+- **Solo nel browser di sviluppo, non negli script**: tocco su una tratta della mappa (negli script la mappa da CDN è bloccata).
+- **Solo dal codice**: focus del dialogo di rimozione di una nazione (stesso meccanismo del dialogo di rimozione di una tappa, provato). Lo script `righe.cjs` lo copre solo con la build `VITE_PASSAGGIO_RIGHE=pulsante`.
+- **Limiti**: su telefono le tabelle a schede perdono la struttura di tabella per i lettori di schermo (non provato con un lettore vero); «Lungo il percorso» considera solo i tratti con tracciato.
+- **Per eseguire gli script**: `PLAYWRIGHT_PATH` deve indicare un pacchetto playwright (nel progetto non è una dipendenza); serve Chrome installato.

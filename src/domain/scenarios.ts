@@ -10,8 +10,7 @@ import {
   syncLegs,
   totalDays,
   totalNights,
-  TRIP_MAX_DAYS,
-  TRIP_MIN_DAYS,
+  inTripTarget,
 } from './itinerary';
 import type { PlanSnapshot, Scenario, ScenarioKind, Trip } from './types';
 
@@ -273,7 +272,7 @@ export function scenarioMetrics(view: Trip): ScenarioMetrics {
     familyNotes,
     days: n,
     nights: totalNights(view.stops),
-    inTarget: n >= TRIP_MIN_DAYS && n <= TRIP_MAX_DAYS,
+    inTarget: inTripTarget(n, view.settings),
     accommodationChanges: accommodationChanges(view.stops),
     roadKm: Math.round(roadKm),
     transferTheoreticalMin: theo,

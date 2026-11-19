@@ -8,7 +8,7 @@ import { newId } from '../domain/ids';
 import { cruiseInRoute, removeCruise } from '../domain/placement';
 import type { CoastalOperator, CoastalOption } from '../domain/types';
 import { useTrip } from '../state/store';
-import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Badge, Empty, Field, fmtMoney, MoneyInput, NumberInput, StatusBadge, StatusSelect, useStackLabels } from './common';
 import { CruiseDialog } from './PlacementDialog';
 import { coastalInfo } from '../domain/verification';
 import { VerificationControl } from './Verification';
@@ -41,6 +41,7 @@ function blank(operator: CoastalOperator): CoastalOption {
 }
 
 export function CoastalView() {
+  const stackRef = useStackLabels<HTMLDivElement>();
   const { trip, update, toast } = useTrip();
   const [placing, setPlacing] = useState<CoastalOption | null>(null);
   const [draft, setDraft] = useState<CoastalOption | null>(null);
@@ -126,8 +127,8 @@ export function CoastalView() {
         {sorted.length === 0 ? (
           <Empty title="Nessuna opzione ancora">Crea un'opzione per ogni combinazione operatore/porti/data che vuoi valutare.</Empty>
         ) : (
-          <div className="table-wrap">
-            <table className="table">
+          <div className="table-wrap" ref={stackRef}>
+            <table className="table stack">
               <thead>
                 <tr>
                   <th>Operatore</th>

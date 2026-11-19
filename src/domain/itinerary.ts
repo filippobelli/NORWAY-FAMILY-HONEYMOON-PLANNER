@@ -1,8 +1,23 @@
 import { newId } from './ids';
-import type { Leg, Segment, Stop, Trip, TripSettings } from './types';
+import type { DataStatus, ID, Leg, Segment, SourceRef, Stop, TransportMode, Trip, TripSettings } from './types';
 
 export const TRIP_MIN_DAYS = 15;
 export const TRIP_MAX_DAYS = 20;
+
+/** Durata obiettivo del viaggio: la preferenza salvata, altrimenti 15–20 giorni */
+export function tripTarget(settings?: Partial<TripSettings>): { min: number; max: number } {
+  const min = Math.max(1, Math.round(settings?.targetDaysMin ?? TRIP_MIN_DAYS));
+  const max = Math.max(min, Math.round(settings?.targetDaysMax ?? TRIP_MAX_DAYS));
+  return { min, max };
+}
+export function inTripTarget(days: number, settings?: Partial<TripSettings>): boolean {
+  const t = tripTarget(settings);
+  return days >= t.min && days <= t.max;
+}
+export const targetLabel = (settings?: Partial<TripSettings>) => {
+  const t = tripTarget(settings);
+  return t.min === t.max ? `${t.min}` : `${t.min}–${t.max}`;
+};
 
 export function uncalculatedSegment(): Segment {
   return {
@@ -330,8 +345,9 @@ export interface TripWarning {
 export function tripWarnings(trip: Trip): TripWarning[] {
   const out: TripWarning[] = [];
   const n = totalDays(trip.stops);
-  if (n > 0 && (n < TRIP_MIN_DAYS || n > TRIP_MAX_DAYS)) {
-    out.push({ level: 'attenzione', text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${TRIP_MIN_DAYS} e ${TRIP_MAX_DAYS}.` });
+  if (n > 0 && !inTripTarget(n, trip.settings)) {
+    const g = tripTarget(trip.settings);
+    out.push({ level: 'attenzione', text: `Il viaggio dura ${n} giorni: l'obiettivo è tra ${g.min} e ${g.max}.` });
   }
   const uncalculated = trip.legs.filter((l) => legTotals(l).hasUncalculated).length;
   if (uncalculated > 0) out.push({ level: 'attenzione', text: uncalculated === 1 ? '1 collegamento non ancora calcolato.' : `${uncalculated} collegamenti non ancora calcolati.` });
@@ -413,4 +429,47 @@ export function moveItem<T>(arr: T[], from: number, to: number): T[] {
   const [it] = copy.splice(from, 1);
   copy.splice(to, 0, it as T);
   return copy;
+}
+
+// ---------- Riepilogo di un trasferimento: guida, traversata, attesa, totale ----------
+
+export interface TransferBreakdown {
+  /** non_calcolato: nessun tempo; parziale: manca la durata di almeno un tratto; completo: tutti i tempi presenti */
+  state: 'non_calcolato' | 'parziale' | 'completo';
+  /** Minuti di guida su strada (0 se non c'è strada) */
+  driveMin: number;
+  roadKm: number;
+  /** Minuti a bordo di traghetti, nave costiera, treni, bus, voli */
+  crossingMin: number;
+  /** Attesa e imbarco: quella inserita più quella ipotizzata per i traghetti senza attesa indicata */
+  waitMin: number;
+  /** true se una parte dell'attesa è l'ipotesi delle impostazioni, non un dato */
+  waitAssumed: boolean;
+  /** Soste ipotizzate durante la guida */
+  breakMin: number;
+  /** Totale previsto con soste e attese; con stato «parziale» è solo la somma dei tempi noti */
+  totalMin: number;
+  /** Tratti non stradali il cui orario non è confermato */
+  unverifiedCrossings: number;
+  /** Tratti non stradali, per mostrare operatore, fonte e stato dell'orario */
+  crossings: { id: ID; mode: TransportMode; label: string; note?: string; departureTime?: string; status: DataStatus; source?: SourceRef; durationMin?: number }[];
+}
+
+/** Scompone un trasferimento nelle voci che servono sul posto. Non inventa nulla: un tempo mancante resta mancante. */
+export function transferBreakdown(leg: Leg, settings?: Partial<TripSettings>): TransferBreakdown {
+  const t = legTotals(leg, settings);
+  const real = leg.segments.filter((s) => s.mode !== 'non_calcolato');
+  const crossings = real.filter((s) => s.mode !== 'strada');
+  return {
+    state: real.length === 0 ? 'non_calcolato' : t.partial ? 'parziale' : 'completo',
+    driveMin: t.driveMin,
+    roadKm: Math.round(t.roadKm),
+    crossingMin: t.travelMin - t.driveMin,
+    waitMin: t.waitMin + t.estimatedWaitMin,
+    waitAssumed: t.estimatedWaitMin > 0,
+    breakMin: t.breakMin,
+    totalMin: t.realisticMin,
+    unverifiedCrossings: t.unverifiedCrossings,
+    crossings: crossings.map((s) => ({ id: s.id, mode: s.mode, label: s.label, note: s.note, departureTime: s.departureTime, status: s.status, source: s.source, durationMin: s.durationMin })),
+  };
 }

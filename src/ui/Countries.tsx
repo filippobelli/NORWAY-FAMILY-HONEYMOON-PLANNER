@@ -136,13 +136,41 @@ export function CountriesPanel() {
  */
 function UpgradeDialog({ target, onClose }: { target: AvailableCountry; onClose: () => void }) {
   const { trip, update, replace, toast } = useTrip();
+  const { prepare } = useTripCatalog();
+  const online = useOnline();
   const from = tripCountries(trip).find((c) => c.code === target.code);
-  const confirm = () => {
+  const [phase, setPhase] = useState<'idle' | 'download' | 'errore'>('idle');
+  const [error, setError] = useState('');
+  // Il dialogo può chiudersi mentre lo scaricamento è in corso: in quel caso non si tocca più il suo stato.
+  // Il valore torna vero a ogni montaggio (in sviluppo React monta, smonta e rimonta i componenti una volta)
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  // Prima si scarica e si controlla la versione nuova, poi la si associa al viaggio: se lo scaricamento non riesce
+  // il viaggio resta sulla versione di prima, che continua a funzionare
+  const confirm = async () => {
     const before = trip;
+    setPhase('download');
+    setError('');
+    let where: 'app' | 'dispositivo';
+    try {
+      where = await prepare(target.releaseId);
+    } catch (e) {
+      if (!alive.current) return;
+      setError((e instanceof Error ? e.message : String(e)).replace(/[.\s]+$/, ''));
+      setPhase('errore');
+      return;
+    }
+    if (!alive.current) return;
     update((t) => upgradeCatalog(t, target.code, target.releaseId));
-    toast(`${target.name}: catalogo ${target.releaseId} in uso`, 'ok', { label: 'Annulla', run: () => replace(before) });
+    toast(`${target.name}: catalogo ${target.releaseId} ${where === 'dispositivo' ? 'scaricato su questo dispositivo e ' : ''}in uso`, 'ok', { label: 'Annulla', run: () => replace(before) });
     onClose();
   };
+  const busy = phase === 'download';
   return (
     <Modal title={`Passare al catalogo ${target.releaseId}?`} onClose={onClose}>
       <p>
@@ -152,14 +180,23 @@ function UpgradeDialog({ target, onClose }: { target: AvailableCountry; onClose:
       <ul className="small">
         <li>Tappe, notti, idee, preferiti, attività, crociere e costi restano come sono.</li>
         <li>Cambia solo la versione del catalogo del viaggio: puoi annullare subito dopo.</li>
+        <li>La versione nuova viene prima scaricata e controllata su questo dispositivo; se non riesce, non cambia nulla.</li>
         <li>Le tariffe dei traghetti lette nel 2026 restano «da verificare» per il viaggio.</li>
       </ul>
+      <div role="status" aria-live="polite">
+        {busy && <p className="small">Scaricamento del catalogo {target.releaseId} in corso… Il viaggio resta su {from?.releaseId ?? 'la versione attuale'} finché non è pronto.</p>}
+        {phase === 'errore' && (
+          <p className="note-warn small">
+            Aggiornamento non riuscito: {error || 'errore sconosciuto'}. {online ? '' : 'Sembra che manchi la rete. '}Il viaggio usa ancora {from?.releaseId ?? 'la versione di prima'}, che resta consultabile.
+          </p>
+        )}
+      </div>
       <div className="row wrap place-actions">
-        <button className="btn btn-primary" onClick={confirm}>
-          Passa a {target.releaseId}
+        <button className="btn btn-primary" disabled={busy} onClick={() => void confirm()}>
+          {busy ? 'Scaricamento in corso…' : phase === 'errore' ? 'Riprova' : `Passa a ${target.releaseId}`}
         </button>
         <button className="btn btn-ghost" onClick={onClose}>
-          Annulla
+          {busy ? 'Chiudi' : 'Annulla'}
         </button>
       </div>
     </Modal>
@@ -272,10 +309,10 @@ function RemoveCountry({ code, onBack, onDone }: { code: string; onBack: () => v
   return (
     <Modal title={`Togliere ${name} dal viaggio?`} onClose={onBack}>
       {empty ? (
-        <p>Nessun elemento del viaggio usa questa nazione. Il suo catalogo viene tolto dal viaggio e da questo dispositivo.</p>
+        <p tabIndex={-1} data-autofocus>Nessun elemento del viaggio usa questa nazione. Il suo catalogo viene tolto dal viaggio e da questo dispositivo.</p>
       ) : (
         <>
-          <p>Questi elementi del viaggio usano la {name}:</p>
+          <p tabIndex={-1} data-autofocus>Questi elementi del viaggio usano la {name}:</p>
           <ul className="small">
             {u.stops.length > 0 && (
               <li>

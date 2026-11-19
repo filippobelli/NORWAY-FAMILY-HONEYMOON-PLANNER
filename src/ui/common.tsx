@@ -2,7 +2,7 @@ import { useCatalog } from '../catalog/registry';
 import { rateFor } from '../domain/coastal';
 import { tripCountries } from '../domain/countries';
 import { useTrip } from '../state/store';
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { STATUS_LABEL } from '../domain/budget';
 import type { Currency, DataStatus, Money, TransportMode } from '../domain/types';
 import { Icon, type IconName } from './icons';
@@ -179,4 +179,27 @@ export function fmtDateTime(iso: string | undefined): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleString('it-IT', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+/**
+ * Tabelle che su telefono diventano schede verticali (classe `stack`, vedi styles.css): ogni cella mostra davanti
+ * il nome della sua colonna. Le etichette si copiano dalle intestazioni dopo ogni disegno, così la tabella resta
+ * scritta una volta sola e su desktop non cambia nulla.
+ */
+export function useStackLabels<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    for (const table of ref.current?.querySelectorAll<HTMLTableElement>('table.stack') ?? []) {
+      const heads = [...table.querySelectorAll('thead th')].map((th) => th.textContent?.trim() ?? '');
+      for (const tr of table.querySelectorAll('tbody tr')) {
+        const cells = [...tr.children] as HTMLElement[];
+        if (cells.length !== heads.length) continue;
+        cells.forEach((td, i) => {
+          if (heads[i]) td.dataset.label = heads[i];
+          else delete td.dataset.label;
+        });
+      }
+    }
+  });
+  return ref;
 }

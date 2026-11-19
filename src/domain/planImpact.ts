@@ -220,3 +220,64 @@ export function applyVersion(trip: Trip, id: ID, label: string, at = new Date().
 export function undoVersion(trip: Trip, from: ID, label: string, at = new Date().toISOString()): Trip {
   return applyVersion(trip, from, `Annullato: ${label}`, at);
 }
+
+// ---------- Bozza della proposta: che cosa è cambiato e che cosa cambia togliendo una tappa ----------
+
+/** Data di arrivo di ogni tappa: primo giorno del viaggio più le notti delle tappe precedenti */
+function arrivals(t: Trip): Map<ID, string> {
+  const out = new Map<ID, string>();
+  let n = 0;
+  for (const s of t.stops) {
+    out.set(s.id, addDays(t.startDate, n));
+    n += s.nights;
+  }
+  return out;
+}
+
+/** Modifiche fatte a mano nella bozza rispetto alla proposta generata (i tratti calcolati non contano) */
+export function draftChanges(initial: Trip, draft: Trip): string[] {
+  const out: string[] = [];
+  const now = new Map(draft.stops.map((s) => [s.id, s]));
+  for (const s of initial.stops) {
+    const d = now.get(s.id);
+    if (!d) out.push(`${s.name} tolta dalla proposta`);
+    else if (d.nights !== s.nights) out.push(`Notti a ${s.name}: da ${s.nights} a ${d.nights}`);
+  }
+  const kept = initial.stops.filter((s) => now.has(s.id)).map((s) => s.id);
+  if (kept.join('|') !== draft.stops.map((s) => s.id).join('|')) out.push('Ordine delle tappe cambiato');
+  return out;
+}
+
+export interface RemovalPreview {
+  name: string;
+  nights: number;
+  /** Tappa che riceve le notti (solo con «alla_precedente» e notti > 0) */
+  receiver?: { name: string; before: number; after: number };
+  daysBefore: number;
+  daysAfter: number;
+  endBefore: string;
+  endAfter: string;
+  /** Tappe che restano e cambiano data di arrivo */
+  dateChanges: { name: string; before: string; after: string }[];
+}
+
+/** Che cosa succede togliendo una tappa dalla bozza: dove vanno le sue notti e quali date si spostano */
+export function removalPreview(t: Trip, stopId: ID, nights: 'togli' | 'alla_precedente'): RemovalPreview | undefined {
+  const gone = t.stops.find((s) => s.id === stopId);
+  if (!gone) return undefined;
+  const after = draftRemoveStop(t, stopId, nights);
+  const a = arrivals(t);
+  const b = arrivals(after);
+  const got = after.stops.find((s) => (t.stops.find((x) => x.id === s.id)?.nights ?? s.nights) !== s.nights);
+  const total = (x: Trip) => x.stops.reduce((n, s) => n + s.nights, 0);
+  return {
+    name: gone.name,
+    nights: gone.nights,
+    receiver: got ? { name: got.name, before: t.stops.find((x) => x.id === got.id)!.nights, after: got.nights } : undefined,
+    daysBefore: total(t) + 1,
+    daysAfter: total(after) + 1,
+    endBefore: addDays(t.startDate, total(t)),
+    endAfter: addDays(after.startDate, total(after)),
+    dateChanges: after.stops.filter((s) => a.get(s.id) !== b.get(s.id)).map((s) => ({ name: s.name, before: a.get(s.id)!, after: b.get(s.id)! })),
+  };
+}

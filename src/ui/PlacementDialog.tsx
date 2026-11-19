@@ -33,7 +33,8 @@ export function Modal({ title, onClose, children, className }: { title: string; 
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (d && !d.open) d.showModal();
     // Primo controllo del contenuto, non il pulsante di chiusura: è quello che serve per proseguire
-    const first = d?.querySelector<HTMLElement>('.dialog-body input, .dialog-body select, .dialog-body textarea, .dialog-body button, .dialog-body a[href]');
+    // `data-autofocus`: il riepilogo da leggere prima di agire (conferme con conseguenze); altrimenti il primo controllo
+    const first = d?.querySelector<HTMLElement>('.dialog-body [data-autofocus]') ?? d?.querySelector<HTMLElement>('.dialog-body input, .dialog-body select, .dialog-body textarea, .dialog-body button, .dialog-body a[href]');
     (first ?? d?.querySelector<HTMLElement>('.dialog-close'))?.focus();
     return () => {
       d?.close();

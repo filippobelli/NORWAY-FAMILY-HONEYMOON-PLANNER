@@ -36,6 +36,14 @@ export interface BookingInfo {
   status: DataStatus | Accommodation['status'];
 }
 
+/** Partenza con un orario inserito (traghetto, treno, volo, nave): va guardata prima delle attività senza orario */
+export interface Departure {
+  time: string;
+  text: string;
+  status?: DataStatus;
+  legId?: string;
+}
+
 export interface NextThing {
   kind: 'attivita' | 'tappa';
   title: string;
@@ -53,6 +61,8 @@ export interface TodayView {
   transfers: LegInfo[];
   activities: { activity: Activity; state: ReturnType<typeof activityState> }[];
   next?: NextThing;
+  /** Partenze della giornata con orario inserito, in ordine di orario */
+  departures: Departure[];
   bookings: BookingInfo[];
   notes: string;
   planB: string[];
@@ -78,6 +88,12 @@ export function todayView(trip: Trip, index: number): TodayView | undefined {
     : place && !['visitata', 'saltata'].includes(stopState(trip, place.id))
       ? { kind: 'tappa', title: place.name, stop: place }
       : undefined;
+
+  const departures: Departure[] = [];
+  for (const f of trip.flights ?? []) if (f.date === day.date && f.selected && f.departureTime) departures.push({ time: f.departureTime, text: `Volo ${f.fromAirport} → ${f.toAirport}` });
+  for (const o of trip.coastalOptions) if (o.date === day.date && o.selected && o.departureTime) departures.push({ time: o.departureTime, text: `${o.operator} ${o.fromPort} → ${o.toPort}` });
+  for (const t of transfers) for (const s of t.leg.segments) if (s.departureTime && s.mode !== 'strada' && s.mode !== 'non_calcolato') departures.push({ time: s.departureTime, text: `${s.label} (${t.from} → ${t.to})`, status: s.status, legId: t.leg.id });
+  departures.sort((a, b) => a.time.localeCompare(b.time));
 
   const bookings: BookingInfo[] = [];
   for (const f of trip.flights ?? []) {
@@ -105,6 +121,7 @@ export function todayView(trip: Trip, index: number): TodayView | undefined {
     transfers,
     activities,
     next,
+    departures,
     bookings,
     notes: plan?.notes ?? '',
     planB: [plan?.planB, place?.weatherPlanB].filter((x): x is string => Boolean(x && x.trim())),

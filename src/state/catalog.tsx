@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { installCatalog, useCatalog, type CatalogState } from '../catalog/registry';
+import { FILE_COUNTRY } from '../data/country';
 import { tripCountries } from '../domain/countries';
-import { cloudCatalogTransport, loadTripCatalogs, pruneCatalogs, type AvailableCountry, type CatalogLoadState } from '../services/catalog/catalogService';
+import { cloudCatalogTransport, loadTripCatalogs, prepareRelease, pruneCatalogs, releasesToKeep, type AvailableCountry, type CatalogLoadState } from '../services/catalog/catalogService';
 import { deviceStore } from '../services/storage/dataStore';
 import { useCloudSync } from './cloudSync';
 import { useTrip } from './store';
@@ -24,6 +25,11 @@ interface CatalogCtx {
   available?: AvailableCountry[];
   availableError?: string;
   loadAvailable: () => Promise<AvailableCountry[] | undefined>;
+  /**
+   * Prepara una versione prima di associarla al viaggio: «app» se è già contenuta nei file dell'app (senza cloud o senza
+   * accesso), «dispositivo» se è stata scaricata e controllata. Lancia un errore se non riesce.
+   */
+  prepare: (releaseId: string) => Promise<'app' | 'dispositivo'>;
 }
 
 const Ctx = createContext<CatalogCtx | null>(null);
@@ -41,6 +47,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   const signature = countries.map((c) => `${c.code}:${c.releaseId}`).join(',');
   const fileMode = !config;
   const loaded = useRef('');
+  const seen = useRef(new Set<string>());
 
   useEffect(() => {
     if (!config) return;
@@ -58,7 +65,10 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         loaded.current = key;
         installCatalog(r.catalog);
       }
-      if (list.length) void pruneCatalogs(deviceStore(), list.map((c) => c.releaseId)).catch(() => undefined);
+      for (const c of list) seen.current.add(c.releaseId);
+      // Si pulisce solo quando tutte le versioni del viaggio sono sul dispositivo: mai lasciare il viaggio senza catalogo
+      const keep = releasesToKeep(r.states, list, seen.current);
+      if (keep) void pruneCatalogs(deviceStore(), keep).catch(() => undefined);
     });
     return () => {
       cancelled = true;
@@ -89,9 +99,20 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     }
   }, [config, session]);
 
+  const prepare = useCallback(
+    async (releaseId: string): Promise<'app' | 'dispositivo'> => {
+      // Senza cloud, o senza accesso, l'app usa i propri file: la versione che contengono è già pronta
+      if (!config || (!session && releaseId === FILE_COUNTRY.releaseId)) return 'app';
+      seen.current.add(releaseId);
+      await prepareRelease(deviceStore(), session ? cloudCatalogTransport(config) : undefined, releaseId);
+      return 'dispositivo';
+    },
+    [config, session],
+  );
+
   const value = useMemo<CatalogCtx>(
-    () => ({ state, fileMode, states, errors, retry: () => setAttempt((n) => n + 1), available, availableError, loadAvailable }),
-    [state, fileMode, states, errors, available, availableError, loadAvailable],
+    () => ({ state, fileMode, states, errors, retry: () => setAttempt((n) => n + 1), available, availableError, loadAvailable, prepare }),
+    [state, fileMode, states, errors, available, availableError, loadAvailable, prepare],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

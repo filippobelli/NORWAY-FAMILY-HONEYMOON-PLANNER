@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { formatEur } from '../domain/budget';
-import { formatDuration } from '../domain/itinerary';
+import { formatDuration, targetLabel } from '../domain/itinerary';
 import {
   addScenario,
   comparability,
@@ -198,7 +198,7 @@ export function ScenariosView() {
                   <div>
                     <dt>Durata</dt>
                     <dd>
-                      {m.days} giorni · {m.nights} notti {!m.inTarget && <span className="warn-text">(fuori 15–20)</span>}
+                      {m.days} giorni · {m.nights} notti {!m.inTarget && <span className="warn-text">(fuori {targetLabel(trip.settings)})</span>}
                     </dd>
                   </div>
                   <div>

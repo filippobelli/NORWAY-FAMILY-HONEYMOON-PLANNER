@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { tripTarget } from '../domain/itinerary';
 import { createEmptyTrip } from '../domain/defaults';
 import { exportTripFile, readTripFile } from '../services/storage/local';
 import { CloudError, isConfigFromEnv, listCloudTrips, saveCloudConfig, signIn, type CloudTripRow } from '../services/storage/supabase';
@@ -67,6 +68,33 @@ export function SettingsView() {
               />
             )}
           </Field>
+          <Field label="Durata obiettivo: da (giorni)" hint="Sotto questa durata il viaggio è segnalato">
+            {(id) => (
+              <NumberInput
+                id={id}
+                value={tripTarget(trip.settings).min}
+                min={1}
+                onChange={(v) => v && update((t) => ({ ...t, settings: { ...t.settings, targetDaysMin: Math.round(v), targetDaysMax: Math.max(Math.round(v), tripTarget(t.settings).max) } }))}
+              />
+            )}
+          </Field>
+          <Field label="Durata obiettivo: a (giorni)" hint="Oltre questa durata il viaggio è segnalato">
+            {(id) => (
+              <NumberInput
+                id={id}
+                value={tripTarget(trip.settings).max}
+                min={1}
+                onChange={(v) => v && update((t) => ({ ...t, settings: { ...t.settings, targetDaysMax: Math.round(v), targetDaysMin: Math.min(Math.round(v), tripTarget(t.settings).min) } }))}
+              />
+            )}
+          </Field>
+          <div className="field">
+            <span className="field-label">Voli</span>
+            <label className="check field-control">
+              <input type="checkbox" checked={trip.settings.flightsNeeded !== false} onChange={(e) => update((t) => ({ ...t, settings: { ...t.settings, flightsNeeded: e.target.checked ? undefined : false } }))} /> Il viaggio prevede voli
+            </label>
+            <small className="hint">Se lo togli, l'app non chiede di scegliere andata e ritorno</small>
+          </div>
           <Field label="Ricontrolla le verifiche dopo (giorni)" hint={`Orari e disponibilità controllati da più tempo diventano «Da ricontrollare». Predefinito ${DEFAULT_RECHECK_DAYS}.`}>
             {(id) => (
               <NumberInput

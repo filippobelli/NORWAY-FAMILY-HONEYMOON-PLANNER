@@ -80,8 +80,22 @@ export function filterAttractions(list: StopAttraction[], f: AttractionFilter): 
  * Giornate della tappa: quelle in cui si dorme lì. Il giorno della partenza appartiene alla tappa successiva
  * (le giornate sono legate alla notte): così una visita compare una sola volta, nella tappa giusta.
  */
+/**
+ * Giornata in cui si passa da una tappa senza pernottamento: quella del trasferimento che ci arriva (o, per la prima
+ * tappa, che ne parte). È la giornata di un'altra tappa: qui serve solo per poterci pianificare una sosta.
+ */
+export function passDay(trip: Trip, stopId: ID, days: DayInfo[] = computeDays(trip)): DayInfo | undefined {
+  const stop = trip.stops.find((s) => s.id === stopId);
+  if (!stop || stop.nights > 0) return undefined;
+  return days.find((d) => d.legs.some((l) => l.toStopId === stopId)) ?? days.find((d) => d.legs.some((l) => l.fromStopId === stopId));
+}
+
+/** Giornate della tappa: quelle in cui ci si dorme; per una sosta senza notti, il giorno in cui si passa di lì */
 export function stopDays(trip: Trip, stopId: ID, days: DayInfo[] = computeDays(trip)): DayInfo[] {
-  return days.filter((d) => d.sleepStop?.id === stopId);
+  const own = days.filter((d) => d.sleepStop?.id === stopId);
+  if (own.length > 0) return own;
+  const pass = passDay(trip, stopId, days);
+  return pass ? [pass] : [];
 }
 
 export interface PlannedVisit {
@@ -104,8 +118,17 @@ export function stopThings(trip: Trip, stopId: ID): StopThings {
   const stop = trip.stops.find((s) => s.id === stopId);
   const planned: PlannedVisit[] = [];
   const personal: PlannedVisit[] = [];
+  // Sosta di passaggio: la giornata è di un'altra tappa, quindi qui contano solo le visite del catalogo vicine alla sosta
+  const passing = Boolean(stop && stop.nights === 0);
   for (const day of days) {
-    for (const a of trip.days[day.key]?.activities ?? []) (a.destinationId ? planned : personal).push({ activity: a, day });
+    for (const a of trip.days[day.key]?.activities ?? []) {
+      if (passing) {
+        const d = a.destinationId ? findDestination(a.destinationId) : undefined;
+        if (d && stop && airKm(stop, d) <= NEAR_KM) planned.push({ activity: a, day });
+        continue;
+      }
+      (a.destinationId ? planned : personal).push({ activity: a, day });
+    }
   }
   const plannedIds = new Set(planned.map((p) => p.activity.destinationId));
   const ideas = (stop?.ideas ?? []).filter((id) => !plannedIds.has(id)).map((id) => findDestination(id)).filter((d): d is Destination => Boolean(d));
@@ -192,4 +215,35 @@ export function missingInfo(a: StopAttraction): string[] {
   if (a.info?.seasonal) out.push('apertura stagionale');
   if (a.outside) out.push('trasferimento da verificare');
   return out;
+}
+
+// ---------- Luoghi lungo il percorso calcolato ----------
+
+/** Entro quanti km in linea d'aria dal tracciato un luogo conta come «lungo il percorso» */
+export const ALONG_KM = 15;
+
+/** true se il viaggio ha almeno un tratto con il tracciato (calcolato o inserito): senza, «lungo il percorso» non si può dire */
+export function hasRouteTrack(trip: Trip): boolean {
+  return trip.legs.some((l) => l.segments.some((s) => (s.geometry?.length ?? 0) > 1));
+}
+
+/**
+ * Distanza minima in linea d'aria tra un luogo e il tracciato dei tratti del viaggio, in km (undefined senza tracciato).
+ * NON è il tempo di deviazione: quello non è noto finché non si calcola un percorso che passa dal luogo.
+ */
+export function routeDistanceKm(trip: Trip, p: { lat: number; lng: number }): number | undefined {
+  let best: number | undefined;
+  for (const l of trip.legs) {
+    for (const s of l.segments) {
+      const g = s.geometry;
+      if (!g || g.length < 2) continue;
+      // Un punto ogni pochi basta: i tracciati hanno punti a poche centinaia di metri
+      const step = Math.max(1, Math.floor(g.length / 400));
+      for (let i = 0; i < g.length; i += step) {
+        const km = airKm(p, { lat: g[i]![0], lng: g[i]![1] });
+        if (best === undefined || km < best) best = km;
+      }
+    }
+  }
+  return best === undefined ? undefined : Math.round(best * 10) / 10;
 }

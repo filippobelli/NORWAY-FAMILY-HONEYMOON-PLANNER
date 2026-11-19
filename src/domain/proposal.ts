@@ -1,5 +1,5 @@
 import { estDriveHours } from './configurator';
-import { addDays, computeDays, isRoutableLeg, legTotals, totalDays, totalNights, TRIP_MAX_DAYS, TRIP_MIN_DAYS } from './itinerary';
+import { addDays, computeDays, isRoutableLeg, legTotals, inTripTarget, totalDays, totalNights } from './itinerary';
 import type { Leg, Trip } from './types';
 
 // Revisione di una proposta automatica prima di attivarla. Tre gradi di affidabilità, sempre dichiarati:
@@ -151,7 +151,7 @@ export function reviewProposal(trip: Trip, limitMin = trip.settings.maxTravelMin
     end: n > 0 ? addDays(trip.startDate, n - 1) : undefined,
     days: n,
     nights: totalNights(trip.stops),
-    inTarget: n >= TRIP_MIN_DAYS && n <= TRIP_MAX_DAYS,
+    inTarget: inTripTarget(n, trip.settings),
     stops,
     transfers,
     counts,

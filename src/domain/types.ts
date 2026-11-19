@@ -312,6 +312,11 @@ export interface TripSettings {
   nokRateNote: string;
   /** Soglia oltre la quale una giornata di trasferimento è segnalata come pesante */
   maxTravelMinPerDay: number;
+  /** Durata obiettivo del viaggio in giorni (assente = 15–20, come nei viaggi salvati prima di questa preferenza) */
+  targetDaysMin?: number;
+  targetDaysMax?: number;
+  /** Il viaggio prevede voli di andata e ritorno da scegliere (assente = sì) */
+  flightsNeeded?: boolean;
   /** Aggiorna il cambio in automatico all'apertura dell'app (assente = sì) */
   nokRateAuto?: boolean;
   /** Data del cambio applicato (YYYY-MM-DD) */

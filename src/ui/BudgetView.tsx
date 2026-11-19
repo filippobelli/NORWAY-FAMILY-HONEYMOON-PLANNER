@@ -6,7 +6,7 @@ import { newId } from '../domain/ids';
 import type { BudgetCategory, BudgetEstimates, BudgetItem, DataStatus, Money, TripSettings } from '../domain/types';
 import { formatRateDate } from '../state/autoRates';
 import { useTrip } from '../state/store';
-import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect } from './common';
+import { Badge, Field, MoneyInput, NumberInput, StatusBadge, StatusSelect, useStackLabels } from './common';
 import { Icon } from './icons';
 import { FerryBudgetDetail } from './Ferries';
 
@@ -22,6 +22,8 @@ function statusParts(c: CategoryBreakdown): string[] {
 }
 
 export function BudgetView() {
+  const capsRef = useStackLabels<HTMLDivElement>();
+  const linesRef = useStackLabels<HTMLDivElement>();
   const { trip, update } = useTrip();
   const b = useMemo(() => computeBudget(trip), [trip]);
   const st = trip.settings;
@@ -149,8 +151,8 @@ export function BudgetView() {
       <div className="grid-2">
         <section className="panel">
           <h2>Per categoria</h2>
-          <div className="table-wrap">
-            <table className="table compact">
+          <div className="table-wrap" ref={capsRef}>
+            <table className="table compact stack">
               <thead>
                 <tr>
                   <th>Categoria</th>
@@ -297,8 +299,8 @@ export function BudgetView() {
             Aggiungi voce
           </button>
         </div>
-        <div className="table-wrap">
-          <table className="table">
+        <div className="table-wrap" ref={linesRef}>
+          <table className="table stack">
             <thead>
               <tr>
                 <th>Voce</th>

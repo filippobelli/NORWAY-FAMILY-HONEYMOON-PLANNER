@@ -5028,3 +5028,153 @@ h2[tabindex='-1']:focus-visible {
     margin-bottom: 6px;
   }
 }
+
+/* Revisione della proposta: collegamento alle azioni finali, utile soprattutto su telefono dove sono in fondo */
+.review-jump {
+  margin: 0.25rem 0 0.75rem;
+}
+.dialog-body [data-autofocus]:focus {
+  outline: none;
+}
+
+/* L'attributo hidden vale anche dove una classe imposta display (es. .configurator) */
+[hidden] {
+  display: none !important;
+}
+/* Itinerario: dettaglio di una selezione che non ha una riga visibile nell'elenco (fuori dal filtro) */
+.ol-outside {
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+  margin-bottom: 8px;
+}
+.ol-outside > p {
+  margin: 0 0 6px;
+}
+
+/* Riepilogo di un trasferimento: guida, traversata, attesa, totale e Google Maps */
+.transfer-summary {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.transfer-title {
+  margin: 0;
+}
+.transfer-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+}
+.transfer-facts dt {
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+.transfer-facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+.transfer-facts dd .block {
+  display: block;
+  font-weight: 400;
+}
+.transfer-total dd {
+  color: var(--ink);
+}
+.transfer-crossings {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+.t-list > li > .transfer-summary {
+  flex-basis: 100%;
+}
+.t-list .transfer-crossings li {
+  display: block;
+}
+.leaflet-interactive.leg-hit {
+  cursor: pointer;
+}
+
+/* Giornata selezionata: contributo di ogni tratta al tempo di trasferimento */
+.day-transfers {
+  margin-bottom: 8px;
+}
+.day-transfers p {
+  margin: 0 0 4px;
+}
+
+/* Giornate: indice compatto delle giornate che hanno proposte per alleggerire */
+.suggestion-index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+/* Tabelle a schede su telefono: niente scorrimento laterale, stato, importo e azione sempre raggiungibili */
+@media (max-width: 600px) {
+  .table.stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .table.stack,
+  .table.stack tbody,
+  .table.stack tfoot {
+    display: block;
+  }
+  .table.stack tr {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 6px 8px;
+    margin-bottom: 8px;
+  }
+  .table.stack td,
+  .table.stack tfoot th {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 2px 12px;
+    border: 0;
+    padding: 3px 0;
+    text-align: left;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .table.stack td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 38%;
+    color: var(--ink-2);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .table.stack td[data-label] > * {
+    max-width: 100%;
+  }
+  .table.stack td:empty {
+    display: none;
+  }
+  .table.stack .num {
+    white-space: normal;
+  }
+  .table.stack .actions {
+    min-width: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .table.stack input:not([type='checkbox']),
+  .table.stack select {
+    max-width: 100%;
+  }
+}
