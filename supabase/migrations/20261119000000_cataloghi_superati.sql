@@ -14,6 +14,7 @@ returns integer language plpgsql set search_path = '' as $$
 declare
   v_latest public.catalog_releases%rowtype;
   v_n integer;
+  t text;
 begin
   select * into v_latest from public.catalog_releases r
    where r.country_code = p_country and r.status = 'pubblicata'
@@ -24,6 +25,14 @@ begin
   perform set_config('nfhp.catalogo_admin', 'on', true);
   update public.trip_countries tc set release_id = v_latest.release_id
    where tc.country_code = p_country and tc.release_id <> v_latest.release_id;
+  -- Prima le tabelle figlie, nell'ordine dei vincoli (non tutti sono a cascata: crociere e tratte puntano ai luoghi)
+  foreach t in array array['ferry_fares', 'ferry_route_stops', 'ferry_route_places', 'ferry_routes', 'ferry_sources', 'voyages', 'operators',
+    'route_ports', 'place_links', 'place_photos', 'place_tips', 'place_sources', 'place_texts', 'places', 'regions'] loop
+    if to_regclass('public.' || t) is not null then
+      execute format('delete from public.%I x using public.catalog_releases r where x.release_id = r.release_id and r.country_code = $1 and r.version < $2', t)
+        using p_country, v_latest.version;
+    end if;
+  end loop;
   delete from public.catalog_releases r
    where r.country_code = p_country and r.version < v_latest.version;
   get diagnostics v_n = row_count;
