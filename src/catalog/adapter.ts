@@ -51,7 +51,7 @@ export interface CatalogCountry {
   status: string;
   publishedAt?: string;
   dataCheckedUntil?: string;
-  /** Luoghi visibili nel catalogo (porti esclusi) */
+  /** Luoghi visibili nel catalogo (porti delle vecchie rotte costiere esclusi) */
   placeCount: number;
   roadFactor?: number;
   avgKmh?: number;
@@ -137,7 +137,7 @@ export function countryOf(b: CatalogBundle): CatalogCountry {
     status: String(r.status),
     publishedAt: str(r.published_at),
     dataCheckedUntil: str(r.data_checked_until),
-    placeCount: b.places.filter((p) => p.category !== 'porti').length,
+    placeCount: b.places.filter((p) => p.category !== 'porti' || p.region_key).length,
     roadFactor: num(r.road_factor),
     avgKmh: num(r.avg_kmh),
     roadCalibrated: Boolean(r.road_calibrated),
@@ -275,7 +275,9 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
   for (const p of b.places) {
     const key = String(p.place_key);
     placeCountry[key] = code;
-    if (p.category === 'porti') continue;
+    // I vecchi scali costieri, senza zona né scheda, restano nella vista delle crociere.
+    // I nuovi porti con scheda e zona sono punti logistici selezionabili dal catalogo.
+    if (p.category === 'porti' && !p.region_key) continue;
     const t = textOf.get(key);
     if (!t) throw new CatalogError(`Manca il testo italiano per ${key}`);
     const min = num(p.visit_hours_min);
@@ -283,6 +285,7 @@ export function adaptBundle(bundle: CatalogBundle): AppCatalog {
     destinations.push(
       clean({
         id: key,
+        transportPoint: p.category === 'treni' && p.day_visit === false && p.visit_hours_min == null && p.visit_hours_max == null ? true : undefined,
         name: String(t.name),
         localName: str(p.local_name),
         iata: key === str(p.iata)?.toLowerCase() ? undefined : str(p.iata),

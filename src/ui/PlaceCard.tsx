@@ -8,6 +8,7 @@ import type { Destination, Stop } from '../domain/types';
 import { commonsFilePage, commonsImageUrl, fetchImageCredit } from '../services/wiki';
 import { Icon } from './icons';
 import { OfficialLink } from './OfficialLink';
+import { RailwayLinks } from './RailwayLinks';
 
 /** Foto del luogo: quelle del catalogo (crediti già pronti); altrimenti la foto principale, con i crediti letti da Commons */
 function usePlacePhotos(id: string): PlacePhoto[] {
@@ -77,6 +78,7 @@ export function PlaceCard({ dest, open }: { dest: Destination; open?: boolean })
         </div>
       )}
       {dest.description && <p>{dest.description}</p>}
+      <RailwayLinks dest={dest} />
       <dl className="place-facts small">
         {dest.access && (
           <>

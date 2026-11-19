@@ -149,12 +149,13 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   natura: 'Cascate, ghiacciai e parchi',
   strade: 'Strade panoramiche e belvedere',
   isole: 'Isole e villaggi costieri',
-  treni: 'Treni e trasporti panoramici',
+  treni: 'Treni e stazioni',
   fauna: 'Fauna e natura',
   musei: 'Musei e luoghi culturali',
   parchi: 'Parchi divertimento',
   stagionali: 'Esperienze stagionali',
   aeroporti: 'Aeroporti',
+  porti: 'Porti e terminal marittimi',
 };
 
 

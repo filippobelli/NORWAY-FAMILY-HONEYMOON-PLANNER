@@ -45,7 +45,7 @@ const tier = (m: PlaceMatch) => (m.km <= MATCH_KM_NEAR ? (m.sameName ? 0 : 1) : 
 export function matchPlace(stop: { name: string; lat: number; lng: number }, destinations: Destination[]): PlaceMatch | undefined {
   let best: PlaceMatch | undefined;
   for (const d of destinations) {
-    if (d.category === 'aeroporti' || d.category === 'stagionali') continue;
+    if (d.category === 'aeroporti' || d.category === 'stagionali' || d.category === 'porti' || d.transportPoint) continue;
     const km = airKm(stop, d);
     if (km > MATCH_KM_SAME_NAME) continue;
     const same = sameName(stop.name, d);

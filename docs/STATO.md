@@ -316,3 +316,7 @@ Regola nuova di Filippo; sostituisce UC4 («il viaggio resta sulla sua versione 
 - **Sicurezza della regola**: ogni versione contiene tutti i luoghi della precedente con le stesse chiavi (controllo di ogni seed), quindi nessuna tappa perde la scheda. I viaggi in JSON (`trips.data`) non vengono toccati dal database: li aggiorna l'app.
 - **Verifiche** (in una copia del repository con solo queste modifiche): typecheck, 282 test (nuovo `tests/catalogo-aggiornamento.test.ts`), lint, build; script nel browser traghetti (passaggio automatico a NO-2 dai file) e revisione-ux (passaggio automatico a NO-3 con un server cloud finto: primo scaricamento fallito, «Riprova», avviso).
 - **Limite**: un viaggio salvato a righe (formato non attivo) su un dispositivo rimasto indietro può trovare la sua versione cancellata al primo invio; l'app lo porta comunque all'ultima appena allineato.
+
+## 19/11/2026 — cataloghi internazionali, versione 2
+
+Lavoro di Codex completato e pubblicato: Germania, Danimarca, Francia, Giappone, Paesi Bassi e Svezia passano da 30 a circa 200 schede ciascuna (dettagli in `docs/cataloghi-internazionali.md`). Le versioni 1 sono state cancellate dopo il caricamento delle 2, come da regola. Verifiche: 291 test e tutti gli script nel browser.

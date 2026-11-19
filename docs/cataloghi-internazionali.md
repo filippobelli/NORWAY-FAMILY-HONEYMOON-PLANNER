@@ -49,3 +49,11 @@ Il working tree originale contiene modifiche contemporanee di un altro processo 
 - Screenshot del catalogo giapponese ispezionato: corretta un'indicazione ereditata che attribuiva a OpenStreetMap tutte le coordinate. Fonti e date sono ora riferite alle singole schede.
 - Verificato il caricamento reale e la restituzione dei sei nuovi bundle dal database, senza modifiche ai viaggi né ai cataloghi norvegesi.
 - Non verificati: sincronizzazione con un account reale, disponibilità attuale di ogni sito P856 e foto su rete esterna, pubblicazione Vercel.
+
+## Seconda selezione (versioni 2)
+
+Preparata da Codex il 19/11/2026 e completata da Claude: circa 200 schede per nazione (DE 200, DK 207, FR 203, JP 213, NL 205, SE 210), con aeroporti, stazioni e porti come tappe di passaggio (zero notti predefinite, mai proposti come visite) e collegamenti alle fonti ferroviarie ufficiali per le stazioni. Candidati scartati e motivi in `src/data/catalogs/international-v2-audit.json`.
+
+- Ogni versione 2 contiene tutta la versione 1 (controllo finale del seed) e, con la regola del 19/11/2026, dopo il controllo cancella la versione 1: i viaggi passano da soli alla versione 2.
+- Caricamento: il database ha letto ogni script dal commit su GitHub (estensione `http` attivata solo per il caricamento e poi tolta), controllandone l'impronta md5 con quella del file nel repository prima di eseguirlo.
+- Verifiche: typecheck, lint, 291 test, build; script nel browser `international` (205 controlli) e le regressioni (e2e, planning, cosafare, a11y, righe, sync, traghetti, revisione-ux).

@@ -31,12 +31,13 @@ import { VerificationControl } from './Verification';
 import { ferrySuggestions } from '../domain/ferries';
 import { ferryChipText, FerryHint, FerrySegmentBlock, useTripFerries } from './Ferries';
 import { PlaceCard, PlaceLinkHint } from './PlaceCard';
+import { defaultDestinationNights } from '../domain/placement';
 
 export function stopFromDestination(destinationId: string): Stop | undefined {
   const d = findDestination(destinationId);
   if (!d) return undefined;
-  // Gli aeroporti sono punti di arrivo/partenza: di norma non ci si dorme
-  const nights = d.category === 'aeroporti' ? 0 : 1;
+  // Aeroporti, stazioni e porti sono punti logistici: nessun pernottamento implicito.
+  const nights = defaultDestinationNights(d);
   return { id: newId(), kind: 'luogo', destinationId: d.id, name: d.name, lat: d.lat, lng: d.lng, nights, notes: '', weatherPlanB: '' };
 }
 

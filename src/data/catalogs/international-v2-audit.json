@@ -1,0 +1,627 @@
+{
+  "DE": {
+    "rejected": [
+      {
+        "key": "de-playmobil-funpark",
+        "title": "Playmobil FunPark",
+        "reason": "Coordinate fuori ambito geografico"
+      },
+      {
+        "key": "de-port-of-cuxhaven",
+        "title": "Port of Cuxhaven",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "de-lubeck",
+        "title": "Lübeck",
+        "qid": "Q2843"
+      }
+    ],
+    "missingPhotos": [
+      "de-cottbus",
+      "de-frankfurt-oder",
+      "de-rostock",
+      "de-hanover",
+      "de-goslar",
+      "de-quedlinburg",
+      "de-koblenz",
+      "de-munster",
+      "de-regensburg",
+      "de-karlsruhe",
+      "de-berlin-cathedral",
+      "de-topography-of-terror",
+      "de-kunsthalle-hamburg",
+      "de-zollverein-coal-mine-industrial-complex",
+      "de-porta-nigra",
+      "de-hohenschwangau-castle",
+      "de-porsche-museum",
+      "de-wartburg",
+      "de-bavarian-forest-national-park",
+      "de-triberg-waterfalls",
+      "de-saxon-switzerland-national-park",
+      "de-heide-park",
+      "de-hamburg-airport",
+      "de-hannover-airport",
+      "de-stuttgart-airport",
+      "de-berlin-ostbahnhof",
+      "de-potsdam-hauptbahnhof",
+      "de-rostock-hauptbahnhof",
+      "de-frankfurt-main-hauptbahnhof",
+      "de-frankfurt-airport-long-distance-station",
+      "de-erfurt-hauptbahnhof",
+      "de-international-maritime-museum-hamburg",
+      "de-port-of-lubeck",
+      "de-beethoven-house",
+      "de-bach-house-eisenach"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "FR": {
+    "rejected": [
+      {
+        "key": "fr-palais-ideal",
+        "title": "Palais idéal",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "fr-ballons-des-vosges-regional-nature-park",
+        "title": "Ballons des Vosges Regional Nature Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "fr-port-of-cherbourg",
+        "title": "Port of Cherbourg",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "fr-port-of-saint-malo",
+        "title": "Port of Saint-Malo",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "fr-port-of-roscoff",
+        "title": "Port of Roscoff",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "fr-port-of-dunkirk",
+        "title": "Port of Dunkirk",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "fr-avignon",
+        "title": "Avignon",
+        "qid": "Q6397"
+      },
+      {
+        "key": "fr-toulouse",
+        "title": "Toulouse",
+        "qid": "Q7880"
+      },
+      {
+        "key": "fr-pont-du-gard",
+        "title": "Pont du Gard",
+        "qid": "Q189764"
+      },
+      {
+        "key": "fr-cite-de-l-espace",
+        "title": "Cité de l'espace",
+        "qid": "Q1094325"
+      },
+      {
+        "key": "fr-lyon-saint-exupery-airport",
+        "title": "Lyon–Saint-Exupéry Airport",
+        "qid": "Q1547"
+      },
+      {
+        "key": "fr-port-of-toulon",
+        "title": "Port of Toulon",
+        "qid": "Q44160"
+      }
+    ],
+    "missingPhotos": [
+      "fr-aix-en-provence",
+      "fr-musee-du-quai-branly-jacques-chirac",
+      "fr-memorial-de-caen",
+      "fr-chateau-de-chenonceau",
+      "fr-chateau-de-villandry",
+      "fr-lascaux",
+      "fr-pointe-du-raz",
+      "fr-ecrins-national-park",
+      "fr-camargue",
+      "fr-marne-la-vallee-chessy-station",
+      "fr-grenoble-station",
+      "fr-marseille-fos-port",
+      "fr-bayeux-museum",
+      "fr-nimes",
+      "fr-lille-airport",
+      "fr-biarritz-pays-basque-airport"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "JP": {
+    "rejected": [
+      {
+        "key": "jp-shirakawa-go-and-gokayama",
+        "title": "Shirakawa-gō and Gokayama",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "jp-historic-village-of-hokkaido",
+        "title": "Historic Village of Hokkaido",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "jp-takachiho-gorge",
+        "title": "Takachiho Gorge",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "jp-tokyo-metropolitan-edo-tokyo-museum",
+        "title": "Tokyo Metropolitan Edo-Tokyo Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "jp-the-railway-museum-saitama",
+        "title": "The Railway Museum (Saitama)",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "jp-tokyo-national-museum",
+        "title": "Tokyo National Museum",
+        "qid": "Q653433"
+      },
+      {
+        "key": "jp-ghibli-museum",
+        "title": "Ghibli Museum",
+        "qid": "Q947907"
+      },
+      {
+        "key": "jp-senso-ji",
+        "title": "Sensō-ji",
+        "qid": "Q615183"
+      },
+      {
+        "key": "jp-fushimi-inari-taisha",
+        "title": "Fushimi Inari-taisha",
+        "qid": "Q714828"
+      },
+      {
+        "key": "jp-himeji-castle",
+        "title": "Himeji Castle",
+        "qid": "Q188754"
+      },
+      {
+        "key": "jp-nara-park",
+        "title": "Nara Park",
+        "qid": "Q1186358"
+      },
+      {
+        "key": "jp-kenroku-en",
+        "title": "Kenroku-en",
+        "qid": "Q998239"
+      },
+      {
+        "key": "jp-osaka-aquarium-kaiyukan",
+        "title": "Osaka Aquarium Kaiyukan",
+        "qid": "Q1191885"
+      },
+      {
+        "key": "jp-okinawa-churaumi-aquarium",
+        "title": "Okinawa Churaumi Aquarium",
+        "qid": "Q1445750"
+      },
+      {
+        "key": "jp-new-chitose-airport",
+        "title": "New Chitose Airport",
+        "qid": "Q908296"
+      },
+      {
+        "key": "jp-port-of-hakata",
+        "title": "Port of Hakata",
+        "qid": "Q26600"
+      },
+      {
+        "key": "jp-port-of-naha",
+        "title": "Port of Naha",
+        "qid": "Q181966"
+      }
+    ],
+    "missingPhotos": [
+      "jp-ise-mie",
+      "jp-shizuoka-city",
+      "jp-hamamatsu",
+      "jp-kagoshima",
+      "jp-21st-century-museum-of-contemporary-art-kanazawa",
+      "jp-hama-rikyu-gardens",
+      "jp-oirase-river",
+      "jp-osaka-international-airport",
+      "jp-aomori-airport",
+      "jp-okayama-station",
+      "jp-taketomi-island"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "NL": {
+    "rejected": [
+      {
+        "key": "nl-museum-of-the-canals",
+        "title": "Grachtenmuseum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-royal-delft",
+        "title": "Royal Delft",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "nl-meijendel",
+        "title": "Meijendel",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-drouwenerzand",
+        "title": "Drouwenerzand",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-julianatoren",
+        "title": "Julianatoren",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-slagharen-amusement-park",
+        "title": "Slagharen (amusement park)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-port-of-den-helder",
+        "title": "Port of Den Helder",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-port-of-vlissingen",
+        "title": "Port of Vlissingen",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "nl-joods-museum",
+        "title": "Joods Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-de-wieden",
+        "title": "De Wieden",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "nl-port-of-terneuzen",
+        "title": "Port of Terneuzen",
+        "reason": "Coordinate terrestri mancanti"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "nl-leiden",
+        "title": "Leiden",
+        "qid": "Q43631"
+      },
+      {
+        "key": "nl-groningen",
+        "title": "Groningen",
+        "qid": "Q749"
+      },
+      {
+        "key": "nl-van-gogh-museum",
+        "title": "Van Gogh Museum",
+        "qid": "Q224124"
+      },
+      {
+        "key": "nl-railway-museum-netherlands",
+        "title": "Railway Museum (Netherlands)",
+        "qid": "Q847166"
+      },
+      {
+        "key": "nl-kroller-muller-museum",
+        "title": "Kröller-Müller Museum",
+        "qid": "Q1051928"
+      },
+      {
+        "key": "nl-de-hoge-veluwe-national-park",
+        "title": "De Hoge Veluwe National Park",
+        "qid": "Q1623374"
+      },
+      {
+        "key": "nl-ecomare",
+        "title": "Ecomare",
+        "qid": "Q1702843"
+      },
+      {
+        "key": "nl-amsterdam-airport-schiphol",
+        "title": "Amsterdam Airport Schiphol",
+        "qid": "Q9694"
+      },
+      {
+        "key": "nl-harlingen-netherlands",
+        "title": "Harlingen, Netherlands",
+        "qid": "Q60475"
+      }
+    ],
+    "missingPhotos": [
+      "nl-enkhuizen",
+      "nl-den-helder",
+      "nl-s-hertogenbosch",
+      "nl-arnhem",
+      "nl-lelystad",
+      "nl-teylers-museum",
+      "nl-van-abbemuseum",
+      "nl-het-loo-palace",
+      "nl-dunes-of-texel-national-park",
+      "nl-biesbosch-national-park",
+      "nl-port-of-amsterdam",
+      "nl-dutch-resistance-museum",
+      "nl-zooparc-overloon",
+      "nl-planetarium-eise-eisinga",
+      "nl-bergen-north-holland",
+      "nl-naarden",
+      "nl-museum-willet-holthuysen"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "DK": {
+    "rejected": [
+      {
+        "key": "dk-ragnarock",
+        "title": "Ragnarock (museum)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-stevns-klint-cold-war-museum",
+        "title": "Stevns Klint Cold War Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-johannes-larsen-museum",
+        "title": "Johannes Larsen Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-ribe-viking-centre",
+        "title": "Ribe Viking Centre",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-tirpitz-museum",
+        "title": "Tirpitz (museum)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-jutland-railway-museum",
+        "title": "Jutland Railway Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-svanninge-bakker",
+        "title": "Svanninge Bakker",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-fils",
+        "title": "Filsø",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-br-ndegardshaven",
+        "title": "Brændegårdshaven",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-fjord-b-lt",
+        "title": "Fjord & Bælt",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-port-of-r-nne",
+        "title": "Port of Rønne",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "dk-botanical-garden-copenhagen",
+        "title": "Botanical Garden (Copenhagen)",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "dk-r-nne",
+        "title": "Rønne",
+        "qid": "Q690062"
+      },
+      {
+        "key": "dk-national-museum-of-denmark",
+        "title": "National Museum of Denmark",
+        "qid": "Q648166"
+      },
+      {
+        "key": "dk-egeskov-castle",
+        "title": "Egeskov Castle",
+        "qid": "Q857504"
+      },
+      {
+        "key": "dk-aros-aarhus-kunstmuseum",
+        "title": "ARoS Aarhus Kunstmuseum",
+        "qid": "Q296962"
+      },
+      {
+        "key": "dk-wadden-sea-national-park",
+        "title": "Wadden Sea National Park",
+        "qid": "Q1965925"
+      },
+      {
+        "key": "dk-thy-national-park",
+        "title": "Thy National Park",
+        "qid": "Q1639749"
+      },
+      {
+        "key": "dk-r",
+        "title": "Ærø",
+        "qid": "Q27150"
+      },
+      {
+        "key": "dk-national-aquarium-denmark",
+        "title": "National Aquarium Denmark",
+        "qid": "Q31828"
+      },
+      {
+        "key": "dk-port-of-grenaa",
+        "title": "Port of Grenaa",
+        "qid": "Q3619316"
+      },
+      {
+        "key": "dk-port-of-hirtshals",
+        "title": "Port of Hirtshals",
+        "qid": "Q846052"
+      },
+      {
+        "key": "dk-port-of-frederikshavn",
+        "title": "Port of Frederikshavn",
+        "qid": "Q27452"
+      },
+      {
+        "key": "dk-christiansborg-palace-chapel",
+        "title": "Christiansborg Palace Chapel",
+        "qid": "Q940733"
+      },
+      {
+        "key": "dk-rubjerg-knude",
+        "title": "Rubjerg Knude",
+        "qid": "Q2206180"
+      }
+    ],
+    "missingPhotos": [
+      "dk-frederikssund",
+      "dk-holb-k",
+      "dk-kalundborg",
+      "dk-nyk-bing-falster",
+      "dk-fredericia",
+      "dk-ebeltoft",
+      "dk-gudhjem",
+      "dk-svaneke",
+      "dk-the-funen-village",
+      "dk-m-ns-klint",
+      "dk-rabjerg-mile",
+      "dk-bulbjerg",
+      "dk-almindingen",
+      "dk-dueodde",
+      "dk-r-m",
+      "dk-christians",
+      "dk-jesperhus",
+      "dk-kattegatcentret",
+      "dk-aalborg-zoo",
+      "dk-bornholm-airport",
+      "dk-sterport-station",
+      "dk-helsing-r-station",
+      "dk-hiller-d-station",
+      "dk-esbjerg-station",
+      "dk-port-of-esbjerg",
+      "dk-sommerland-sj-lland",
+      "dk-odsherreds-kunstmuseum",
+      "dk-gammel-estrup-manor",
+      "dk-himmelbjerget",
+      "dk-drag-r",
+      "dk-gilleleje",
+      "dk-hasle-bornholm"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "SE": {
+    "rejected": [
+      {
+        "key": "se-fotografiska",
+        "title": "Fotografiska (Stockholm)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "se-aeroseum",
+        "title": "Aeroseum",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "se-swedish-glass-museum",
+        "title": "Swedish Glass Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "se-asnen-national-park",
+        "title": "Åsnen National Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "se-boras-zoo",
+        "title": "Borås Zoo",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "se-mora-railway-station",
+        "title": "Mora railway station",
+        "reason": "Coordinate fuori ambito geografico"
+      },
+      {
+        "key": "se-port-of-kapellskar",
+        "title": "Port of Kapellskär",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "se-vasa-museum",
+        "title": "Vasa Museum",
+        "qid": "Q901371"
+      },
+      {
+        "key": "se-swedish-national-museum-of-science-and-technology",
+        "title": "Swedish National Museum of Science and Technology",
+        "qid": "Q177550"
+      },
+      {
+        "key": "se-drottningholm-palace",
+        "title": "Drottningholm Palace",
+        "qid": "Q208559"
+      },
+      {
+        "key": "se-port-of-lulea",
+        "title": "Port of Luleå",
+        "qid": "Q26268"
+      }
+    ],
+    "missingPhotos": [
+      "se-landskrona",
+      "se-granna",
+      "se-rattvik",
+      "se-are",
+      "se-moderna-museet",
+      "se-bohus-fortress",
+      "se-gammelstad-church-town",
+      "se-kullaberg",
+      "se-gotska-sandon-national-park",
+      "se-grinda",
+      "se-tosselilla-summer-park",
+      "se-oland-zoo-and-amusement-park",
+      "se-stockholm-central-station",
+      "se-uppsala-central-station",
+      "se-port-of-gothenburg",
+      "se-jonkoping-central-station",
+      "se-falun-central-station",
+      "se-abisko-ostra-railway-station",
+      "se-stockholm-port",
+      "se-port-of-visby"
+    ],
+    "checkedAt": "2026-11-19"
+  }
+}

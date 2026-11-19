@@ -15,6 +15,7 @@ import { Badge, Field } from './common';
 import { Icon, type IconName } from './icons';
 import { stopFromDestination } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
+import { RailwayLinks } from './RailwayLinks';
 import { Modal, StopDialog } from './PlacementDialog';
 
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
@@ -245,7 +246,7 @@ export function CatalogView() {
               const st = stopFromDestination(d.id);
               if (st) setPlacing(pass ? { ...st, nights: 0 } : st);
             }}
-            onVisit={trip.stops.length > 0 ? () => setVisiting(d) : undefined}
+            onVisit={trip.stops.length > 0 && !d.transportPoint && d.category !== 'porti' && d.category !== 'aeroporti' ? () => setVisiting(d) : undefined}
           />
         ))}
       </div>
@@ -267,6 +268,7 @@ const CATEGORY_ICON: Record<Category, IconName> = {
   parchi: 'star',
   stagionali: 'sparkle',
   aeroporti: 'plane',
+  porti: 'ship',
 };
 
 function DestinationCard({
@@ -382,6 +384,7 @@ function DestinationCard({
             {d.localName && <Badge>{d.localName}</Badge>}
           </div>
           <p>{d.description}</p>
+          <RailwayLinks dest={d} />
           {d.officialUrl && (
             <p>
               <OfficialLink id={d.id} />
@@ -432,7 +435,7 @@ function DestinationCard({
               <Badge tone="warn">Dati pratici da verificare</Badge>
               {d.sources[0]?.url && (
                 <a className="small" href={d.sources[0].url} target="_blank" rel="noreferrer">
-                  OSM ↗
+                  Fonte coordinate ↗
                 </a>
               )}
             </span>
@@ -443,9 +446,11 @@ function DestinationCard({
               <button className="btn btn-small" disabled={d.id === 'aurora'} title="Una fermata lungo il percorso, senza notti" onClick={() => onAdd(true)}>
                 Inserisci come sosta
               </button>
-              <button className="btn btn-small" disabled={!onVisit} title={onVisit ? 'Una visita in una giornata, senza cambiare tappe e notti' : 'Serve almeno una tappa nel percorso'} onClick={onVisit}>
-                Pianifica come visita
-              </button>
+              {!d.transportPoint && d.category !== 'porti' && d.category !== 'aeroporti' && (
+                <button className="btn btn-small" disabled={!onVisit} title={onVisit ? 'Una visita in una giornata, senza cambiare tappe e notti' : 'Serve almeno una tappa nel percorso'} onClick={onVisit}>
+                  Pianifica come visita
+                </button>
+              )}
             </span>
           </footer>
         </div>

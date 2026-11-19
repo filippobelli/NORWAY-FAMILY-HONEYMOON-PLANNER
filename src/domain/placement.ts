@@ -4,7 +4,7 @@ import { airKm } from './configurator';
 import { airportLabel, norwayAirports } from './flightAdvisor';
 import { newId } from './ids';
 import { addDays, computeDays, formatDateIt, isRoutableLeg, legTotals, syncLegs, totalDays, totalNights, tripTarget, uncalculatedSegment } from './itinerary';
-import type { CoastalOption, Flight, Leg, Segment, Stop, Trip } from './types';
+import type { CoastalOption, Destination, Flight, Leg, Segment, Stop, Trip } from './types';
 
 // Inserimento nel percorso di ciò che si decide altrove (crociere, voli, mete).
 // Funzioni pure: restituiscono un nuovo viaggio e non applicano nulla da sole. L'interfaccia mostra
@@ -12,6 +12,11 @@ import type { CoastalOption, Flight, Leg, Segment, Stop, Trip } from './types';
 
 const norm = (s: string) => s.trim().toLowerCase();
 const nightsLabel = (n: number) => `${n} ${n === 1 ? 'notte' : 'notti'}`;
+
+/** Una fermata logistica non deve aggiungere un pernottamento al viaggio. */
+export function defaultDestinationNights(d: Pick<Destination, 'category' | 'transportPoint'>): number {
+  return d.category === 'aeroporti' || d.category === 'porti' || d.transportPoint ? 0 : 1;
+}
 
 // ---------- Posizione nel percorso ----------
 

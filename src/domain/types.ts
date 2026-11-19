@@ -45,13 +45,16 @@ export type Category =
   | 'musei'
   | 'parchi'
   | 'stagionali'
-  | 'aeroporti';
+  | 'aeroporti'
+  | 'porti';
 
 /** Nome della zona di viaggio definita dal catalogo della nazione. */
 export type Region = string;
 
 export interface Destination {
   id: ID;
+  /** Punto logistico senza visita o pernottamento implicito; derivato dal catalogo. */
+  transportPoint?: boolean;
   name: string;
   localName?: string;
   /** Codice IATA, indipendente dalla chiave interna della scheda. */

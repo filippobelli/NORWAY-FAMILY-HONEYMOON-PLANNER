@@ -26,7 +26,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildInternational, INTERNATIONAL_CODES } from './build-international';
+import { buildInternational, buildInternationalV2, INTERNATIONAL_CODES } from './build-international';
 
 import { FERRY_CHECKED_AT, FERRY_ROUTES, FERRY_SOURCES } from '../src/data/ferryRoutes';
 import type { FerryRoute, FerrySource } from '../src/data/ferryTypes';
@@ -648,7 +648,7 @@ export function buildNorwayV5(): CatalogSeed {
 /** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
 const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3, 4: buildNorwayV4, 5: buildNorwayV5 } };
 
-for (const code of INTERNATIONAL_CODES) BUILDERS[code] = { 1: () => buildInternational(code) };
+for (const code of INTERNATIONAL_CODES) BUILDERS[code] = { 1: () => buildInternational(code), 2: () => buildInternationalV2(code) };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 
@@ -979,7 +979,7 @@ export function generateSql(c: CatalogSeed): string {
   // Da NO-3 anche le tratte traghetto della versione precedente (il seed di NO-2 resta identico byte per byte)
   if (c.release.version >= 3 && hasFerries) inherited.push(...FERRY_TABLES);
   // Da NO-4 anche foto e consigli della versione precedente
-  if (c.release.version >= 4) inherited.push('place_photos', 'place_tips');
+  if (c.release.version >= 4 || c.country.code !== 'NO') inherited.push('place_photos', 'place_tips');
 
   out.push('-- Controllo finale: se fallisce, la transazione si annulla');
   out.push('do $check$');
