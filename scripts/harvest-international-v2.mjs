@@ -1,12 +1,17 @@
 // Acquisizione controllata e riprendibile; nessuna scrittura cloud e nessun testo Wikipedia importato.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { CANDIDATES_V2, COUNTRIES_V2 } from './international-expansion.mjs';
+const option = (name) => { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : undefined; };
+const selection = await import(new URL(option('--selection') ?? './international-expansion.mjs', import.meta.url));
+const CANDIDATES_V2 = selection.CANDIDATES_V2 ?? selection.CANDIDATES;
+const COUNTRIES_V2 = selection.COUNTRIES_V2 ?? selection.COUNTRIES;
 
 const root = resolve(import.meta.dirname, '..');
-const file = resolve(root, 'src/data/catalogs/international-v2.json');
-const reportFile = resolve(root, 'src/data/catalogs/international-v2-audit.json');
-const v1 = JSON.parse(readFileSync(resolve(root, 'src/data/catalogs/international-v1.json'), 'utf8'));
+const snapshot = option('--snapshot') ?? 'international-v2';
+if (!/^[a-z0-9-]+$/.test(snapshot)) throw new Error('Nome della fotografia dati non valido');
+const file = resolve(root, `src/data/catalogs/${snapshot}.json`);
+const reportFile = resolve(root, `src/data/catalogs/${snapshot}-audit.json`);
+const v1 = process.argv.includes('--new-countries') ? {} : JSON.parse(readFileSync(resolve(root, 'src/data/catalogs/international-v1.json'), 'utf8'));
 const saved = process.argv.includes('--resume') && existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
 const reports = process.argv.includes('--resume') && existsSync(reportFile) ? JSON.parse(readFileSync(reportFile, 'utf8')) : {};
 const date = new Date().toISOString().slice(0, 10);
@@ -36,12 +41,13 @@ async function api(host, params) {
 
 const kind = { citta: 'Località da usare come base di esplorazione', musei: 'Luogo culturale', natura: 'Luogo di interesse naturale', isole: 'Isola o località insulare', parchi: 'Parco o attrazione ricreativa', fauna: 'Luogo dedicato alla fauna', treni: 'Stazione ferroviaria', aeroporti: 'Aeroporto', porti: 'Area portuale' };
 for (const [code, country] of Object.entries(COUNTRIES_V2)) {
-  const places = saved[code]?.places ?? structuredClone(v1[code].places);
-  const inherited = new Set(v1[code].places.map((p) => p.key));
+  const places = saved[code]?.places ?? structuredClone(v1[code]?.places ?? []);
+  const inherited = new Set((v1[code]?.places ?? []).map((p) => p.key));
   const selections = new Map(CANDIDATES_V2[code].map((p) => [p.key, p]));
   for (const p of places) {
     const c = selections.get(p.key);
     if (!c || inherited.has(p.key)) continue;
+    p.category = c.category;
     p.region = country.regions[c.regionIndex];
     const operational = ['aeroporti', 'porti', 'treni'].includes(c.category) ? ' Servizi attivi, terminal, accessi, orari e coincidenze da verificare con il gestore; nessuna tratta o tariffa implicita.' : '';
     p.description = (c.description ?? `${kind[c.category]} nella zona di viaggio ${p.region}.`) + operational;

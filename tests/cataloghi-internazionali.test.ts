@@ -53,7 +53,7 @@ test('Sei cataloghi con chiavi globali, coordinate con fonte e metadati incomple
         assert.match(photo.license, /^(CC BY|CC0|Public domain)/);
       }
     }
-    assert.equal(generateSql(seed), readFileSync(new URL(`../supabase/seed/${seed.outFile}`, import.meta.url), 'utf8'));
+    assert.equal(generateSql(seed), readFileSync(new URL(`../supabase/seed/${seed.outFile}`, import.meta.url), 'utf8').replace(/\r\n/g, '\n'));
   }
   assert.equal(keys.size, 180);
 });

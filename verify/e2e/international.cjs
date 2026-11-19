@@ -15,8 +15,9 @@ const server = serve(4189);
 (async () => {
   const browser = await launch();
   try {
+    const latest = Object.keys(fixture.bundles).filter((k) => k.endsWith('-2') || !fixture.bundles[k.replace(/-1$/, '-2')]);
     const sets = Object.keys(fixture.bundles).map((key) => [key]);
-    sets.push(Object.keys(fixture.bundles).filter((k) => k.endsWith('-2')));
+    sets.push(latest);
     for (const keys of sets) {
       const label = keys.join('+');
       const ctx = await context(browser, { viewport: { width: 1440, height: 1000 } });
@@ -84,7 +85,8 @@ const server = serve(4189);
       }
       await page.goto('http://localhost:4189/#/configuratore');
       const options = await page.locator('select').evaluateAll((ss) => ss.flatMap((s) => [...s.options].map((o) => o.value)));
-      check(options.some((s) => /^[a-z]{2}-[a-z]{3}$/.test(s)) && !options.includes('bgo'), `${label}: aeroporti dei cataloghi caricati`);
+      const airportKeys = bundles.flatMap((b) => b.places.filter((p) => p.category === 'aeroporti').map((p) => p.place_key));
+      check(airportKeys.some((key) => options.includes(key)) && !options.includes('bgo'), `${label}: aeroporti dei cataloghi caricati`);
       check((await page.locator('.region-list').innerText()).includes(bundles[0].regions[0].name), `${label}: regioni della nazione`);
       await page.goto('http://localhost:4189/#/crociere');
       check((await page.locator('body').innerText()).includes('non contengono ancora crociere'), `${label}: trasporti mancanti dichiarati`);

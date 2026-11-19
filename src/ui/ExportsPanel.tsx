@@ -1,6 +1,7 @@
 import { countryInfo, placeCountry } from '../catalog/registry';
 import { DESTINATIONS } from '../data/destinations';
 import { airportCode } from '../domain/flightAdvisor';
+import { geographicTimezone } from '../domain/geographicTimezone';
 import { FILE_COUNTRY } from '../data/country';
 import { stopCountry, tripCountries } from '../domain/countries';
 import type { Trip } from '../domain/types';
@@ -74,8 +75,8 @@ export function ExportsPanel({ compact }: { compact?: boolean }) {
           </h3>
           <p className="small">Un evento per ogni giornata. Voli e traghetti diventano eventi con l'ora solo se l'orario è stato inserito: nessun orario inventato.</p>
           <button className="btn" onClick={() => run('Calendario', () => download(exportFileName(trip, 'ics'), tripToIcs(trip, undefined, tripTimezone(trip), {
-            stops: Object.fromEntries(trip.stops.map((s) => [s.id, countryInfo(stopCountry(trip, s, placeCountry))?.timezone ?? tripTimezone(trip)])),
-            airports: Object.fromEntries(DESTINATIONS.filter((d) => d.category === 'aeroporti').map((d) => [airportCode(d), countryInfo(placeCountry(d.id))?.timezone ?? tripTimezone(trip)])),
+            stops: Object.fromEntries(trip.stops.map((s) => { const code = stopCountry(trip, s, placeCountry); return [s.id, geographicTimezone(code, s, countryInfo(code)?.timezone ?? tripTimezone(trip))]; })),
+            airports: Object.fromEntries(DESTINATIONS.filter((d) => d.category === 'aeroporti').map((d) => { const code = placeCountry(d.id); return [airportCode(d), geographicTimezone(code, d, countryInfo(code)?.timezone ?? tripTimezone(trip))]; })),
           }), 'text/calendar;charset=utf-8'))}>
             Scarica il calendario
           </button>

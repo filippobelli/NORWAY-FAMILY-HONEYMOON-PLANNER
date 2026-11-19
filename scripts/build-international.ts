@@ -8,9 +8,9 @@ interface ResearchedPlace {
   qid: string; revision?: number; lat: number; lng: number; localName?: string; iata?: string;
   official?: string; wiki: { it?: string; en?: string }; photos: PlacePhoto[]; checkedAt: string;
 }
-interface ResearchedCountry {
+export interface ResearchedCountry {
   name: string; en: string; language: string; currency: string; timezone: string;
-  tourism: string; regions: string[]; checkedAt: string; places: ResearchedPlace[];
+  tourism: string; tourismChecked?: boolean; regions: string[]; checkedAt: string; places: ResearchedPlace[];
 }
 
 export const INTERNATIONAL_CODES = ['DE', 'FR', 'JP', 'NL', 'DK', 'SE'] as const;
@@ -35,6 +35,11 @@ function buildInternationalVersion(code: string, version: 1 | 2): CatalogSeed {
   const all = JSON.parse(readFileSync(fileURLToPath(new URL(`../src/data/catalogs/international-v${version}.json`, import.meta.url)), 'utf8')) as Record<string, ResearchedCountry>;
   const c = all[code];
   if (!c || (version === 1 ? c.places.length !== 30 : c.places.length < 150)) throw new Error(`Ricerca incompleta per ${code}`);
+  return researchedCountrySeed(code, c, version);
+}
+
+/** Formato comune alle nuove nazioni; i dati congelati delle release precedenti non cambiano. */
+export function researchedCountrySeed(code: string, c: ResearchedCountry, version: number): CatalogSeed {
   const regionKey = (name: string) => `${code.toLowerCase()}-r${c.regions.indexOf(name) + 1}`;
   const places: PlaceSeed[] = c.places.map((p) => {
     const url = `https://www.wikidata.org/wiki/${p.qid}`;
@@ -66,8 +71,8 @@ function buildInternationalVersion(code: string, version: 1 | 2): CatalogSeed {
     country: { code, name: c.name, names: { en: c.en }, currency: c.currency, timezone: c.timezone, language: c.language },
     release: {
       version, dataCheckedUntil: c.checkedAt,
-      notes: version === 1 ? 'Prima selezione editoriale: città, musei, natura, parchi e aeroporti. Coordinate da Wikidata; foto Commons con licenza per file. Informazioni operative da verificare. Trasporti non ancora catalogati.' : 'Catalogo ampliato: città, musei, parchi, natura, aeroporti, stazioni e aree portuali. Coordinate Wikidata e foto Commons con attribuzione. La presenza di un punto di trasporto non conferma servizi attivi, tratte, orari o prezzi. Coordinate portuali riferite all’area, non al molo di imbarco.',
-      sourceNotes: [{ label: 'Wikidata: dati strutturati CC0', url: 'https://www.wikidata.org/wiki/Wikidata:Licensing', checkedAt: c.checkedAt, license: 'CC0-1.0' }, { label: `Ente turistico · ${c.name}`, url: c.tourism, checkedAt: c.checkedAt, note: 'Consultato per il contesto e la copertura; testi e immagini non importati' }],
+      notes: version === 1 && !c.places.some((p) => p.category === 'treni' || p.category === 'porti') ? 'Prima selezione editoriale: città, musei, natura, parchi e aeroporti. Coordinate da Wikidata; foto Commons con licenza per file. Informazioni operative da verificare. Trasporti non ancora catalogati.' : 'Catalogo ampliato: città, musei, parchi, natura, aeroporti, stazioni e aree portuali. Coordinate Wikidata e foto Commons con attribuzione. La presenza di un punto di trasporto non conferma servizi attivi, tratte, orari o prezzi. Coordinate portuali riferite all’area, non al molo di imbarco.',
+      sourceNotes: [{ label: 'Wikidata: dati strutturati CC0', url: 'https://www.wikidata.org/wiki/Wikidata:Licensing', checkedAt: c.checkedAt, license: 'CC0-1.0' }, { label: `Ente turistico · ${c.name}`, url: c.tourism, checkedAt: c.tourismChecked === false ? undefined : c.checkedAt, note: c.tourismChecked === false ? 'Riferimento istituzionale; pagina non accessibile durante la ricerca. Testi e immagini non importati.' : 'Consultato per il contesto e la copertura; testi e immagini non importati' }],
       roadCalibrated: false, roadNote: 'Parametri stradali non calibrati per questa nazione. I tempi del configuratore sono indicativi: calcolare i trasferimenti prima di attivare.',
     },
     regions: c.regions.map((name) => ({ key: regionKey(name), name, areas: [], sources: [{ label: 'Raggruppamento editoriale per esplorare il catalogo', checkedAt: c.checkedAt, note: 'Zone di viaggio; confini cartografici non importati' }] })),

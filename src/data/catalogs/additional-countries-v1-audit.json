@@ -1,0 +1,708 @@
+{
+  "SI": {
+    "rejected": [
+      {
+        "key": "si-technical-museum-of-slovenia",
+        "title": "Technical Museum of Slovenia",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "si-liznjek-house",
+        "title": "Liznjek House",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-tolmin-gorge",
+        "title": "Tolmin Gorge",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-strunjan-nature-reserve",
+        "title": "Strunjan Nature Reserve",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-logar-valley",
+        "title": "Logar Valley",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "si-krakovo-forest",
+        "title": "Krakovo Forest",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "si-terme-olimia",
+        "title": "Terme Olimia",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-most-na-soci-railway-station",
+        "title": "Most na Soči railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-novo-mesto-railway-station",
+        "title": "Novo Mesto railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-krsko-railway-station",
+        "title": "Krško railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-sevnica-railway-station",
+        "title": "Sevnica railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "si-marina-portoroz",
+        "title": "Marina Portorož",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "si-lipica-stud-farm",
+        "title": "Lipica Stud Farm",
+        "qid": "Q556339"
+      }
+    ],
+    "missingPhotos": [
+      "si-bled",
+      "si-kobarid",
+      "si-trzic",
+      "si-maribor",
+      "si-slovenj-gradec",
+      "si-slovenska-bistrica",
+      "si-mozirje",
+      "si-kostanjevica-na-krki",
+      "si-national-museum-of-slovenia",
+      "si-city-museum-of-ljubljana",
+      "si-tivoli-castle",
+      "si-dragon-bridge-ljubljana",
+      "si-velika-planina",
+      "si-soca",
+      "si-planica",
+      "si-krizna-cave",
+      "si-ljubljana-zoo",
+      "si-maribor-edvard-rusjan-airport",
+      "si-maribor-railway-station",
+      "si-zidani-most-railway-station"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "AT": {
+    "rejected": [
+      {
+        "key": "at-kreuzenstein-castle",
+        "title": "Kreuzenstein Castle",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-haus-der-natur",
+        "title": "Haus der Natur",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-schwaz-silver-mine",
+        "title": "Schwaz Silver Mine",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-graz-clock-tower",
+        "title": "Graz Clock Tower",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-ars-electronica-center",
+        "title": "Ars Electronica Center",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "at-gastein-waterfall",
+        "title": "Gastein waterfall",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-stuibenfall",
+        "title": "Stuibenfall",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-zammer-lochputz",
+        "title": "Zammer Lochputz",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-alpine-garden-patscherkofel",
+        "title": "Alpine Garden Patscherkofel",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-nockberge-biosphere-park",
+        "title": "Nockberge Biosphere Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "at-dachstein-ice-cave",
+        "title": "Dachstein Ice Cave",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "at-st-polten",
+      "at-st-gilgen",
+      "at-saalfelden",
+      "at-hallein",
+      "at-lienz",
+      "at-bregenz",
+      "at-villach",
+      "at-velden-am-worther-see",
+      "at-graz",
+      "at-freistadt",
+      "at-haus-der-musik",
+      "at-vienna-state-opera",
+      "at-laxenburg-castles",
+      "at-mozart-s-birthplace",
+      "at-salzburg-cathedral",
+      "at-kunsthaus-bregenz",
+      "at-eggenberg-palace-graz",
+      "at-lentos-art-museum",
+      "at-mauthausen-concentration-camp",
+      "at-vienna-woods",
+      "at-lainzer-tiergarten",
+      "at-piburger-see",
+      "at-kalkalpen-national-park",
+      "at-innsbruck-airport",
+      "at-vienna-airport-railway-station",
+      "at-salzburg-hauptbahnhof",
+      "at-landeck-zams-railway-station",
+      "at-bregenz-railway-station"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "ES": {
+    "rejected": [
+      {
+        "key": "es-baeza",
+        "title": "Baeza",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-museum-of-altamira",
+        "title": "Museum of Altamira",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-covadonga-lakes",
+        "title": "Covadonga Lakes",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-federico-garcia-lorca-granada-jaen-airport",
+        "title": "Federico García Lorca Granada–Jaén Airport",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-valencia-nord-railway-station",
+        "title": "València Nord railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-salamanca-railway-station",
+        "title": "Salamanca railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-port-of-mahon",
+        "title": "Port of Mahón",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "es-port-of-ibiza",
+        "title": "Port of Ibiza",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "es-aranjuez",
+      "es-besalu",
+      "es-murcia",
+      "es-vitoria-gasteiz",
+      "es-salamanca",
+      "es-teruel",
+      "es-palma-de-mallorca",
+      "es-ibiza-city",
+      "es-san-cristobal-de-la-laguna",
+      "es-alcazar-of-toledo",
+      "es-museu-de-les-ciencies-principe-felipe",
+      "es-palma-cathedral",
+      "es-albufera",
+      "es-cies-islands",
+      "es-serra-de-tramuntana",
+      "es-mondrago-natural-park",
+      "es-tenerife",
+      "es-fuerteventura",
+      "es-barcelona-zoo",
+      "es-girona-costa-brava-airport",
+      "es-malaga-airport",
+      "es-san-sebastian-airport",
+      "es-asturias-airport",
+      "es-palma-de-mallorca-airport",
+      "es-ibiza-airport",
+      "es-tenerife-south-airport",
+      "es-tenerife-north-ciudad-de-la-laguna-airport",
+      "es-estacio-de-franca",
+      "es-port-of-bilbao",
+      "es-port-of-palma"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "PT": {
+    "rejected": [
+      {
+        "key": "pt-aveiro-museum",
+        "title": "Aveiro Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-castle-of-monsaraz",
+        "title": "Castle of Monsaraz",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-paiva-walkways",
+        "title": "Paiva Walkways",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-laurisilva-of-madeira",
+        "title": "Laurisilva of Madeira",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "pt-caldeira-velha",
+        "title": "Caldeira Velha",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-kidzania-lisbon",
+        "title": "KidZania Lisbon",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-zoomarine-algarve",
+        "title": "Zoomarine Algarve",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-slide-splash",
+        "title": "Slide & Splash",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-aquashow-park",
+        "title": "Aquashow Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-braga-railway-station",
+        "title": "Braga railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-coimbra-b-railway-station",
+        "title": "Coimbra-B station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-tomar-railway-station",
+        "title": "Tomar railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-guarda-railway-station",
+        "title": "Guarda railway station",
+        "reason": "Coordinate fuori ambito geografico"
+      },
+      {
+        "key": "pt-evora-railway-station",
+        "title": "Évora railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-beja-railway-station",
+        "title": "Beja railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-port-of-setubal",
+        "title": "Port of Setúbal",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "pt-port-of-ponta-delgada",
+        "title": "Port of Ponta Delgada",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "pt-sao-bento-railway-station",
+        "title": "São Bento railway station",
+        "qid": "Q579250"
+      }
+    ],
+    "missingPhotos": [
+      "pt-vila-nova-de-gaia",
+      "pt-braga",
+      "pt-vila-real",
+      "pt-castelo-branco-portugal",
+      "pt-castelo-de-vide",
+      "pt-loule",
+      "pt-olhao",
+      "pt-machico",
+      "pt-porto-moniz",
+      "pt-sao-jorge-castle",
+      "pt-ria-formosa",
+      "pt-benagil",
+      "pt-pico-ruivo",
+      "pt-lisbon-zoo",
+      "pt-flores-airport",
+      "pt-lagos-railway-station",
+      "pt-port-of-lisbon",
+      "pt-amarante",
+      "pt-batalha"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "HR": {
+    "rejected": [
+      {
+        "key": "hr-karlovac-city-museum",
+        "title": "Karlovac City Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-apoxyomenos-museum",
+        "title": "Apoxyomenos Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-fortress-of-ston",
+        "title": "Fortress of Ston",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-marco-polo-house",
+        "title": "Marco Polo House",
+        "reason": "Coordinate fuori ambito geografico"
+      },
+      {
+        "key": "hr-cape-kamenjak",
+        "title": "Cape Kamenjak",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-vransko-lake-nature-park",
+        "title": "Vransko Lake Nature Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-dinopark-funtana",
+        "title": "Dinopark Funtana",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-karlovac-railway-station",
+        "title": "Karlovac railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-varazdin-railway-station",
+        "title": "Varaždin railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-koprivnica-railway-station",
+        "title": "Koprivnica railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-zadar-railway-station",
+        "title": "Zadar railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-knin-railway-station",
+        "title": "Knin railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-perkovic-railway-station",
+        "title": "Perković railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-port-of-pula",
+        "title": "Port of Pula",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-port-of-rovinj",
+        "title": "Port of Rovinj",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-port-of-mali-losinj",
+        "title": "Port of Mali Lošinj",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-port-of-zadar",
+        "title": "Port of Zadar",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "hr-port-of-sibenik",
+        "title": "Port of Šibenik",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "hr-brijuni",
+        "title": "Brijuni",
+        "qid": "Q849748"
+      },
+      {
+        "key": "hr-port-of-dubrovnik",
+        "title": "Port of Dubrovnik",
+        "qid": "Q1722"
+      }
+    ],
+    "missingPhotos": [
+      "hr-rastoke",
+      "hr-umag",
+      "hr-pazin",
+      "hr-makarska",
+      "hr-stari-grad-croatia",
+      "hr-supetar",
+      "hr-sinj",
+      "hr-korcula-town",
+      "hr-ilok",
+      "hr-medvednica",
+      "hr-krk",
+      "hr-dugi-otok",
+      "hr-brac",
+      "hr-solta",
+      "hr-korcula",
+      "hr-lastovo",
+      "hr-pula-railway-station",
+      "hr-gazenica"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "GR": {
+    "rejected": [
+      {
+        "key": "gr-aegina-town",
+        "title": "Aegina (town)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-corinth",
+        "title": "Corinth (city)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-mykonos-town",
+        "title": "Mykonos (town)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-archaeological-site-of-aigai",
+        "title": "Archaeological Site of Aigai",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-asklepion-kos",
+        "title": "Asklepion (Kos)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-diros-caves",
+        "title": "Diros Caves",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-acqua-plus",
+        "title": "Acqua Plus",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "gr-port-of-rafina",
+        "title": "Port of Rafina",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-lavrio",
+        "title": "Port of Lavrio",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-patras",
+        "title": "Port of Patras",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-volos",
+        "title": "Port of Volos",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-alexandroupoli",
+        "title": "Port of Alexandroupoli",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-naxos",
+        "title": "Port of Naxos",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gr-port-of-rhodes",
+        "title": "Port of Rhodes",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "gr-milos",
+        "title": "Milos",
+        "qid": "Q203979"
+      },
+      {
+        "key": "gr-port-of-corfu",
+        "title": "Port of Corfu",
+        "qid": "Q121378"
+      },
+      {
+        "key": "gr-port-of-heraklion",
+        "title": "Port of Heraklion",
+        "qid": "Q160544"
+      }
+    ],
+    "missingPhotos": [
+      "gr-athens",
+      "gr-patras",
+      "gr-karpenisi",
+      "gr-lamia-city",
+      "gr-thessaloniki",
+      "gr-alexandroupoli",
+      "gr-argostoli",
+      "gr-ermoupoli",
+      "gr-rethymno",
+      "gr-mytilene",
+      "gr-national-archaeological-museum-athens",
+      "gr-archaeological-museum-of-piraeus",
+      "gr-ancient-theatre-of-epidaurus",
+      "gr-akrotiri-prehistoric-city",
+      "gr-monastery-of-saint-john-the-theologian",
+      "gr-lefkada",
+      "gr-paxi",
+      "gr-crete",
+      "gr-nea-anchialos-national-airport",
+      "gr-thessaloniki-airport",
+      "gr-kavala-international-airport",
+      "gr-litochoro-railway-station",
+      "gr-edessa-railway-station",
+      "gr-souda"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "TR": {
+    "rejected": [
+      {
+        "key": "tr-deyrulzafaran-monastery",
+        "title": "Deyrulzafaran Monastery",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "tr-ilgaz-mountain-national-park",
+        "title": "Ilgaz Mountain National Park",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "tr-the-land-of-legends",
+        "title": "The Land of Legends",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "tr-eminonu-ferry-terminal",
+        "title": "Eminönü Ferry Terminal",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "tr-port-of-bodrum",
+        "title": "Port of Bodrum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "tr-port-of-tasucu",
+        "title": "Port of Taşucu",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "tr-goreme-open-air-museum",
+        "title": "Göreme Open Air Museum",
+        "qid": "Q6710593"
+      },
+      {
+        "key": "tr-gobekli-tepe",
+        "title": "Göbekli Tepe",
+        "qid": "Q214944"
+      }
+    ],
+    "missingPhotos": [
+      "tr-tekirdag",
+      "tr-bal-kesir",
+      "tr-ayval-k",
+      "tr-denizli",
+      "tr-side-turkey",
+      "tr-kayseri",
+      "tr-diyarbak-r",
+      "tr-erzurum",
+      "tr-galata-tower",
+      "tr-rahmi-m-koc-museum",
+      "tr-house-of-the-virgin-mary",
+      "tr-alanya-castle",
+      "tr-an-tkabir",
+      "tr-catalhoyuk",
+      "tr-lake-van",
+      "tr-istanbul-airport",
+      "tr-dalaman-airport",
+      "tr-antalya-airport",
+      "tr-cukurova-international-airport",
+      "tr-trabzon-airport",
+      "tr-ordu-giresun-airport",
+      "tr-gaziantep-airport",
+      "tr-kars-harakani-airport",
+      "tr-basmane-railway-station",
+      "tr-alsancak-railway-station",
+      "tr-denizli-railway-station",
+      "tr-ankara-railway-station",
+      "tr-yenikap-ferry-terminal",
+      "tr-kabatas-ferry-terminal",
+      "tr-kad-koy-ferry-terminal",
+      "tr-port-of-antalya"
+    ],
+    "checkedAt": "2026-11-19"
+  }
+}

@@ -40,7 +40,7 @@ test('Sei cataloghi ampliati: copertura, fonti, unicità e prime versioni conser
       assert.ok(next.regions.some((r) => r.key === p.regionKey));
       for (const photo of p.photos ?? []) assert.ok(photo.author && photo.license && /^https?:\/\//.test(photo.licenseUrl ?? ''), p.key);
     }
-    assert.equal(generateSql(next), readFileSync(new URL(`../supabase/seed/${next.outFile}`, import.meta.url), 'utf8'));
+    assert.equal(generateSql(next), readFileSync(new URL(`../supabase/seed/${next.outFile}`, import.meta.url), 'utf8').replace(/\r\n/g, '\n'));
     count += next.places.length;
   }
   assert.equal(count, 1238);

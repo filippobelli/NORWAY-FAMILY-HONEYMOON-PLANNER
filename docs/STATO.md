@@ -1,5 +1,12 @@
 # Stato del progetto — 27 ottobre 2026
 
+## Sette nuove nazioni · 19 novembre 2026
+
+- Pubblicati nel database i cataloghi di Slovenia (140 schede), Austria (187), Spagna (235), Portogallo (171), Croazia (162), Grecia (205) e Turchia (213): 1.313 schede e 1.305 riferimenti fotografici con attribuzione, inclusi aeroporti, stazioni e porti dove disponibili.
+- Nessuna nuova dipendenza o migrazione dello schema. Viaggi e cataloghi precedenti verificati invariati dopo il caricamento; database circa 25,7 MB. SI-2 e AT-2 correggono due attribuzioni di zona senza riscrivere le prime release.
+- Fonti ferroviarie nazionali e fusi locali di Canarie, Madeira e Azzorre nelle esportazioni. Informazioni operative mancanti sempre da verificare.
+- Verifiche: 296 test, typecheck, lint, build e 518 controlli browser su cataloghi, flussi, accessibilità e mobile. Dettagli, fonti e limiti: [cataloghi-sette-nazioni.md](cataloghi-sette-nazioni.md).
+
 Ultimo audit: [AUDIT-2026-10-27.md](AUDIT-2026-10-27.md) (22 problemi, 18 risolti).
 
 ## Navigazione e flussi (riorganizzazione UX, 5 novembre 2026)

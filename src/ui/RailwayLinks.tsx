@@ -12,7 +12,7 @@ export function RailwayLinks({ dest }: { dest: Destination }) {
   return (
     <p className="small">
       <a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>
-      <br />Fonte nazionale consultata il {formatDateIt(source.checkedAt)}. Richiede rete. Verifica la tratta e la data: nessun biglietto è incluso.
+      <br />{source.checkedAt ? `Fonte nazionale consultata il ${formatDateIt(source.checkedAt)}.` : 'Fonte nazionale: raggiungibilità da verificare.'} Richiede rete. Verifica la tratta e la data: nessun biglietto è incluso.
     </p>
   );
 }
