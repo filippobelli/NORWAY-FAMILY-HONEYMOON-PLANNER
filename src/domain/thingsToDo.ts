@@ -19,7 +19,7 @@ import type { Activity, Category, Destination, ID, Stop, Trip } from './types';
 export const ATTRACTION_CATEGORIES: Category[] = ['musei', 'parchi', 'natura', 'fauna'];
 
 export const ATTRACTION_CATEGORY_LABEL: Partial<Record<Category, string>> = {
-  musei: 'Musei',
+  musei: 'Musei e luoghi culturali',
   parchi: 'Parchi divertimento',
   natura: 'Natura e parchi',
   fauna: 'Animali e natura',

@@ -314,12 +314,11 @@ export interface FlightIssue {
 const KEEP = 'tieni';
 
 function airportDestination(code: string) {
-  const d = findDestination(norm(code));
-  return d?.category === 'aeroporti' ? d : undefined;
+  return DESTINATIONS.find((d) => d.category === 'aeroporti' && norm(d.iata ?? d.id) === norm(code));
 }
 
 function stopIsAirport(s: Stop | undefined, code: string): boolean {
-  return Boolean(s && (norm(s.destinationId ?? '') === norm(code) || norm(s.name) === norm(airportLabel(code))));
+  return Boolean(s && (s.destinationId === airportDestination(code)?.id || norm(s.name) === norm(airportLabel(code))));
 }
 
 function airportStopFor(code: string): Stop | undefined {

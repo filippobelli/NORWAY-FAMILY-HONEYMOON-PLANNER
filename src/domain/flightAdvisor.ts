@@ -1,7 +1,7 @@
 import { DESTINATIONS } from '../data/destinations';
 import { AIRPORT_RADIUS_KM, airKm } from './configurator';
 import { addDays, computeDays, legTotals, totalDays } from './itinerary';
-import type { Stop, Trip } from './types';
+import type { Destination, Stop, Trip } from './types';
 
 // Suggerimenti di tratte aeree ricavati dalle tappe. Non conosce prezzi, orari né voli diretti:
 // indica gli aeroporti più vicini (in linea d'aria) e dove un volo interno può evitare un trasferimento lungo.
@@ -39,11 +39,14 @@ export interface NorwayAirport {
   name: string;
   lat: number;
   lng: number;
+  destinationId?: string;
 }
+
+export const airportCode = (d: Destination): string => d.iata ?? d.id.toUpperCase();
 
 /** Aeroporti norvegesi del catalogo: l'id della scheda è il codice IATA. */
 export function norwayAirports(): NorwayAirport[] {
-  return DESTINATIONS.filter((d) => d.category === 'aeroporti').map((d) => ({ code: d.id.toUpperCase(), name: d.name, lat: d.lat, lng: d.lng }));
+  return DESTINATIONS.filter((d) => d.category === 'aeroporti').map((d) => ({ code: airportCode(d), name: d.name, lat: d.lat, lng: d.lng, destinationId: d.id }));
 }
 
 export function airportLabel(code: string): string {
@@ -97,7 +100,7 @@ export interface FlightAdvice {
 
 function picksFor(stop: Stop): AirportPick[] {
   const all = norwayAirports();
-  const own = stop.destinationId ? all.find((a) => a.code.toLowerCase() === stop.destinationId) : undefined;
+  const own = stop.destinationId ? all.find((a) => a.destinationId === stop.destinationId) : undefined;
   if (own) return [{ code: own.code, name: own.name, airKm: 0, isStop: true, far: false }];
   const byDistance = all
     .map((a) => ({ code: a.code, name: a.name, airKm: Math.round(airKm(stop, a)), isStop: false, far: false }))

@@ -1,12 +1,11 @@
 import { iconSvg } from './icons';
+import { useCatalog } from '../catalog/registry';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { COUNTIES, REGION_COUNTIES } from '../data/regionShapes';
 import { BASE_IDS } from '../domain/configurator';
 import type { Region } from '../domain/types';
 import { addBaseMap, loadLeaflet, type LeafletApi, type LLayerGroup, type LMap, type LPath } from '../services/map/leaflet';
-
-export const REGIONS: Region[] = ['Oslo e Østlandet', 'Innlandet e montagne', 'Fiordi occidentali', 'Sørlandet e Rogaland', 'Trøndelag', 'Nordland e Lofoten', 'Troms e Finnmark'];
 
 // Blu per le regioni, rosso per quella evidenziata: Leaflet ha bisogno del colore esplicito
 const BLU = '#00205B';
@@ -24,6 +23,8 @@ interface Props {
 }
 
 export function RegionPicker({ selected, airportRegions, airportIds, onToggle }: Props) {
+  const catalog = useCatalog();
+  const regions = useMemo(() => Object.keys(catalog.regionCountry), [catalog.regionCountry]);
   const el = useRef<HTMLDivElement>(null);
   const ref = useRef<{ L: LeafletApi; map: LMap; marks: LLayerGroup; shapes: Map<Region, LPath[]> } | null>(null);
   const [state, setState] = useState<'caricamento' | 'pronta' | 'errore'>('caricamento');
@@ -34,14 +35,14 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
   const info = useMemo(
     () =>
       Object.fromEntries(
-        REGIONS.map((r) => {
-          const counties = COUNTIES.filter((c) => REGION_COUNTIES[r].includes(c.nr)).map((c) => c.name);
+        regions.map((r) => {
+          const counties = COUNTIES.filter((c) => REGION_COUNTIES[r]?.includes(c.nr)).map((c) => c.name);
           const dests = DESTINATIONS.filter((d) => d.region === r && d.category !== 'aeroporti');
           const bases = BASE_IDS.map((id) => findDestination(id)).filter((d) => d && d.region === r).map((d) => d!.name);
           return [r, { counties, count: dests.length, bases, examples: dests.filter((d) => d.kidScore === 3 && !bases.includes(d.name)).slice(0, 4).map((d) => d.name) }];
         }),
       ) as Record<Region, { counties: string[]; count: number; bases: string[]; examples: string[] }>,
-    [],
+    [regions],
   );
 
   useEffect(() => {
@@ -53,9 +54,9 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         // Le località scelte hanno già la loro etichetta: quelle del fondo si sovrapporrebbero
         void addBaseMap(L, map, () => cancelled, { labels: false });
         const shapes = new Map<Region, LPath[]>();
-        for (const r of REGIONS) {
+        for (const r of regions) {
           const list: LPath[] = [];
-          for (const c of COUNTIES.filter((x) => REGION_COUNTIES[r].includes(x.nr))) {
+          for (const c of COUNTIES.filter((x) => REGION_COUNTIES[r]?.includes(x.nr))) {
             const p = L.polygon(c.rings, { color: BLU, weight: 1, fillOpacity: 0.1 }) as LPath;
             p.bindTooltip(`<strong>${esc(r)}</strong><br>${esc(c.name)}`, { sticky: true });
             p.on('click', () => toggleRef.current(r));
@@ -70,7 +71,8 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         // La mappa nasce dentro un pannello appena disegnato: si ricalcola la misura prima di inquadrare la Norvegia
         const fit = () => {
           map.invalidateSize();
-          map.fitBounds(L.latLngBounds([[57.95, 4.5], [71.2, 31.1]]), { padding: [4, 4] });
+          const points = DESTINATIONS.map((d) => [d.lat, d.lng] as [number, number]);
+          if (points.length) map.fitBounds(L.latLngBounds(points), { padding: [12, 12], maxZoom: 7 });
         };
         fit();
         window.setTimeout(fit, 150);
@@ -83,7 +85,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
       ref.current?.map.remove();
       ref.current = null;
     };
-  }, []);
+  }, [regions]);
 
   // Colori delle regioni scelte, località base e aeroporti
   useEffect(() => {
@@ -119,6 +121,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         fillOpacity: 1,
       });
       mk.bindTooltip(esc(d.name), { permanent: active, direction: 'right', offset: [6, 0], className: 'region-label' });
+      mk.on('click', () => toggleRef.current(d.region));
       mk.addTo(m.marks);
     }
     for (const id of airportIds) {
@@ -138,20 +141,19 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
   return (
     <div className="region-picker">
       <div className="map-box">
-        <div ref={el} className="map region-map" role="region" aria-label="Mappa delle regioni della Norvegia" />
+        <div ref={el} className="map region-map" role="region" aria-label="Mappa delle regioni e delle località del viaggio" />
         {state === 'caricamento' && <div className="map-overlay">Caricamento mappa…</div>}
         {state === 'errore' && <div className="map-overlay map-error">Mappa non disponibile: scegli le regioni dall'elenco.</div>}
       </div>
       <div className="region-list">
         <p className="muted small">
-          Tocca una regione sulla mappa o nell'elenco per sceglierla o toglierla. Le regioni degli aeroporti sono comprese all'inizio: se le togli, si atterra o si
-          riparte comunque da lì, ma il viaggio non le esplora (bordo tratteggiato).
+          Scegli le zone dall’elenco o tocca una località sulla mappa. Le zone degli aeroporti sono comprese all’inizio: puoi toglierle se vuoi passarci solo per il volo.
         </p>
         <ul>
-          {REGIONS.map((r) => {
+          {regions.map((r) => {
             const on = selected.includes(r);
             const isAirport = airportRegions.includes(r);
-            const i = info[r];
+            const i = info[r]!;
             return (
               <li key={r} className={`region-item ${on ? 'on' : ''} ${shown === r ? 'lit' : ''}`} onMouseEnter={() => setHover(r)} onMouseLeave={() => setHover(null)}>
                 <label>
@@ -160,7 +162,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
                   {isAirport && <span className="muted small">{on ? ' · aeroporto' : ' · solo aeroporto: arrivo o partenza, regione non esplorata'}</span>}
                 </label>
                 <div className="small muted">
-                  Contee: {i.counties.join(', ')} · {i.count} {i.count === 1 ? 'luogo' : 'luoghi'} da visitare nel catalogo
+                  {i.counties.length > 0 && `Contee: ${i.counties.join(', ')} · `}{i.count} {i.count === 1 ? 'luogo' : 'luoghi'} da visitare nel catalogo
                 </div>
                 {i.bases.length > 0 && <div className="small">Dove dormire: {i.bases.join(', ')}</div>}
                 {i.examples.length > 0 && <div className="small muted">Per i bambini: {i.examples.join(', ')}</div>}
@@ -168,7 +170,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
             );
           })}
         </ul>
-        <p className="muted small">Confini: Kartverket (contee 2024), semplificati.</p>
+        <p className="muted small">{COUNTIES.length ? 'Confini disponibili: Kartverket, contee norvegesi 2024 semplificate. ' : ''}Per le zone senza confini cartografici sono mostrate le località del catalogo.</p>
       </div>
     </div>
   );

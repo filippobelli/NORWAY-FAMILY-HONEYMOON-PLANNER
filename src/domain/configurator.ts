@@ -8,7 +8,7 @@ import { COASTAL_PORTS_NORTHBOUND } from '../data/coastalPorts';
 import { DESTINATIONS, findDestination } from '../data/destinations';
 import { newId } from './ids';
 import { dayKey, syncLegs } from './itinerary';
-import type { Activity, DayPlan, Destination, Leg, PlanSnapshot, Region, ScenarioKind, Segment, Stop } from './types';
+import type { Activity, DayPlan, Destination, Leg, PlanSnapshot, Region, ScenarioKind, Segment, Stop, Trip } from './types';
 
 /**
  * Località adatte a fare da base per dormire (le altre schede diventano visite in giornata).
@@ -127,6 +127,25 @@ export interface ConfiguratorResult {
   /** Problemi da guardare */
   warnings: string[];
   bases: string[];
+}
+
+/** Ripristina solo preferenze compatibili con i cataloghi attualmente caricati. */
+export function initialConfigurator(trip: Trip, saved: Partial<ConfiguratorInput> = {}): ConfiguratorInput {
+  const airports = DESTINATIONS.filter((d) => d.category === 'aeroporti');
+  const arrival = airports.find((a) => a.id === saved.arrivalAirportId) ?? airports.find((a) => a.id === 'bgo') ?? airports[0];
+  const departure = airports.find((a) => a.id === saved.departureAirportId) ?? arrival;
+  const regions = saved.regions?.filter((r) => DESTINATIONS.some((d) => d.region === r));
+  const modes = saved.modes?.filter((m) => m !== 'nave' || COASTAL_PORTS_NORTHBOUND.length > 0);
+  return {
+    days: saved.days ?? 18, startDate: trip.startDate,
+    arrivalAirportId: arrival?.id ?? '', departureAirportId: departure?.id ?? '',
+    modes: modes?.length ? modes : ['auto'], pace: saved.pace ?? 'equilibrato',
+    maxDriveHours: saved.maxDriveHours ?? Math.round(trip.settings.maxTravelMinPerDay / 60),
+    regions: regions?.length ? regions : [findDestination('bergen')?.region ?? arrival?.region ?? ''].filter(Boolean),
+    excludedAirportRegions: saved.excludedAirportRegions?.filter((r) => DESTINATIONS.some((d) => d.region === r)) ?? [],
+    mustSee: trip.favorites.filter((id) => { const d = findDestination(id); return d && d.category !== 'aeroporti'; }),
+    kidFriendly: saved.kidFriendly ?? true,
+  };
 }
 
 // ---------- geometria (stime) ----------
@@ -287,9 +306,9 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   const regions = new Set<Region>([...input.regions, ...[arr.region, dep.region].filter((r) => !excluded.has(r))]);
   const directKm = airKm(arr, dep);
   for (const b of bases) {
-    const visitScore = b.visits.reduce((s, v) => s + v.kidScore + (mustSet.has(v.id) ? 6 : 0), 0);
+    const visitScore = b.visits.reduce((s, v) => s + (v.kidScore ?? 0) + (mustSet.has(v.id) ? 6 : 0), 0);
     const detour = airKm(arr, b) + airKm(b, dep) - directKm;
-    b.score = b.d.kidScore * 2 + visitScore + (b.must ? 100 : 0) + (regions.has(b.d.region) ? 8 : -30) - detour / 120;
+    b.score = (b.d.kidScore ?? 0) * 2 + visitScore + (b.must ? 100 : 0) + (regions.has(b.d.region) ? 8 : -30) - detour / 120;
   }
 
   // Quante basi ci stanno con il ritmo scelto
@@ -494,7 +513,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
     const base = order.find((b) => b.d.id === stop.destinationId);
     if (!base) continue;
     const visits = [...base.visits].sort(
-      (x, y) => Number(mustSet.has(y.id)) - Number(mustSet.has(x.id)) || y.kidScore - x.kidScore || (x.visitHours?.[0] ?? 2) - (y.visitHours?.[0] ?? 2),
+      (x, y) => Number(mustSet.has(y.id)) - Number(mustSet.has(x.id)) || (y.kidScore ?? 0) - (x.kidScore ?? 0) || (x.visitHours?.[0] ?? 2) - (y.visitHours?.[0] ?? 2),
     );
     const cap = Array.from({ length: stop.nights }, (_, k) => (k === 0 ? travelDay : fullDay));
     // Giorno 0 = arrivo con trasferimento: solo cose brevi. L'ultima tappa prima del volo ha l'ultimo giorno libero.
@@ -506,7 +525,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
       if (k === undefined) continue;
       cap[k]! -= dur;
       const key = dayKey(stop.id, k);
-      const act: Activity = { id: newId(), title: v.name, destinationId: v.id, durationMin: dur, costStatus: 'da_verificare' };
+      const act: Activity = { id: newId(), title: v.name, destinationId: v.id, durationMin: v.visitHours ? dur : undefined, costStatus: 'da_verificare' };
       days[key] = days[key] ?? { activities: [], notes: '', planB: '' };
       days[key]!.activities.push(act);
     }
@@ -529,6 +548,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   }
   if (input.days < 15 || input.days > 20) notes.push(`Durata di ${input.days} giorni, fuori dall'obiettivo di 15–20.`);
   notes.push('Distanze e tempi usati per scegliere l\'ordine sono stime di massima: i km e i tempi reali si calcolano con «Calcola tratti mancanti».');
+  if (Object.values(days).some((d) => d.activities.some((a) => a.durationMin === undefined))) notes.push('Alcune attività non hanno una durata nel catalogo: è da inserire. Per distribuirle nella bozza è stato riservato un margine indicativo di due ore, che non entra come durata confermata.');
   if (dep.id !== arr.id) notes.push(`Arrivo a ${arr.name}, ripartenza da ${dep.name}: verifica il costo del noleggio con riconsegna in un'altra città.`);
 
   return {

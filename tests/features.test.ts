@@ -143,7 +143,7 @@ test('Regioni: ogni destinazione con posizione verificata cade nelle contee dell
   };
   const wrong: string[] = [];
   for (const d of DESTINATIONS.filter((x) => x.coordsStatus === 'verificate')) {
-    const nrs = REGION_COUNTIES[d.region];
+    const nrs = REGION_COUNTIES[d.region] ?? [];
     const ok = COUNTIES.filter((c) => nrs.includes(c.nr)).some((c) => c.rings.some((r) => inside(d.lat, d.lng, r)));
     if (!ok) {
       const real = COUNTIES.find((c) => c.rings.some((r) => inside(d.lat, d.lng, r)))?.name ?? 'fuori dai confini semplificati';

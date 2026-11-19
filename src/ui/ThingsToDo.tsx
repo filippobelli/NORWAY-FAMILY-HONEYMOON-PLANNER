@@ -282,7 +282,7 @@ function AttractionCard({ a, stop, isIdea }: { a: StopAttraction; stop: Stop; is
       <p className="attr-desc">{a.d.description}</p>
       <ul className="attr-facts small">
         {duration && <li>Durata indicativa: {duration}</li>}
-        <li>{KID_TEXT[a.d.kidScore]} (valutazione editoriale)</li>
+        <li>{a.d.kidScore ? `${KID_TEXT[a.d.kidScore]} (valutazione editoriale)` : 'Idoneità per i bambini da verificare'}</li>
         {a.info?.setting && <li>{SETTING_LABEL[a.info.setting]}</li>}
         <li className={a.outside ? 'warn-text' : ''}>
           {a.info?.outside ? a.info.outside.note : `${a.outside ? 'Fuori città: ' : ''}circa ${a.km.toLocaleString('it-IT')} km in linea d'aria dal centro di ${stop.name}`}

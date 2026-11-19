@@ -47,19 +47,15 @@ export type Category =
   | 'stagionali'
   | 'aeroporti';
 
-export type Region =
-  | 'Oslo e Østlandet'
-  | 'Innlandet e montagne'
-  | 'Fiordi occidentali'
-  | 'Sørlandet e Rogaland'
-  | 'Trøndelag'
-  | 'Nordland e Lofoten'
-  | 'Troms e Finnmark';
+/** Nome della zona di viaggio definita dal catalogo della nazione. */
+export type Region = string;
 
 export interface Destination {
   id: ID;
   name: string;
   localName?: string;
+  /** Codice IATA, indipendente dalla chiave interna della scheda. */
+  iata?: string;
   description: string;
   lat: number;
   lng: number;
@@ -69,9 +65,9 @@ export interface Destination {
   region: Region;
   /** Durata indicativa della visita, in ore [min, max] */
   visitHours?: [number, number];
-  difficulty: 'facile' | 'media' | 'impegnativa';
+  difficulty?: 'facile' | 'media' | 'impegnativa';
   /** 1 = poco adatto, 2 = adatto con accortezze, 3 = molto adatto (valutazione indicativa) */
-  kidScore: 1 | 2 | 3;
+  kidScore?: 1 | 2 | 3;
   access: string;
   season: string;
   /** Avviso specifico per agosto (es. aurora non visibile) */

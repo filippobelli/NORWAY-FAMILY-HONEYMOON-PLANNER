@@ -1,5 +1,6 @@
 import { canConvert, toEur } from './coastal';
 import { computeDays, legTotals, totalDays } from './itinerary';
+import { defaultCountry, tripCountries } from './countries';
 import type { BudgetCategory, DataStatus, Money, TripSettings, Trip } from './types';
 
 export const BUDGET_CATEGORIES: { id: BudgetCategory; label: string }[] = [
@@ -204,8 +205,17 @@ export function computeBudget(trip: Trip): BudgetSummary {
 
   // Segmenti di trasporto con costo (traghetti, treni, bus...). La costiera è già contata sopra.
   let roadKm = 0;
+  let outsideNorwayKm = 0;
+  const countries = tripCountries(trip);
+  const countryOfStop = (id: string) => {
+    const stop = trip.stops.find((s) => s.id === id);
+    return stop?.countryCode ?? countries.find((c) => stop?.destinationId?.startsWith(`${c.code.toLowerCase()}-`))?.code ?? defaultCountry(trip);
+  };
   for (const leg of trip.legs) {
-    roadKm += legTotals(leg).roadKm;
+    const km = legTotals(leg).roadKm;
+    // Il prezzo SSB in NOK riguarda solo tratti interamente norvegesi.
+    if (countryOfStop(leg.fromStopId) === 'NO' && countryOfStop(leg.toStopId) === 'NO') roadKm += km;
+    else outsideNorwayKm += km;
     for (const seg of leg.segments) {
       if (seg.coastalOptionId) continue;
       // Traghetto del catalogo: voce «Traghetto A → B · con/senza auto»; senza prezzo «prezzo da cercare», mai zero
@@ -240,6 +250,9 @@ export function computeBudget(trip: Trip): BudgetSummary {
     } else {
       missingIn('carburante_pedaggi', 'Costo del carburante non impostato (consumo e prezzo dell\'auto)');
     }
+  }
+  if (outsideNorwayKm > 0) {
+    missingIn('carburante_pedaggi', `Carburante su ${Math.round(outsideNorwayKm)} km fuori dalla Norvegia o transfrontalieri: inserisci il costo per queste tratte nelle voci del budget; la media norvegese non viene applicata`);
   }
 
   // Attività con costo nelle giornate esistenti (le giornate rimaste senza tappa non sono contate)

@@ -1,8 +1,10 @@
 import { getContext, setContext } from '../state/workContext';
+import { useCatalog } from '../catalog/registry';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS, findDestination } from '../data/destinations';
 import {
   configureItinerary,
+  initialConfigurator,
   PACE_MIN_NIGHTS,
   scenarioKindFor,
   TRAVEL_MODE_LABEL,
@@ -41,7 +43,7 @@ const MODE_HINT: Record<TravelMode, string> = {
   volo: 'Per i tratti molto lunghi tra due aeroporti',
 };
 /** "Aeroporto Bergen Flesland" → "Bergen Flesland (BGO)" */
-const airportLabel = (id: string, name: string) => `${name.replace(/^Aeroporto (di )?/, '')} (${id.toUpperCase()})`;
+const airportLabel = (id: string, name: string) => `${name.replace(/^Aeroporto (di )?/, '')} (${findDestination(id)?.iata ?? id.toUpperCase()})`;
 export const AUTO_ROUTE_KEY = 'nfhp.autoRoute';
 
 // Calcolato a ogni uso: il catalogo cambia con le nazioni del viaggio
@@ -54,20 +56,9 @@ function loadSaved(): Partial<ConfiguratorInput> {
 
 export function ConfiguratorView() {
   const { trip } = useTrip();
+  const catalog = useCatalog();
   const saved = useMemo(loadSaved, []);
-  const [input, setInput] = useState<ConfiguratorInput>(() => ({
-    days: saved.days ?? 18,
-    startDate: trip.startDate,
-    arrivalAirportId: saved.arrivalAirportId ?? 'bgo',
-    departureAirportId: saved.departureAirportId ?? 'bgo',
-    modes: saved.modes?.length ? saved.modes : ['auto'],
-    pace: saved.pace ?? 'equilibrato',
-    maxDriveHours: saved.maxDriveHours ?? Math.round(trip.settings.maxTravelMinPerDay / 60),
-    regions: saved.regions ?? ['Fiordi occidentali'],
-    excludedAirportRegions: saved.excludedAirportRegions ?? [],
-    mustSee: trip.favorites.filter((id) => findDestination(id)?.category !== 'aeroporti'),
-    kidFriendly: saved.kidFriendly ?? true,
-  }));
+  const [input, setInput] = useState<ConfiguratorInput>(() => initialConfigurator(trip, saved));
   // Proposta in revisione: resta montata (con bozza, nome e calcoli) anche mentre si guardano le impostazioni
   const [proposal, setProposal] = useState<{ gen: number; result: ConfiguratorResult; input: ConfiguratorInput; defaultName: string } | null>(null);
   // Modifiche fatte a mano nella bozza: servono per avvisare prima di sostituirla
@@ -178,6 +169,7 @@ export function ConfiguratorView() {
         </Modal>
       )}
     <div className="configurator" hidden={showReview}>
+      {catalog.countries.some((c) => !c.roadCalibrated) && <p className="note-info">Per {catalog.countries.filter((c) => !c.roadCalibrated).map((c) => c.name).join(', ')} le stime stradali della proposta non sono calibrate. Calcola i trasferimenti nella revisione e controlla i collegamenti tra isole e nazioni. Durate delle visite e idoneità per i bambini restano da verificare dove mancano nel catalogo.</p>}
       <ol className="flow-steps" aria-label="Come funziona">
         <li className="active" aria-current="step">1. Scegli le impostazioni</li>
         <li>2. Controlla la proposta</li>
@@ -234,7 +226,7 @@ export function ConfiguratorView() {
           <div className="field">
             <span className="field-label">Bambini</span>
             <label className="check field-control">
-              <input type="checkbox" checked={input.kidFriendly} onChange={(e) => set({ kidFriendly: e.target.checked })} /> Solo attività adatte
+              <input type="checkbox" checked={input.kidFriendly} onChange={(e) => set({ kidFriendly: e.target.checked })} /> Evita attività poco adatte
             </label>
             <small className="hint">Esclude quelle poco adatte ai piccoli</small>
           </div>

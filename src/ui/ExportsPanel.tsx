@@ -1,6 +1,8 @@
-import { countryInfo } from '../catalog/registry';
+import { countryInfo, placeCountry } from '../catalog/registry';
+import { DESTINATIONS } from '../data/destinations';
+import { airportCode } from '../domain/flightAdvisor';
 import { FILE_COUNTRY } from '../data/country';
-import { tripCountries } from '../domain/countries';
+import { stopCountry, tripCountries } from '../domain/countries';
 import type { Trip } from '../domain/types';
 import { useState } from 'react';
 import { exportFileName, offlinePackage, tripToGpx, tripToIcs, tripToKml } from '../domain/exportFormats';
@@ -71,7 +73,10 @@ export function ExportsPanel({ compact }: { compact?: boolean }) {
             <Icon name="calendar" /> Calendario (.ics)
           </h3>
           <p className="small">Un evento per ogni giornata. Voli e traghetti diventano eventi con l'ora solo se l'orario è stato inserito: nessun orario inventato.</p>
-          <button className="btn" onClick={() => run('Calendario', () => download(exportFileName(trip, 'ics'), tripToIcs(trip, undefined, tripTimezone(trip)), 'text/calendar;charset=utf-8'))}>
+          <button className="btn" onClick={() => run('Calendario', () => download(exportFileName(trip, 'ics'), tripToIcs(trip, undefined, tripTimezone(trip), {
+            stops: Object.fromEntries(trip.stops.map((s) => [s.id, countryInfo(stopCountry(trip, s, placeCountry))?.timezone ?? tripTimezone(trip)])),
+            airports: Object.fromEntries(DESTINATIONS.filter((d) => d.category === 'aeroporti').map((d) => [airportCode(d), countryInfo(placeCountry(d.id))?.timezone ?? tripTimezone(trip)])),
+          }), 'text/calendar;charset=utf-8'))}>
             Scarica il calendario
           </button>
         </article>

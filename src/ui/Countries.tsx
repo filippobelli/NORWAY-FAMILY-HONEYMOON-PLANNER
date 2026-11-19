@@ -6,6 +6,7 @@ import { FILE_COUNTRY } from '../data/country';
 import { DESTINATIONS } from '../data/destinations';
 import { addCountry, countryUsage, releaseVersion, removeCountry, tripCountries, upgradeCatalog, usageEmpty } from '../domain/countries';
 import { removeStops } from '../domain/itinerary';
+import { airportCode } from '../domain/flightAdvisor';
 import type { AvailableCountry, CatalogLoadState } from '../services/catalog/catalogService';
 import { useTripCatalog } from '../state/catalog';
 import { useTrip } from '../state/store';
@@ -298,7 +299,7 @@ function RemoveCountry({ code, onBack, onDone }: { code: string; onBack: () => v
   const name = countryInfo(code)?.name ?? code;
   const cat = useCatalog();
   const voyageKeys = new Set(COASTAL_CATALOG.filter((v) => cat.voyageCountry[v.id] === code).map((v) => v.id));
-  const airports = new Set(DESTINATIONS.filter((d) => d.category === 'aeroporti' && placeCountry(d.id) === code).map((d) => d.id.toUpperCase()));
+  const airports = new Set(DESTINATIONS.filter((d) => d.category === 'aeroporti' && placeCountry(d.id) === code).map(airportCode));
   const u = countryUsage(trip, code, placeCountry, { voyageKeys, airportCodes: airports });
   const empty = usageEmpty(u);
   const confirm = () => {

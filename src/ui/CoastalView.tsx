@@ -65,19 +65,19 @@ export function CoastalView() {
     <div className="coastal">
       {placing && <CruiseDialog option={placing} onClose={() => setPlacing(null)} />}
       <div className="grid-2">
-        {(['Hurtigruten', 'Havila'] as const).map((op) => (
+        {(['Hurtigruten', 'Havila'] as const).filter((op) => COASTAL_FACTS[op]?.length).map((op) => (
           <section key={op} className="panel">
             <h2>{op}</h2>
             <details className="more-fields">
               <summary>Cosa sapere su {op}</summary>
             <p className="muted small">Fatti verificati sulle pagine ufficiali il 27/10/2026. Non sono tariffe né orari 2027.</p>
             <ul className="facts-list">
-              {COASTAL_FACTS[op].map((f) => (
+              {(COASTAL_FACTS[op] ?? []).map((f) => (
                 <li key={f}>{f}</li>
               ))}
             </ul>
             <ul className="links">
-              {COASTAL_SOURCES[op].map((s) => (
+              {(COASTAL_SOURCES[op] ?? []).map((s) => (
                 <li key={s.url}>
                   <a href={s.url} target="_blank" rel="noreferrer">
                     {s.label}
@@ -99,6 +99,8 @@ export function CoastalView() {
           </section>
         ))}
       </div>
+
+      {!Object.keys(COASTAL_FACTS).length && <p className="note-info">I cataloghi delle nazioni selezionate non contengono ancora crociere. Puoi inserire i collegamenti conosciuti nei dettagli dei trasferimenti, con fonte e dati da verificare.</p>}
 
       <div className="note-info">
         Tariffe e orari di agosto 2027 potrebbero non essere ancora pubblicati. Inserisci qui i preventivi reali man mano che li ottieni, indicando

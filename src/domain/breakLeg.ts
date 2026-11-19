@@ -35,7 +35,7 @@ export function breakCandidates(trip: Trip, legId: string, maxKm = 20): BreakOpt
   const used = new Set(trip.stops.map((s) => s.destinationId).filter(Boolean));
   const out: BreakCandidate[] = [];
   for (const d of DESTINATIONS) {
-    if (used.has(d.id) || !SLEEP_CATEGORIES.has(d.category) || d.kidScore < 2) continue;
+    if (used.has(d.id) || !SLEEP_CATEGORIES.has(d.category) || (d.kidScore ?? 0) < 2) continue;
     let best = Infinity;
     let at = 0;
     pts.forEach(([lat, lng], i) => {

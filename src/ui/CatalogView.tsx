@@ -108,8 +108,7 @@ export function CatalogView() {
       {visiting && <VisitDialog d={visiting} onClose={() => setVisiting(null)} />}
       <div className="note-info">
         <CatalogVersionNote />
-        {DESTINATIONS.length} luoghi. Coordinate verificate su OpenStreetMap per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length}{' '}
-        schede (27/10/2026); le altre sono approssimative. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>{' '}
+        Coordinate con fonte per {DESTINATIONS.filter((d) => d.coordsStatus === 'verificate').length} schede su {DESTINATIONS.length}; fonte e data sono indicate nelle singole schede. Le altre coordinate sono approssimative o mancanti. Descrizioni, durate, idoneità per bambini e stagionalità sono <strong>da verificare</strong>{' '}
         sulle fonti ufficiali; prezzi e orari non sono inseriti di proposito.
       </div>
       <div className="filters">
@@ -379,7 +378,7 @@ function DestinationCard({
             </p>
           )}
           <div className="tags">
-            <Badge tone={d.kidScore === 3 ? 'ok' : d.kidScore === 1 ? 'warn' : 'neutral'}>{KID_LABEL[d.kidScore]}</Badge>
+            <Badge tone={d.kidScore === 3 ? 'ok' : d.kidScore === 1 ? 'warn' : 'neutral'}>{d.kidScore ? KID_LABEL[d.kidScore] : 'Idoneità bambini da verificare'}</Badge>
             {d.localName && <Badge>{d.localName}</Badge>}
           </div>
           <p>{d.description}</p>
@@ -423,7 +422,7 @@ function DestinationCard({
               </>
             )}
             <dt>Difficoltà</dt>
-            <dd>{d.difficulty}</dd>
+            <dd>{d.difficulty ?? 'Da verificare'}</dd>
           </dl>
           <footer>
             <span className="tags">

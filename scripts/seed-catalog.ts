@@ -26,6 +26,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildInternational, INTERNATIONAL_CODES } from './build-international';
 
 import { FERRY_CHECKED_AT, FERRY_ROUTES, FERRY_SOURCES } from '../src/data/ferryRoutes';
 import type { FerryRoute, FerrySource } from '../src/data/ferryTypes';
@@ -198,7 +199,7 @@ export function buildNorway(): CatalogSeed {
   const regions = regionNames.map((name) => ({
     key: slug(name),
     name,
-    areas: REGION_COUNTIES[name].map((nr) => {
+    areas: REGION_COUNTIES[name]!.map((nr) => {
       const c = COUNTIES.find((x) => x.nr === nr);
       if (!c) throw new Error(`Contea ${nr} assente in regionShapes.ts`);
       return { code: c.nr, name: c.name, rings: c.rings };
@@ -646,6 +647,8 @@ export function buildNorwayV5(): CatalogSeed {
 
 /** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
 const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3, 4: buildNorwayV4, 5: buildNorwayV5 } };
+
+for (const code of INTERNATIONAL_CODES) BUILDERS[code] = { 1: () => buildInternational(code) };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 

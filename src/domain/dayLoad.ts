@@ -111,7 +111,7 @@ export function midRouteCandidates(trip: Trip, day: DayInfo, maxKm = 15): { dest
     const middle = pts.slice(Math.floor(pts.length * 0.3), Math.ceil(pts.length * 0.7));
     for (const d of DESTINATIONS) {
       // Solo località dove ha senso dormire (città, villaggi, isole)
-      if (used.has(d.id) || (d.category !== 'citta' && d.category !== 'isole') || d.kidScore < 2) continue;
+      if (used.has(d.id) || (d.category !== 'citta' && d.category !== 'isole') || (d.kidScore ?? 0) < 2) continue;
       const near = middle.some(([lat, lng]) => distKm({ lat, lng }, d) <= maxKm);
       if (near && !out.some((o) => o.destinationId === d.id)) out.push({ destinationId: d.id, beforeStopId: leg.toStopId, name: d.name });
     }

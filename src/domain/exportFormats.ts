@@ -88,7 +88,12 @@ export function foldIcsLine(line: string): string {
   return out.join('\r\n ');
 }
 
-export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTRY.timezone): string {
+export interface ExportTimezones {
+  stops: Record<string, string>;
+  airports: Record<string, string>;
+}
+
+export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTRY.timezone, zones?: ExportTimezones): string {
   const { cet } = zoneInfo(tz);
   const days = computeDays(trip);
   const stamp = utcStamp(now);
@@ -130,7 +135,7 @@ export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTR
         event([
           `UID:${uid(`tratto-${s.id}`)}`,
           `DTSTAMP:${stamp}`,
-          localStamp('DTSTART', tz, cet, d.date, t),
+          localStamp('DTSTART', zones?.stops[l.fromStopId] ?? tz, zones ? false : cet, d.date, t),
           ...(s.durationMin ? [`DURATION:PT${Math.round(s.durationMin)}M`] : []),
           `SUMMARY:${icsText(s.label)}`,
           `DESCRIPTION:${icsText(`Orario inserito a mano: verificalo sul sito dell'operatore.${s.source?.url ? `\nFonte: ${s.source.url}` : ''}`)}`,
@@ -142,11 +147,13 @@ export function tripToIcs(trip: Trip, now = new Date(), tz: string = FILE_COUNTR
     const t = validTime(f.departureTime);
     if (!f.selected || !f.date || !t) continue;
     const arr = validTime(f.arrivalTime);
+    const departureZone = zones?.airports[f.fromAirport.toUpperCase()] ?? tz;
+    const arrivalZone = zones?.airports[f.toAirport.toUpperCase()] ?? tz;
     event([
       `UID:${uid(`volo-${f.id}`)}`,
       `DTSTAMP:${stamp}`,
-      localStamp('DTSTART', tz, cet, f.date, t),
-      ...(arr && arr > t ? [localStamp('DTEND', tz, cet, f.date, arr)] : []),
+      localStamp('DTSTART', departureZone, zones ? false : cet, f.date, t),
+      ...(arr && arr > t && departureZone === arrivalZone ? [localStamp('DTEND', arrivalZone, zones ? false : cet, f.date, arr)] : []),
       `SUMMARY:${icsText(`Volo ${f.fromAirport} → ${f.toAirport}${f.flightNumber ? ` (${f.airline} ${f.flightNumber})` : ''}`)}`,
       `DESCRIPTION:${icsText(`Volo del ${formatDateIt(f.date)}. Orari inseriti a mano: verificali con la compagnia.`)}`,
     ]);

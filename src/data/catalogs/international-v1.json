@@ -1,0 +1,4784 @@
+{
+  "DE": {
+    "name": "Germania",
+    "en": "Germany",
+    "language": "de",
+    "currency": "EUR",
+    "timezone": "Europe/Berlin",
+    "qid": "Q183",
+    "bounds": [
+      47,
+      55.2,
+      5.5,
+      15.5
+    ],
+    "tourism": "https://www.germany.travel/en/home.html",
+    "regions": [
+      "Berlino e Brandeburgo",
+      "Amburgo e Germania settentrionale",
+      "Renania e Germania occidentale",
+      "Baviera",
+      "Baden-Württemberg",
+      "Sassonia e Turingia"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "de-berlino",
+        "name": "Berlino",
+        "title": "Berlin",
+        "category": "citta",
+        "region": "Berlino e Brandeburgo",
+        "description": "Capitale della Germania, con quartieri storici, musei e parchi lungo la Sprea.",
+        "qid": "Q64",
+        "lat": 52.516666666667,
+        "lng": 13.383333333333,
+        "official": "https://www.berlin.de/",
+        "wiki": {
+          "it": "Berlino",
+          "en": "Berlin"
+        },
+        "photos": [
+          {
+            "file": "Cityscape Berlin.jpg",
+            "author": "Thomas Wolf, www.foto-tw.de",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-porta-brandeburgo",
+        "name": "Porta di Brandeburgo",
+        "title": "Brandenburg Gate",
+        "category": "musei",
+        "region": "Berlino e Brandeburgo",
+        "description": "Porta monumentale di Berlino, punto di riferimento per esplorare il centro storico.",
+        "qid": "Q82425",
+        "lat": 52.516272222222,
+        "lng": 13.377722222222,
+        "official": "http://www.visitberlin.de/de/ort/brandenburger-tor",
+        "wiki": {
+          "it": "Porta di Brandeburgo",
+          "en": "Brandenburg Gate"
+        },
+        "photos": [
+          {
+            "file": "Berlin-Brandenburg Gate overview.jpg",
+            "author": "Cezary p at Polish Wikipedia",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "Brandenburger Tor morgens.jpg",
+            "author": "Thomas Wolf, www.foto-tw.de",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-museo-storia-naturale",
+        "name": "Museo di storia naturale di Berlino",
+        "title": "Natural History Museum, Berlin",
+        "category": "musei",
+        "region": "Berlino e Brandeburgo",
+        "description": "Museo dedicato alla storia naturale, con collezioni paleontologiche e zoologiche.",
+        "qid": "Q233098",
+        "lat": 52.5302,
+        "lng": 13.3792,
+        "official": "https://www.museumfuernaturkunde.berlin",
+        "wiki": {
+          "it": "Museum für Naturkunde",
+          "en": "Museum für Naturkunde Berlin"
+        },
+        "photos": [
+          {
+            "file": "Berlin, Mitte, Invalidenstrasse 43, Museum für Naturkunde.jpg",
+            "author": "Jörg Zägel",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-zoo-berlino",
+        "name": "Zoo di Berlino",
+        "title": "Berlin Zoological Garden",
+        "category": "fauna",
+        "region": "Berlino e Brandeburgo",
+        "description": "Giardino zoologico nel quartiere del Tiergarten; percorsi, ingressi e servizi vanno controllati sul sito ufficiale.",
+        "qid": "Q154828",
+        "lat": 52.508333333333,
+        "lng": 13.3375,
+        "official": "https://www.zoo-berlin.de/",
+        "wiki": {
+          "it": "Zoologischer Garten Berlin",
+          "en": "Berlin Zoo"
+        },
+        "photos": [
+          {
+            "file": "Giraffe-berlin-zoo.jpg",
+            "author": "Adamantios",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "Bahnhof Zoo Wegweiser Zoo.JPG",
+            "author": "Cherubino",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-potsdam",
+        "name": "Potsdam",
+        "title": "Potsdam",
+        "category": "citta",
+        "region": "Berlino e Brandeburgo",
+        "description": "Città del Brandeburgo con residenze prussiane e parchi storici.",
+        "qid": "Q1711",
+        "lat": 52.4009309,
+        "lng": 13.0591397,
+        "official": "https://www.potsdam.de/",
+        "wiki": {
+          "it": "Potsdam",
+          "en": "Potsdam"
+        },
+        "photos": [
+          {
+            "file": "2018-08-10 DE Potsdam, Havel, Potsdamer Stadtschloss, Charlottenhof 05609390 (49952695592).jpg",
+            "author": "Paul Korecky",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-sanssouci",
+        "name": "Palazzo di Sanssouci",
+        "title": "Sanssouci",
+        "category": "musei",
+        "region": "Berlino e Brandeburgo",
+        "description": "Residenza prussiana a Potsdam, inserita nel paesaggio del parco di Sanssouci.",
+        "qid": "Q151330",
+        "lat": 52.403257,
+        "lng": 13.038626,
+        "official": "https://www.spsg.de/schloesser-gaerten/objekt/schloss-sanssouci/",
+        "wiki": {
+          "it": "Palazzo di Sanssouci",
+          "en": "Sanssouci"
+        },
+        "photos": [
+          {
+            "file": ".00 3591 Schloss Sanssouci in Potsdam.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": ".00 2522 Schloss Sanssouci in Potsdam.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-amburgo",
+        "name": "Amburgo",
+        "title": "Hamburg",
+        "category": "citta",
+        "region": "Amburgo e Germania settentrionale",
+        "description": "Città portuale sull’Elba, con canali, quartieri di magazzini e passeggiate sull’acqua.",
+        "qid": "Q1055",
+        "lat": 53.55,
+        "lng": 10,
+        "official": "https://www.hamburg.de/",
+        "wiki": {
+          "it": "Amburgo",
+          "en": "Hamburg"
+        },
+        "photos": [
+          {
+            "file": "Hamburg view St. Nikolai.jpg",
+            "author": "kallerna",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-miniatur-wunderland",
+        "name": "Miniatur Wunderland",
+        "title": "Miniatur Wunderland",
+        "category": "musei",
+        "region": "Amburgo e Germania settentrionale",
+        "description": "Esposizione di plastici ferroviari e paesaggi in miniatura nella Speicherstadt di Amburgo.",
+        "qid": "Q685524",
+        "lat": 53.5438229,
+        "lng": 9.9889448,
+        "official": "https://www.miniatur-wunderland.de/",
+        "wiki": {
+          "it": "Miniatur Wunderland",
+          "en": "Miniatur Wunderland"
+        },
+        "photos": [
+          {
+            "file": "DungeonMiwula.jpg",
+            "author": "Gulp",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-lubecca",
+        "name": "Lubecca",
+        "title": "Lübeck",
+        "category": "citta",
+        "region": "Amburgo e Germania settentrionale",
+        "description": "Città anseatica con centro storico in mattoni e vie d’acqua.",
+        "qid": "Q2843",
+        "lat": 53.869722222222,
+        "lng": 10.686388888889,
+        "official": "https://www.luebeck.de/",
+        "wiki": {
+          "it": "Lubecca",
+          "en": "Lübeck"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-brema",
+        "name": "Brema",
+        "title": "Bremen",
+        "category": "citta",
+        "region": "Amburgo e Germania settentrionale",
+        "description": "Città anseatica sul Weser, con la piazza del mercato e il quartiere dello Schnoor.",
+        "qid": "Q24879",
+        "lat": 53.075833333333335,
+        "lng": 8.807222222222222,
+        "official": "https://www.bremen.de/",
+        "wiki": {
+          "it": "Brema",
+          "en": "Bremen"
+        },
+        "photos": [
+          {
+            "file": "Bremen-rathaus-dom-buergerschaft.jpg",
+            "author": "Klaus Grünberg",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-colonia",
+        "name": "Colonia",
+        "title": "Cologne",
+        "category": "citta",
+        "region": "Renania e Germania occidentale",
+        "description": "Città sul Reno, con cattedrale gotica e musei.",
+        "qid": "Q365",
+        "lat": 50.942222222222,
+        "lng": 6.9577777777778,
+        "official": "https://www.stadt-koeln.de/",
+        "wiki": {
+          "it": "Colonia (Germania)",
+          "en": "Cologne"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-duomo-colonia",
+        "name": "Duomo di Colonia",
+        "title": "Cologne Cathedral",
+        "category": "musei",
+        "region": "Renania e Germania occidentale",
+        "description": "Cattedrale gotica nel centro di Colonia; accessi alla chiesa e alle torri hanno condizioni differenti.",
+        "qid": "Q4176",
+        "lat": 50.94138888888889,
+        "lng": 6.958333333333333,
+        "official": "http://www.koelner-dom.de/",
+        "wiki": {
+          "it": "Duomo di Colonia",
+          "en": "Cologne Cathedral"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-francoforte",
+        "name": "Francoforte sul Meno",
+        "title": "Frankfurt",
+        "category": "citta",
+        "region": "Renania e Germania occidentale",
+        "description": "Città sul Meno, con musei, centro storico ricostruito e skyline contemporaneo.",
+        "qid": "Q1794",
+        "lat": 50.11055555555556,
+        "lng": 8.682222222222222,
+        "official": "https://frankfurt.de",
+        "wiki": {
+          "it": "Francoforte sul Meno",
+          "en": "Frankfurt"
+        },
+        "photos": [
+          {
+            "file": "Blick vom Kaiserdom über Frankfurt zur Skyline.jpg",
+            "author": "Jörg Braukmann",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-heidelberg",
+        "name": "Heidelberg",
+        "title": "Heidelberg",
+        "category": "citta",
+        "region": "Baden-Württemberg",
+        "description": "Città universitaria sul Neckar, con centro storico e castello sulle pendici della valle.",
+        "qid": "Q2966",
+        "lat": 49.4093582,
+        "lng": 8.694724,
+        "official": "https://www.heidelberg.de/",
+        "wiki": {
+          "it": "Heidelberg",
+          "en": "Heidelberg"
+        },
+        "photos": [
+          {
+            "file": "Heidelberg corr.jpg",
+            "author": "Miholz",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-monaco",
+        "name": "Monaco di Baviera",
+        "title": "Munich",
+        "category": "citta",
+        "region": "Baviera",
+        "description": "Capoluogo bavarese con musei, piazze e il parco dell’Englischer Garten.",
+        "qid": "Q1726",
+        "lat": 48.1375,
+        "lng": 11.575,
+        "official": "https://stadt.muenchen.de/rathaus.html",
+        "wiki": {
+          "it": "Monaco di Baviera",
+          "en": "Munich"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-deutsches-museum",
+        "name": "Deutsches Museum",
+        "title": "Deutsches Museum",
+        "category": "musei",
+        "region": "Baviera",
+        "description": "Museo della scienza e della tecnica sull’Isola dei Musei di Monaco.",
+        "qid": "Q131617",
+        "lat": 48.13,
+        "lng": 11.583333333333,
+        "official": "https://www.deutsches-museum.de/",
+        "wiki": {
+          "it": "Deutsches Museum",
+          "en": "Deutsches Museum"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-englischer-garten",
+        "name": "Englischer Garten",
+        "title": "Englischer Garten",
+        "category": "natura",
+        "region": "Baviera",
+        "description": "Parco urbano di Monaco con prati, corsi d’acqua e percorsi pedonali.",
+        "qid": "Q260223",
+        "lat": 48.152777777778,
+        "lng": 11.591944444444,
+        "official": "https://www.schloesser.bayern.de/deutsch/garten/objekte/mu_engl.htm",
+        "wiki": {
+          "it": "Englischer Garten",
+          "en": "Englischer Garten"
+        },
+        "photos": [
+          {
+            "file": "Aerial image of Englischer Garten in Munich (view from the southwest).jpg",
+            "author": "Carsten Steger",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-fussen",
+        "name": "Füssen",
+        "title": "Füssen",
+        "category": "citta",
+        "region": "Baviera",
+        "description": "Località bavarese presso le Alpi dell’Allgäu, utilizzabile come base per i dintorni.",
+        "qid": "Q262684",
+        "lat": 47.56666666666667,
+        "lng": 10.7,
+        "official": "https://www.stadt-fuessen.de/",
+        "wiki": {
+          "it": "Füssen",
+          "en": "Füssen"
+        },
+        "photos": [
+          {
+            "file": "Füssen -.JPG",
+            "author": "Wolkenkratzer",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-neuschwanstein",
+        "name": "Castello di Neuschwanstein",
+        "title": "Neuschwanstein Castle",
+        "category": "musei",
+        "region": "Baviera",
+        "description": "Castello ottocentesco presso Schwangau; visita interna e accesso alla zona richiedono verifiche separate.",
+        "qid": "Q4152",
+        "lat": 47.5574885428434,
+        "lng": 10.74944180794,
+        "official": "https://www.neuschwanstein.com/",
+        "wiki": {
+          "it": "Castello di Neuschwanstein",
+          "en": "Neuschwanstein Castle"
+        },
+        "photos": [
+          {
+            "file": "Neuschwanstein Castle entrance gate.jpg",
+            "author": "DestinationFearFan",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "Neuschwanstein Castle 2024-02.jpg",
+            "author": "Wilfredor",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-norimberga",
+        "name": "Norimberga",
+        "title": "Nuremberg",
+        "category": "citta",
+        "region": "Baviera",
+        "description": "Città della Franconia con centro storico, mura e musei.",
+        "qid": "Q2090",
+        "lat": 49.45388888888889,
+        "lng": 11.0775,
+        "official": "https://www.nuernberg.de/",
+        "wiki": {
+          "it": "Norimberga",
+          "en": "Nuremberg"
+        },
+        "photos": [
+          {
+            "file": "Nuremberg, view from Sinwell Tower 2012.06.16 - panoramio.jpg",
+            "author": "YuTrofimov",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-stoccarda",
+        "name": "Stoccarda",
+        "title": "Stuttgart",
+        "category": "citta",
+        "region": "Baden-Württemberg",
+        "description": "Capoluogo del Baden-Württemberg, con musei e parchi.",
+        "qid": "Q1022",
+        "lat": 48.7775,
+        "lng": 9.18,
+        "official": "https://www.stuttgart.de/",
+        "wiki": {
+          "it": "Stoccarda",
+          "en": "Stuttgart"
+        },
+        "photos": [
+          {
+            "file": "Neues Schloss Schlossplatzspringbrunnen Jubiläumssäule Schlossplatz Stuttgart 2015 01.jpg",
+            "author": "Julian Herzog (Website)",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-mercedes-museum",
+        "name": "Mercedes-Benz Museum",
+        "title": "Mercedes-Benz Museum",
+        "category": "musei",
+        "region": "Baden-Württemberg",
+        "description": "Museo di Stoccarda dedicato alla storia dell’automobile e del marchio Mercedes-Benz.",
+        "qid": "Q707377",
+        "lat": 48.78855,
+        "lng": 9.23376,
+        "official": "https://www.mercedes-benz.com/en/art-and-culture/museum/",
+        "wiki": {
+          "it": "Museo Mercedes-Benz",
+          "en": "Mercedes-Benz Museum"
+        },
+        "photos": [
+          {
+            "file": "Mercedes-Benz Museum 201312 02 sunset.jpg",
+            "author": "Julian Herzog (Website)",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-europa-park",
+        "name": "Europa-Park",
+        "title": "Europa-Park",
+        "category": "parchi",
+        "region": "Baden-Württemberg",
+        "description": "Parco divertimenti a Rust; apertura, biglietti e limiti delle attrazioni vanno verificati.",
+        "qid": "Q159144",
+        "lat": 48.268333,
+        "lng": 7.720833,
+        "official": "https://www.europapark.de/",
+        "wiki": {
+          "it": "Europa-Park",
+          "en": "Europa-Park"
+        },
+        "photos": [
+          {
+            "file": "2008-04-26-DSC 1978-c-Europapark.jpg",
+            "author": "Thomas Berwing",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-friburgo",
+        "name": "Friburgo in Brisgovia",
+        "title": "Freiburg im Breisgau",
+        "category": "citta",
+        "region": "Baden-Württemberg",
+        "description": "Città ai margini della Foresta Nera, con centro pedonale e cattedrale.",
+        "qid": "Q2833",
+        "lat": 47.995,
+        "lng": 7.85,
+        "official": "https://www.freiburg.de/",
+        "wiki": {
+          "it": "Friburgo in Brisgovia",
+          "en": "Freiburg im Breisgau"
+        },
+        "photos": [
+          {
+            "file": "Schlossbergblick Freiburg i. B. 14.jpg",
+            "author": "H.Helmlechner",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-dresda",
+        "name": "Dresda",
+        "title": "Dresden",
+        "category": "citta",
+        "region": "Sassonia e Turingia",
+        "description": "Città sull’Elba con residenze, musei e architetture barocche ricostruite.",
+        "qid": "Q1731",
+        "lat": 51.0493286,
+        "lng": 13.7381437,
+        "official": "https://www.dresden.de/",
+        "wiki": {
+          "it": "Dresda",
+          "en": "Dresden"
+        },
+        "photos": [
+          {
+            "file": "DD-canaletto-blick.jpg",
+            "author": "Bgabel",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-lipsia",
+        "name": "Lipsia",
+        "title": "Leipzig",
+        "category": "citta",
+        "region": "Sassonia e Turingia",
+        "description": "Città della Sassonia con tradizione musicale, musei e parchi.",
+        "qid": "Q2079",
+        "lat": 51.3406321,
+        "lng": 12.3747329,
+        "official": "https://www.leipzig.de/",
+        "wiki": {
+          "it": "Lipsia",
+          "en": "Leipzig"
+        },
+        "photos": [
+          {
+            "file": "Innenstadt Leipzig mit Thomaskirche von Panorama Tower 2013.jpg",
+            "author": "Tuxyso",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-bastei",
+        "name": "Bastei",
+        "title": "Bastei",
+        "category": "natura",
+        "region": "Sassonia e Turingia",
+        "description": "Formazione rocciosa e belvedere nella Svizzera Sassone; percorsi e condizioni di accesso vanno controllati.",
+        "qid": "Q671486",
+        "lat": 50.966666666667,
+        "lng": 14.066666666667,
+        "wiki": {
+          "it": "Bastei",
+          "en": "Bastei"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-ber",
+        "name": "Aeroporto di Berlino Brandeburgo",
+        "title": "Berlin Brandenburg Airport",
+        "category": "aeroporti",
+        "region": "Berlino e Brandeburgo",
+        "description": "Aeroporto dell’area di Berlino; collegamenti con la città e tempi di accesso da verificare.",
+        "qid": "Q160556",
+        "lat": 52.36224722222222,
+        "lng": 13.500672222222223,
+        "iata": "BER",
+        "official": "https://ber.berlin-airport.de/",
+        "wiki": {
+          "it": "Aeroporto di Berlino-Brandeburgo",
+          "en": "Berlin Brandenburg Airport"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-muc",
+        "name": "Aeroporto di Monaco",
+        "title": "Munich Airport",
+        "category": "aeroporti",
+        "region": "Baviera",
+        "description": "Aeroporto dell’area di Monaco di Baviera; trasferimenti da verificare.",
+        "qid": "Q131402",
+        "lat": 48.35378333333333,
+        "lng": 11.78608611111111,
+        "iata": "MUC",
+        "official": "https://www.munich-airport.de/",
+        "wiki": {
+          "it": "Aeroporto di Monaco di Baviera",
+          "en": "Munich Airport"
+        },
+        "photos": [
+          {
+            "file": "Munich Airport Aerial View T1 T2 MAC.jpg",
+            "author": "Thomas Kniess",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "de-fra",
+        "name": "Aeroporto di Francoforte",
+        "title": "Frankfurt Airport",
+        "category": "aeroporti",
+        "region": "Renania e Germania occidentale",
+        "description": "Aeroporto dell’area di Francoforte sul Meno; terminal e trasferimenti da verificare.",
+        "qid": "Q46033",
+        "lat": 50.03330555555556,
+        "lng": 8.570455555555556,
+        "iata": "FRA",
+        "official": "https://www.frankfurt-airport.com/",
+        "wiki": {
+          "it": "Aeroporto di Francoforte sul Meno",
+          "en": "Frankfurt Airport"
+        },
+        "photos": [
+          {
+            "file": "FRA June2013.JPG",
+            "author": "Steffen Wurzel",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  },
+  "FR": {
+    "name": "Francia",
+    "en": "France",
+    "language": "fr",
+    "currency": "EUR",
+    "timezone": "Europe/Paris",
+    "qid": "Q142",
+    "bounds": [
+      41,
+      51.2,
+      -5.5,
+      10
+    ],
+    "tourism": "https://www.france.fr/en/",
+    "regions": [
+      "Parigi e Île-de-France",
+      "Normandia e Bretagna",
+      "Valle della Loira",
+      "Alsazia e Francia orientale",
+      "Lione e Alpi francesi",
+      "Provenza e Costa Azzurra",
+      "Francia sud-occidentale"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "fr-parigi",
+        "name": "Parigi",
+        "title": "Paris",
+        "category": "citta",
+        "region": "Parigi e Île-de-France",
+        "description": "Capitale francese attraversata dalla Senna, con musei, giardini e quartieri storici.",
+        "qid": "Q90",
+        "lat": 48.85666666666667,
+        "lng": 2.352222222222222,
+        "official": "https://www.paris.fr/",
+        "wiki": {
+          "it": "Parigi",
+          "en": "Paris"
+        },
+        "photos": [
+          {
+            "file": "La Tour Eiffel vue de la Tour Saint-Jacques, Paris août 2014 (2).jpg",
+            "author": "Yann Caradec from Paris, France",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-louvre",
+        "name": "Museo del Louvre",
+        "title": "Louvre",
+        "category": "musei",
+        "region": "Parigi e Île-de-France",
+        "description": "Museo parigino con collezioni di arte e archeologia nel palazzo del Louvre.",
+        "qid": "Q19675",
+        "lat": 48.861111111111114,
+        "lng": 2.3358333333333334,
+        "official": "https://www.louvre.fr/",
+        "wiki": {
+          "it": "Museo del Louvre",
+          "en": "Louvre"
+        },
+        "photos": [
+          {
+            "file": "Cour Napoléon at night - Louvre.jpg",
+            "author": "Benh LIEU SONG",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-torre-eiffel",
+        "name": "Torre Eiffel",
+        "title": "Eiffel Tower",
+        "category": "musei",
+        "region": "Parigi e Île-de-France",
+        "description": "Torre in ferro sul Champ-de-Mars; livelli accessibili, prenotazioni e aperture vanno controllati.",
+        "qid": "Q243",
+        "lat": 48.858296,
+        "lng": 2.294479,
+        "official": "https://www.toureiffel.paris",
+        "wiki": {
+          "it": "Torre Eiffel",
+          "en": "Eiffel Tower"
+        },
+        "photos": [
+          {
+            "file": "Tour Eiffel Wikimedia Commons.jpg",
+            "author": "Benh LIEU SONG",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-orsay",
+        "name": "Museo d’Orsay",
+        "title": "Musée d'Orsay",
+        "category": "musei",
+        "region": "Parigi e Île-de-France",
+        "description": "Museo d’arte ospitato in una ex stazione sulla riva della Senna.",
+        "qid": "Q23402",
+        "lat": 48.859972,
+        "lng": 2.326527,
+        "official": "https://www.musee-orsay.fr",
+        "wiki": {
+          "it": "Museo d'Orsay",
+          "en": "Musée d'Orsay"
+        },
+        "photos": [
+          {
+            "file": "MuseeDOrsay.jpg",
+            "author": "Sanchezn",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "Musee d'Orsay and Pont Royal, North-West view 140402 1.jpg",
+            "author": "DXR",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Gare d'Orsay (49570190081).jpg",
+            "author": "Cheng-en Cheng from Taichung City, Taiwan",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-jardin-plantes",
+        "name": "Jardin des Plantes",
+        "title": "Jardin des plantes",
+        "category": "natura",
+        "region": "Parigi e Île-de-France",
+        "description": "Giardino botanico di Parigi collegato al complesso del Museo nazionale di storia naturale.",
+        "qid": "Q730948",
+        "lat": 48.843888888889,
+        "lng": 2.3597222222222,
+        "official": "https://www.jardindesplantesdeparis.fr/",
+        "wiki": {
+          "it": "Jardin des Plantes",
+          "en": "Jardin des Plantes"
+        },
+        "photos": [
+          {
+            "file": "Paris 75005 Grande Galerie de l'Evolution 20070804.jpg",
+            "author": "Benh LIEU SONG",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-cite-sciences",
+        "name": "Città delle scienze e dell’industria",
+        "title": "Cité des Sciences et de l’Industrie",
+        "category": "musei",
+        "region": "Parigi e Île-de-France",
+        "description": "Centro scientifico alla Villette, con esposizioni e attività da scegliere secondo l’età.",
+        "qid": "Q1094338",
+        "lat": 48.89555555555555,
+        "lng": 2.388055555555556,
+        "official": "https://www.cite-sciences.fr/",
+        "wiki": {
+          "it": "Cité des sciences et de l'industrie",
+          "en": "Cité des Sciences et de l'Industrie"
+        },
+        "photos": [
+          {
+            "file": "Radio telescope de la Villette.jpg",
+            "author": "Aliva Sahoo",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-versailles",
+        "name": "Reggia di Versailles",
+        "title": "Palace of Versailles",
+        "category": "musei",
+        "region": "Parigi e Île-de-France",
+        "description": "Residenza reale con giardini a Versailles; palazzo, parco e tenute possono avere accessi distinti.",
+        "qid": "Q2946",
+        "lat": 48.804722222222225,
+        "lng": 2.120277777777778,
+        "official": "https://en.chateauversailles.fr/",
+        "wiki": {
+          "it": "Reggia di Versailles",
+          "en": "Palace of Versailles"
+        },
+        "photos": [
+          {
+            "file": "Vue aérienne du domaine de Versailles par ToucanWings - Creative Commons By Sa 3.0 - 083.jpg",
+            "author": "ToucanWings",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-disneyland",
+        "name": "Disneyland Paris",
+        "title": "Disneyland Paris",
+        "category": "parchi",
+        "region": "Parigi e Île-de-France",
+        "description": "Complesso di parchi a Marne-la-Vallée, fuori dal centro di Parigi; biglietti e trasferimento da verificare.",
+        "qid": "Q206521",
+        "lat": 48.868719444444,
+        "lng": 2.7818,
+        "official": "https://www.disneylandparis.com/",
+        "wiki": {
+          "it": "Disneyland Paris",
+          "en": "Disneyland Paris"
+        },
+        "photos": [
+          {
+            "file": "Disneyland Park 05, Paris 22 August 2013.jpg",
+            "author": "flightlog",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-rouen",
+        "name": "Rouen",
+        "title": "Rouen",
+        "category": "citta",
+        "region": "Normandia e Bretagna",
+        "description": "Città normanna sulla Senna con centro storico e cattedrale.",
+        "qid": "Q30974",
+        "lat": 49.443055555556,
+        "lng": 1.1025,
+        "official": "https://rouen.fr/",
+        "wiki": {
+          "it": "Rouen",
+          "en": "Rouen"
+        },
+        "photos": [
+          {
+            "file": "Rouen mosaique.png",
+            "author": "Foulques1996",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-mont-saint-michel",
+        "name": "Mont-Saint-Michel",
+        "title": "Mont-Saint-Michel",
+        "category": "isole",
+        "region": "Normandia e Bretagna",
+        "description": "Borgo e abbazia su un isolotto della baia normanna; maree e accessi richiedono controlli aggiornati.",
+        "qid": "Q20892",
+        "lat": 48.635833333333,
+        "lng": -1.5102777777778,
+        "official": "https://mairie-lemontsaintmichel.fr/",
+        "wiki": {
+          "it": "Le Mont-Saint-Michel",
+          "en": "Mont-Saint-Michel"
+        },
+        "photos": [
+          {
+            "file": "Mont St Michel 3, Brittany, France - July 2011.jpg",
+            "author": "Diliff",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-saint-malo",
+        "name": "Saint-Malo",
+        "title": "Saint-Malo",
+        "category": "citta",
+        "region": "Normandia e Bretagna",
+        "description": "Città costiera bretone con centro storico cinto da mura.",
+        "qid": "Q163108",
+        "lat": 48.64944444444444,
+        "lng": -2.026111111111111,
+        "official": "http://www.ville-saint-malo.fr",
+        "wiki": {
+          "it": "Saint-Malo",
+          "en": "Saint-Malo"
+        },
+        "photos": [
+          {
+            "file": "Aerial image of Saint-Malo (view from the south).jpg",
+            "author": "Carsten Steger",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-nantes",
+        "name": "Nantes",
+        "title": "Nantes",
+        "category": "citta",
+        "region": "Valle della Loira",
+        "description": "Città della Loira con castello, musei e spazi sull’isola di Nantes.",
+        "qid": "Q12191",
+        "lat": 47.217222222222,
+        "lng": -1.5538888888889,
+        "official": "https://metropole.nantes.fr/",
+        "wiki": {
+          "it": "Nantes",
+          "en": "Nantes"
+        },
+        "photos": [
+          {
+            "file": "Marité.jpg",
+            "author": "Jibi44",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-machines-ile",
+        "name": "Les Machines de l’île",
+        "title": "Machines of the Isle of Nantes",
+        "category": "parchi",
+        "region": "Valle della Loira",
+        "description": "Installazioni meccaniche e attrazioni artistiche sull’isola di Nantes.",
+        "qid": "Q1820547",
+        "lat": 47.206,
+        "lng": -1.5648194444444,
+        "wiki": {
+          "it": "Macchine dell'Isola di Nantes",
+          "en": "Machines of the Isle of Nantes"
+        },
+        "photos": [
+          {
+            "file": "Hangar des machines de l'île.jpg",
+            "author": "User:Symac",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-tours",
+        "name": "Tours",
+        "title": "Tours",
+        "category": "citta",
+        "region": "Valle della Loira",
+        "description": "Città della Valle della Loira, utilizzabile come base per esplorare i dintorni.",
+        "qid": "Q288",
+        "lat": 47.392777777778,
+        "lng": 0.68833333333333,
+        "official": "https://www.tours.fr/",
+        "wiki": {
+          "it": "Tours",
+          "en": "Tours"
+        },
+        "photos": [
+          {
+            "file": "Morning in September in Tours 18.jpg",
+            "author": "Szilas",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-chambord",
+        "name": "Castello di Chambord",
+        "title": "Château de Chambord",
+        "category": "musei",
+        "region": "Valle della Loira",
+        "description": "Castello rinascimentale nella Valle della Loira, circondato da una vasta tenuta.",
+        "qid": "Q205367",
+        "lat": 47.61611111111111,
+        "lng": 1.5172222222222222,
+        "official": "http://www.chambord.org",
+        "wiki": {
+          "it": "Castello di Chambord",
+          "en": "Château de Chambord"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-strasburgo",
+        "name": "Strasburgo",
+        "title": "Strasbourg",
+        "category": "citta",
+        "region": "Alsazia e Francia orientale",
+        "description": "Città alsaziana con cattedrale e quartieri storici lungo i canali.",
+        "qid": "Q6602",
+        "lat": 48.573333333333,
+        "lng": 7.7522222222222,
+        "official": "https://www.strasbourg.eu",
+        "wiki": {
+          "it": "Strasburgo",
+          "en": "Strasbourg"
+        },
+        "photos": [
+          {
+            "file": "Strasbourg seen from Esca Tower in 2014.jpg",
+            "author": "Dominique Philbert",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Strasburg.jpg",
+            "author": "Radek Kucharski",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-colmar",
+        "name": "Colmar",
+        "title": "Colmar",
+        "category": "citta",
+        "region": "Alsazia e Francia orientale",
+        "description": "Città alsaziana con case a graticcio e vie del centro storico.",
+        "qid": "Q130994",
+        "lat": 48.081111111111,
+        "lng": 7.355,
+        "official": "https://www.colmar.fr/",
+        "wiki": {
+          "it": "Colmar",
+          "en": "Colmar"
+        },
+        "photos": [
+          {
+            "file": "View of Église Saint-Martin (43833049001).jpg",
+            "author": "--sinava-- from Berlin",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-lione",
+        "name": "Lione",
+        "title": "Lyon",
+        "category": "citta",
+        "region": "Lione e Alpi francesi",
+        "description": "Città alla confluenza di Rodano e Saona, con quartieri storici e musei.",
+        "qid": "Q456",
+        "lat": 45.7675,
+        "lng": 4.835,
+        "official": "https://www.lyon.fr/",
+        "wiki": {
+          "it": "Lione",
+          "en": "Lyon"
+        },
+        "photos": [
+          {
+            "file": "01. Panorama de Lyon pris depuis le toit de la Basilique de Fourvière.jpg",
+            "author": "Otourly",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-annecy",
+        "name": "Annecy",
+        "title": "Annecy",
+        "category": "citta",
+        "region": "Lione e Alpi francesi",
+        "description": "Città dell’Alta Savoia sul lago omonimo, con canali e centro storico.",
+        "qid": "Q50189",
+        "lat": 45.899166666667,
+        "lng": 6.1294444444444,
+        "official": "https://www.annecy.fr/",
+        "wiki": {
+          "it": "Annecy",
+          "en": "Annecy"
+        },
+        "photos": [
+          {
+            "file": "Annecy-palais2.jpg",
+            "author": "Yves LC",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-chamonix",
+        "name": "Chamonix",
+        "title": "Chamonix",
+        "category": "citta",
+        "region": "Lione e Alpi francesi",
+        "description": "Località alpina ai piedi del massiccio del Monte Bianco; impianti e percorsi dipendono dalle condizioni.",
+        "qid": "Q83236",
+        "lat": 45.922222222222,
+        "lng": 6.8688888888889,
+        "official": "https://www.chamonix.fr/",
+        "wiki": {
+          "it": "Chamonix-Mont-Blanc",
+          "en": "Chamonix"
+        },
+        "photos": [
+          {
+            "file": "Chamonix - Arve river.jpg",
+            "author": "Tiia Monto",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-avignone",
+        "name": "Avignone",
+        "title": "Avignon",
+        "category": "citta",
+        "region": "Provenza e Costa Azzurra",
+        "description": "Città provenzale sul Rodano con mura e Palazzo dei Papi.",
+        "qid": "Q6397",
+        "lat": 43.948611111111,
+        "lng": 4.8083333333333,
+        "official": "http://www.avignon.fr",
+        "wiki": {
+          "it": "Avignone",
+          "en": "Avignon"
+        },
+        "photos": [
+          {
+            "file": "Avignon, Palais des Papes depuis Tour Philippe le Bel by JM Rosier.jpg",
+            "author": "Jean-Marc Rosier (de/from http://www.cjrosier.com + http://www.gordes-immobilier.com)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": ".00 3171 Stadtmauer von Avignon, Frankreich.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-pont-gard",
+        "name": "Pont du Gard",
+        "title": "Pont du Gard",
+        "category": "musei",
+        "region": "Provenza e Costa Azzurra",
+        "description": "Ponte-acquedotto romano presso il Gardon, con area di visita e percorsi.",
+        "qid": "Q189764",
+        "lat": 43.9473,
+        "lng": 4.5355,
+        "official": "https://www.pontdugard.fr",
+        "wiki": {
+          "it": "Pont du Gard",
+          "en": "Pont du Gard"
+        },
+        "photos": [
+          {
+            "file": "Pont du Gard BLS.jpg",
+            "author": "Benh LIEU SONG (Flickr)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-nizza",
+        "name": "Nizza",
+        "title": "Nice",
+        "category": "citta",
+        "region": "Provenza e Costa Azzurra",
+        "description": "Città della Costa Azzurra con centro storico e passeggiata sul mare.",
+        "qid": "Q33959",
+        "lat": 43.701944444444,
+        "lng": 7.2683333333333,
+        "official": "https://nice.fr",
+        "wiki": {
+          "it": "Nizza",
+          "en": "Nice"
+        },
+        "photos": [
+          {
+            "file": "Port Of Nice, Côte d'Azur.jpg",
+            "author": "Moody Dreiza (Moody751 at English Wikipedia)",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-bordeaux",
+        "name": "Bordeaux",
+        "title": "Bordeaux",
+        "category": "citta",
+        "region": "Francia sud-occidentale",
+        "description": "Città sulla Garonna con architettura storica e lungofiume.",
+        "qid": "Q1479",
+        "lat": 44.837777777778,
+        "lng": -0.57944444444444,
+        "official": "https://www.bordeaux.fr",
+        "wiki": {
+          "it": "Bordeaux",
+          "en": "Bordeaux"
+        },
+        "photos": [
+          {
+            "file": "138 - Place de la Bourse et le miroir d'eau - Bordeaux.jpg",
+            "author": "Patrick Despoix",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-tolosa",
+        "name": "Tolosa",
+        "title": "Toulouse",
+        "category": "citta",
+        "region": "Francia sud-occidentale",
+        "description": "Città sul fiume Garonna con architetture in mattoni e musei.",
+        "qid": "Q7880",
+        "lat": 43.60444444444445,
+        "lng": 1.4433333333333334,
+        "official": "https://metropole.toulouse.fr/",
+        "wiki": {
+          "it": "Tolosa",
+          "en": "Toulouse"
+        },
+        "photos": [
+          {
+            "file": "Toulouse - View on Saint Sernin.jpg",
+            "author": "Tonio94 (talk · contribs)",
+            "license": "CC BY-SA 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-cite-espace",
+        "name": "Cité de l’espace",
+        "title": "Cité de l'espace",
+        "category": "musei",
+        "region": "Francia sud-occidentale",
+        "description": "Centro di divulgazione dedicato all’esplorazione spaziale nei dintorni di Tolosa.",
+        "qid": "Q1094325",
+        "lat": 43.58691667,
+        "lng": 1.49327778,
+        "official": "http://www.cite-espace.com/",
+        "wiki": {
+          "it": "Cité de l'espace",
+          "en": "Cité de l'espace"
+        },
+        "photos": [
+          {
+            "file": "CDE Mir.JPG",
+            "author": "Emeraude 22:10, 16 October 2006 (UTC)",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          },
+          {
+            "file": "Radar à la Cité de l'Espace.jpg",
+            "author": "Celeda",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-carcassonne",
+        "name": "Carcassonne",
+        "title": "Carcassonne",
+        "category": "citta",
+        "region": "Francia sud-occidentale",
+        "description": "Città dell’Occitania con cittadella fortificata e mura.",
+        "qid": "Q6582",
+        "lat": 43.215833333333,
+        "lng": 2.3513888888889,
+        "official": "http://www.carcassonne.org",
+        "wiki": {
+          "it": "Carcassonne",
+          "en": "Carcassonne"
+        },
+        "photos": [
+          {
+            "file": "1 carcassonne aerial 2016.jpg",
+            "author": "Chensiyuan",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-cdg",
+        "name": "Aeroporto di Parigi Charles de Gaulle",
+        "title": "Charles de Gaulle Airport",
+        "category": "aeroporti",
+        "region": "Parigi e Île-de-France",
+        "description": "Aeroporto dell’area parigina; terminal e collegamenti da verificare.",
+        "qid": "Q46280",
+        "lat": 49.009722222222,
+        "lng": 2.5477777777778,
+        "iata": "CDG",
+        "official": "https://www.parisaeroport.fr/fr/passagers/roissy-charles-de-gaulle",
+        "wiki": {
+          "it": "Aeroporto di Parigi Charles de Gaulle",
+          "en": "Paris Charles de Gaulle Airport"
+        },
+        "photos": [
+          {
+            "file": "Aeroport de Roissy.JPG",
+            "author": "Remi Jouan",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-lys",
+        "name": "Aeroporto di Lione Saint-Exupéry",
+        "title": "Lyon–Saint-Exupéry Airport",
+        "category": "aeroporti",
+        "region": "Lione e Alpi francesi",
+        "description": "Aeroporto dell’area di Lione; collegamenti con la città da verificare.",
+        "qid": "Q1547",
+        "lat": 45.725555555556,
+        "lng": 5.0811111111111,
+        "iata": "LYS",
+        "official": "https://www.lyonaeroports.com/",
+        "wiki": {
+          "it": "Aeroporto di Lione Saint Exupéry",
+          "en": "Lyon–Saint-Exupéry Airport"
+        },
+        "photos": [
+          {
+            "file": "Vue aérienne d'une partie de l'aéroport de Lyon Saint-Exupéry et de la gare TGV (septembre 2022).jpg",
+            "author": "Benoît Prieur",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "fr-nce",
+        "name": "Aeroporto di Nizza Costa Azzurra",
+        "title": "Nice Côte d'Azur Airport",
+        "category": "aeroporti",
+        "region": "Provenza e Costa Azzurra",
+        "description": "Aeroporto dell’area di Nizza; trasferimenti e terminal da verificare.",
+        "qid": "Q821557",
+        "lat": 43.665277777778,
+        "lng": 7.215,
+        "iata": "NCE",
+        "official": "https://www.nice.aeroport.fr/",
+        "wiki": {
+          "it": "Aeroporto di Nizza Costa Azzurra",
+          "en": "Nice Côte d'Azur Airport"
+        },
+        "photos": [
+          {
+            "file": "Aéroport Nice vue aérienne.jpg",
+            "author": "Abxbay",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  },
+  "JP": {
+    "name": "Giappone",
+    "en": "Japan",
+    "language": "ja",
+    "currency": "JPY",
+    "timezone": "Asia/Tokyo",
+    "qid": "Q17",
+    "bounds": [
+      24,
+      46,
+      122,
+      146
+    ],
+    "tourism": "https://www.japan.travel/en/",
+    "regions": [
+      "Tokyo e Kantō",
+      "Kyoto, Osaka e Kansai",
+      "Chūbu e Alpi giapponesi",
+      "Hokkaidō",
+      "Tōhoku",
+      "Chūgoku e Shikoku",
+      "Kyūshū e Okinawa"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "jp-tokyo",
+        "name": "Tokyo",
+        "title": "Tokyo",
+        "category": "citta",
+        "region": "Tokyo e Kantō",
+        "description": "Capitale giapponese con quartieri molto diversi, musei e giardini; conviene organizzare le visite per zona.",
+        "qid": "Q1490",
+        "lat": 35.68944444444445,
+        "lng": 139.69166666666666,
+        "official": "https://www.english.metro.tokyo.lg.jp/",
+        "wiki": {
+          "it": "Tokyo",
+          "en": "Tokyo"
+        },
+        "photos": [
+          {
+            "file": "Skyscrapers of Shinjuku 2009 January (revised).jpg",
+            "author": "Morio",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Tokyo Japan taken by Hodoyoshi-3 Satellite.jpg",
+            "author": "The University of Tokyo, Hodoyoshi-3&4 Project",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-sensoji",
+        "name": "Sensō-ji",
+        "title": "Sensō-ji",
+        "category": "musei",
+        "region": "Tokyo e Kantō",
+        "description": "Tempio buddhista nel quartiere di Asakusa, a Tokyo.",
+        "qid": "Q615183",
+        "lat": 35.714555555556,
+        "lng": 139.79663888889,
+        "official": "https://www.senso-ji.jp/",
+        "wiki": {
+          "it": "Sensō-ji",
+          "en": "Sensō-ji"
+        },
+        "photos": [
+          {
+            "file": "Sensoji 2023.jpg",
+            "author": "Akonnchiroll",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-ueno",
+        "name": "Parco di Ueno",
+        "title": "Ueno Park",
+        "category": "natura",
+        "region": "Tokyo e Kantō",
+        "description": "Parco di Tokyo con viali, laghetto e istituzioni museali.",
+        "qid": "Q746216",
+        "lat": 35.712222,
+        "lng": 139.771111,
+        "official": "http://www.kensetsu.metro.tokyo.jp/toubuk/ueno/index_top.html",
+        "wiki": {
+          "it": "Parco di Ueno",
+          "en": "Ueno Park"
+        },
+        "photos": [
+          {
+            "file": "UenoPark Hanami.jpg",
+            "author": "The original uploader was Sdalu at English Wikipedia.",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-museo-tokyo",
+        "name": "Museo nazionale di Tokyo",
+        "title": "Tokyo National Museum",
+        "category": "musei",
+        "region": "Tokyo e Kantō",
+        "description": "Museo nel parco di Ueno dedicato all’arte e alle antichità del Giappone e dell’Asia.",
+        "qid": "Q653433",
+        "lat": 35.71888888888889,
+        "lng": 139.7763888888889,
+        "official": "https://www.tnm.jp/",
+        "wiki": {
+          "it": "Museo nazionale di Tokyo",
+          "en": "Tokyo National Museum"
+        },
+        "photos": [
+          {
+            "file": "Tokyo National Museum, Honkan 2010.jpg",
+            "author": "Wiiii",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-miraikan",
+        "name": "Miraikan",
+        "title": "Miraikan",
+        "category": "musei",
+        "region": "Tokyo e Kantō",
+        "description": "Museo della scienza e dell’innovazione nell’area di Odaiba a Tokyo.",
+        "qid": "Q656957",
+        "lat": 35.61916667,
+        "lng": 139.77666667,
+        "official": "http://www.miraikan.jst.go.jp/index.html",
+        "wiki": {
+          "it": "Miraikan",
+          "en": "Miraikan"
+        },
+        "photos": [
+          {
+            "file": "Miraikan.jpg",
+            "author": "Jason Ruck",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-museo-ghibli",
+        "name": "Museo Ghibli",
+        "title": "Ghibli Museum",
+        "category": "musei",
+        "region": "Tokyo e Kantō",
+        "description": "Museo dedicato all’animazione dello Studio Ghibli a Mitaka; modalità di prenotazione da controllare prima della visita.",
+        "qid": "Q947907",
+        "lat": 35.696233,
+        "lng": 139.570431,
+        "official": "https://www.ghibli-museum.jp/en/",
+        "wiki": {
+          "it": "Museo Ghibli",
+          "en": "Ghibli Museum"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-nikko",
+        "name": "Nikkō",
+        "title": "Nikkō",
+        "category": "citta",
+        "region": "Tokyo e Kantō",
+        "description": "Località del Tochigi con santuari e paesaggi montani.",
+        "qid": "Q235753",
+        "lat": 36.719833333333334,
+        "lng": 139.69816666666668,
+        "official": "https://www.city.nikko.lg.jp/",
+        "wiki": {
+          "it": "Nikkō",
+          "en": "Nikkō"
+        },
+        "photos": [
+          {
+            "file": "Kegon Taki.jpg",
+            "author": "Jordy Meow",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "200801 Nikko Tosho-gu Nikko Japan03s3.jpg",
+            "author": "663highland",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-hakone",
+        "name": "Hakone",
+        "title": "Hakone",
+        "category": "citta",
+        "region": "Tokyo e Kantō",
+        "description": "Area montana con lago e musei, a ovest di Tokyo; trasporti locali e condizioni da verificare.",
+        "qid": "Q671040",
+        "lat": 35.23236111111111,
+        "lng": 139.10694444444445,
+        "official": "https://www.town.hakone.kanagawa.jp/",
+        "wiki": {
+          "it": "Hakone",
+          "en": "Hakone"
+        },
+        "photos": [
+          {
+            "file": "161223 Owakudani Hakone Japan08s3.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          },
+          {
+            "file": "Mount Fuji from Lake Ashi 20211202-2.jpg",
+            "author": "Suicasmo",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-kyoto",
+        "name": "Kyoto",
+        "title": "Kyoto",
+        "category": "citta",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Città con templi, santuari e quartieri storici; le visite richiedono attenzione alle distanze tra le zone.",
+        "qid": "Q34600",
+        "lat": 35.01161111111111,
+        "lng": 135.76811111111112,
+        "official": "https://www.city.kyoto.lg.jp/",
+        "wiki": {
+          "it": "Kyoto",
+          "en": "Kyoto"
+        },
+        "photos": [
+          {
+            "file": "Pedestrian road with pavements, paper umbrellas and people in yukata, Higashiyama-ku, Kyoto, Japan.jpg",
+            "author": "Basile Morin",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-fushimi-inari",
+        "name": "Fushimi Inari Taisha",
+        "title": "Fushimi Inari-taisha",
+        "category": "musei",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Santuario di Kyoto con percorsi di torii lungo il monte Inari; lunghezza e dislivello dipendono dall’itinerario scelto.",
+        "qid": "Q714828",
+        "lat": 34.967202,
+        "lng": 135.773386,
+        "official": "https://inari.jp/",
+        "wiki": {
+          "it": "Santuario di Fushimi Inari-taisha",
+          "en": "Fushimi Inari-taisha"
+        },
+        "photos": [
+          {
+            "file": "Fushimiinari-taisha, naihaiden-1.jpg",
+            "author": "Saigen Jiro",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-osaka",
+        "name": "Osaka",
+        "title": "Osaka",
+        "category": "citta",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Città del Kansai con quartieri commerciali, musei e passeggiate lungo i canali.",
+        "qid": "Q35765",
+        "lat": 34.69375,
+        "lng": 135.5021111111111,
+        "official": "https://www.city.osaka.lg.jp/",
+        "wiki": {
+          "it": "Osaka",
+          "en": "Osaka"
+        },
+        "photos": [
+          {
+            "file": "Osaka Castle 02bs3200.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          },
+          {
+            "file": "Osaka montage.jpg",
+            "author": "Kyoww",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-kaiyukan",
+        "name": "Acquario Kaiyukan",
+        "title": "Osaka Aquarium Kaiyukan",
+        "category": "fauna",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Acquario nell’area portuale di Osaka con ambienti dedicati alla vita marina.",
+        "qid": "Q1191885",
+        "lat": 34.654472222222,
+        "lng": 135.42888888889,
+        "official": "https://www.kaiyukan.com/",
+        "wiki": {
+          "it": "Kaiyūkan",
+          "en": "Osaka Aquarium Kaiyukan"
+        },
+        "photos": [
+          {
+            "file": "Osaka Kaiyukan01s3872.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-nara",
+        "name": "Nara",
+        "title": "Nara, Nara",
+        "category": "citta",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Città del Kansai con templi e un parco frequentato da cervi liberi.",
+        "qid": "Q169134",
+        "lat": 34.685,
+        "lng": 135.8047777777778,
+        "official": "https://www.city.nara.lg.jp/",
+        "wiki": {
+          "it": "Nara",
+          "en": "Nara (city)"
+        },
+        "photos": [
+          {
+            "file": "Sika deer in Nara 05.jpg",
+            "author": "Dariusz Jemielniak (\"Pundit\")",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "Kasuga-taisha, chumon-1.jpg",
+            "author": "Saigen Jiro",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-parco-nara",
+        "name": "Parco di Nara",
+        "title": "Nara Park",
+        "category": "natura",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Parco con templi e cervi; osservazione e comportamento con gli animali richiedono attenzione.",
+        "qid": "Q1186358",
+        "lat": 34.68545278,
+        "lng": 135.84341111,
+        "official": "https://www3.pref.nara.jp/park/",
+        "wiki": {
+          "it": "Parco di Nara",
+          "en": "Nara Park"
+        },
+        "photos": [
+          {
+            "file": "Nara Park, November 2016.jpg",
+            "author": "Martin Falbisoner",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "Five-storied Pagoda, Kofuku-ji - Nara, Japan - DSC07497.jpg",
+            "author": "Daderot",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-himeji",
+        "name": "Castello di Himeji",
+        "title": "Himeji Castle",
+        "category": "musei",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Complesso fortificato storico a Himeji; scale e percorso interno vanno valutati prima della visita.",
+        "qid": "Q188754",
+        "lat": 34.839444444444446,
+        "lng": 134.69361111111112,
+        "official": "http://www.himejicastle.jp/en/",
+        "wiki": {
+          "it": "Castello di Himeji",
+          "en": "Himeji Castle"
+        },
+        "photos": [
+          {
+            "file": "Himeji castle in may 2015.jpg",
+            "author": "Nikos Kitsakis",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "Himeji Castle, Hyōgo Prefecture; August 2018 (04).jpg",
+            "author": "_steffen",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-kanazawa",
+        "name": "Kanazawa",
+        "title": "Kanazawa",
+        "category": "citta",
+        "region": "Chūbu e Alpi giapponesi",
+        "description": "Città dell’Ishikawa con giardini e quartieri storici.",
+        "qid": "Q191130",
+        "lat": 36.561055555555555,
+        "lng": 136.6565,
+        "official": "https://www4.city.kanazawa.lg.jp/",
+        "wiki": {
+          "it": "Kanazawa",
+          "en": "Kanazawa"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-kenrokuen",
+        "name": "Giardino Kenrokuen",
+        "title": "Kenroku-en",
+        "category": "natura",
+        "region": "Chūbu e Alpi giapponesi",
+        "description": "Giardino paesaggistico a Kanazawa, vicino al castello.",
+        "qid": "Q998239",
+        "lat": 36.561944444444,
+        "lng": 136.6625,
+        "official": "http://www.pref.ishikawa.jp/siro-niwa/kenrokuen/",
+        "wiki": {
+          "it": "Kenroku-en",
+          "en": "Kenroku-en"
+        },
+        "photos": [
+          {
+            "file": "131109 Kenrokuen Kanazawa Ishikawa pref Japan00s3.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          },
+          {
+            "file": "131109 Kenrokuen Kanazawa Ishikawa pref Japan01s3.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-takayama",
+        "name": "Takayama",
+        "title": "Takayama, Gifu",
+        "category": "citta",
+        "region": "Chūbu e Alpi giapponesi",
+        "description": "Città montana della prefettura di Gifu con strade storiche e tradizioni artigianali.",
+        "qid": "Q622594",
+        "lat": 36.146027777777775,
+        "lng": 137.25216666666665,
+        "official": "https://www.city.takayama.lg.jp/",
+        "wiki": {
+          "it": "Takayama",
+          "en": "Takayama, Gifu"
+        },
+        "photos": [
+          {
+            "file": "Hotakadake Takayama01j3872.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          },
+          {
+            "file": "Takayama (15485428565).jpg",
+            "author": "Felix Filnkoessl",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-matsumoto",
+        "name": "Matsumoto",
+        "title": "Matsumoto, Nagano",
+        "category": "citta",
+        "region": "Chūbu e Alpi giapponesi",
+        "description": "Città del Nagano con castello e accessi alle aree montane circostanti.",
+        "qid": "Q213324",
+        "lat": 36.238,
+        "lng": 137.97197222222223,
+        "official": "https://www.city.matsumoto.nagano.jp/",
+        "wiki": {
+          "it": "Matsumoto",
+          "en": "Matsumoto, Nagano"
+        },
+        "photos": [
+          {
+            "file": "Matsumoto Castle05s5s4592.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-sapporo",
+        "name": "Sapporo",
+        "title": "Sapporo",
+        "category": "citta",
+        "region": "Hokkaidō",
+        "description": "Città dell’Hokkaidō con parchi, musei e viali urbani.",
+        "qid": "Q37951",
+        "lat": 43.06194444444444,
+        "lng": 141.35444444444445,
+        "official": "https://www.city.sapporo.jp/",
+        "wiki": {
+          "it": "Sapporo",
+          "en": "Sapporo"
+        },
+        "photos": [
+          {
+            "file": "札幌タワー電波塔展望台から札幌駅方面 - panoramio.jpg",
+            "author": "Hideki Uchida (セラ)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-otaru",
+        "name": "Otaru",
+        "title": "Otaru",
+        "category": "citta",
+        "region": "Hokkaidō",
+        "description": "Città portuale dell’Hokkaidō con canale storico ed edifici di magazzino.",
+        "qid": "Q242108",
+        "lat": 43.19072222222222,
+        "lng": 140.99436111111112,
+        "official": "https://www.city.otaru.lg.jp/",
+        "wiki": {
+          "it": "Otaru",
+          "en": "Otaru"
+        },
+        "photos": [
+          {
+            "file": "Otaru from Tenguyama.JPG",
+            "author": "Soica2001 (talk)",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-sendai",
+        "name": "Sendai",
+        "title": "Sendai",
+        "category": "citta",
+        "region": "Tōhoku",
+        "description": "Città del Tōhoku utilizzabile come base per esplorare l’area di Miyagi.",
+        "qid": "Q46747",
+        "lat": 38.26822222222222,
+        "lng": 140.86941666666667,
+        "official": "https://www.city.sendai.jp/",
+        "wiki": {
+          "it": "Sendai",
+          "en": "Sendai"
+        },
+        "photos": [
+          {
+            "file": "SendaiCity Skylines from Mukaiyama2018.jpg",
+            "author": "Nryate",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-hiroshima",
+        "name": "Hiroshima",
+        "title": "Hiroshima",
+        "category": "citta",
+        "region": "Chūgoku e Shikoku",
+        "description": "Città del Giappone occidentale con luoghi della memoria e collegamenti da verificare verso le isole vicine.",
+        "qid": "Q34664",
+        "lat": 34.39138888888889,
+        "lng": 132.45194444444445,
+        "official": "https://www.city.hiroshima.lg.jp/",
+        "wiki": {
+          "it": "Hiroshima",
+          "en": "Hiroshima"
+        },
+        "photos": [
+          {
+            "file": "Atomic Bomb Dome and Motoyaso River, Hiroshima, Northwest view 20190417 1.jpg",
+            "author": "DXR",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-miyajima",
+        "name": "Miyajima",
+        "title": "Itsukushima",
+        "category": "isole",
+        "region": "Chūgoku e Shikoku",
+        "description": "Isola della baia di Hiroshima con santuario e percorsi; traghetto, maree e sentieri da verificare.",
+        "qid": "Q875301",
+        "lat": 34.275555555556,
+        "lng": 132.30777777778,
+        "official": "https://www.miyajima.or.jp/",
+        "wiki": {
+          "it": "Itsukushima",
+          "en": "Itsukushima"
+        },
+        "photos": [
+          {
+            "file": "Miyajima Island.jpg",
+            "author": "Bernard Gagnon",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-fukuoka",
+        "name": "Fukuoka",
+        "title": "Fukuoka",
+        "category": "citta",
+        "region": "Kyūshū e Okinawa",
+        "description": "Città del Kyūshū con quartieri storici, parchi e affacci sulla baia.",
+        "qid": "Q26600",
+        "lat": 33.59013888888889,
+        "lng": 130.40172222222222,
+        "official": "https://www.city.fukuoka.lg.jp/",
+        "wiki": {
+          "it": "Fukuoka",
+          "en": "Fukuoka"
+        },
+        "photos": [
+          {
+            "file": "Hakata Port from Fukuoka Tower.jpg",
+            "author": "そらみみ",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-nagasaki",
+        "name": "Nagasaki",
+        "title": "Nagasaki",
+        "category": "citta",
+        "region": "Kyūshū e Okinawa",
+        "description": "Città portuale del Kyūshū con luoghi storici e testimonianze degli scambi internazionali.",
+        "qid": "Q38234",
+        "lat": 32.74952777777778,
+        "lng": 129.87963888888888,
+        "official": "https://www.city.nagasaki.lg.jp/",
+        "wiki": {
+          "it": "Nagasaki",
+          "en": "Nagasaki"
+        },
+        "photos": [
+          {
+            "file": "Nagasaki City View from Glover Garden, Nagasaki 2014.jpg",
+            "author": "Tomio344456",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-churaumi",
+        "name": "Acquario Churaumi",
+        "title": "Okinawa Churaumi Aquarium",
+        "category": "fauna",
+        "region": "Kyūshū e Okinawa",
+        "description": "Acquario nel nord dell’isola principale di Okinawa; il trasferimento dalla base scelta va pianificato.",
+        "qid": "Q1445750",
+        "lat": 26.69438889,
+        "lng": 127.87794444,
+        "official": "https://churaumi.okinawa/",
+        "wiki": {
+          "it": "Acquario Churaumi",
+          "en": "Okinawa Churaumi Aquarium"
+        },
+        "photos": [
+          {
+            "file": "沖縄美ら海水族館＿大.jpg",
+            "author": "sinnosuke uchida",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-hnd",
+        "name": "Aeroporto di Tokyo Haneda",
+        "title": "Haneda Airport",
+        "category": "aeroporti",
+        "region": "Tokyo e Kantō",
+        "description": "Aeroporto dell’area di Tokyo; terminal e trasferimenti da verificare.",
+        "qid": "Q204853",
+        "lat": 35.553333333333,
+        "lng": 139.78111111111,
+        "iata": "HND",
+        "official": "https://tokyo-haneda.com/",
+        "wiki": {
+          "it": "Aeroporto Internazionale di Tokyo",
+          "en": "Haneda Airport"
+        },
+        "photos": [
+          {
+            "file": "Tokyo-International-Airport Satellite.jpg",
+            "author": "MaedaAkihiko",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-kix",
+        "name": "Aeroporto internazionale del Kansai",
+        "title": "Kansai International Airport",
+        "category": "aeroporti",
+        "region": "Kyoto, Osaka e Kansai",
+        "description": "Aeroporto su isola artificiale nella baia di Osaka; trasferimenti verso Osaka e Kyoto da verificare.",
+        "qid": "Q193682",
+        "lat": 34.43055555555556,
+        "lng": 135.2302777777778,
+        "iata": "KIX",
+        "official": "https://www.kansai-airport.or.jp/en/",
+        "wiki": {
+          "it": "Aeroporto Internazionale del Kansai",
+          "en": "Kansai International Airport"
+        },
+        "photos": [
+          {
+            "file": "関西国際空港全体写真20220811.jpg",
+            "author": "Ankou1192",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "jp-cts",
+        "name": "Aeroporto di New Chitose",
+        "title": "New Chitose Airport",
+        "category": "aeroporti",
+        "region": "Hokkaidō",
+        "description": "Aeroporto dell’area di Sapporo in Hokkaidō; trasferimenti da verificare.",
+        "qid": "Q908296",
+        "lat": 42.7752,
+        "lng": 141.69228333333,
+        "iata": "CTS",
+        "official": "https://www.hokkaido-airports.com/ja/new-chitose/",
+        "wiki": {
+          "it": "Aeroporto di Shin-Chitose",
+          "en": "New Chitose Airport"
+        },
+        "photos": [
+          {
+            "file": "Hokkaido New Chitose Airport13n4272.jpg",
+            "author": "663highland",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  },
+  "NL": {
+    "name": "Paesi Bassi",
+    "en": "Netherlands",
+    "language": "nl",
+    "currency": "EUR",
+    "timezone": "Europe/Amsterdam",
+    "qid": "Q55",
+    "bounds": [
+      50.7,
+      53.7,
+      3,
+      7.3
+    ],
+    "tourism": "https://www.holland.com/global/tourism",
+    "regions": [
+      "Amsterdam e Olanda settentrionale",
+      "L’Aia, Rotterdam e Olanda meridionale",
+      "Utrecht e Paesi Bassi centrali",
+      "Brabante e Limburgo",
+      "Frisia e Paesi Bassi settentrionali"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "nl-amsterdam",
+        "name": "Amsterdam",
+        "title": "Amsterdam",
+        "category": "citta",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Capitale dei Paesi Bassi con canali, musei e quartieri storici.",
+        "qid": "Q727",
+        "lat": 52.36666666666667,
+        "lng": 4.883333333333333,
+        "official": "https://amsterdam.nl",
+        "wiki": {
+          "it": "Amsterdam",
+          "en": "Amsterdam"
+        },
+        "photos": [
+          {
+            "file": "Imagen de los canales concéntricos en Ámsterdam.png",
+            "author": "Andrés Barrios",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-rijksmuseum",
+        "name": "Rijksmuseum",
+        "title": "Rijksmuseum",
+        "category": "musei",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Museo di Amsterdam dedicato all’arte e alla storia dei Paesi Bassi.",
+        "qid": "Q190804",
+        "lat": 52.36,
+        "lng": 4.885277777777778,
+        "official": "https://www.rijksmuseum.nl/",
+        "wiki": {
+          "it": "Rijksmuseum (Amsterdam)",
+          "en": "Rijksmuseum"
+        },
+        "photos": [
+          {
+            "file": "Rijksmuseum in Amsterdam.jpg",
+            "author": "Marco Almbauer",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-van-gogh",
+        "name": "Museo Van Gogh",
+        "title": "Van Gogh Museum",
+        "category": "musei",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Museo di Amsterdam dedicato alle opere e alla vita di Vincent van Gogh.",
+        "qid": "Q224124",
+        "lat": 52.358333333333,
+        "lng": 4.8811111111111,
+        "official": "http://www.vangoghmuseum.nl/",
+        "wiki": {
+          "it": "Van Gogh Museum",
+          "en": "Van Gogh Museum"
+        },
+        "photos": [
+          {
+            "file": "Van Gogh Museum.jpg",
+            "author": "Warrox",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-nemo",
+        "name": "NEMO Science Museum",
+        "title": "NEMO (museum)",
+        "category": "musei",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Museo della scienza di Amsterdam con esposizioni interattive.",
+        "qid": "Q1422000",
+        "lat": 52.374106,
+        "lng": 4.912392,
+        "official": "http://www.nemosciencemuseum.nl/",
+        "wiki": {
+          "it": "NEMO (Amsterdam)",
+          "en": "NEMO (museum)"
+        },
+        "photos": [
+          {
+            "file": "NEMO (Amsterdam).jpg",
+            "author": "Gamekeeper at Dutch Wikipedia",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          },
+          {
+            "file": "Nemo Science Museum.jpg",
+            "author": "Elekes Andor",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "Nemo Science Museum (53).jpg",
+            "author": "Elekes Andor",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-artis",
+        "name": "ARTIS",
+        "title": "Artis (zoo)",
+        "category": "fauna",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Giardino zoologico nel tessuto urbano di Amsterdam; attività e percorsi da verificare.",
+        "qid": "Q713124",
+        "lat": 52.366111111111,
+        "lng": 4.9166666666667,
+        "official": "http://www.artis.nl",
+        "wiki": {
+          "it": "Artis (Amsterdam)",
+          "en": "Artis (zoo)"
+        },
+        "photos": [
+          {
+            "file": "NL-Artis-ingang.jpg",
+            "author": "Dejonkheer",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-vondelpark",
+        "name": "Vondelpark",
+        "title": "Vondelpark",
+        "category": "natura",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Parco urbano di Amsterdam con prati, laghetti e percorsi.",
+        "qid": "Q1419691",
+        "lat": 52.356944444444,
+        "lng": 4.8663888888889,
+        "official": "http://www.hetvondelpark.net/",
+        "wiki": {
+          "it": "Vondelpark",
+          "en": "Vondelpark"
+        },
+        "photos": [
+          {
+            "file": "Amsterdam, Vondelpark, at the pond-2.jpg",
+            "author": "Dguendel",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-haarlem",
+        "name": "Haarlem",
+        "title": "Haarlem",
+        "category": "citta",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Città dell’Olanda settentrionale con centro storico e musei.",
+        "qid": "Q9920",
+        "lat": 52.381388888888885,
+        "lng": 4.635555555555555,
+        "official": "https://haarlem.nl/",
+        "wiki": {
+          "it": "Haarlem",
+          "en": "Haarlem"
+        },
+        "photos": [
+          {
+            "file": "Haarlem Spaarne.jpg",
+            "author": "M.Minderhoud",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "HaarlemGroteMarkt1.JPG",
+            "author": "Fryslan0109 at English Wikipedia",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-zaanse-schans",
+        "name": "Zaanse Schans",
+        "title": "Zaanse Schans",
+        "category": "musei",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Area di edifici storici e mulini presso Zaandam; accessi ai singoli luoghi da verificare.",
+        "qid": "Q136661",
+        "lat": 52.473889,
+        "lng": 4.816389,
+        "official": "https://www.dezaanseschans.nl/",
+        "wiki": {
+          "it": "Zaanse Schans",
+          "en": "Zaanse Schans"
+        },
+        "photos": [
+          {
+            "file": "Z.Schans.JPG",
+            "author": "Frila",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "The Windmills of Zaanse Schans, Netherlands.jpg",
+            "author": "Mustang Joe",
+            "license": "CC0",
+            "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-alkmaar",
+        "name": "Alkmaar",
+        "title": "Alkmaar",
+        "category": "citta",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Città dell’Olanda settentrionale con canali e centro storico.",
+        "qid": "Q972",
+        "lat": 52.6289,
+        "lng": 4.74403,
+        "official": "https://www.alkmaar.nl/",
+        "wiki": {
+          "it": "Alkmaar",
+          "en": "Alkmaar"
+        },
+        "photos": [
+          {
+            "file": "Alkmaar Waag door het geboomte.jpg",
+            "author": "Plaats",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-texel",
+        "name": "Texel",
+        "title": "Texel",
+        "category": "isole",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Isola del Mare dei Wadden con dune e villaggi; traghetti e accessi alle riserve da verificare.",
+        "qid": "Q9966",
+        "lat": 53.066666666667,
+        "lng": 4.8,
+        "official": "https://www.texel.nl/",
+        "wiki": {
+          "it": "Texel (comune)",
+          "en": "Texel"
+        },
+        "photos": [
+          {
+            "file": "Aerial image of Texel (view from the southwest).jpg",
+            "author": "Carsten Steger",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-aia",
+        "name": "L’Aia",
+        "title": "The Hague",
+        "category": "citta",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Città sede del governo dei Paesi Bassi, con musei e accesso alla costa.",
+        "qid": "Q36600",
+        "lat": 52.08,
+        "lng": 4.31,
+        "official": "https://www.denhaag.nl/",
+        "wiki": {
+          "it": "L'Aia",
+          "en": "The Hague"
+        },
+        "photos": [
+          {
+            "file": "The Hague Montage 2021.png",
+            "author": "Montage by Ætoms",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-mauritshuis",
+        "name": "Mauritshuis",
+        "title": "Mauritshuis",
+        "category": "musei",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Museo d’arte nel centro dell’Aia, dedicato in particolare alla pittura olandese.",
+        "qid": "Q221092",
+        "lat": 52.08038888888889,
+        "lng": 4.314305555555555,
+        "official": "https://www.mauritshuis.nl",
+        "wiki": {
+          "it": "Mauritshuis",
+          "en": "Mauritshuis"
+        },
+        "photos": [
+          {
+            "file": "Mauritshuis Museum (14346890947).jpg",
+            "author": "Roman Boed from The Netherlands",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-madurodam",
+        "name": "Madurodam",
+        "title": "Madurodam",
+        "category": "parchi",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Parco dell’Aia con riproduzioni in miniatura di luoghi dei Paesi Bassi.",
+        "qid": "Q747322",
+        "lat": 52.099403,
+        "lng": 4.297558,
+        "official": "http://www.madurodam.nl/en/",
+        "wiki": {
+          "it": "Madurodam",
+          "en": "Madurodam"
+        },
+        "photos": [
+          {
+            "file": "Madurodam pays bas.JPG",
+            "author": "Cqui",
+            "license": "CC BY-SA 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-rotterdam",
+        "name": "Rotterdam",
+        "title": "Rotterdam",
+        "category": "citta",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Città portuale sul delta del Reno e della Mosa, con architettura contemporanea.",
+        "qid": "Q34370",
+        "lat": 51.92,
+        "lng": 4.48,
+        "official": "https://www.rotterdam.nl/",
+        "wiki": {
+          "it": "Rotterdam",
+          "en": "Rotterdam"
+        },
+        "photos": [
+          {
+            "file": "Erasmusbrug seen from Euromast.jpg",
+            "author": "Mlefter",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "0 8605 Rotterdam - Het Witte Huis.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-delft",
+        "name": "Delft",
+        "title": "Delft",
+        "category": "citta",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Città con canali e centro storico, legata alla tradizione della ceramica.",
+        "qid": "Q690",
+        "lat": 52.01166666666666,
+        "lng": 4.359166666666667,
+        "official": "https://www.delft.nl/",
+        "wiki": {
+          "it": "Delft",
+          "en": "Delft"
+        },
+        "photos": [
+          {
+            "file": "00 0781 Canal in Delft (NL).jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-kinderdijk",
+        "name": "Kinderdijk",
+        "title": "Kinderdijk",
+        "category": "musei",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Paesaggio di mulini e canali per la gestione delle acque; percorsi e accessi da verificare.",
+        "qid": "Q740066",
+        "lat": 51.883333333333,
+        "lng": 4.6333333333333,
+        "wiki": {
+          "it": "Kinderdijk",
+          "en": "Kinderdijk"
+        },
+        "photos": [
+          {
+            "file": "KinderdijkMolens02.jpg",
+            "author": "Lucas Hirschegger",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-leida",
+        "name": "Leida",
+        "title": "Leiden",
+        "category": "citta",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Città universitaria con canali, musei e giardino botanico.",
+        "qid": "Q43631",
+        "lat": 52.16,
+        "lng": 4.49,
+        "official": "https://gemeente.leiden.nl/",
+        "wiki": {
+          "it": "Leida",
+          "en": "Leiden"
+        },
+        "photos": [
+          {
+            "file": "00 1865 Leiden - Netherlands.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-keukenhof",
+        "name": "Keukenhof",
+        "title": "Keukenhof",
+        "category": "natura",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Giardino floreale a Lisse con apertura stagionale; controllare il calendario prima di inserirlo nel viaggio.",
+        "qid": "Q18769666",
+        "lat": 52.268889,
+        "lng": 4.547222,
+        "official": "http://www.keukenhof.nl/",
+        "wiki": {
+          "it": "Keukenhof",
+          "en": "Keukenhof"
+        },
+        "photos": [
+          {
+            "file": "NL-keukenhof-10.jpg",
+            "author": "Balou46",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "NL-keukenhof-12.jpg",
+            "author": "Balou46",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Keukenhof 2018 DSC 0508.jpg",
+            "author": "Atamari",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-utrecht",
+        "name": "Utrecht",
+        "title": "Utrecht",
+        "category": "citta",
+        "region": "Utrecht e Paesi Bassi centrali",
+        "description": "Città con canali a banchine ribassate e centro storico.",
+        "qid": "Q803",
+        "lat": 52.090833333333336,
+        "lng": 5.121666666666667,
+        "official": "https://www.utrecht.nl/",
+        "wiki": {
+          "it": "Utrecht",
+          "en": "Utrecht"
+        },
+        "photos": [
+          {
+            "file": "Neude met Domtoren.JPG",
+            "author": "Pepijntje",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-spoorwegmuseum",
+        "name": "Museo ferroviario di Utrecht",
+        "title": "Railway Museum (Netherlands)",
+        "category": "musei",
+        "region": "Utrecht e Paesi Bassi centrali",
+        "description": "Museo ferroviario ospitato nell’ex stazione Maliebaan di Utrecht.",
+        "qid": "Q847166",
+        "lat": 52.08777777777778,
+        "lng": 5.131666666666667,
+        "official": "http://www.spoorwegmuseum.nl",
+        "wiki": {
+          "en": "Railway Museum (Netherlands)"
+        },
+        "photos": [
+          {
+            "file": "Spoorwegmuseum Utrecht 003.JPG",
+            "author": "Marion Golsteijn",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-hoge-veluwe",
+        "name": "Parco nazionale De Hoge Veluwe",
+        "title": "Hoge Veluwe National Park",
+        "category": "natura",
+        "region": "Utrecht e Paesi Bassi centrali",
+        "description": "Parco di brughiere, boschi e terreni sabbiosi nel Gelderland; itinerari e accessi da verificare.",
+        "qid": "Q1623374",
+        "lat": 52.0833,
+        "lng": 5.79855,
+        "official": "http://www.hogeveluwe.nl/",
+        "wiki": {
+          "it": "Parco nazionale De Hoge Veluwe",
+          "en": "De Hoge Veluwe National Park"
+        },
+        "photos": [
+          {
+            "file": "De Hoge Veluwe landscape.jpg",
+            "author": "Deb Collins",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-kroller-muller",
+        "name": "Museo Kröller-Müller",
+        "title": "Kröller-Müller Museum",
+        "category": "musei",
+        "region": "Utrecht e Paesi Bassi centrali",
+        "description": "Museo d’arte con giardino di sculture nell’area del parco De Hoge Veluwe.",
+        "qid": "Q1051928",
+        "lat": 52.095833333333,
+        "lng": 5.8169444444444,
+        "official": "http://www.kmm.nl",
+        "wiki": {
+          "it": "Museo Kröller-Müller",
+          "en": "Kröller-Müller Museum"
+        },
+        "photos": [
+          {
+            "file": "Entrance Kröller-Müller Museum.JPG",
+            "author": "Gerardus",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-efteling",
+        "name": "Efteling",
+        "title": "Efteling",
+        "category": "parchi",
+        "region": "Brabante e Limburgo",
+        "description": "Parco divertimenti a Kaatsheuvel con ambientazioni fiabesche; limiti di età e altezza da verificare.",
+        "qid": "Q733234",
+        "lat": 51.650277777778,
+        "lng": 5.0480555555556,
+        "official": "https://www.efteling.com/",
+        "wiki": {
+          "it": "Efteling",
+          "en": "Efteling"
+        },
+        "photos": [
+          {
+            "file": "Efteling The House of the Five Senses.jpg",
+            "author": "Rémih",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-maastricht",
+        "name": "Maastricht",
+        "title": "Maastricht",
+        "category": "citta",
+        "region": "Brabante e Limburgo",
+        "description": "Città del Limburgo sulla Mosa, con piazze e centro storico.",
+        "qid": "Q1309",
+        "lat": 50.866666666667,
+        "lng": 5.6833333333333,
+        "official": "http://www.maastrichtportal.nl/",
+        "wiki": {
+          "it": "Maastricht",
+          "en": "Maastricht"
+        },
+        "photos": [
+          {
+            "file": "MaastrichtAltstadt.jpg",
+            "author": "de:Benutzer:Mussklprozz",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "00 6191 Maastricht - Niederlande.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-eindhoven",
+        "name": "Eindhoven",
+        "title": "Eindhoven",
+        "category": "citta",
+        "region": "Brabante e Limburgo",
+        "description": "Città del Brabante settentrionale legata a design e industria.",
+        "qid": "Q9832",
+        "lat": 51.434444444444,
+        "lng": 5.4841666666667,
+        "official": "https://www.eindhoven.nl/",
+        "wiki": {
+          "it": "Eindhoven",
+          "en": "Eindhoven"
+        },
+        "photos": [
+          {
+            "file": "Centrum Eindhoven.jpg",
+            "author": "Arno van den Tillaart from Eindhoven, Netherlands",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-groninga",
+        "name": "Groninga",
+        "title": "Groningen",
+        "category": "citta",
+        "region": "Frisia e Paesi Bassi settentrionali",
+        "description": "Città universitaria dei Paesi Bassi settentrionali.",
+        "qid": "Q749",
+        "lat": 53.21888888888889,
+        "lng": 6.5675,
+        "official": "https://groningen.nl/",
+        "wiki": {
+          "it": "Groninga",
+          "en": "Groningen"
+        },
+        "photos": [
+          {
+            "file": "Plattegrond van de stad Groningen in 1575.jpg",
+            "author": "Braun & Hogenberg",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-leeuwarden",
+        "name": "Leeuwarden",
+        "title": "Leeuwarden",
+        "category": "citta",
+        "region": "Frisia e Paesi Bassi settentrionali",
+        "description": "Capoluogo della Frisia con canali e musei.",
+        "qid": "Q25390",
+        "lat": 53.2,
+        "lng": 5.7833333333333,
+        "official": "https://www.leeuwarden.nl/",
+        "wiki": {
+          "it": "Leeuwarden",
+          "en": "Leeuwarden"
+        },
+        "photos": [
+          {
+            "file": "Waag, Leeuwarden 1614.jpg",
+            "author": "C messier",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-ams",
+        "name": "Aeroporto di Amsterdam Schiphol",
+        "title": "Amsterdam Airport Schiphol",
+        "category": "aeroporti",
+        "region": "Amsterdam e Olanda settentrionale",
+        "description": "Aeroporto dell’area di Amsterdam; trasferimenti e terminal da verificare.",
+        "qid": "Q9694",
+        "lat": 52.3081,
+        "lng": 4.7641694444444,
+        "iata": "AMS",
+        "official": "https://www.schiphol.nl/",
+        "wiki": {
+          "it": "Aeroporto di Amsterdam-Schiphol",
+          "en": "Amsterdam Airport Schiphol"
+        },
+        "photos": [
+          {
+            "file": "Ams-above-2007.jpg",
+            "author": "Fyodor Borisov",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Schiphol Tower.jpg",
+            "author": "Ikreis",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-ein",
+        "name": "Aeroporto di Eindhoven",
+        "title": "Eindhoven Airport",
+        "category": "aeroporti",
+        "region": "Brabante e Limburgo",
+        "description": "Aeroporto dell’area di Eindhoven; trasferimenti da verificare.",
+        "qid": "Q1348234",
+        "lat": 51.450556,
+        "lng": 5.374167,
+        "iata": "EIN",
+        "official": "https://www.eindhovenairport.nl/en",
+        "wiki": {
+          "it": "Aeroporto di Eindhoven",
+          "en": "Eindhoven Airport"
+        },
+        "photos": [
+          {
+            "file": "Vertekhal Eindhoven airport.jpg",
+            "author": "CoolmenNL",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "nl-rtm",
+        "name": "Aeroporto di Rotterdam L’Aia",
+        "title": "Rotterdam The Hague Airport",
+        "category": "aeroporti",
+        "region": "L’Aia, Rotterdam e Olanda meridionale",
+        "description": "Aeroporto che serve l’area di Rotterdam e L’Aia; trasferimenti da verificare.",
+        "qid": "Q656807",
+        "lat": 51.95,
+        "lng": 4.4333333333333,
+        "iata": "RTM",
+        "official": "http://www.rotterdamthehagueairport.nl",
+        "wiki": {
+          "it": "Aeroporto di Rotterdam",
+          "en": "Rotterdam The Hague Airport"
+        },
+        "photos": [
+          {
+            "file": "Rotterdam airport luchtfoto.jpg",
+            "author": "User:Quistnix",
+            "license": "CC BY 1.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/1.0"
+          },
+          {
+            "file": "Vliegveld Zestienhoven.JPG",
+            "author": "Bryan Tong Minh",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  },
+  "DK": {
+    "name": "Danimarca",
+    "en": "Denmark",
+    "language": "da",
+    "currency": "DKK",
+    "timezone": "Europe/Copenhagen",
+    "qid": "Q35",
+    "bounds": [
+      54.4,
+      58,
+      7.7,
+      15.3
+    ],
+    "tourism": "https://www.visitdenmark.com/",
+    "regions": [
+      "Copenaghen e Selandia",
+      "Fionia",
+      "Jutland meridionale e centrale",
+      "Jutland settentrionale",
+      "Bornholm"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "dk-copenaghen",
+        "name": "Copenaghen",
+        "title": "Copenhagen",
+        "category": "citta",
+        "region": "Copenaghen e Selandia",
+        "description": "Capitale danese con canali, palazzi, musei e parchi urbani.",
+        "qid": "Q1748",
+        "lat": 55.676111111111,
+        "lng": 12.568888888889,
+        "official": "https://www.kk.dk/",
+        "wiki": {
+          "it": "Copenaghen",
+          "en": "Copenhagen"
+        },
+        "photos": [
+          {
+            "file": "Copenhagen - view from Christiansborg castle.jpg",
+            "author": "Pudelek",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-tivoli",
+        "name": "Giardini di Tivoli",
+        "title": "Tivoli Gardens",
+        "category": "parchi",
+        "region": "Copenaghen e Selandia",
+        "description": "Parco divertimenti storico nel centro di Copenaghen; calendario e accessi alle attrazioni da verificare.",
+        "qid": "Q110289",
+        "lat": 55.673611111111,
+        "lng": 12.568333333333,
+        "official": "https://www.tivoli.dk",
+        "wiki": {
+          "it": "Giardini di Tivoli",
+          "en": "Tivoli Gardens"
+        },
+        "photos": [
+          {
+            "file": "CopenhagenTivoliEntrance.jpg",
+            "author": "Elgaard",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-museo-nazionale",
+        "name": "Museo nazionale danese",
+        "title": "National Museum of Denmark",
+        "category": "musei",
+        "region": "Copenaghen e Selandia",
+        "description": "Museo di Copenaghen dedicato alla storia e alle culture della Danimarca.",
+        "qid": "Q648166",
+        "lat": 55.67472222222222,
+        "lng": 12.574722222222222,
+        "official": "https://nationalmuseet.dk/en",
+        "wiki": {
+          "it": "Museo nazionale danese",
+          "en": "National Museum of Denmark"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-experimentarium",
+        "name": "Experimentarium",
+        "title": "Experimentarium",
+        "category": "musei",
+        "region": "Copenaghen e Selandia",
+        "description": "Centro scientifico interattivo a Hellerup, nell’area di Copenaghen.",
+        "qid": "Q12310799",
+        "lat": 55.726547421663,
+        "lng": 12.579962758737,
+        "localName": "Experimentarium",
+        "official": "https://www.experimentarium.dk/",
+        "wiki": {},
+        "photos": [
+          {
+            "file": "20171005 Experimentarium Hellerup 0062 (37729624156).jpg",
+            "author": "Johan Wessman / News Oresund",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-bla-planet",
+        "name": "Den Blå Planet",
+        "title": "National Aquarium Denmark",
+        "category": "fauna",
+        "region": "Copenaghen e Selandia",
+        "description": "Acquario a Kastrup, nell’area di Copenaghen, dedicato agli ambienti acquatici.",
+        "qid": "Q31828",
+        "lat": 55.638,
+        "lng": 12.656,
+        "official": "https://denblaaplanet.dk",
+        "wiki": {
+          "it": "Acquario nazionale danese",
+          "en": "National Aquarium Denmark"
+        },
+        "photos": [
+          {
+            "file": "Ocean tanken.jpg",
+            "author": "Villy Fink Isaksen",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-roskilde",
+        "name": "Roskilde",
+        "title": "Roskilde",
+        "category": "citta",
+        "region": "Copenaghen e Selandia",
+        "description": "Città della Selandia con cattedrale e museo delle navi vichinghe.",
+        "qid": "Q26563",
+        "lat": 55.641666666667,
+        "lng": 12.080833333333,
+        "official": "http://roskilde.dk/",
+        "wiki": {
+          "it": "Roskilde",
+          "en": "Roskilde"
+        },
+        "photos": [
+          {
+            "file": "Roskilde ratusz mpazdziora.jpg",
+            "author": "Mariusz Paździora",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-museo-vichingo",
+        "name": "Museo delle navi vichinghe di Roskilde",
+        "title": "Viking Ship Museum (Roskilde)",
+        "category": "musei",
+        "region": "Copenaghen e Selandia",
+        "description": "Museo dedicato alle navi e alle tecniche di navigazione vichinghe presso il fiordo di Roskilde.",
+        "qid": "Q1458032",
+        "lat": 55.650139,
+        "lng": 12.078944,
+        "official": "https://www.vikingeskibsmuseet.dk/",
+        "wiki": {
+          "it": "Museo delle navi vichinghe di Roskilde",
+          "en": "Viking Ship Museum (Roskilde)"
+        },
+        "photos": [
+          {
+            "file": "View of Viking Ship Museum from Roskilde Fjord.jpg",
+            "author": "Jami430",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-kronborg",
+        "name": "Castello di Kronborg",
+        "title": "Kronborg",
+        "category": "musei",
+        "region": "Copenaghen e Selandia",
+        "description": "Castello a Helsingør sullo stretto dell’Øresund, associato all’ambientazione dell’Amleto.",
+        "qid": "Q189358",
+        "lat": 56.038611111111,
+        "lng": 12.621944444444,
+        "official": "https://www.kronborg.dk",
+        "wiki": {
+          "it": "Castello di Kronborg",
+          "en": "Kronborg"
+        },
+        "photos": [
+          {
+            "file": "KronborgCastle HCS.jpg",
+            "author": "H.C. Steensen",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-louisiana",
+        "name": "Louisiana Museum of Modern Art",
+        "title": "Louisiana Museum of Modern Art",
+        "category": "musei",
+        "region": "Copenaghen e Selandia",
+        "description": "Museo d’arte moderna a Humlebæk, con spazi espositivi e giardino sul mare.",
+        "qid": "Q1410617",
+        "lat": 55.969444444444,
+        "lng": 12.543055555556,
+        "official": "https://louisiana.dk/",
+        "wiki": {
+          "it": "Louisiana Museum of Modern Art",
+          "en": "Louisiana Museum of Modern Art"
+        },
+        "photos": [
+          {
+            "file": "Louisiana Museum of Modern Art Hovedindgang.jpg",
+            "author": "Louisiana Museum of Modern Art / Kim Hansen",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-odense",
+        "name": "Odense",
+        "title": "Odense",
+        "category": "citta",
+        "region": "Fionia",
+        "description": "Città della Fionia legata alla vita e alle fiabe di Hans Christian Andersen.",
+        "qid": "Q25331",
+        "lat": 55.4,
+        "lng": 10.383333333333,
+        "official": "https://www.odense.dk/",
+        "wiki": {
+          "it": "Odense",
+          "en": "Odense"
+        },
+        "photos": [
+          {
+            "file": "Odense rådhus.jpg",
+            "author": "Emelie Graven",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-egeskov",
+        "name": "Castello di Egeskov",
+        "title": "Egeskov Castle",
+        "category": "musei",
+        "region": "Fionia",
+        "description": "Castello circondato dall’acqua in Fionia, con giardini e aree di visita.",
+        "qid": "Q857504",
+        "lat": 55.176388888889,
+        "lng": 10.489444444444,
+        "official": "http://www.egeskov.dk",
+        "wiki": {
+          "it": "Castello di Egeskov",
+          "en": "Egeskov Castle"
+        },
+        "photos": [
+          {
+            "file": "Egeskov Slot spejling Edit 2.jpg",
+            "author": "Malene Thyssen",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-svendborg",
+        "name": "Svendborg",
+        "title": "Svendborg",
+        "category": "citta",
+        "region": "Fionia",
+        "description": "Città portuale della Fionia meridionale, di fronte all’arcipelago.",
+        "qid": "Q28031",
+        "lat": 55.059722222222,
+        "lng": 10.61,
+        "official": "http://www.Svendborg.dk/",
+        "wiki": {
+          "it": "Svendborg",
+          "en": "Svendborg"
+        },
+        "photos": [
+          {
+            "file": "Svendborg.3.jpg",
+            "author": "Erik Christensen",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-aero",
+        "name": "Ærø",
+        "title": "Ærø",
+        "category": "isole",
+        "region": "Fionia",
+        "description": "Isola dell’arcipelago della Fionia meridionale; collegamenti in traghetto da verificare.",
+        "qid": "Q27150",
+        "lat": 54.883333333333,
+        "lng": 10.333333333333,
+        "wiki": {
+          "it": "Ærø (isola)",
+          "en": "Ærø"
+        },
+        "photos": [
+          {
+            "file": "Arroe by Blaeu 1665 (cropped).jpg",
+            "author": "Joan Blaeu",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-aarhus",
+        "name": "Aarhus",
+        "title": "Aarhus",
+        "category": "citta",
+        "region": "Jutland meridionale e centrale",
+        "description": "Città dello Jutland con musei, quartieri storici e lungomare.",
+        "qid": "Q25319",
+        "lat": 56.156388888889,
+        "lng": 10.209722222222,
+        "official": "https://aarhus.dk",
+        "wiki": {
+          "it": "Aarhus",
+          "en": "Aarhus"
+        },
+        "photos": [],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-den-gamle-by",
+        "name": "Den Gamle By",
+        "title": "Den Gamle By",
+        "category": "musei",
+        "region": "Jutland meridionale e centrale",
+        "description": "Museo all’aperto ad Aarhus con edifici e ambienti di vita urbana di epoche diverse.",
+        "qid": "Q1186756",
+        "lat": 56.15888889,
+        "lng": 10.19166667,
+        "official": "http://www.dengamleby.dk",
+        "wiki": {
+          "it": "Den Gamle By",
+          "en": "Den Gamle By"
+        },
+        "photos": [
+          {
+            "file": "Den gamle by 2.jpg",
+            "author": "Nico-dk (talk) 21:08, 17 September 2009 (UTC)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-aros",
+        "name": "ARoS",
+        "title": "ARoS Aarhus Art Museum",
+        "category": "musei",
+        "region": "Jutland meridionale e centrale",
+        "description": "Museo d’arte ad Aarhus con collezioni ed esposizioni contemporanee.",
+        "qid": "Q296962",
+        "lat": 56.153888888889,
+        "lng": 10.199611111111,
+        "official": "https://www.aros.dk",
+        "wiki": {
+          "it": "ARoS Aarhus Kunstmuseum",
+          "en": "ARoS Aarhus Kunstmuseum"
+        },
+        "photos": [
+          {
+            "file": "ARoS \"Your rainbow\" panorama under construction.jpg",
+            "author": "Jon Wickmann",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-billund",
+        "name": "Billund",
+        "title": "Billund, Denmark",
+        "category": "citta",
+        "region": "Jutland meridionale e centrale",
+        "description": "Località dello Jutland centrale legata alla storia dei mattoncini LEGO.",
+        "qid": "Q1701099",
+        "lat": 55.7243,
+        "lng": 9.1188,
+        "official": "https://billund.dk/",
+        "wiki": {
+          "it": "Billund",
+          "en": "Billund, Denmark"
+        },
+        "photos": [
+          {
+            "file": "Billund skyline.jpg",
+            "author": "HartOve",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-legoland",
+        "name": "LEGOLAND Billund",
+        "title": "Legoland Billund Resort",
+        "category": "parchi",
+        "region": "Jutland meridionale e centrale",
+        "description": "Parco divertimenti a Billund; calendario, biglietti e requisiti delle attrazioni da verificare.",
+        "qid": "Q1063513",
+        "lat": 55.73555556,
+        "lng": 9.12611111,
+        "official": "https://www.legoland.dk",
+        "wiki": {
+          "it": "Legoland Billund",
+          "en": "Legoland Billund Resort"
+        },
+        "photos": [
+          {
+            "file": "LegoBillundTowerView.jpg",
+            "author": "A.Christensen",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-lego-house",
+        "name": "LEGO House",
+        "title": "Lego House (Billund)",
+        "category": "musei",
+        "region": "Jutland meridionale e centrale",
+        "description": "Centro di esperienze e costruzioni LEGO nel centro di Billund.",
+        "qid": "Q22087791",
+        "lat": 55.730688,
+        "lng": 9.114958,
+        "official": "https://www.legohouse.com",
+        "wiki": {
+          "en": "Lego House (Billund)"
+        },
+        "photos": [
+          {
+            "file": "Lego House Billund.jpg",
+            "author": "MPhernambucq",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-ribe",
+        "name": "Ribe",
+        "title": "Ribe",
+        "category": "citta",
+        "region": "Jutland meridionale e centrale",
+        "description": "Città dello Jutland sud-occidentale con centro storico e cattedrale.",
+        "qid": "Q322361",
+        "lat": 55.327222,
+        "lng": 8.763056,
+        "wiki": {
+          "it": "Ribe",
+          "en": "Ribe"
+        },
+        "photos": [
+          {
+            "file": "Ribe - udsigt mod øst.jpg",
+            "author": "Hubertus45",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          },
+          {
+            "file": "RibeVue.jpg",
+            "author": "Hjart",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-jutland-wadden",
+        "name": "Parco nazionale del Mare dei Wadden",
+        "title": "Wadden Sea National Park",
+        "category": "natura",
+        "region": "Jutland meridionale e centrale",
+        "description": "Area costiera danese di piane di marea e isole; uscite e maree richiedono preparazione e verifica.",
+        "qid": "Q1965925",
+        "lat": 54.456,
+        "lng": 8.646,
+        "wiki": {
+          "it": "Parchi nazionali del mare dei Wadden",
+          "en": "Wadden Sea National Parks"
+        },
+        "photos": [
+          {
+            "file": "13-09-29-Sylt Jorsand-N3S 9266.jpg",
+            "author": "Ralf Roletschek",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-aalborg",
+        "name": "Aalborg",
+        "title": "Aalborg",
+        "category": "citta",
+        "region": "Jutland settentrionale",
+        "description": "Città sul Limfjord nello Jutland settentrionale.",
+        "qid": "Q25410",
+        "lat": 57.05,
+        "lng": 9.9166666666667,
+        "official": "https://www.enjoynordjylland.dk/aalborg",
+        "wiki": {
+          "it": "Aalborg",
+          "en": "Aalborg"
+        },
+        "photos": [
+          {
+            "file": "Aalborg NyTorv 2004 ubt.jpeg",
+            "author": "© 2004 by Tomasz Sienicki [user: tsca, mail: tomasz.sienicki at gmail.com]",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-skagen",
+        "name": "Skagen",
+        "title": "Skagen",
+        "category": "citta",
+        "region": "Jutland settentrionale",
+        "description": "Località dello Jutland settentrionale con spiagge e tradizione artistica.",
+        "qid": "Q215177",
+        "lat": 57.722222222222,
+        "lng": 10.587777777778,
+        "official": "https://www.toppenafdanmark.dk/",
+        "wiki": {
+          "it": "Skagen",
+          "en": "Skagen"
+        },
+        "photos": [
+          {
+            "file": "Daphnesvej, Skagen, 2007 ubt.jpg",
+            "author": "photo © 2007 by Tomasz Sienicki [user: tsca, mail: tomasz.sienicki at gmail.com]",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          },
+          {
+            "file": "Skagen seen from the lighthouse 2009.jpg",
+            "author": "De-okin (talk) 15:41, 25 July 2009 (UTC)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Skagen (Danemark).jpg",
+            "author": "Jérémy Toma",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-grenen",
+        "name": "Grenen",
+        "title": "Grenen",
+        "category": "natura",
+        "region": "Jutland settentrionale",
+        "description": "Punta sabbiosa presso Skagen; condizioni del mare, accessi e indicazioni di sicurezza da controllare sul posto.",
+        "qid": "Q1537592",
+        "lat": 57.7456,
+        "lng": 10.6469,
+        "wiki": {
+          "it": "Grenen",
+          "en": "Grenen"
+        },
+        "photos": [
+          {
+            "file": "Grenen-2001.jpg",
+            "author": "Original uploader was Hansjorn at da.wikipedia",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-thy",
+        "name": "Parco nazionale Thy",
+        "title": "Thy National Park",
+        "category": "natura",
+        "region": "Jutland settentrionale",
+        "description": "Parco dello Jutland nord-occidentale con dune, brughiere e laghi.",
+        "qid": "Q1639749",
+        "lat": 56.947,
+        "lng": 8.422,
+        "official": "http://nationalparkthy.dk/",
+        "wiki": {
+          "it": "Parco nazionale Thy",
+          "en": "Thy National Park"
+        },
+        "photos": [
+          {
+            "file": "Nørre Vorupør Coast 2012-11-18.jpg",
+            "author": "Slaunger",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-ronne",
+        "name": "Rønne",
+        "title": "Rønne",
+        "category": "citta",
+        "region": "Bornholm",
+        "description": "Città portuale dell’isola di Bornholm, utilizzabile come base per l’isola.",
+        "qid": "Q690062",
+        "lat": 55.1,
+        "lng": 14.7,
+        "official": "http://www.brk.dk",
+        "wiki": {
+          "it": "Rønne",
+          "en": "Rønne"
+        },
+        "photos": [
+          {
+            "file": "Rønne Bornholm - 52568086465.jpg",
+            "author": "Werner Wilmes",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-hammershus",
+        "name": "Hammershus",
+        "title": "Hammershus",
+        "category": "musei",
+        "region": "Bornholm",
+        "description": "Rovine di una fortezza nella parte settentrionale di Bornholm.",
+        "qid": "Q700384",
+        "lat": 55.271150759805,
+        "lng": 14.755814574273,
+        "wiki": {
+          "en": "Hammershus"
+        },
+        "photos": [
+          {
+            "file": "Bornholm Hammershus 01.jpg",
+            "author": "Unukorno",
+            "license": "CC BY 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-cph",
+        "name": "Aeroporto di Copenaghen",
+        "title": "Copenhagen Airport",
+        "category": "aeroporti",
+        "region": "Copenaghen e Selandia",
+        "description": "Aeroporto di Kastrup nell’area di Copenaghen; trasferimenti da verificare.",
+        "qid": "Q206277",
+        "lat": 55.618055555556,
+        "lng": 12.656111111111,
+        "iata": "CPH",
+        "official": "http://www.cph.dk/",
+        "wiki": {
+          "it": "Aeroporto di Copenaghen",
+          "en": "Copenhagen Airport"
+        },
+        "photos": [
+          {
+            "file": "Copenhagen airport from air.jpg",
+            "author": "kallerna",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-bll",
+        "name": "Aeroporto di Billund",
+        "title": "Billund Airport",
+        "category": "aeroporti",
+        "region": "Jutland meridionale e centrale",
+        "description": "Aeroporto dello Jutland centrale presso Billund; trasferimenti da verificare.",
+        "qid": "Q598121",
+        "lat": 55.740277777778,
+        "lng": 9.1519444444444,
+        "iata": "BLL",
+        "official": "https://www.bll.dk/en",
+        "wiki": {
+          "it": "Aeroporto di Billund",
+          "en": "Billund Airport"
+        },
+        "photos": [
+          {
+            "file": "Billund Airport from NE.jpg",
+            "author": "Nico-dk",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "dk-aal",
+        "name": "Aeroporto di Aalborg",
+        "title": "Aalborg Airport",
+        "category": "aeroporti",
+        "region": "Jutland settentrionale",
+        "description": "Aeroporto dell’area di Aalborg; trasferimenti da verificare.",
+        "qid": "Q478620",
+        "lat": 57.092777777778,
+        "lng": 9.8491666666667,
+        "iata": "AAL",
+        "official": "https://www.aal.dk",
+        "wiki": {
+          "it": "Aeroporto di Aalborg",
+          "en": "Aalborg Airport"
+        },
+        "photos": [
+          {
+            "file": "Aalborg Lufthavn indgang.JPG",
+            "author": "Simon Wedege Petersen",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  },
+  "SE": {
+    "name": "Svezia",
+    "en": "Sweden",
+    "language": "sv",
+    "currency": "SEK",
+    "timezone": "Europe/Stockholm",
+    "qid": "Q34",
+    "bounds": [
+      55,
+      69.2,
+      10.5,
+      24.5
+    ],
+    "tourism": "https://visitsweden.com/",
+    "regions": [
+      "Stoccolma e Svezia centrale",
+      "Göteborg e costa occidentale",
+      "Scania e Svezia meridionale",
+      "Småland e Öland",
+      "Gotland",
+      "Dalarna e Svezia settentrionale"
+    ],
+    "checkedAt": "2026-11-19",
+    "places": [
+      {
+        "key": "se-stoccolma",
+        "name": "Stoccolma",
+        "title": "Stockholm",
+        "category": "citta",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Capitale svedese distribuita su isole, con centro storico, musei e lungofiume.",
+        "qid": "Q1754",
+        "lat": 59.329444444444,
+        "lng": 18.068611111111,
+        "official": "https://start.stockholm/",
+        "wiki": {
+          "it": "Stoccolma",
+          "en": "Stockholm"
+        },
+        "photos": [
+          {
+            "file": "Stockholm gamlastan etc.jpg",
+            "author": "JZ",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-vasa",
+        "name": "Museo Vasa",
+        "title": "Vasa Museum",
+        "category": "musei",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Museo di Stoccolma dedicato alla nave seicentesca Vasa.",
+        "qid": "Q901371",
+        "lat": 59.32807,
+        "lng": 18.09139,
+        "official": "https://www.vasamuseet.se/",
+        "wiki": {
+          "it": "Museo Vasa",
+          "en": "Vasa Museum"
+        },
+        "photos": [
+          {
+            "file": "Vasa model.jpg",
+            "author": "Peter Isotalo",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          },
+          {
+            "file": "Vasa Museum building view from the sea (3).jpg",
+            "author": "Hanay",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-skansen",
+        "name": "Skansen",
+        "title": "Skansen",
+        "category": "musei",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Museo all’aperto sull’isola di Djurgården con edifici storici e aree dedicate agli animali.",
+        "qid": "Q725108",
+        "lat": 59.32445,
+        "lng": 18.101,
+        "official": "https://skansen.se",
+        "wiki": {
+          "it": "Skansen",
+          "en": "Skansen"
+        },
+        "photos": [
+          {
+            "file": "Skansen Entré 2015a.jpg",
+            "author": "Holger.Ellgaard",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-junibacken",
+        "name": "Junibacken",
+        "title": "Junibacken",
+        "category": "musei",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Centro di esperienze a Stoccolma dedicato alla letteratura per l’infanzia.",
+        "qid": "Q1713506",
+        "lat": 59.329444444444,
+        "lng": 18.088888888889,
+        "official": "https://www.junibacken.se/",
+        "wiki": {
+          "it": "Junibacken",
+          "en": "Junibacken"
+        },
+        "photos": [
+          {
+            "file": "Junibacken 2007.jpg",
+            "author": "Holger Ellgaard",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-tekniska",
+        "name": "Tekniska museet",
+        "title": "Swedish National Museum of Science and Technology",
+        "category": "musei",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Museo della scienza e della tecnica nell’area di Stoccolma.",
+        "qid": "Q177550",
+        "lat": 59.3325,
+        "lng": 18.11861111,
+        "official": "https://www.tekniskamuseet.se/",
+        "wiki": {
+          "it": "Museo nazionale svedese di scienza e tecnologia",
+          "en": "National Museum of Science and Technology (Sweden)"
+        },
+        "photos": [
+          {
+            "file": "Swedish national museum of science and technology 20061026 001.jpg",
+            "author": "Jonas Bergsten",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-drottningholm",
+        "name": "Palazzo di Drottningholm",
+        "title": "Drottningholm Palace",
+        "category": "musei",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Residenza reale sull’isola di Lovön, con giardini e edifici storici.",
+        "qid": "Q208559",
+        "lat": 59.321694,
+        "lng": 17.886383,
+        "official": "https://www.kungligaslotten.se/english/royal-palaces-and-sites/drottningholm-palace.html",
+        "wiki": {
+          "it": "Castello di Drottningholm",
+          "en": "Drottningholm Palace"
+        },
+        "photos": [
+          {
+            "file": "Drottningholm Palace (by Pudelek) 3.jpg",
+            "author": "Pudelek",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-uppsala",
+        "name": "Uppsala",
+        "title": "Uppsala",
+        "category": "citta",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Città universitaria a nord di Stoccolma, con cattedrale e giardini.",
+        "qid": "Q25286",
+        "lat": 59.849760548324,
+        "lng": 17.638946597524,
+        "official": "http://www.uppsala.se",
+        "wiki": {
+          "it": "Uppsala",
+          "en": "Uppsala"
+        },
+        "photos": [
+          {
+            "file": "Uppsala vanalinn suveõhtul.jpg",
+            "author": "Sillerkiil",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-sigtuna",
+        "name": "Sigtuna",
+        "title": "Sigtuna",
+        "category": "citta",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Località storica sulle rive del lago Mälaren.",
+        "qid": "Q3183470",
+        "lat": 59.61731,
+        "lng": 17.72361,
+        "official": "https://www.sigtuna.se",
+        "wiki": {
+          "it": "Sigtuna",
+          "en": "Sigtuna"
+        },
+        "photos": [
+          {
+            "file": "Stora gatan i Sigtuna nr 1.jpg",
+            "author": "Brorsson",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-goteborg",
+        "name": "Göteborg",
+        "title": "Gothenburg",
+        "category": "citta",
+        "region": "Göteborg e costa occidentale",
+        "description": "Città portuale della costa occidentale con canali, musei e parchi.",
+        "qid": "Q25287",
+        "lat": 57.7075,
+        "lng": 11.9675,
+        "official": "https://goteborg.se/",
+        "wiki": {
+          "it": "Göteborg",
+          "en": "Gothenburg"
+        },
+        "photos": [
+          {
+            "file": "Göteborg 2503 stitch (28573994096).jpg",
+            "author": "Bengt Nyman from Vaxholm, Sweden",
+            "license": "CC BY 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-universeum",
+        "name": "Universeum",
+        "title": "Universeum",
+        "category": "musei",
+        "region": "Göteborg e costa occidentale",
+        "description": "Centro scientifico di Göteborg con esposizioni dedicate a natura e tecnologia.",
+        "qid": "Q388667",
+        "lat": 57.695555555556,
+        "lng": 11.989166666667,
+        "official": "https://www.universeum.se",
+        "wiki": {
+          "en": "Universeum"
+        },
+        "photos": [
+          {
+            "file": "Universeum2.JPG",
+            "author": "Erik031",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-liseberg",
+        "name": "Liseberg",
+        "title": "Liseberg",
+        "category": "parchi",
+        "region": "Göteborg e costa occidentale",
+        "description": "Parco divertimenti a Göteborg; calendario e requisiti delle attrazioni da verificare.",
+        "qid": "Q1413270",
+        "lat": 57.695555555556,
+        "lng": 11.99,
+        "official": "https://www.liseberg.com",
+        "wiki": {
+          "it": "Liseberg",
+          "en": "Liseberg"
+        },
+        "photos": [
+          {
+            "file": "Liseberg, 20221223.jpg",
+            "author": "AleWi",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-marstrand",
+        "name": "Marstrand",
+        "title": "Marstrand",
+        "category": "isole",
+        "region": "Göteborg e costa occidentale",
+        "description": "Località costiera e insulare del Bohuslän, con fortezza e porto.",
+        "qid": "Q406556",
+        "lat": 57.88576929949,
+        "lng": 11.580885793696,
+        "official": "https://www.marstrand.se",
+        "wiki": {
+          "it": "Marstrand",
+          "en": "Marstrand"
+        },
+        "photos": [
+          {
+            "file": "Marstrand - KMB - 16000300022826 (cropped).jpg",
+            "author": "Jan Norrman",
+            "license": "CC BY 2.5",
+            "licenseUrl": "https://creativecommons.org/licenses/by/2.5"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-malmo",
+        "name": "Malmö",
+        "title": "Malmö",
+        "category": "citta",
+        "region": "Scania e Svezia meridionale",
+        "description": "Città della Scania sull’Øresund con parchi e quartieri contemporanei.",
+        "qid": "Q2211",
+        "lat": 55.583333333333336,
+        "lng": 13,
+        "official": "http://www.malmo.se",
+        "wiki": {
+          "it": "Malmö",
+          "en": "Malmö"
+        },
+        "photos": [
+          {
+            "file": "Centrala Malmö.jpg",
+            "author": "Johan Jönsson (Julle)",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-lund",
+        "name": "Lund",
+        "title": "Lund",
+        "category": "citta",
+        "region": "Scania e Svezia meridionale",
+        "description": "Città universitaria della Scania con cattedrale e centro storico.",
+        "qid": "Q2167",
+        "lat": 55.708313018551,
+        "lng": 13.199164196669,
+        "official": "http://www.lund.se",
+        "wiki": {
+          "it": "Lund",
+          "en": "Lund"
+        },
+        "photos": [
+          {
+            "file": "Stortorget lund 080508.jpg",
+            "author": "Anton Holmquist Soasta",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-ystad",
+        "name": "Ystad",
+        "title": "Ystad",
+        "category": "citta",
+        "region": "Scania e Svezia meridionale",
+        "description": "Città costiera della Scania con edifici a graticcio e porto.",
+        "qid": "Q28287",
+        "lat": 55.434619741448,
+        "lng": 13.825365282235,
+        "official": "https://www.ystad.se/",
+        "wiki": {
+          "it": "Ystad",
+          "en": "Ystad"
+        },
+        "photos": [
+          {
+            "file": "Ystad stortorget.jpg",
+            "author": "Mickaël Delcey (Silverkey)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-soderasen",
+        "name": "Parco nazionale Söderåsen",
+        "title": "Söderåsen National Park",
+        "category": "natura",
+        "region": "Scania e Svezia meridionale",
+        "description": "Parco della Scania con boschi e valloni; sentieri e accessibilità da verificare.",
+        "qid": "Q1530442",
+        "lat": 56.024143280350344,
+        "lng": 13.2300891594342,
+        "official": "http://www.nationalpark-soderasen.lst.se/",
+        "wiki": {
+          "it": "Parco nazionale Söderåsen",
+          "en": "Söderåsen"
+        },
+        "photos": [
+          {
+            "file": "Kopparhatten.jpg",
+            "author": "en:User:Abelson",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-kalmar",
+        "name": "Kalmar",
+        "title": "Kalmar",
+        "category": "citta",
+        "region": "Småland e Öland",
+        "description": "Città sullo stretto di Kalmar con castello e collegamento stradale verso Öland.",
+        "qid": "Q26345",
+        "lat": 56.66428611111111,
+        "lng": 16.365633333333335,
+        "official": "https://www.kalmar.se/",
+        "wiki": {
+          "it": "Kalmar",
+          "en": "Kalmar"
+        },
+        "photos": [
+          {
+            "file": "Kalmar collage.jpg",
+            "author": "L.G.foto, Kiwijo2000, ginandtonique, Sniper Zeta and Shrek_38 Collage by Moralist.",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-oland",
+        "name": "Öland",
+        "title": "Öland",
+        "category": "isole",
+        "region": "Småland e Öland",
+        "description": "Isola del Baltico con paesaggi rurali, costa e aree naturali.",
+        "qid": "Q239276",
+        "lat": 56.733333333333,
+        "lng": 16.666666666667,
+        "official": "http://www.oland.se",
+        "wiki": {
+          "it": "Öland",
+          "en": "Öland"
+        },
+        "photos": [
+          {
+            "file": "Resmo,Kvarnar vid Gynge hög 01.jpg",
+            "author": "Bernt Fransson,Lindås",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-vimmerby",
+        "name": "Vimmerby",
+        "title": "Vimmerby",
+        "category": "citta",
+        "region": "Småland e Öland",
+        "description": "Località dello Småland legata alla scrittrice Astrid Lindgren.",
+        "qid": "Q634231",
+        "lat": 57.668639398054,
+        "lng": 15.855066742328,
+        "wiki": {
+          "it": "Vimmerby",
+          "en": "Vimmerby"
+        },
+        "photos": [
+          {
+            "file": "Torget i Vimmerby.JPG",
+            "author": "Rotsee",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-astrid-lindgren",
+        "name": "Il mondo di Astrid Lindgren",
+        "title": "Astrid Lindgren's World",
+        "category": "parchi",
+        "region": "Småland e Öland",
+        "description": "Parco tematico a Vimmerby ispirato ai personaggi di Astrid Lindgren; apertura e spettacoli da verificare.",
+        "qid": "Q750684",
+        "lat": 57.674444444444,
+        "lng": 15.843611111111,
+        "official": "https://astridlindgrensvarld.se",
+        "wiki": {
+          "it": "Il mondo di Astrid Lindgren",
+          "en": "Astrid Lindgren's World"
+        },
+        "photos": [
+          {
+            "file": "Astrid Lindgrens Värld - Entré.jpg",
+            "author": "Kigsz",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-visby",
+        "name": "Visby",
+        "title": "Visby",
+        "category": "citta",
+        "region": "Gotland",
+        "description": "Città di Gotland con cinta muraria medievale e centro storico.",
+        "qid": "Q54757",
+        "lat": 57.628997457133,
+        "lng": 18.307108945039,
+        "official": "http://www.visby.se/",
+        "wiki": {
+          "it": "Visby",
+          "en": "Visby"
+        },
+        "photos": [
+          {
+            "file": "Visby 13-.JPG",
+            "author": "Żeglarz",
+            "license": "Public domain",
+            "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Licensing"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-faro",
+        "name": "Fårö",
+        "title": "Fårö",
+        "category": "isole",
+        "region": "Gotland",
+        "description": "Isola a nord di Gotland con costa e formazioni rocciose; collegamento locale da verificare.",
+        "qid": "Q1004693",
+        "lat": 57.933333333333,
+        "lng": 19.15,
+        "wiki": {
+          "it": "Fårö",
+          "en": "Fårö"
+        },
+        "photos": [
+          {
+            "file": "Rauks (3881539849).jpg",
+            "author": "allen watkin from London, UK",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-falun",
+        "name": "Falun",
+        "title": "Falun",
+        "category": "citta",
+        "region": "Dalarna e Svezia settentrionale",
+        "description": "Città della Dalarna legata alla storia dell’estrazione del rame.",
+        "qid": "Q26509",
+        "lat": 60.602736713846,
+        "lng": 15.656063817692,
+        "official": "http://www.falun.se",
+        "wiki": {
+          "it": "Falun",
+          "en": "Falun"
+        },
+        "photos": [
+          {
+            "file": "Falun från Radiohuset.jpg",
+            "author": "Calle Eklund/V-wolf",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-miniera-falun",
+        "name": "Miniera di Falun",
+        "title": "Falun Mine",
+        "category": "musei",
+        "region": "Dalarna e Svezia settentrionale",
+        "description": "Sito minerario storico della Dalarna; visite sotterranee, età minima e accessi da verificare.",
+        "qid": "Q636194",
+        "lat": 60.604722222222,
+        "lng": 15.630833333333,
+        "wiki": {
+          "it": "Falu koppargruva",
+          "en": "Falun Mine"
+        },
+        "photos": [
+          {
+            "file": "Falu koppargruva July 2017 01.jpg",
+            "author": "Arild Vågen",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-ostersund",
+        "name": "Östersund",
+        "title": "Östersund",
+        "category": "citta",
+        "region": "Dalarna e Svezia settentrionale",
+        "description": "Città del Jämtland sul lago Storsjön.",
+        "qid": "Q26515",
+        "lat": 63.179175,
+        "lng": 14.63600638888889,
+        "official": "https://www.ostersund.se",
+        "wiki": {
+          "it": "Östersund",
+          "en": "Östersund"
+        },
+        "photos": [
+          {
+            "file": "Östersund from Frösön.jpg",
+            "author": "Lars Falkdalen Lindahl (User:Njaelkies Lea)",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-kiruna",
+        "name": "Kiruna",
+        "title": "Kiruna",
+        "category": "citta",
+        "region": "Dalarna e Svezia settentrionale",
+        "description": "Città della Lapponia svedese, interessata dallo spostamento del centro urbano.",
+        "qid": "Q83232",
+        "lat": 67.8488888888889,
+        "lng": 20.302777777777777,
+        "wiki": {
+          "it": "Kiruna",
+          "en": "Kiruna"
+        },
+        "photos": [
+          {
+            "file": "Kiruna montage.png",
+            "author": "Jonipoon",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "00 2803 Kiruna - Schweden.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          },
+          {
+            "file": "00 2797 Kiruna (Schweden) - Erzbergwerk.jpg",
+            "author": "W. Bulach",
+            "license": "CC BY-SA 4.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-abisko",
+        "name": "Parco nazionale Abisko",
+        "title": "Abisko National Park",
+        "category": "natura",
+        "region": "Dalarna e Svezia settentrionale",
+        "description": "Parco della Lapponia con ambienti montani; meteo, stagione e difficoltà dei sentieri da verificare.",
+        "qid": "Q953092",
+        "lat": 68.32429948502646,
+        "lng": 18.68073066647587,
+        "official": "https://sverigesnationalparker.se/en/choose-park---list/abisko-national-park/",
+        "wiki": {
+          "it": "Parco nazionale Abisko",
+          "en": "Abisko National Park"
+        },
+        "photos": [
+          {
+            "file": "Abiskojåkka.jpg",
+            "author": "q8",
+            "license": "CC BY-SA 2.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-arn",
+        "name": "Aeroporto di Stoccolma Arlanda",
+        "title": "Stockholm Arlanda Airport",
+        "category": "aeroporti",
+        "region": "Stoccolma e Svezia centrale",
+        "description": "Aeroporto dell’area di Stoccolma; terminal e trasferimenti da verificare.",
+        "qid": "Q223499",
+        "lat": 59.651944444444,
+        "lng": 17.918611111111,
+        "iata": "ARN",
+        "official": "https://www.swedavia.com/arlanda/",
+        "wiki": {
+          "it": "Aeroporto di Stoccolma-Arlanda",
+          "en": "Stockholm Arlanda Airport"
+        },
+        "photos": [
+          {
+            "file": "Arlanda 1 Publish.jpg",
+            "author": "Brorsson at English Wikipedia",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-got",
+        "name": "Aeroporto di Göteborg Landvetter",
+        "title": "Göteborg Landvetter Airport",
+        "category": "aeroporti",
+        "region": "Göteborg e costa occidentale",
+        "description": "Aeroporto dell’area di Göteborg; trasferimenti da verificare.",
+        "qid": "Q1137115",
+        "lat": 57.66,
+        "lng": 12.291111111111,
+        "iata": "GOT",
+        "official": "https://www.swedavia.com/landvetter/",
+        "wiki": {
+          "it": "Aeroporto di Göteborg-Landvetter",
+          "en": "Göteborg Landvetter Airport"
+        },
+        "photos": [
+          {
+            "file": "GOT D-AEMD.jpg",
+            "author": "Andrzej Otrębski",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "file": "Landvetter Air View.jpg",
+            "author": "Kontrastfoto",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      },
+      {
+        "key": "se-mmx",
+        "name": "Aeroporto di Malmö",
+        "title": "Malmö Airport",
+        "category": "aeroporti",
+        "region": "Scania e Svezia meridionale",
+        "description": "Aeroporto dell’area di Malmö; trasferimenti verso la città da verificare.",
+        "qid": "Q898922",
+        "lat": 55.53,
+        "lng": 13.371388888889,
+        "iata": "MMX",
+        "official": "http://www.swedavia.com/malmo/",
+        "wiki": {
+          "it": "Aeroporto di Malmö-Sturup",
+          "en": "Malmö Airport"
+        },
+        "photos": [
+          {
+            "file": "Sturup airport.jpg",
+            "author": "jorchr",
+            "license": "CC BY-SA 3.0",
+            "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+          }
+        ],
+        "checkedAt": "2026-11-19"
+      }
+    ]
+  }
+}

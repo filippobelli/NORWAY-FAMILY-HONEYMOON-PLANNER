@@ -151,7 +151,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   isole: 'Isole e villaggi costieri',
   treni: 'Treni e trasporti panoramici',
   fauna: 'Fauna e natura',
-  musei: 'Musei e attività per bambini',
+  musei: 'Musei e luoghi culturali',
   parchi: 'Parchi divertimento',
   stagionali: 'Esperienze stagionali',
   aeroporti: 'Aeroporti',
