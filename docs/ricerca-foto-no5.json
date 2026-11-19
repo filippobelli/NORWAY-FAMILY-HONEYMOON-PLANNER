@@ -1,0 +1,86 @@
+{
+ "checkedAt": "2026-11-19",
+ "note": "Generato da scripts/harvest-foto.mjs: foto per le correzioni di NO-5.",
+ "places": {
+  "svartisen": {
+   "category": "Engabreen",
+   "photos": [
+    {
+     "file": "Svartisen Glacier; Day Four of Hurtigruten Coastal Voyage North (21).jpg",
+     "author": "Richard Mortel from Riyadh, Saudi Arabia",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+    },
+    {
+     "file": "Engabreen Svartisen jun 2025.jpg",
+     "author": "Wolfgang Hägele",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+     "file": "Nordland Svartisen 1.JPG",
+     "author": "Zairon",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    }
+   ]
+  },
+  "hermetikkmuseum": {
+   "category": "Norsk Hermetikkmuseum",
+   "photos": [
+    {
+     "file": "Norsk hermetikkmuseum.jpg",
+     "author": "Tobias Spaltenberger",
+     "license": "CC BY-SA 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+    }
+   ]
+  },
+  "avaldsnes": {
+   "category": "Avaldsnes kirke",
+   "photos": [
+    {
+     "file": "Konggårdruin fra middelalderen under utgravning. .jpg",
+     "author": "Msvea",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+     "file": "Avaldsnes kirke 2021.jpg",
+     "author": "Even Harbo",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+     "file": "Avaldseskirke.jpg",
+     "author": "Krage52",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    }
+   ]
+  },
+  "jektefartsmuseet": {
+   "category": "Anna Karoline (ship, 1876)",
+   "photos": [
+    {
+     "file": "Anna Karoline 2.jpg",
+     "author": "Tarjei Mo",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+     "file": "Anna Karoline 3.jpg",
+     "author": "Tarjei Mo",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    {
+     "file": "Anna Karoline 1.jpg",
+     "author": "Tarjei Mo",
+     "license": "CC BY-SA 4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    }
+   ]
+  }
+ }
+}

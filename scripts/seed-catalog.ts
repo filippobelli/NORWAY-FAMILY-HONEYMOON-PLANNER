@@ -38,6 +38,7 @@ import { DESTINATIONS } from '../src/data/destinations';
 import { OFFICIAL_CHECKED_AT, OFFICIAL_KIND_LABEL, OFFICIAL_SITES } from '../src/data/officialSites';
 import { COUNTIES, REGION_COUNTIES } from '../src/data/regionShapes';
 import { ATTR_CHECKED_AT, ATTR_PHOTOS, ATTR_PLACES } from '../src/data/placesAttrazioni';
+import { CORRECTIONS_CHECKED_AT, CORRECTIONS_NO5 } from '../src/data/correzioniNO5';
 import { NORD_CHECKED_AT, NORD_PHOTOS, NORD_PLACES, NORD_TIPS, type NordPlace } from '../src/data/placesNord';
 import type { PlacePhoto, PlaceTip } from '../src/data/placeExtras';
 import { WIKI } from '../src/data/wiki';
@@ -123,6 +124,11 @@ export interface CatalogSeed {
      */
     previousReleaseId?: string;
   };
+  /**
+   * Luoghi corretti rispetto alla versione precedente (da NO-5): stessa chiave, ma testi, sito ufficiale, fonti o foto
+   * diversi. Per queste chiavi il controllo «contiene tutta la precedente» guarda solo che il luogo ci sia ancora.
+   */
+  correctedKeys?: string[];
   /** Tratte traghetto (da NO-2): tabelle ferry_* */
   ferries?: { sources: FerrySource[]; routes: FerryRoute[] };
   regions:{ key: string; name: string; areas: unknown[]; sources: SourceSeed[] }[];
@@ -585,8 +591,61 @@ export function buildNorwayV4(): CatalogSeed {
   };
 }
 
+/**
+ * Norvegia, versione 5: tutto NO-4 più le correzioni di src/data/correzioniNO5.ts (testi senza affermazioni non
+ * verificate, siti ufficiali controllati, foto). Stesse chiavi e stessi luoghi; le righe dei luoghi corretti cambiano
+ * e il seed lo dichiara (correctedKeys), tutte le altre restano identiche a NO-4.
+ */
+export function buildNorwayV5(): CatalogSeed {
+  const v4 = buildNorwayV4();
+  const known = new Set(v4.places.map((p) => p.key));
+  for (const key of Object.keys(CORRECTIONS_NO5)) if (!known.has(key)) throw new Error(`Correzione per un luogo che non esiste: ${key}`);
+  const at = CORRECTIONS_CHECKED_AT;
+  const places = v4.places.map((p): PlaceSeed => {
+    const c = CORRECTIONS_NO5[p.key];
+    if (!c) return p;
+    const official = c.official === undefined ? p.official : c.official === null ? undefined : { url: c.official, kind: 'attrazione', via: 'verifica manuale' };
+    const photos = c.photos ? (c.photos.length ? c.photos : undefined) : p.photos;
+    return {
+      ...p,
+      official,
+      texts: c.texts ? { ...p.texts, it: { ...p.texts.it!, ...c.texts } } : p.texts,
+      photos,
+      photosCheckedAt: c.photos ? at : p.photosCheckedAt,
+      wiki: p.wiki && c.photos ? { ...p.wiki, image: photos?.[0]?.file } : p.wiki,
+      sources: {
+        ...p.sources,
+        sito_ufficiale:
+          c.official === undefined
+            ? p.sources.sito_ufficiale
+            : official
+              ? [{ label: OFFICIAL_KIND_LABEL.attrazione, url: official.url, checkedAt: at, method: 'Verifica manuale: pagina aperta e riconosciuta dal titolo', note: 'Solo il collegamento: nessun contenuto copiato' }]
+              : undefined,
+        testi: [...(p.sources.testi ?? []), { label: `Correzione del ${at}: ${c.why}`, checkedAt: at, method: 'redazione' }],
+      },
+    };
+  });
+  return {
+    ...v4,
+    release: {
+      ...v4.release,
+      version: 5,
+      dataCheckedUntil: at,
+      notes: 'Quinta versione: gli stessi luoghi di NO-4 con correzioni a testi, siti ufficiali e foto (affermazioni non verificate attenuate, collegamenti controllati uno per uno).',
+      sourceNotes: [
+        ...v4.release.sourceNotes,
+        { label: `Correzioni di ${Object.keys(CORRECTIONS_NO5).length} schede: testi, siti ufficiali verificati a mano, foto di Wikimedia Commons`, checkedAt: at, note: 'Elenco e motivo di ogni correzione tra le fonti dei testi del luogo' },
+      ],
+      previousReleaseId: 'NO-4',
+    },
+    correctedKeys: Object.keys(CORRECTIONS_NO5).sort(),
+    places,
+    outFile: 'catalogo-norvegia-v5.sql',
+  };
+}
+
 /** Costruttori per nazione e versione; senza --version si usa la prima (comportamento storico del comando) */
-const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3, 4: buildNorwayV4 } };
+const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: buildNorway, 2: buildNorwayV2, 3: buildNorwayV3, 4: buildNorwayV4, 5: buildNorwayV5 } };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 
@@ -934,8 +993,16 @@ export function generateSql(c: CatalogSeed): string {
   out.push(`  select count(*) into v_n from public.places p where p.release_id = ${R} and not exists (select 1 from public.place_texts t where t.release_id = p.release_id and t.place_key = p.place_key and t.lang = 'it');`);
   out.push(`  if v_n <> 0 then raise exception 'Luoghi senza testo italiano: %', v_n; end if;`);
   if (prev) {
+    // Luoghi corretti (da NO-5): per le tabelle dei luoghi le loro righe possono cambiare, ma il luogo deve restare
+    const corrected = c.correctedKeys ?? [];
+    const PLACE_TABLES = ['places', 'place_texts', 'place_sources', 'place_photos', 'place_tips'];
+    const notCorrected = corrected.length ? ` and x.place_key not in (${corrected.map(q).join(', ')})` : '';
+    if (corrected.length) {
+      out.push(`  select count(*) into v_n from public.places where release_id = ${R} and place_key in (${corrected.map(q).join(', ')});`);
+      out.push(`  if v_n <> ${corrected.length} then raise exception 'Luoghi corretti: attesi ${corrected.length} nella nuova versione, trovati %', v_n; end if;`);
+    }
     for (const t of inherited) {
-      out.push(`  select count(*) into v_n from (select to_jsonb(x) - 'release_id' from public.${t} x where x.release_id = ${q(prev)}`);
+      out.push(`  select count(*) into v_n from (select to_jsonb(x) - 'release_id' from public.${t} x where x.release_id = ${q(prev)}${PLACE_TABLES.includes(t) ? notCorrected : ''}`);
       out.push(`    except select to_jsonb(x) - 'release_id' from public.${t} x where x.release_id = ${R}) d;`);
       out.push(`  if v_n <> 0 then raise exception '${t}: % righe di ${prev} mancano o sono diverse in ${rel} (la nuova versione deve contenere tutta la precedente)', v_n; end if;`);
     }

@@ -292,3 +292,15 @@ Partenza: commit `dc314ad`. Nove interventi, in ordine di priorità.
 - **Solo dal codice**: focus del dialogo di rimozione di una nazione (stesso meccanismo del dialogo di rimozione di una tappa, provato). Lo script `righe.cjs` lo copre solo con la build `VITE_PASSAGGIO_RIGHE=pulsante`.
 - **Limiti**: su telefono le tabelle a schede perdono la struttura di tabella per i lettori di schermo (non provato con un lettore vero); «Lungo il percorso» considera solo i tratti con tracciato.
 - **Per eseguire gli script**: `PLAYWRIGHT_PATH` deve indicare un pacchetto playwright (nel progetto non è una dipendenza); serve Chrome installato.
+
+## 19/11/2026 — catalogo NO-5: correzioni a 28 schede (pubblicato)
+
+Stessi 358 luoghi di NO-4; cambiano solo 28 schede (elenco e motivo in `src/data/correzioniNO5.ts`, e tra le fonti dei testi di ogni luogo).
+
+- **Testi** (12 schede): tolte o attenuate affermazioni non verificate su una fonte; per i primati dichiarati dal luogo, «come si presenta sul suo sito».
+- **Siti ufficiali**: ogni link di NO-4 aperto il 19/11/2026. 4 sostituiti con pagine verificate (Folgefonna e Reisa su norgesnasjonalparker.no, Norsk Natursenter Hardanger, Jektefartsmuseet su nordlandsmuseet.no); 11 tolti perché non rispondevano, avevano il certificato scaduto o il dominio non era più del luogo (es. kode.no).
+- **Foto** (Wikimedia Commons, licenza libera e autore; `scripts/harvest-foto.mjs`, esclusi panorami deformati e foto d'archivio dell'Ottocento): Engabreen per Svartisen, la jekt «Anna Karoline» per Jektefartsmuseet, Avaldsnes kirke, Norsk Hermetikkmuseum; Rampestreken tiene una sola foto.
+- **Database**: NO-5 caricato e pubblicato su Supabase (copia di NO-4 lato server più le 28 schede corrette, poi il controllo finale del seed). NO-1…NO-4 e i viaggi salvati verificati invariati con un'impronta prima e dopo.
+- **Per usarlo**: Impostazioni › Nazioni e cataloghi › passa a NO-5. Il viaggio non cambia versione da solo.
+- **Verifiche**: typecheck, 278 test (nuovo `tests/catalogo-correzioni.test.ts`), lint, build.
+- **Limiti**: 6 luoghi ancora senza foto adatta (Flor og Fjære, Solastranden, Smelthytta, Blåisvatnet, Sápmi Park, Grenselandmuseet). I link dei luoghi di NO-1…NO-3 non toccati da queste correzioni non sono stati riaperti. Folgefonna resta «terzo della Norvegia per estensione» (da verificare).
