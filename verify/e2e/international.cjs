@@ -16,8 +16,9 @@ const server = serve(4189);
   const browser = await launch();
   try {
     const latest = Object.keys(fixture.bundles).filter((k) => k.endsWith('-2') || !fixture.bundles[k.replace(/-1$/, '-2')]);
-    const sets = Object.keys(fixture.bundles).map((key) => [key]);
-    sets.push(latest);
+    const areasOnly = process.argv.includes('--areas');
+    const sets = areasOnly ? [['GB-1'], ['IN-1']] : Object.keys(fixture.bundles).map((key) => [key]);
+    if (!areasOnly) sets.push(latest);
     for (const keys of sets) {
       const label = keys.join('+');
       const ctx = await context(browser, { viewport: { width: 1440, height: 1000 } });
@@ -83,11 +84,42 @@ const server = serve(4189);
         await page.locator('.catalog input[type="search"]').fill('');
         await page.getByLabel('Categoria', { exact: true }).selectOption('');
       }
+      if (keys.length === 1 && ['GB-1', 'IN-1'].includes(keys[0])) {
+        const areas = keys[0] === 'GB-1' ? [['gb-scotland', 'Scozia —'], ['gb-other', null]] : [['in-north', 'India del Nord —'], ['in-south', 'India del Sud —']];
+        const areaSelect = page.getByLabel('Area di viaggio', { exact: true });
+        for (const [id, prefix] of areas) {
+          const regions = new Set(bundles[0].regions.filter((r) => prefix ? r.name.startsWith(prefix) : !r.name.startsWith('Scozia —')).map((r) => r.region_key));
+          const subset = bundles[0].places.filter((p) => regions.has(p.region_key));
+          await areaSelect.selectOption(id);
+          check(await page.locator('.catalog .dest').count() === subset.length, `${id}: conteggio e perimetro corretti`);
+          await page.getByLabel('Categoria', { exact: true }).selectOption('musei');
+          check(await page.locator('.catalog .dest').count() === subset.filter((p) => p.category === 'musei').length, `${id}: filtri area e categoria combinati`);
+          await page.getByLabel('Cerca nel catalogo', { exact: true }).fill('ricerca-nessun-risultato-fixture');
+          check(await page.locator('.catalog .dest').count() === 0, `${id}: ricerca senza risultati`);
+          await page.getByLabel('Cerca nel catalogo', { exact: true }).fill('');
+          await page.getByLabel('Categoria', { exact: true }).selectOption('');
+          await page.reload();
+          await page.getByLabel('Area di viaggio', { exact: true }).waitFor();
+          await page.waitForFunction((count) => document.querySelectorAll('.catalog .dest').length === count, subset.length);
+          check(await areaSelect.inputValue() === id && await page.locator('.catalog .dest').count() === subset.length, `${id}: contesto conservato al ritorno`);
+          await areaSelect.focus();
+          check(await areaSelect.evaluate((el) => el === document.activeElement), `${id}: filtro raggiungibile da tastiera`);
+        }
+        await page.getByRole('button', { name: 'Azzera filtri', exact: true }).first().click();
+        check(await page.locator('.catalog .dest').count() === expected, `${label}: tutte le aree ripristinate`);
+      }
       await page.goto('http://localhost:4189/#/configuratore');
       const options = await page.locator('select').evaluateAll((ss) => ss.flatMap((s) => [...s.options].map((o) => o.value)));
       const airportKeys = bundles.flatMap((b) => b.places.filter((p) => p.category === 'aeroporti').map((p) => p.place_key));
       check(airportKeys.some((key) => options.includes(key)) && !options.includes('bgo'), `${label}: aeroporti dei cataloghi caricati`);
       check((await page.locator('.region-list').innerText()).includes(bundles[0].regions[0].name), `${label}: regioni della nazione`);
+      if (keys.length === 1 && ['GB-1', 'IN-1'].includes(keys[0])) {
+        const area = keys[0] === 'GB-1' ? 'gb-scotland' : 'in-south';
+        const before = await page.evaluate(() => localStorage.getItem('nfhp.trip.v1'));
+        await page.getByLabel('Area da pianificare', { exact: true }).selectOption(area);
+        check(await page.getByLabel('Area da pianificare', { exact: true }).inputValue() === area, `${area}: configuratore riconosce la scelta`);
+        check(await page.evaluate(() => localStorage.getItem('nfhp.trip.v1')) === before, `${area}: scelta non applicata al viaggio`);
+      }
       await page.goto('http://localhost:4189/#/crociere');
       check((await page.locator('body').innerText()).includes('non contengono ancora crociere'), `${label}: trasporti mancanti dichiarati`);
       await page.setViewportSize({ width: 375, height: 812 });

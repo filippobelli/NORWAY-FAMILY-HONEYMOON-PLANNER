@@ -99,6 +99,8 @@ export function scenarioKindFor(modes: TravelMode[]): ScenarioKind {
 }
 
 export interface ConfiguratorInput {
+  /** Per una proposta limitata a un'area editoriale; assente nei viaggi e nelle impostazioni precedenti. */
+  scopePlaceIds?: string[];
   days: number;
   startDate: string;
   arrivalAirportId: string;
@@ -136,14 +138,17 @@ export function initialConfigurator(trip: Trip, saved: Partial<ConfiguratorInput
   const departure = airports.find((a) => a.id === saved.departureAirportId) ?? arrival;
   const regions = saved.regions?.filter((r) => DESTINATIONS.some((d) => d.region === r));
   const modes = saved.modes?.filter((m) => m !== 'nave' || COASTAL_PORTS_NORTHBOUND.length > 0);
+  const savedScope = saved.scopePlaceIds?.filter((id) => DESTINATIONS.some((d) => d.id === id));
+  const scopePlaceIds = savedScope?.includes(arrival?.id ?? '') && savedScope.includes(departure?.id ?? '') ? savedScope : undefined;
   return {
+    scopePlaceIds,
     days: saved.days ?? 18, startDate: trip.startDate,
     arrivalAirportId: arrival?.id ?? '', departureAirportId: departure?.id ?? '',
     modes: modes?.length ? modes : ['auto'], pace: saved.pace ?? 'equilibrato',
     maxDriveHours: saved.maxDriveHours ?? Math.round(trip.settings.maxTravelMinPerDay / 60),
     regions: regions?.length ? regions : [findDestination('bergen')?.region ?? arrival?.region ?? ''].filter(Boolean),
     excludedAirportRegions: saved.excludedAirportRegions?.filter((r) => DESTINATIONS.some((d) => d.region === r)) ?? [],
-    mustSee: trip.favorites.filter((id) => { const d = findDestination(id); return d && d.category !== 'aeroporti'; }),
+    mustSee: trip.favorites.filter((id) => { const d = findDestination(id); return d && d.category !== 'aeroporti' && (!scopePlaceIds || scopePlaceIds.includes(id)); }),
     kidFriendly: saved.kidFriendly ?? true,
   };
 }
@@ -253,11 +258,13 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   const arr = findDestination(input.arrivalAirportId);
   const dep = findDestination(input.departureAirportId);
   if (!arr || !dep) throw new Error('Aeroporti non validi');
+  const scope = input.scopePlaceIds ? new Set(input.scopePlaceIds) : undefined;
+  if (scope && (!scope.has(arr.id) || !scope.has(dep.id))) throw new Error('Gli aeroporti non appartengono all’area scelta. Seleziona di nuovo l’area o modifica le regioni.');
   const totalNights = Math.max(1, Math.round(input.days) - 1);
   const minNights = PACE_MIN_NIGHTS[input.pace];
   const maxDrive = Math.max(1, input.maxDriveHours);
 
-  const all = BASE_IDS.map((id) => findDestination(id)).filter((d): d is Destination => Boolean(d));
+  const all = BASE_IDS.map((id) => findDestination(id)).filter((d): d is Destination => d !== undefined && (!scope || scope.has(d.id)));
   const bases: Base[] = all.map((d) => ({ d, lat: d.lat, lng: d.lng, visits: [], must: false, score: 0, nights: 0 }));
   const byId = new Map(bases.map((b) => [b.d.id, b]));
 
@@ -265,7 +272,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   const mustSet = new Set(input.mustSee);
   const unreachable: string[] = [];
   for (const v of DESTINATIONS) {
-    if (byId.has(v.id) || !isVisit(v, input.kidFriendly)) continue;
+    if ((scope && !scope.has(v.id)) || byId.has(v.id) || !isVisit(v, input.kidFriendly)) continue;
     let best: Base | undefined;
     let bestKm = Infinity;
     for (const b of bases) {
@@ -291,7 +298,7 @@ export function configureItinerary(input: ConfiguratorInput): ConfiguratorResult
   if (input.kidFriendly) {
     for (const id of input.mustSee) {
       const d = findDestination(id);
-      if (!d || d.kidScore !== 1 || byId.has(id)) continue;
+      if (!d || (scope && !scope.has(d.id)) || d.kidScore !== 1 || byId.has(id)) continue;
       const b = [...bases].sort((x, y) => airKm(x, d) - airKm(y, d))[0];
       if (b && airKm(b, d) <= VISIT_RADIUS_KM && !b.visits.includes(d)) {
         b.visits.push(d);

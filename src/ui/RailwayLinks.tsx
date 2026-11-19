@@ -1,5 +1,5 @@
 import { placeCountry } from '../catalog/registry';
-import { RAIL_PLANNERS } from '../data/railPlanners';
+import { NORTHERN_IRELAND_RAIL, RAIL_PLANNERS } from '../data/railPlanners';
 import { formatDateIt } from '../domain/itinerary';
 import type { Destination } from '../domain/types';
 
@@ -7,7 +7,7 @@ import type { Destination } from '../domain/types';
 export function RailwayLinks({ dest }: { dest: Destination }) {
   if (!dest.transportPoint || dest.category !== 'treni') return null;
   const code = placeCountry(dest.id);
-  const source = code ? RAIL_PLANNERS[code] : undefined;
+  const source = code === 'GB' && dest.region === 'Irlanda del Nord' ? NORTHERN_IRELAND_RAIL : code ? RAIL_PLANNERS[code] : undefined;
   if (!source) return null;
   return (
     <p className="small">

@@ -19,6 +19,7 @@ import { Modal } from './PlacementDialog';
 const STATE_LABEL: Record<CatalogLoadState, string> = { sul_dispositivo: 'sul dispositivo', in_download: 'in download', da_scaricare: 'da scaricare', errore: 'da scaricare' };
 const STATE_TONE: Record<CatalogLoadState, 'ok' | 'info' | 'warn'> = { sul_dispositivo: 'ok', in_download: 'info', da_scaricare: 'warn', errore: 'warn' };
 const date = (iso?: string) => (iso ? iso.slice(0, 10) : 'data non indicata');
+const areaHint = (code: string) => code === 'GB' ? 'Include la Scozia, selezionabile nei filtri del catalogo e nel pianificatore.' : code === 'IN' ? 'India del Nord e India del Sud selezionabili separatamente nel catalogo e nel pianificatore.' : undefined;
 
 /** Nazioni con un catalogo pubblicato. Senza cloud (modalità di prova) solo quella del catalogo da file. */
 function useAvailable(): { list?: AvailableCountry[]; error?: string } {
@@ -200,6 +201,7 @@ export function CountriesDialog({ onClose }: { onClose: () => void }) {
             {others.map((a) => (
               <label key={a.code} className="place-opt">
                 <input type="radio" name="nazione-nuova" checked={choice === a.code} onChange={() => setChoice(a.code)} /> {a.name} · catalogo versione {a.version} · valuta {a.currency}
+                {areaHint(a.code) && <span className="small"> {areaHint(a.code)}</span>}
               </label>
             ))}
             <button className="btn btn-primary" disabled={!choice || !online} onClick={add}>
@@ -292,6 +294,7 @@ export function CountryChooser() {
             {available.map((a) => (
               <label key={a.code} className={`ov-start-card ${sel === a.code ? 'is-recommended' : ''}`}>
                 <input type="radio" name="prima-nazione" checked={sel === a.code} onChange={() => setChoice(a.code)} /> <strong>{a.name}</strong>
+                {areaHint(a.code) && <span className="small">{areaHint(a.code)}</span>}
                 <span className="small">
                   {' '}
                   Catalogo versione {a.version} · pubblicato il {date(a.publishedAt)}

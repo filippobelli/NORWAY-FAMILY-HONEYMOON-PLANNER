@@ -28,6 +28,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildInternational, buildInternationalV2, INTERNATIONAL_CODES } from './build-international';
 import { ADDITIONAL_CODES, ADDITIONAL_PATCH_CODES, buildAdditionalCountry, buildAdditionalCountryV2 } from './build-additional-countries';
+import { NORTHERN_ASIA_CODES, buildNorthernAsia } from './build-northern-asia';
 
 import { FERRY_CHECKED_AT, FERRY_ROUTES, FERRY_SOURCES } from '../src/data/ferryRoutes';
 import type { FerryRoute, FerrySource } from '../src/data/ferryTypes';
@@ -652,6 +653,7 @@ const BUILDERS: Record<string, Record<number, () => CatalogSeed>> = { NO: { 1: b
 for (const code of INTERNATIONAL_CODES) BUILDERS[code] = { 1: () => buildInternational(code), 2: () => buildInternationalV2(code) };
 for (const code of ADDITIONAL_CODES) BUILDERS[code] = { 1: () => buildAdditionalCountry(code) };
 for (const code of ADDITIONAL_PATCH_CODES) BUILDERS[code]![2] = () => buildAdditionalCountryV2(code);
+for (const code of NORTHERN_ASIA_CODES) BUILDERS[code] = { 1: () => buildNorthernAsia(code) };
 
 // ---------- Righe delle tabelle ferry_* (stesse per il SQL e per il bundle) ----------
 

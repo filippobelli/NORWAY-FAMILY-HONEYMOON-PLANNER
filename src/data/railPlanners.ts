@@ -13,4 +13,14 @@ export const RAIL_PLANNERS: Record<string, { label: string; url: string; checked
   HR: { label: 'Cerca treni su HŽPP', url: 'https://www.hzpp.hr/en' },
   GR: { label: 'Cerca treni su Hellenic Train', url: 'https://www.hellenictrain.gr/en/', checkedAt: '2026-11-19' },
   TR: { label: 'Cerca treni su TCDD Taşımacılık', url: 'https://www.tcddtasimacilik.gov.tr/', checkedAt: '2026-11-19' },
+  FI: { label: 'Cerca treni su VR', url: 'https://www.vr.fi/en', checkedAt: '2026-11-19' },
+  GB: { label: 'Cerca treni su National Rail · Gran Bretagna', url: 'https://www.nationalrail.co.uk/', checkedAt: '2026-11-19' },
+  IE: { label: 'Cerca treni su Irish Rail', url: 'https://www.irishrail.ie/en-ie/', checkedAt: '2026-11-19' },
+  TH: { label: 'Cerca treni su State Railway of Thailand', url: 'https://www.railway.co.th/', checkedAt: '2026-11-19' },
+  KH: { label: 'Cerca treni su Royal Railway Cambodia', url: 'https://www.royalrailway.com.kh/', checkedAt: '2026-11-19' },
+  VN: { label: 'Cerca treni su Vietnam Railways', url: 'https://www.vr.com.vn/en' },
+  IN: { label: 'Cerca treni su IRCTC', url: 'https://www.irctc.co.in/nget/train-search' },
 };
+
+/** National Rail copre la Gran Bretagna, non la rete dell'Irlanda del Nord. */
+export const NORTHERN_IRELAND_RAIL = { label: 'Cerca treni su Translink · Irlanda del Nord', url: 'https://www.translink.co.uk/', checkedAt: '2026-11-19' };

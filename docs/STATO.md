@@ -1,5 +1,11 @@
 # Stato del progetto — 27 ottobre 2026
 
+## Nord Europa e Asia · 19 novembre 2026
+
+- Pubblicate nel database otto nazioni: Islanda (127 schede), Finlandia (177), Regno Unito (273, incluse 122 in Scozia), Irlanda (147), Thailandia (156), Cambogia (101), Vietnam (134) e India (302: 150 Nord, 152 Sud). 1.417 nuove schede e 1.458 riferimenti fotografici con attribuzione.
+- Scozia e India Nord/Sud selezionabili come aree in catalogo e configuratore, senza duplicare nazioni o luoghi. Nessuna nuova migrazione o dipendenza; viaggi e cataloghi precedenti verificati invariati. Totale: 22 nazioni, 4.326 schede nelle ultime release, database circa 29,5 MB.
+- Typecheck, lint, build, 302 test e controlli browser superati. Fonti, limiti, copertura e risultati: [cataloghi-nord-asia.md](cataloghi-nord-asia.md).
+
 ## Sette nuove nazioni · 19 novembre 2026
 
 - Pubblicati nel database i cataloghi di Slovenia (140 schede), Austria (187), Spagna (235), Portogallo (171), Croazia (162), Grecia (205) e Turchia (213): 1.313 schede e 1.305 riferimenti fotografici con attribuzione, inclusi aeroporti, stazioni e porti dove disponibili.

@@ -1,0 +1,588 @@
+{
+  "IS": {
+    "rejected": [
+      {
+        "key": "is-arb-r-open-air-museum",
+        "title": "Árbær Open Air Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-reykjanes-art-museum",
+        "title": "Reykjanes Art Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-the-settlement-center",
+        "title": "The Settlement Center",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-norwegian-house-stykkisholmur",
+        "title": "Norwegian House (Stykkishólmur)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-east-iceland-heritage-museum",
+        "title": "East Iceland Heritage Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-petra-s-stone-collection",
+        "title": "Petra's Stone Collection",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-bridge-between-continents",
+        "title": "Bridge Between Continents",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-reykjavik-family-park-and-zoo",
+        "title": "Reykjavík Family Park and Zoo",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-port-of-reykjavik",
+        "title": "Port of Reykjavík",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-skarfabakki",
+        "title": "Skarfabakki",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "is-port-of-sey-isfjor-ur",
+        "title": "Port of Seyðisfjörður",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "is-flu-ir",
+      "is-holmavik",
+      "is-national-gallery-of-iceland",
+      "is-whales-of-iceland",
+      "is-snorrastofa",
+      "is-museum-of-icelandic-sorcery-and-witchcraft",
+      "is-herring-era-museum",
+      "is-glaumb-r",
+      "is-icelandic-aviation-museum",
+      "is-gunnuhver",
+      "is-dyrholaey",
+      "is-barnafoss",
+      "is-hljo-aklettar",
+      "is-reykjavik-airport",
+      "is-hornafjor-ur-airport",
+      "is-vestmannaeyjar-airport"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "FI": {
+    "rejected": [
+      {
+        "key": "fi-seili",
+        "title": "Seili",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "fi-sami-museum-siida",
+        "title": "Sámi Museum Siida",
+        "qid": "Q946264"
+      }
+    ],
+    "missingPhotos": [
+      "fi-enontekio",
+      "fi-uspenski-cathedral",
+      "fi-seurasaari",
+      "fi-sodankyla-old-church",
+      "fi-hossa-national-park",
+      "fi-pallas-yllastunturi-national-park",
+      "fi-saana",
+      "fi-aland",
+      "fi-turku-central-railway-station",
+      "fi-lahti-railway-station",
+      "fi-kajaani-railway-station",
+      "fi-rovaniemi-railway-station"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "GB": {
+    "rejected": [
+      {
+        "key": "gb-culloden",
+        "title": "Culloden",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gb-belfast-grand-central-station",
+        "title": "Belfast Grand Central station",
+        "reason": "Nazione dichiarata diversa: Q26"
+      },
+      {
+        "key": "gb-larne-harbour",
+        "title": "Larne Harbour",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gb-port-of-rosyth",
+        "title": "Port of Rosyth",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "gb-lerwick-harbour",
+        "title": "Lerwick Harbour",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "gb-stornoway-harbour",
+        "title": "Stornoway Harbour",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "gb-brunel-s-ss-great-britain",
+        "title": "SS Great Britain",
+        "qid": "Q744086"
+      }
+    ],
+    "missingPhotos": [
+      "gb-canterbury",
+      "gb-fitzwilliam-museum",
+      "gb-jorvik-viking-centre",
+      "gb-national-museum-of-scotland",
+      "gb-stirling-castle",
+      "gb-iona-abbey",
+      "gb-the-burrell-collection",
+      "gb-south-downs-national-park",
+      "gb-mourne-mountains",
+      "gb-lewis-and-harris",
+      "gb-landmark-forest-adventure-park",
+      "gb-heathrow-airport",
+      "gb-london-city-airport",
+      "gb-port-of-plymouth",
+      "gb-port-of-liverpool"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "IE": {
+    "rejected": [
+      {
+        "key": "ie-titanic-experience-cobh",
+        "title": "Titanic Experience Cobh",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "ie-emerald-park-ireland",
+        "title": "Emerald Park (amusement park)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "ie-doolin-pier",
+        "title": "Doolin Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "ie-kilkenny",
+      "ie-ennis",
+      "ie-doolin",
+      "ie-drogheda",
+      "ie-dublin-castle",
+      "ie-kilkenny-castle",
+      "ie-killarney-national-park",
+      "ie-ring-of-kerry",
+      "ie-inishmaan",
+      "ie-inisheer",
+      "ie-port-of-galway"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "TH": {
+    "rejected": [
+      {
+        "key": "th-wat-mahathat-ayutthaya",
+        "title": "Wat Mahathat, Ayutthaya",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-emerald-pool-thailand",
+        "title": "Emerald Pool (Thailand)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-ko-yao-noi",
+        "title": "Ko Yao Noi",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-ko-muk",
+        "title": "Ko Muk",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-andamanda-phuket",
+        "title": "Andamanda Phuket",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-lampang-railway-station",
+        "title": "Lampang railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-bang-bao",
+        "title": "Bang Bao",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-rassada-pier",
+        "title": "Rassada Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-ao-po-pier",
+        "title": "Ao Po Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-donsak-pier",
+        "title": "Donsak Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-nathon-pier",
+        "title": "Nathon Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "th-mae-haad-pier",
+        "title": "Mae Haad Pier",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "th-nong-khai",
+      "th-takua-pa",
+      "th-bangkok-national-museum",
+      "th-phuket-thai-hua-museum",
+      "th-sam-phan-bok",
+      "th-ko-phi-phi",
+      "th-nakhon-phanom-airport",
+      "th-chumphon-airport",
+      "th-pattaya-railway-station",
+      "th-surat-thani-railway-station",
+      "th-ko-lanta",
+      "th-dream-world"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "KH": {
+    "rejected": [
+      {
+        "key": "kh-sra-aem",
+        "title": "Sra Aem",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-landmine-museum",
+        "title": "Cambodia Landmine Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-cambodia-peace-gallery",
+        "title": "Cambodia Peace Gallery",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-baksei-chamkrong",
+        "title": "Baksei Chamkrong",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "kh-battambang-museum",
+        "title": "Battambang Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-wat-damrei-sar",
+        "title": "Wat Damrei Sar",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-wat-samathi",
+        "title": "Wat Samathi",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-kampot-provincial-museum",
+        "title": "Kampot Provincial Museum",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-phnom-han-chey",
+        "title": "Phnom Han Chey",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-koh-russey",
+        "title": "Koh Russey",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-pursat-railway-station",
+        "title": "Pursat railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-takeo-railway-station",
+        "title": "Takeo railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "kh-kampot-international-tourist-port",
+        "title": "Kampot International Tourist Port",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "kh-poipet",
+      "kh-chaktomuk-conference-hall",
+      "kh-east-baray",
+      "kh-phnom-sampeau",
+      "kh-koh-ta-kiev",
+      "kh-koh-sdach",
+      "kh-techo-international-airport",
+      "kh-kampot-railway-station",
+      "kh-phnom-penh-autonomous-port",
+      "kh-sihanoukville-autonomous-port",
+      "kh-yeak-laom-lake"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "VN": {
+    "rejected": [
+      {
+        "key": "vn-nam-inh",
+        "title": "Nam Định",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "vn-bac-ha",
+        "title": "Bắc Hà (town)",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-hoi-an",
+        "title": "Hoi An",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-ong-ha",
+        "title": "Đông Hà",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "vn-tuy-hoa",
+        "title": "Tuy Hòa",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "vn-my-tho",
+        "title": "My Tho",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-dinh-vua-meo",
+        "title": "Dinh Vua Meo",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-tomb-of-minh-mang",
+        "title": "Tomb of Minh Mạng",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-po-klong-garai",
+        "title": "Po Klong Garai",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "vn-a-lat-railway-station",
+        "title": "Đà Lạt railway station",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-kon-tum-cathedral",
+        "title": "Kon Tum Cathedral",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-ban-gioc-detian-falls",
+        "title": "Bản Giốc–Detian Falls",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-pongour-falls",
+        "title": "Pongour Falls",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-can-gio-mangrove-biosphere-reserve",
+        "title": "Can Gio Mangrove Biosphere Reserve",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "vn-sun-world-ha-long",
+        "title": "Sun World Hạ Long",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-port-of-haiphong",
+        "title": "Port of Hai Phong",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-lach-huyen-port",
+        "title": "Lach Huyen Port",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-tuan-chau-marina",
+        "title": "Tuần Châu Marina",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-port-of-da-nang",
+        "title": "Port of Da Nang",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-cam-ranh-port",
+        "title": "Cam Ranh Port",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-cai-mep-thi-vai-port",
+        "title": "Cái Mép–Thị Vải Port",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "vn-ha-tien-ferry-port",
+        "title": "Hà Tiên ferry port",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [],
+    "missingPhotos": [
+      "vn-ha-long",
+      "vn-cao-bang",
+      "vn-mai-chau",
+      "vn-moc-chau",
+      "vn-ong-hoi",
+      "vn-quy-nhon",
+      "vn-phan-thiet",
+      "vn-buon-ma-thuot",
+      "vn-pleiku",
+      "vn-kon-tum",
+      "vn-bien-hoa",
+      "vn-chau-oc",
+      "vn-ha-tien",
+      "vn-rach-gia",
+      "vn-hoa-lo-prison",
+      "vn-my-son",
+      "vn-cai-rang-floating-market",
+      "vn-cuc-phuong-national-park",
+      "vn-fansipan",
+      "vn-co-to-island",
+      "vn-tuy-hoa-airport",
+      "vn-can-tho-international-airport",
+      "vn-rach-gia-airport",
+      "vn-nam-inh-railway-station",
+      "vn-chan-may-port"
+    ],
+    "checkedAt": "2026-11-19"
+  },
+  "IN": {
+    "rejected": [
+      {
+        "key": "in-vijaya-vitthala-temple",
+        "title": "Vijaya Vitthala Temple",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "in-kerala-folklore-museum",
+        "title": "Kerala Folklore Museum",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "in-church-of-st-francis-of-assisi-goa",
+        "title": "Church of St. Francis of Assisi, Goa",
+        "reason": "Entità non risolta o pagina disambigua"
+      },
+      {
+        "key": "in-visakhapatnam-airport",
+        "title": "Visakhapatnam International Airport",
+        "reason": "IATA non disponibile"
+      },
+      {
+        "key": "in-new-mangalore-port",
+        "title": "New Mangalore Port",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "key": "in-v-o-chidambaranar-port-authority",
+        "title": "V. O. Chidambaranar Port Authority",
+        "reason": "Entità non risolta o pagina disambigua"
+      }
+    ],
+    "duplicates": [
+      {
+        "key": "in-group-of-monuments-at-pattadakal",
+        "title": "Group of Monuments at Pattadakal",
+        "qid": "Q817250"
+      }
+    ],
+    "missingPhotos": [
+      "in-delhi",
+      "in-agra-fort",
+      "in-itmad-ud-daulah",
+      "in-red-fort",
+      "in-lotus-temple",
+      "in-india-gate",
+      "in-jama-masjid-delhi",
+      "in-sarnath",
+      "in-bara-imambara",
+      "in-amber-fort",
+      "in-city-palace-jaipur",
+      "in-dilwara-temples",
+      "in-jallianwala-bagh",
+      "in-pantnagar-airport",
+      "in-prayagraj-junction-railway-station",
+      "in-jaipur-junction-railway-station",
+      "in-rishikesh-railway-station",
+      "in-kalka-railway-station",
+      "in-mapusa",
+      "in-gingee-fort",
+      "in-ramappa-temple",
+      "in-borra-caves",
+      "in-bannerghatta-national-park",
+      "in-eravikulam-national-park",
+      "in-kerala-backwaters",
+      "in-wayanad-wildlife-sanctuary",
+      "in-pichavaram",
+      "in-nilgiri-mountains",
+      "in-madras-crocodile-bank-trust",
+      "in-dabolim-airport",
+      "in-mysore-junction-railway-station",
+      "in-hosapete-junction-railway-station"
+    ],
+    "checkedAt": "2026-11-19"
+  }
+}

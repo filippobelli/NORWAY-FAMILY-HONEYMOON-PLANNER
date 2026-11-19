@@ -1,5 +1,5 @@
 import { getContext, setContext } from '../state/workContext';
-import { useCatalog } from '../catalog/registry';
+import { placeCountry, useCatalog } from '../catalog/registry';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_LABEL, DESTINATIONS, findDestination } from '../data/destinations';
 import {
@@ -28,6 +28,7 @@ import { Icon } from './icons';
 import { Modal } from './PlacementDialog';
 import { BookingConfirm, ImpactView } from './PlanBDialog';
 import { RegionPicker } from './RegionMap';
+import { CATALOG_AREAS, configureArea, destinationInArea } from '../domain/catalogAreas';
 
 const PACE_LABEL: Record<Pace, string> = { tranquillo: 'Tranquillo', equilibrato: 'Equilibrato', intenso: 'Intenso' };
 const PACE_HINT: Record<Pace, string> = {
@@ -36,9 +37,9 @@ const PACE_HINT: Record<Pace, string> = {
   intenso: 'Anche 1 notte per tappa',
 };
 const MODE_HINT: Record<TravelMode, string> = {
-  auto: 'Tra le tappe; i traghetti dei fiordi sono compresi nei percorsi',
+  auto: 'Tra le tappe; traghetti, attese e orari vanno verificati separatamente',
   nave: 'Per i tratti lunghi lungo la costa, con notti a bordo',
-  treno: 'Dove c\'è una linea tra due tappe (Bergensbanen, Dovrebanen…)',
+  treno: 'Dove esiste una linea: collegamenti, coincidenze e orari da verificare',
   bus: 'Per i tratti senza auto né treno',
   volo: 'Per i tratti molto lunghi tra due aeroporti',
 };
@@ -72,6 +73,13 @@ export function ConfiguratorView() {
   const airportRegions = [...new Set([findDestination(input.arrivalAirportId)?.region, findDestination(input.departureAirportId)?.region].filter((r): r is Region => Boolean(r)))];
   const excludedAirport = input.excludedAirportRegions ?? [];
   const effectiveRegions = [...new Set([...input.regions, ...airportRegions.filter((r) => !excludedAirport.includes(r))])];
+  const availableAreas = CATALOG_AREAS.filter((a) => airports().some((d) => destinationInArea(d, placeCountry(d.id), a.id)));
+  const configuredArea = availableAreas.find((a) => {
+    if (!input.scopePlaceIds) return false;
+    const regionSet = new Set(DESTINATIONS.filter((d) => destinationInArea(d, placeCountry(d.id), a.id)).map((d) => d.region));
+    return effectiveRegions.length === regionSet.size && effectiveRegions.every((r) => regionSet.has(r)) &&
+      [input.arrivalAirportId, input.departureAirportId].every((id) => { const d = findDestination(id); return d && destinationInArea(d, placeCountry(id), a.id); });
+  })?.id ?? '';
   const toggleRegion = (r: Region) => {
     const on = effectiveRegions.includes(r);
     if (airportRegions.includes(r)) {
@@ -85,7 +93,9 @@ export function ConfiguratorView() {
     set({ regions: on ? input.regions.filter((x) => x !== r) : [...input.regions, r] });
   };
   // Cambiare un'impostazione non butta via la proposta: la si sostituisce solo creando di nuovo, con conferma
-  const set = (p: Partial<ConfiguratorInput>) => setInput((x) => ({ ...x, ...p }));
+  const set = (p: Partial<ConfiguratorInput>) => setInput((x) => ({ ...x, ...p,
+    ...(['regions', 'excludedAirportRegions', 'arrivalAirportId', 'departureAirportId'].some((key) => key in p) || p.mustSee?.some((id) => x.scopePlaceIds && !x.scopePlaceIds.includes(id)) ? { scopePlaceIds: undefined } : {}),
+  }));
 
   const run = () => {
     try {
@@ -247,6 +257,18 @@ export function ConfiguratorView() {
 
         <fieldset className="chips-field">
           <legend>Regioni da esplorare</legend>
+          {availableAreas.length > 0 && (
+            <Field label="Area da pianificare" hint="Imposta regioni e aeroporti della proposta. I preferiti esterni restano salvati ma non entrano nella proposta. Modificando regioni o aeroporti torni alla scelta personalizzata.">
+              {(id) => <select id={id} value={configuredArea} onChange={(e) => {
+                if (!e.target.value) return;
+                try { setInput(configureArea(input, e.target.value, DESTINATIONS, placeCountry)); setError(''); }
+                catch (e) { setError((e as Error).message); }
+              }}>
+                <option value="" disabled>Scelta personalizzata delle regioni</option>
+                {availableAreas.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+              </select>}
+            </Field>
+          )}
           <RegionPicker
             selected={effectiveRegions}
             airportRegions={airportRegions}

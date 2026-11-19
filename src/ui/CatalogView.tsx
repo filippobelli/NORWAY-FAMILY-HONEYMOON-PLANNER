@@ -16,6 +16,7 @@ import { Icon, type IconName } from './icons';
 import { stopFromDestination } from './ItineraryView';
 import { OfficialLink } from './OfficialLink';
 import { RailwayLinks } from './RailwayLinks';
+import { CATALOG_AREAS, areaContains, destinationInArea } from '../domain/catalogAreas';
 import { Modal, StopDialog } from './PlacementDialog';
 
 const KID_LABEL = { 1: 'Poco adatto ai piccoli', 2: 'Adatto con accortezze', 3: 'Molto adatto ai bambini' } as const;
@@ -30,10 +31,11 @@ interface CatalogFilters {
   kids: boolean;
   onlyFav: boolean;
   nation: string;
+  area: string;
   /** '' ovunque, 'percorso' lungo il tracciato, altrimenti l'id della tappa vicino a cui cercare */
   where: string;
 }
-const NO_FILTERS: CatalogFilters = { q: '', cat: '', region: '', kids: false, onlyFav: false, nation: '', where: '' };
+const NO_FILTERS: CatalogFilters = { q: '', cat: '', region: '', kids: false, onlyFav: false, nation: '', area: '', where: '' };
 function loadFilters(): CatalogFilters {
   try {
     return { ...NO_FILTERS, ...(JSON.parse(sessionStorage.getItem(FILTERS_KEY) ?? '{}') as Partial<CatalogFilters>) };
@@ -52,6 +54,9 @@ export function CatalogView() {
   const [onlyFav, setOnlyFav] = useState(saved.onlyFav);
   const [openId, setOpenId] = useState<string | null>(null);
   const [nation, setNation] = useState(saved.nation);
+  const [areaRaw, setArea] = useState(saved.area);
+  const areas = CATALOG_AREAS.filter((a) => tripCountries(trip).some((c) => c.code === a.countryCode) && (!nation || nation === a.countryCode));
+  const area = areas.some((a) => a.id === areaRaw) ? areaRaw : '';
   const [whereRaw, setWhere] = useState(saved.where);
   const hasTrack = useMemo(() => hasRouteTrack(trip), [trip]);
   // Un filtro salvato che non vale più (tappa tolta, tracciato assente) torna a «ovunque»
@@ -59,12 +64,12 @@ export function CatalogView() {
   const whereStop = trip.stops.find((s) => s.id === where);
   useEffect(() => {
     try {
-      sessionStorage.setItem(FILTERS_KEY, JSON.stringify({ q, cat, region, kids, onlyFav, nation, where }));
+      sessionStorage.setItem(FILTERS_KEY, JSON.stringify({ q, cat, region, kids, onlyFav, nation, area, where }));
     } catch {
       /* senza sessionStorage i filtri valgono solo finché la schermata resta aperta */
     }
-  }, [q, cat, region, kids, onlyFav, nation, where]);
-  const filtered = Boolean(q.trim() || cat || region || kids || onlyFav || nation || where);
+  }, [q, cat, region, kids, onlyFav, nation, area, where]);
+  const filtered = Boolean(q.trim() || cat || region || kids || onlyFav || nation || area || where);
   const resetFilters = () => {
     setQ('');
     setCat('');
@@ -72,6 +77,7 @@ export function CatalogView() {
     setKids(false);
     setOnlyFav(false);
     setNation('');
+    setArea('');
     setWhere('');
   };
   const [visiting, setVisiting] = useState<Destination | null>(null);
@@ -81,23 +87,24 @@ export function CatalogView() {
   const multi = countries.length > 1;
   const nameOf = (code: string) => countryInfo(code)?.name ?? code;
   // Regioni del catalogo in uso (per nazione e versione), non un elenco fisso
-  const regions = Object.keys(REGION_COUNTIES).filter((r) => !nation || catalog.regionCountry[r] === nation);
+  const selectedArea = areas.find((a) => a.id === area);
+  const regions = Object.keys(REGION_COUNTIES).filter((r) => (!nation || catalog.regionCountry[r] === nation) && (!selectedArea || areaContains(selectedArea, r, catalog.regionCountry[r])));
 
-  const list = useMemo(() => {
-    const qq = q.trim().toLowerCase();
-    return DESTINATIONS.filter(
+  // Il registro sostituisce il catalogo sul posto: rifiltrare anche al suo caricamento,
+  // senza conservare in un memo le schede della nazione precedente.
+  const qq = q.trim().toLowerCase();
+  const list = DESTINATIONS.filter(
       (d) =>
         (!qq || `${d.name} ${d.localName ?? ''} ${d.description}`.toLowerCase().includes(qq)) &&
         (!cat || d.category === cat) &&
         (!region || d.region === region) &&
         (!nation || placeCountry(d.id) === nation) &&
+        (!area || destinationInArea(d, placeCountry(d.id), area)) &&
         (!kids || d.kidScore === 3) &&
         (!onlyFav || trip.favorites.includes(d.id)) &&
         (where !== 'percorso' || (routeDistanceKm(trip, d) ?? Infinity) <= ALONG_KM) &&
         (!whereStop || airKm(whereStop, d) <= NEAR_KM),
     );
-    // trip.legs e trip.stops: il filtro per posizione dipende da tracciato e tappe
-  }, [q, cat, region, nation, kids, onlyFav, trip, where, whereStop]);
   const byCountry = countries.map((c) => ({ code: c.code, items: list.filter((d) => placeCountry(d.id) === c.code) }));
 
   const inTrip = new Set(trip.stops.map((s) => s.destinationId));
@@ -120,6 +127,7 @@ export function CatalogView() {
             onChange={(e) => {
               setNation(e.target.value);
               setRegion('');
+              setArea('');
             }}
             aria-label="Nazione"
           >
@@ -129,6 +137,17 @@ export function CatalogView() {
                 {nameOf(c.code)}
               </option>
             ))}
+          </select>
+        )}
+        {areas.length > 0 && (
+          <select value={area} aria-label="Area di viaggio" onChange={(e) => {
+            const chosen = areas.find((a) => a.id === e.target.value);
+            setArea(e.target.value);
+            setRegion('');
+            if (multi && chosen) setNation(chosen.countryCode);
+          }}>
+            <option value="">Tutte le aree della nazione</option>
+            {areas.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
           </select>
         )}
         <select value={cat} onChange={(e) => setCat(e.target.value as Category | '')} aria-label="Categoria">
