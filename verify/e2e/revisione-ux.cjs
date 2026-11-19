@@ -16,7 +16,7 @@ const PORT = 4187;
 const BASE = `http://localhost:${PORT}`;
 const ROOT = path.resolve(__dirname, '../..');
 
-// Cataloghi reali NO-1 e NO-2 generati dal seed, serviti dal server finto
+// Cataloghi reali NO-1, NO-2 e NO-3 generati dal seed, serviti dal server finto
 const bundlesFile = path.join(OUT, 'bundles.json');
 execFileSync(process.execPath, [path.join(ROOT, 'node_modules/tsx/dist/cli.mjs'), path.join(__dirname, 'bundles.ts'), bundlesFile], { cwd: ROOT, stdio: 'inherit' });
 const BUNDLES = JSON.parse(fs.readFileSync(bundlesFile, 'utf8'));
@@ -164,13 +164,14 @@ async function controlsOutside(p) {
       if (u.pathname === '/auth/v1/token') return json(200, { access_token: 'tok', refresh_token: 'ref', expires_in: 3600, user: { id: 'u1', email: 'prova@example.test' } });
       if (u.pathname === '/rest/v1/catalog_releases')
         return json(200, [
+          { release_id: 'NO-3', country_code: 'NO', version: 3, published_at: '2026-11-10T00:00:00+00:00', countries: { name: 'Norvegia', currency: 'NOK', timezone: 'Europe/Oslo' } },
           { release_id: 'NO-2', country_code: 'NO', version: 2, published_at: '2026-11-10T00:00:00+00:00', countries: { name: 'Norvegia', currency: 'NOK', timezone: 'Europe/Oslo' } },
           { release_id: 'NO-1', country_code: 'NO', version: 1, published_at: '2026-11-06T00:00:00+00:00', countries: { name: 'Norvegia', currency: 'NOK', timezone: 'Europe/Oslo' } },
         ]);
       if (u.pathname === '/rest/v1/rpc/catalog_bundle') {
         const id = body().p_release_id;
         asked.push(id);
-        if (id === 'NO-2' && failNext) {
+        if (id === 'NO-3' && failNext) {
           failNext = false;
           return json(503, { message: 'Servizio non disponibile (simulato)' });
         }
@@ -217,16 +218,12 @@ async function controlsOutside(p) {
     await p.click('button[type=submit]');
     const panel = 'section[aria-labelledby="nazioni-titolo"]';
     await p.waitForSelector(`${panel} >> text=sul dispositivo`, { timeout: 15000 }).then(() => ok('catalogo NO-1 sul dispositivo')).catch(async () => fail('NO-1 non caricato: ' + (await p.textContent(panel))));
-    const upgrade = p.locator(`${panel} button:has-text("NO-2")`).first();
-    await upgrade.waitFor({ timeout: 10000 }).then(() => ok('versione NO-2 proposta')).catch(async () => fail('NO-2 non proposta: ' + (await p.textContent(panel))));
-    await upgrade.click();
-    await p.waitForSelector('dialog[open]');
-    await p.click('dialog[open] button.btn-primary');
-    await p.waitForSelector('dialog[open] >> text=Aggiornamento non riuscito', { timeout: 10000 }).then(() => ok('errore mostrato nel dialogo')).catch(async () => fail('nessun errore: ' + (await p.textContent('dialog[open]'))));
-    check(/usa ancora NO-1/.test(await p.textContent('dialog[open]')), 'il messaggio dice che il viaggio resta su NO-1');
-    check(await p.locator('dialog[open] button:has-text("Riprova")').count() === 1, 'pulsante «Riprova»');
+    // Passaggio automatico a NO-3: il primo scaricamento fallisce (503 simulato), il viaggio resta su NO-1
+    await p.waitForSelector(`${panel} >> text=Aggiornamento alla versione 3 non riuscito`, { timeout: 15000 }).then(() => ok("errore dell'aggiornamento automatico mostrato nel riquadro")).catch(async () => fail('nessun errore: ' + (await p.textContent(panel))));
+    check(/usa ancora la versione 1/.test(await p.textContent(panel)), 'il messaggio dice che il viaggio resta sulla versione 1');
+    check(await p.locator(`${panel} button:has-text("Riprova")`).count() === 1, 'pulsante «Riprova»');
     const tripNow = [...db.values()][0];
-    check(!tripNow || !JSON.stringify(tripNow.data.countries ?? []).includes('NO-2'), 'nel viaggio la versione non è cambiata');
+    check(!tripNow || !JSON.stringify(tripNow.data.countries ?? []).includes('NO-3'), 'nel viaggio la versione non è cambiata');
     const cached = async () => p.evaluate(async () => {
       const names = await indexedDB.databases?.();
       const out = [];
@@ -248,11 +245,12 @@ async function controlsOutside(p) {
       return out;
     });
     check((await cached()).includes('NO-1'), 'dopo l\'errore la copia di NO-1 è ancora sul dispositivo', JSON.stringify(await cached()));
-    await p.click('dialog[open] button:has-text("Riprova")');
-    await p.waitForSelector('dialog[open]', { state: 'detached', timeout: 15000 }).then(() => ok('riprova riuscita: il dialogo si chiude')).catch(async () => fail('riprova: ' + (await p.textContent('dialog[open]'))));
-    await p.waitForSelector(`${panel} >> text=versione 2`, { timeout: 10000 }).then(() => ok('il viaggio usa NO-2')).catch(async () => fail('dopo riprova: ' + (await p.textContent(panel))));
-    check((await cached()).includes('NO-2'), 'NO-2 scaricata sul dispositivo prima del passaggio', JSON.stringify(await cached()));
-    check(asked.filter((x) => x === 'NO-2').length === 2, 'NO-2 chiesta due volte: tentativo fallito e riprova', JSON.stringify(asked));
+    await p.click(`${panel} button:has-text("Riprova")`);
+    await p.waitForSelector(`${panel} >> text=Catalogo versione 3`, { timeout: 15000 }).then(() => ok('riprova riuscita: il viaggio usa NO-3')).catch(async () => fail('dopo riprova: ' + (await p.textContent(panel))));
+    await p.waitForSelector('.toast:has-text("Catalogo aggiornato alla versione 3")', { timeout: 5000 }).then(() => ok('avviso con le novità del catalogo')).catch(() => fail('avviso di aggiornamento'));
+    check((await p.locator(`${panel} button:has-text("Passa a")`).count()) === 0, 'nessun pulsante di passaggio manuale');
+    check((await cached()).includes('NO-3'), 'NO-3 scaricata sul dispositivo prima del passaggio', JSON.stringify(await cached()));
+    check(asked.filter((x) => x === 'NO-3').length === 2, 'NO-3 chiesta due volte: tentativo fallito e riprova', JSON.stringify(asked));
     await ctx.close();
   }
 

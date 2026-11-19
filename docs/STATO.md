@@ -304,3 +304,15 @@ Stessi 358 luoghi di NO-4; cambiano solo 28 schede (elenco e motivo in `src/data
 - **Per usarlo**: Impostazioni › Nazioni e cataloghi › passa a NO-5. Il viaggio non cambia versione da solo.
 - **Verifiche**: typecheck, 278 test (nuovo `tests/catalogo-correzioni.test.ts`), lint, build.
 - **Limiti**: 6 luoghi ancora senza foto adatta (Flor og Fjære, Solastranden, Smelthytta, Blåisvatnet, Sápmi Park, Grenselandmuseet). I link dei luoghi di NO-1…NO-3 non toccati da queste correzioni non sono stati riaperti. Folgefonna resta «terzo della Norvegia per estensione» (da verificare).
+
+## 19/11/2026 — catalogo sempre all'ultima versione, le vecchie si cancellano
+
+Regola nuova di Filippo; sostituisce UC4 («il viaggio resta sulla sua versione finché non scegli»), che resta citato nei documenti di design storici.
+
+- **App** (`src/state/catalog.tsx`): quando c'è una versione pubblicata più recente di quella del viaggio, l'app la scarica e la controlla e solo allora ci porta il viaggio, con un avviso delle novità. Con l'accesso al cloud lo fa a viaggio allineato (nessuna modifica in sospeso, nessun conflitto); senza accesso vale la versione contenuta nei file dell'app (NO-2), mai all'indietro, e solo per un viaggio con almeno una tappa (un viaggio vuoto su un dispositivo nuovo non va caricato nel cloud solo per la versione). Se lo scaricamento non riesce il viaggio resta com'è, il riquadro lo dice con «Riprova» e si riprova anche al ritorno della rete.
+- **Versioni che non esistono più** (viaggi senza nazioni, backup vecchi, viaggi su altri dispositivi): conta solo che l'ultima sia più recente, quindi passano all'ultima (`pendingUpgrades` in `src/domain/countries.ts`).
+- **Impostazioni › Nazioni e cataloghi**: tolti «Passa a…» e il dialogo di conferma; resta lo stato (in corso / non riuscito).
+- **Database** (migrazione `20261119000000_cataloghi_superati.sql`): `private.purge_superseded_releases(nazione)` cancella le versioni più vecchie dell'ultima pubblicata e porta all'ultima le nazioni dei viaggi salvati a righe; la versione precedente resta scritta come storia (vincolo tolto). Ogni seed la chiama dopo il controllo finale, nella stessa transazione; un seed di una versione superata si ferma con un errore chiaro; il seed della versione in uso si può rieseguire anche senza la precedente.
+- **Sicurezza della regola**: ogni versione contiene tutti i luoghi della precedente con le stesse chiavi (controllo di ogni seed), quindi nessuna tappa perde la scheda. I viaggi in JSON (`trips.data`) non vengono toccati dal database: li aggiorna l'app.
+- **Verifiche** (in una copia del repository con solo queste modifiche): typecheck, 282 test (nuovo `tests/catalogo-aggiornamento.test.ts`), lint, build; script nel browser traghetti (passaggio automatico a NO-2 dai file) e revisione-ux (passaggio automatico a NO-3 con un server cloud finto: primo scaricamento fallito, «Riprova», avviso).
+- **Limite**: un viaggio salvato a righe (formato non attivo) su un dispositivo rimasto indietro può trovare la sua versione cancellata al primo invio; l'app lo porta comunque all'ultima appena allineato.

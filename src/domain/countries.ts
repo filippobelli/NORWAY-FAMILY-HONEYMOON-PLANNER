@@ -81,13 +81,46 @@ export function releaseVersion(releaseId: string | undefined): number | undefine
 }
 
 /**
- * Cambia la versione del catalogo di una nazione (architettura §16.3), solo su richiesta esplicita dell'utente.
- * Nulla si perde: la nuova versione contiene la vecchia (stesse chiavi). Tappe, idee, preferiti, attività e tratti
- * restano come sono; un viaggio senza `countries` li rende espliciti. Il ritorno alla versione precedente è la
- * stessa funzione.
+ * Cambia la versione del catalogo di una nazione (architettura §16.3). Dal 19/11/2026 avviene da sola (regola di
+ * Filippo): quando esce una versione nuova il viaggio ci passa e le versioni vecchie vengono cancellate dal database.
+ * Nulla si perde: la nuova versione contiene la vecchia (stesse chiavi, controllo del seed). Tappe, idee, preferiti,
+ * attività e tratti restano come sono; un viaggio senza `countries` li rende espliciti.
  */
 export function upgradeCatalog(t: Trip, code: string, releaseId: string): Trip {
   const list = tripCountries(t);
   if (!list.some((c) => c.code === code)) return t;
   return { ...t, countries: list.map((c) => (c.code === code ? { ...c, releaseId } : c)) };
+}
+
+/** Ultima versione pubblicata di una nazione (dal server) */
+export interface LatestRelease {
+  code: string;
+  releaseId: string;
+  version: number;
+}
+
+/**
+ * Nazioni del viaggio da portare all'ultima versione pubblicata. Vale anche quando la versione del viaggio non esiste
+ * più (cancellata dal database, viaggio vecchio senza `countries`, backup vecchio): conta solo che l'ultima sia più
+ * recente. Una nazione senza versione pubblicata resta com'è.
+ */
+export function pendingUpgrades(t: Pick<Trip, 'countries'>, latest: LatestRelease[]): { code: string; from: string; to: LatestRelease }[] {
+  const out: { code: string; from: string; to: LatestRelease }[] = [];
+  for (const c of tripCountries(t)) {
+    const l = latest.find((a) => a.code === c.code);
+    if (!l || l.releaseId === c.releaseId) continue;
+    if (l.version > (releaseVersion(c.releaseId) ?? 0)) out.push({ code: c.code, from: c.releaseId, to: l });
+  }
+  return out;
+}
+
+/** Novità del catalogo della Norvegia tra due versioni (le altre nazioni non ne hanno ancora) */
+export function catalogNews(code: string, from: number, to: number): string[] {
+  if (code !== 'NO') return [];
+  const parts: string[] = [];
+  if (from < 2 && to >= 2) parts.push('le tratte dei traghetti');
+  if (from < 3 && to >= 3) parts.push('molti luoghi in più nel nord, con foto e consigli');
+  if (from < 4 && to >= 4) parts.push('musei, parchi e attrazioni in tutta la Norvegia');
+  if (from < 5 && to >= 5) parts.push('schede corrette: testi più prudenti, siti ufficiali controllati e qualche foto in più');
+  return parts;
 }

@@ -848,16 +848,22 @@ export function generateSql(c: CatalogSeed): string {
     if (prev) out.push(`-- Contiene tutta la versione ${prev} (controllo finale: righe identiche per chiave) e la indica come versione precedente.`);
   }
   out.push('-- Idempotente: con la versione già pubblicata non scrive nulla e controlla solo i conteggi.');
-  out.push('-- Tocca solo le tabelle del catalogo: nessun viaggio, nessun dato di auth.');
+  out.push('-- Tocca solo le tabelle del catalogo e la versione delle nazioni dei viaggi a righe; nessun dato di auth.');
+  out.push('-- Dopo il controllo cancella le versioni precedenti della nazione (migrazione 20261119000000_cataloghi_superati.sql).');
   out.push('');
   out.push('begin;');
   out.push('');
-  if (prev || hasFerries) {
-    out.push('-- Prerequisiti: versione precedente pubblicata, tabelle dei traghetti presenti');
+  {
+    out.push('-- Prerequisiti: versione non superata, versione precedente pubblicata, tabelle dei traghetti presenti');
     out.push('do $pre$');
     out.push('begin');
+    out.push(`  if exists (select 1 from public.catalog_releases where country_code = ${q(c.country.code)} and status = 'pubblicata' and version > ${c.release.version}) then`);
+    out.push(`    raise exception 'Il catalogo ${c.country.code} ha già una versione più recente di ${rel}: questo seed è superato';`);
+    out.push('  end if;');
     if (prev) {
-      out.push(`  if not exists (select 1 from public.catalog_releases where release_id = ${q(prev)} and status in ('pubblicata', 'ritirata')) then`);
+      // Dopo la pubblicazione la precedente viene cancellata: rieseguire il seed della versione in uso resta possibile
+      out.push(`  if not exists (select 1 from public.catalog_releases where release_id = ${q(prev)} and status in ('pubblicata', 'ritirata'))`);
+      out.push(`     and not exists (select 1 from public.catalog_releases where release_id = ${R} and status = 'pubblicata') then`);
       out.push(`    raise exception 'La versione precedente ${prev} non è pubblicata: applicare prima il suo seed';`);
       out.push('  end if;');
     }
@@ -1017,6 +1023,14 @@ export function generateSql(c: CatalogSeed): string {
   const ferryNote = hasFerries ? `, ${ferries.ferry_routes.length} tratte traghetto` : '';
   out.push(`  raise notice 'Catalogo ${rel} pubblicato e controllato: ${c.places.length} luoghi, ${c.voyages.length} crociere, ${c.routePorts.length} porti in rotta${ferryNote}';`);
   out.push('end $check$;');
+  out.push('');
+  out.push('-- Versioni precedenti: cancellate (i viaggi passano a questa, che le contiene)');
+  out.push('do $purge$');
+  out.push('begin');
+  out.push(`  if to_regprocedure('private.purge_superseded_releases(text)') is not null then`);
+  out.push(`    perform private.purge_superseded_releases(${q(c.country.code)});`);
+  out.push('  end if;');
+  out.push('end $purge$;');
   out.push('');
   out.push('commit;');
   out.push('');

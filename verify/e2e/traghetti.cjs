@@ -1,4 +1,4 @@
-// «Trasporti via mare» nel browser: schede Crociere (invariata) e Traghetti, invito e passaggio esplicito a NO-2,
+// «Trasporti via mare» nel browser: schede Crociere (invariata) e Traghetti, passaggio automatico a NO-2 (catalogo nei file),
 // elenco con ricerca e filtri, scheda della tratta, aggiunta al percorso con costo per la famiglia, tratto nel percorso,
 // righe nel Budget, suggerimenti «alternativa all'auto», tastiera e 375 px.
 // Build di produzione, servizi esterni simulati o bloccati (OSRM finto come in e2e.cjs). Nessuna prenotazione.
@@ -52,8 +52,11 @@ const legOf = (t, a, b) => {
   }
   await p.click('.plan-status .next-step a.btn-primary');
   await p.waitForSelector('.toast:has-text("Calcolati 3 tratti")', { timeout: 20000 }).then(() => ok('strada calcolata nei 3 collegamenti (OSRM finto)')).catch(() => fail('calcolo dei tratti'));
+  // Il viaggio nuovo nasce senza nazioni (vale NO-1) e passa da solo all'ultima versione disponibile: qui quella dei file, NO-2
+  await p.waitForFunction(() => JSON.parse(localStorage.getItem('nfhp.trip.v1') || '{}').countries?.[0]?.releaseId === 'NO-2', null, { timeout: 10000 })
+    .then(() => ok('viaggio passato da solo al catalogo NO-2'))
+    .catch(async () => fail('passaggio automatico a NO-2', JSON.stringify((await stored(p)).countries)));
   const start = await stored(p);
-  check(!start.countries || start.countries[0].releaseId === 'NO-1', 'viaggio nuovo sul catalogo NO-1', JSON.stringify(start.countries));
 
   // 2. Menù e indirizzi: «Trasporti via mare», Crociere invariata, alias #/mare
   await p.goto(BASE + '#/crociere');
@@ -65,38 +68,25 @@ const legOf = (t, a, b) => {
   await p.goto(BASE + '#/costiera');
   check((await p.locator('h2:has-text("Hurtigruten")').count()) === 1, 'vecchio indirizzo #/costiera funziona');
 
-  // 3. Viaggio su NO-1: invito ad aggiornare, nessuna tratta, nessun dato finto
+  // 3. Scheda Traghetti e tastiera sulle schede
   await p.goto(BASE + '#/crociere');
   await p.click('[role=tab]#mare-traghetti');
-  check(/parte=traghetti/.test(p.url()), 'la scheda scelta aggiorna l\'indirizzo');
-  const invite = await p.textContent('#mare-pannello');
-  check(/catalogo Norvegia versione 2/.test(invite) && /non cambia da solo/.test(invite), 'catalogo versione 1: invito a passare alla versione 2', invite.slice(0, 160));
-  check((await p.locator('.ferry-item').count()) === 0, 'su NO-1 nessuna tratta mostrata');
-  // Tastiera sulle schede: freccia sinistra torna a Crociere
+  check(/parte=traghetti/.test(p.url()), "la scheda scelta aggiorna l'indirizzo");
+  check((await p.locator('#mare-pannello .ferry-upgrade').count()) === 0, 'nessun invito ad aggiornare: il viaggio è già su NO-2');
   await p.focus('[role=tab]#mare-traghetti');
   await p.keyboard.press('ArrowLeft');
   await p.waitForTimeout(150); // il focus si sposta al fotogramma successivo
   check((await p.getAttribute('[role=tab]#mare-crociere', 'aria-selected')) === 'true' && (await p.evaluate(() => document.activeElement?.id)) === 'mare-crociere', 'schede: frecce della tastiera');
   await p.keyboard.press('End');
-  check((await p.getAttribute('[role=tab]#mare-traghetti', 'aria-selected')) === 'true', 'schede: Fine porta all\'ultima');
+  check((await p.getAttribute('[role=tab]#mare-traghetti', 'aria-selected')) === 'true', "schede: Fine porta all'ultima");
 
-  // 4. Passaggio a NO-2 da Impostazioni › Nazioni e cataloghi, con conferma
-  await p.click('a:has-text("Vai a Nazioni e cataloghi")');
-  await p.waitForSelector('#nazioni button:has-text("Passa a NO-2")');
-  ok('Impostazioni: «Passa a NO-2» nel riquadro Nazioni e cataloghi');
-  await p.click('#nazioni button:has-text("Passa a NO-2")');
-  await p.waitForSelector('dialog[open]');
-  check(/Tappe, notti, idee, preferiti/.test(await p.textContent('dialog[open]')), 'conferma: spiega che nulla si perde');
-  await p.keyboard.press('Escape');
-  const afterEsc = await stored(p);
-  check(JSON.stringify(afterEsc.countries) === JSON.stringify(start.countries), 'Esc: il viaggio resta su NO-1');
-  await p.click('#nazioni button:has-text("Passa a NO-2")');
-  await p.click('dialog[open] button.btn-primary:has-text("Passa a NO-2")');
-  await p.waitForTimeout(400);
+  // 4. Impostazioni › Nazioni e cataloghi: nessun pulsante di passaggio, la regola è spiegata; tappe invariate
+  await p.goto(BASE + '#/impostazioni?sezione=nazioni');
+  await p.waitForSelector('#nazioni');
+  check((await p.locator('#nazioni button:has-text("Passa a")').count()) === 0, 'nessun pulsante «Passa a…»');
+  check(/si aggiorna da solo/.test(await p.textContent('#nazioni')), 'riquadro: il catalogo si aggiorna da solo');
   const up = await stored(p);
-  check(up.countries?.[0]?.releaseId === 'NO-2', 'viaggio passato a NO-2', JSON.stringify(up.countries));
-  check(JSON.stringify(up.stops) === JSON.stringify(afterEsc.stops) && JSON.stringify(up.legs) === JSON.stringify(afterEsc.legs) && JSON.stringify(up.days) === JSON.stringify(afterEsc.days), 'tappe, collegamenti e giornate invariati');
-  check((await p.locator('#nazioni button:has-text("Passa a NO-2")').count()) === 0, 'dopo il passaggio nessun invito');
+  check(JSON.stringify(up.stops.map((s) => [s.id, s.destinationId, s.nights])) === JSON.stringify(start.stops.map((s) => [s.id, s.destinationId, s.nights])), 'tappe invariate dopo il passaggio');
 
   // 5. Elenco dei traghetti: conteggio, riepilogo, ricerca e filtri combinabili, stato vuoto
   await p.goto(BASE + '#/crociere?parte=traghetti');

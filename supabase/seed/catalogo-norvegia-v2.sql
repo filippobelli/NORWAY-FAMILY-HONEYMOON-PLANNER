@@ -3,14 +3,19 @@
 -- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500 e 20261109000000_traghetti.sql.
 -- Contiene tutta la versione NO-1 (controllo finale: righe identiche per chiave) e la indica come versione precedente.
 -- Idempotente: con la versione già pubblicata non scrive nulla e controlla solo i conteggi.
--- Tocca solo le tabelle del catalogo: nessun viaggio, nessun dato di auth.
+-- Tocca solo le tabelle del catalogo e la versione delle nazioni dei viaggi a righe; nessun dato di auth.
+-- Dopo il controllo cancella le versioni precedenti della nazione (migrazione 20261119000000_cataloghi_superati.sql).
 
 begin;
 
--- Prerequisiti: versione precedente pubblicata, tabelle dei traghetti presenti
+-- Prerequisiti: versione non superata, versione precedente pubblicata, tabelle dei traghetti presenti
 do $pre$
 begin
-  if not exists (select 1 from public.catalog_releases where release_id = 'NO-1' and status in ('pubblicata', 'ritirata')) then
+  if exists (select 1 from public.catalog_releases where country_code = 'NO' and status = 'pubblicata' and version > 2) then
+    raise exception 'Il catalogo NO ha già una versione più recente di NO-2: questo seed è superato';
+  end if;
+  if not exists (select 1 from public.catalog_releases where release_id = 'NO-1' and status in ('pubblicata', 'ritirata'))
+     and not exists (select 1 from public.catalog_releases where release_id = 'NO-2' and status = 'pubblicata') then
     raise exception 'La versione precedente NO-1 non è pubblicata: applicare prima il suo seed';
   end if;
   if to_regclass('public.ferry_routes') is null then
@@ -1447,5 +1452,13 @@ begin
   if v_n <> 0 then raise exception 'Tratte senza tappe: %', v_n; end if;
   raise notice 'Catalogo NO-2 pubblicato e controllato: 117 luoghi, 24 crociere, 35 porti in rotta, 58 tratte traghetto';
 end $check$;
+
+-- Versioni precedenti: cancellate (i viaggi passano a questa, che le contiene)
+do $purge$
+begin
+  if to_regprocedure('private.purge_superseded_releases(text)') is not null then
+    perform private.purge_superseded_releases('NO');
+  end if;
+end $purge$;
 
 commit;

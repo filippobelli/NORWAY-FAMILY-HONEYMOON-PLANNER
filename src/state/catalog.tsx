@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { installCatalog, useCatalog, type CatalogState } from '../catalog/registry';
 import { FILE_COUNTRY } from '../data/country';
-import { tripCountries } from '../domain/countries';
+import { catalogNews, pendingUpgrades, releaseVersion, tripCountries, upgradeCatalog, type LatestRelease } from '../domain/countries';
 import { cloudCatalogTransport, loadTripCatalogs, prepareRelease, pruneCatalogs, releasesToKeep, type AvailableCountry, type CatalogLoadState } from '../services/catalog/catalogService';
 import { deviceStore } from '../services/storage/dataStore';
 import { useCloudSync } from './cloudSync';
@@ -11,6 +11,8 @@ import { useTrip } from './store';
 // - con il cloud configurato: copia offline per versione, download con catalog_bundle se manca;
 // - senza cloud (solo sviluppo e test, D1): catalogo di prova dai file di src/data.
 // Finché un catalogo non arriva resta in uso quello precedente (all'avvio, i file: per la Norvegia sono la versione 1).
+// Regola del 19/11/2026: il viaggio passa da solo all'ultima versione pubblicata (scaricata e controllata prima), e le
+// versioni vecchie vengono cancellate dal database. Il passaggio avviene a viaggio allineato con il cloud.
 
 interface CatalogCtx {
   state: CatalogState;
@@ -30,13 +32,17 @@ interface CatalogCtx {
    * accesso), «dispositivo» se è stata scaricata e controllata. Lancia un errore se non riesce.
    */
   prepare: (releaseId: string) => Promise<'app' | 'dispositivo'>;
+  /** Aggiornamento automatico all'ultima versione: in corso o non riuscito (si riprova da solo) */
+  autoUpgrade?: { phase: 'in_corso' | 'errore'; releaseId: string; error?: string };
 }
 
 const Ctx = createContext<CatalogCtx | null>(null);
 
 export function CatalogProvider({ children }: { children: ReactNode }) {
-  const { trip } = useTrip();
-  const { config, session } = useCloudSync();
+  const { trip, update, toast, readOnly } = useTrip();
+  const { config, session, status, pending } = useCloudSync();
+  const [autoUpgrade, setAutoUpgrade] = useState<CatalogCtx['autoUpgrade']>();
+  const upgrading = useRef(false);
   const state = useCatalog();
   const [states, setStates] = useState<Record<string, CatalogLoadState>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -110,9 +116,58 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     [config, session],
   );
 
+  // Passaggio automatico all'ultima versione. Con l'accesso al cloud l'elenco viene dal server e si aspetta che il
+  // viaggio sia allineato (niente modifiche in sospeso, nessun conflitto); senza accesso vale la versione contenuta nei
+  // file dell'app. Prima si scarica e si controlla la versione nuova: se non riesce il viaggio resta com'è e si riprova
+  // al prossimo tentativo (rete che torna, «Riprova»).
+  // Con il cloud configurato ma senza accesso, un viaggio ancora vuoto non si tocca: su un dispositivo nuovo, all'accesso,
+  // si apre il viaggio del cloud e un viaggio vuoto non va caricato solo per la versione del catalogo.
+  const hasStops = trip.stops.length > 0;
+  const ready = !readOnly && (session ? status === 'sincronizzato' && !pending : !config || hasStops);
+  useEffect(() => {
+    if (!ready || upgrading.current) return;
+    let cancelled = false;
+    upgrading.current = true;
+    void (async () => {
+      try {
+        let latest: LatestRelease[];
+        if (config && session) {
+          const a = await cloudCatalogTransport(config).available();
+          if (!cancelled) setAvailable(a);
+          latest = a;
+        } else latest = [{ code: FILE_COUNTRY.code, releaseId: FILE_COUNTRY.releaseId, version: FILE_COUNTRY.version }];
+        const todo = pendingUpgrades({ countries: signature ? signature.split(',').map((x) => ({ code: x.split(':')[0]!, releaseId: x.split(':')[1]! })) : undefined }, latest);
+        for (const u of todo) {
+          if (cancelled) return;
+          setAutoUpgrade({ phase: 'in_corso', releaseId: u.to.releaseId });
+          try {
+            await prepare(u.to.releaseId);
+          } catch (e) {
+            if (!cancelled) setAutoUpgrade({ phase: 'errore', releaseId: u.to.releaseId, error: e instanceof Error ? e.message : String(e) });
+            return;
+          }
+          if (cancelled) return;
+          update((t) => upgradeCatalog(t, u.code, u.to.releaseId));
+          const news = catalogNews(u.code, releaseVersion(u.from) ?? 1, u.to.version);
+          toast(`Catalogo aggiornato alla versione ${u.to.version}${news.length ? `: ${news.join('; ')}` : ''}`);
+        }
+        if (!cancelled) setAutoUpgrade(undefined);
+      } catch (e) {
+        // Elenco delle versioni non disponibile (rete): si riprova al prossimo tentativo
+        if (!cancelled) setAvailableError(e instanceof Error ? e.message : String(e));
+      } finally {
+        upgrading.current = false;
+      }
+    })();
+    return () => {
+      cancelled = true;
+      upgrading.current = false;
+    };
+  }, [ready, signature, config, session, attempt, prepare, update, toast]);
+
   const value = useMemo<CatalogCtx>(
-    () => ({ state, fileMode, states, errors, retry: () => setAttempt((n) => n + 1), available, availableError, loadAvailable, prepare }),
-    [state, fileMode, states, errors, available, availableError, loadAvailable, prepare],
+    () => ({ state, fileMode, states, errors, retry: () => setAttempt((n) => n + 1), available, availableError, loadAvailable, prepare, autoUpgrade }),
+    [state, fileMode, states, errors, available, availableError, loadAvailable, prepare, autoUpgrade],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

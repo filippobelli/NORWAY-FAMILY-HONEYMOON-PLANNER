@@ -152,7 +152,7 @@ function FerriesPanel({ routes }: { routes: FerryRoute[] }) {
     if (noRelease && (releaseVersion(noRelease.releaseId) ?? 0) < 2) {
       return (
         <div className="note-info ferry-upgrade">
-          <p>Le tratte dei traghetti sono nel catalogo Norvegia versione 2. Il viaggio usa la versione {releaseVersion(noRelease.releaseId) ?? 1} e non cambia da solo.</p>
+          <p>Le tratte dei traghetti sono nel catalogo Norvegia dalla versione 2. Il viaggio usa ancora la versione {releaseVersion(noRelease.releaseId) ?? 1}: passa da solo all'ultima appena il catalogo è scaricato.</p>
           <a className="btn" href={buildHash('impostazioni', { sezione: 'nazioni' })}>
             Vai a Nazioni e cataloghi
           </a>

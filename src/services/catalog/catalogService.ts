@@ -4,8 +4,8 @@ import type { AsyncStore } from '../storage/dataStore';
 import { restJson, rpc, type CloudConfig } from '../storage/supabase';
 
 // Catalogo delle nazioni del viaggio: copia offline per versione (IndexedDB «cataloghi») e download con
-// catalog_bundle quando manca. La versione è quella fissata nel viaggio: una versione più recente nel database
-// non cambia nulla (UC4), si segnala soltanto.
+// catalog_bundle quando manca. La versione è quella del viaggio; quando ne esce una più recente il viaggio ci passa da solo
+// (state/catalog.tsx) e le vecchie vengono cancellate dal database.
 
 export type CatalogLoadState = 'sul_dispositivo' | 'in_download' | 'da_scaricare' | 'errore';
 

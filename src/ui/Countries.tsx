@@ -4,7 +4,7 @@ import { countryInfo, placeCountry, useCatalog } from '../catalog/registry';
 import { COASTAL_CATALOG } from '../data/coastalCatalog';
 import { FILE_COUNTRY } from '../data/country';
 import { DESTINATIONS } from '../data/destinations';
-import { addCountry, countryUsage, releaseVersion, removeCountry, tripCountries, upgradeCatalog, usageEmpty } from '../domain/countries';
+import { addCountry, countryUsage, releaseVersion, removeCountry, tripCountries, usageEmpty } from '../domain/countries';
 import { removeStops } from '../domain/itinerary';
 import { airportCode } from '../domain/flightAdvisor';
 import type { AvailableCountry, CatalogLoadState } from '../services/catalog/catalogService';
@@ -68,31 +68,15 @@ export function CountriesLine() {
   );
 }
 
-/** Novità del catalogo della Norvegia tra due versioni: NO-2 ha portato i traghetti, NO-3 i luoghi del nord con foto e consigli, NO-4 musei, parchi e attrazioni */
-function whatsNew(from: number, to: number, where: 'invito' | 'conferma'): string {
-  const parts: string[] = [];
-  if (from < 2 && to >= 2) parts.push(where === 'invito' ? 'le tratte dei traghetti (Trasporti via mare)' : 'le tratte dei traghetti (Prenotazioni › Trasporti via mare › Traghetti)');
-  if (from < 3 && to >= 3) parts.push('molti luoghi in più nel nord (Bodø, Lofoten, Vesterålen, Senja, Tromsø), con foto e consigli nella scheda di ogni tappa');
-  if (from < 4 && to >= 4) parts.push('musei, parchi e attrazioni in tutta la Norvegia, con le foto');
-  if (from < 5 && to >= 5) parts.push('schede corrette: testi più prudenti, siti ufficiali controllati e qualche foto in più');
-  if (!parts.length) return '';
-  return `${where === 'invito' ? ', con ' : ', più '}${[parts.slice(0, -1).join(', '), parts[parts.length - 1]].filter(Boolean).join(' e ')}`;
-}
-
 /** Riquadro «Nazioni e cataloghi» delle Impostazioni */
 export function CountriesPanel() {
   const { trip } = useTrip();
-  const { states, fileMode } = useTripCatalog();
-  const { list: listed } = useAvailable();
-  const cat = useCatalog();
-  // Senza l'elenco del server (non collegati) e con il catalogo dei file in uso, la versione proposta è quella
-  // contenuta nell'app (NO-2): il passaggio resta una scelta esplicita con conferma
-  const available = listed ?? (cat.source === 'file' ? [fileAvailable()] : undefined);
+  const { states, fileMode, autoUpgrade, retry } = useTripCatalog();
+  const { list: available } = useAvailable();
+  const online = useOnline();
   const [open, setOpen] = useState(false);
-  const [upgrading, setUpgrading] = useState<AvailableCountry>();
   return (
     <section className="panel" id="nazioni" aria-labelledby="nazioni-titolo">
-      {upgrading && <UpgradeDialog target={upgrading} onClose={() => setUpgrading(undefined)} />}
       <h2 id="nazioni-titolo">Nazioni e cataloghi</h2>
       <ul className="plain-list">
         {tripCountries(trip).map((c) => {
@@ -109,99 +93,35 @@ export function CountriesPanel() {
                 {info ? ` · fuso ${info.timezone}` : ''}
               </span>
               {newer && (
-                <div className="small catalog-upgrade">
-                  <p>
-                    <Badge tone="info">versione {newer.version} disponibile</Badge> È uscita la versione {newer.version} del catalogo{newer.publishedAt ? ` (${date(newer.publishedAt)})` : ''}
-                    {c.code === 'NO' ? whatsNew(current, newer.version, 'invito') : ''}. Il viaggio resta sulla versione {current} finché non scegli di passare.
-                  </p>
-                  <button className="btn btn-small" onClick={() => setUpgrading(newer)}>
-                    Passa a {newer.releaseId}
-                  </button>
+                <div className="small catalog-upgrade" role="status" aria-live="polite">
+                  {autoUpgrade?.phase === 'errore' && autoUpgrade.releaseId === newer.releaseId ? (
+                    <p className="note-warn">
+                      Aggiornamento alla versione {newer.version} non riuscito: {autoUpgrade.error?.replace(/[.\s]+$/, '') || 'errore sconosciuto'}. {online ? '' : 'Sembra che manchi la rete. '}Il
+                      viaggio usa ancora la versione {current}.{' '}
+                      <button type="button" className="link-btn" onClick={retry}>
+                        Riprova
+                      </button>
+                    </p>
+                  ) : (
+                    <p>
+                      <Badge tone="info">versione {newer.version}</Badge>{' '}
+                      {autoUpgrade?.phase === 'in_corso' && autoUpgrade.releaseId === newer.releaseId
+                        ? `Scaricamento della versione ${newer.version} in corso: il viaggio ci passa appena è pronta.`
+                        : `È uscita la versione ${newer.version}: il viaggio ci passa da solo appena è allineato con il cloud.`}
+                    </p>
+                  )}
                 </div>
               )}
             </li>
           );
         })}
       </ul>
-      <p className="small muted">Il catalogo caricato nel viaggio non cambia da solo: resta questa versione anche se ne esce una più recente.</p>
+      <p className="small muted">Il catalogo si aggiorna da solo: quando esce una versione nuova il viaggio ci passa (tappe, idee e preferiti restano come sono) e le versioni vecchie vengono tolte.</p>
       <button className="btn" onClick={() => setOpen(true)}>
         Gestisci le nazioni
       </button>
       {open && <CountriesDialog onClose={() => setOpen(false)} />}
     </section>
-  );
-}
-
-/**
- * Passaggio a una versione più recente del catalogo (architettura §16.3), con conferma esplicita: la nuova contiene
- * la vecchia (stesse chiavi), nulla del viaggio cambia tranne la versione; si può annullare.
- */
-function UpgradeDialog({ target, onClose }: { target: AvailableCountry; onClose: () => void }) {
-  const { trip, update, replace, toast } = useTrip();
-  const { prepare } = useTripCatalog();
-  const online = useOnline();
-  const from = tripCountries(trip).find((c) => c.code === target.code);
-  const [phase, setPhase] = useState<'idle' | 'download' | 'errore'>('idle');
-  const [error, setError] = useState('');
-  // Il dialogo può chiudersi mentre lo scaricamento è in corso: in quel caso non si tocca più il suo stato.
-  // Il valore torna vero a ogni montaggio (in sviluppo React monta, smonta e rimonta i componenti una volta)
-  const alive = useRef(true);
-  useEffect(() => {
-    alive.current = true;
-    return () => {
-      alive.current = false;
-    };
-  }, []);
-  // Prima si scarica e si controlla la versione nuova, poi la si associa al viaggio: se lo scaricamento non riesce
-  // il viaggio resta sulla versione di prima, che continua a funzionare
-  const confirm = async () => {
-    const before = trip;
-    setPhase('download');
-    setError('');
-    let where: 'app' | 'dispositivo';
-    try {
-      where = await prepare(target.releaseId);
-    } catch (e) {
-      if (!alive.current) return;
-      setError((e instanceof Error ? e.message : String(e)).replace(/[.\s]+$/, ''));
-      setPhase('errore');
-      return;
-    }
-    if (!alive.current) return;
-    update((t) => upgradeCatalog(t, target.code, target.releaseId));
-    toast(`${target.name}: catalogo ${target.releaseId} ${where === 'dispositivo' ? 'scaricato su questo dispositivo e ' : ''}in uso`, 'ok', { label: 'Annulla', run: () => replace(before) });
-    onClose();
-  };
-  const busy = phase === 'download';
-  return (
-    <Modal title={`Passare al catalogo ${target.releaseId}?`} onClose={onClose}>
-      <p>
-        Il viaggio usa il catalogo {target.name} {from?.releaseId ?? ''}. La versione {target.version} contiene tutti i luoghi della versione precedente, con le stesse
-        chiavi{target.code === 'NO' ? whatsNew(releaseVersion(from?.releaseId ?? '') ?? 1, target.version, 'conferma') : ''}.
-      </p>
-      <ul className="small">
-        <li>Tappe, notti, idee, preferiti, attività, crociere e costi restano come sono.</li>
-        <li>Cambia solo la versione del catalogo del viaggio: puoi annullare subito dopo.</li>
-        <li>La versione nuova viene prima scaricata e controllata su questo dispositivo; se non riesce, non cambia nulla.</li>
-        <li>Le tariffe dei traghetti lette nel 2026 restano «da verificare» per il viaggio.</li>
-      </ul>
-      <div role="status" aria-live="polite">
-        {busy && <p className="small">Scaricamento del catalogo {target.releaseId} in corso… Il viaggio resta su {from?.releaseId ?? 'la versione attuale'} finché non è pronto.</p>}
-        {phase === 'errore' && (
-          <p className="note-warn small">
-            Aggiornamento non riuscito: {error || 'errore sconosciuto'}. {online ? '' : 'Sembra che manchi la rete. '}Il viaggio usa ancora {from?.releaseId ?? 'la versione di prima'}, che resta consultabile.
-          </p>
-        )}
-      </div>
-      <div className="row wrap place-actions">
-        <button className="btn btn-primary" disabled={busy} onClick={() => void confirm()}>
-          {busy ? 'Scaricamento in corso…' : phase === 'errore' ? 'Riprova' : `Passa a ${target.releaseId}`}
-        </button>
-        <button className="btn btn-ghost" onClick={onClose}>
-          {busy ? 'Chiudi' : 'Annulla'}
-        </button>
-      </div>
-    </Modal>
   );
 }
 
@@ -288,7 +208,7 @@ export function CountriesDialog({ onClose }: { onClose: () => void }) {
           </>
         )}
       </fieldset>
-      <p className="small muted">Il catalogo di ogni nazione resta nella versione caricata: non cambia da solo.</p>
+      <p className="small muted">Il catalogo di ogni nazione si aggiorna da solo all'ultima versione pubblicata.</p>
     </Modal>
   );
 }

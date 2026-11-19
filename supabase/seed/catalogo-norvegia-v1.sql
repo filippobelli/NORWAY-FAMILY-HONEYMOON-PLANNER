@@ -2,9 +2,18 @@
 -- GENERATO da scripts/seed-catalog.ts: non modificare a mano, rigenerare con `npx tsx scripts/seed-catalog.ts`.
 -- Prerequisito: migrazioni supabase/migrations/20261106000100 … 20261106000500.
 -- Idempotente: con la versione già pubblicata non scrive nulla e controlla solo i conteggi.
--- Tocca solo le tabelle del catalogo: nessun viaggio, nessun dato di auth.
+-- Tocca solo le tabelle del catalogo e la versione delle nazioni dei viaggi a righe; nessun dato di auth.
+-- Dopo il controllo cancella le versioni precedenti della nazione (migrazione 20261119000000_cataloghi_superati.sql).
 
 begin;
+
+-- Prerequisiti: versione non superata, versione precedente pubblicata, tabelle dei traghetti presenti
+do $pre$
+begin
+  if exists (select 1 from public.catalog_releases where country_code = 'NO' and status = 'pubblicata' and version > 1) then
+    raise exception 'Il catalogo NO ha già una versione più recente di NO-1: questo seed è superato';
+  end if;
+end $pre$;
 
 insert into public.countries (code, name, names, currency, timezone, language) values
   ('NO', 'Norvegia', '{"en":"Norway","nb":"Norge"}'::jsonb, 'NOK', 'Europe/Oslo', 'nb')
@@ -933,5 +942,13 @@ begin
   if v_n <> 0 then raise exception 'Luoghi senza testo italiano: %', v_n; end if;
   raise notice 'Catalogo NO-1 pubblicato e controllato: 117 luoghi, 24 crociere, 35 porti in rotta';
 end $check$;
+
+-- Versioni precedenti: cancellate (i viaggi passano a questa, che le contiene)
+do $purge$
+begin
+  if to_regprocedure('private.purge_superseded_releases(text)') is not null then
+    perform private.purge_superseded_releases('NO');
+  end if;
+end $purge$;
 
 commit;
