@@ -1,0 +1,4909 @@
+{
+  "DE": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 17,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 245,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 158,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q152802",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q157550",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q322160",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q571421",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q697766",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q574114",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q319069",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q552761",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q328036",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q895855",
+        "type": "Q46169",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q548850",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q220238",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1676234",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1712142",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1713788",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2261870",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2432193",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2530033",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q821403",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q15884236",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q29075418",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q29075421",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q824180",
+        "type": "Q167346",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q885098",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q175213",
+        "type": "Q23413",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "de-wd-q278908",
+      "de-wd-q684424",
+      "de-wd-q32659772",
+      "de-wd-q833817",
+      "de-wd-q322433",
+      "de-wd-q701525",
+      "de-wd-q220036",
+      "de-wd-q663149",
+      "de-wd-q323124",
+      "de-wd-q174823",
+      "de-wd-q700562",
+      "de-wd-q567643",
+      "de-wd-q632379",
+      "de-wd-q449088"
+    ],
+    "editorialExcluded": []
+  },
+  "FR": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 116,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q650053",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2915307",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1758416",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1585909",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q9026818",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3329213",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q774118",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q9494",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1775540",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3329948",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q550389",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q665459",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q1028479",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q1898465",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3576019",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3333182",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q259897",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2945366",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q16511780",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2859174",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2859183",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2859172",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3364799",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3457649",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q17355438",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19951206",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q121435022",
+        "type": "Q43501",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q973233",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3162482",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3162394",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3162454",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q6159718",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3034600",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2859702",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q18785665",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q3363812",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q1865480",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1090492",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q921634",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1959055",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q15992417",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q839242",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "fr-wd-q36698440",
+      "fr-wd-q174274",
+      "fr-wd-q1011357",
+      "fr-wd-q1054169",
+      "fr-wd-q547789",
+      "fr-wd-q516697",
+      "fr-wd-q1665109",
+      "fr-wd-q3225108",
+      "fr-wd-q604550",
+      "fr-wd-q3162568",
+      "fr-wd-q3105145",
+      "fr-wd-q1055404",
+      "fr-wd-q2739331",
+      "fr-wd-q1013191"
+    ],
+    "editorialExcluded": []
+  },
+  "JP": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 36,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 196,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q7818931",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q18515604",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1058730",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q867148",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3736155",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10333378",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q20055320",
+        "type": "Q46169",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11577719",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11590110",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q21652473",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11341120",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11374325",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11490912",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11325868",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q55237812",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "jp-wd-q41977",
+      "jp-wd-q3275446",
+      "jp-wd-q147157",
+      "jp-wd-q2855971",
+      "jp-wd-q84029",
+      "jp-wd-q11465642"
+    ],
+    "editorialExcluded": []
+  },
+  "NL": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 28,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 43,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 34,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 140,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q2077489",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2668933",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2419924",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2267276",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2920487",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1934808",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2842816",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1822492",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1954331",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2224691",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2261423",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2356434",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q18378399",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2474005",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2310064",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2642108",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2017195",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2568630",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q4692149",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2198135",
+        "type": "Q46169",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q1221249",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2584307",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2673660",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q113632569",
+        "type": "Q167346",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q11721992",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2765622",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2801139",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1987631",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q17319270",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q41881059",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q126917151",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q129263773",
+        "type": "Q23413",
+        "reason": "Coordinate terrestri mancanti"
+      },
+      {
+        "qid": "Q131763095",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q33219829",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "nl-wd-q1121835",
+      "nl-wd-q572269",
+      "nl-wd-q1324489",
+      "nl-wd-q2170763",
+      "nl-wd-q1872824",
+      "nl-wd-q2156810",
+      "nl-wd-q2361043",
+      "nl-wd-q1304441",
+      "nl-wd-q13572749",
+      "nl-wd-q18771183",
+      "nl-wd-q2498387",
+      "nl-wd-q13442809",
+      "nl-wd-q1971949",
+      "nl-wd-q2332962",
+      "nl-wd-q13442808",
+      "nl-wd-q1827054",
+      "nl-wd-q114839588"
+    ],
+    "editorialExcluded": []
+  },
+  "DK": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 24,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 13,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 27,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 21,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [
+      {
+        "type": "Q839954",
+        "reason": "The operation was aborted due to timeout"
+      }
+    ],
+    "rejected": [
+      {
+        "qid": "Q3375972",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10986155",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3362210",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3329884",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3432921",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q803409",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1786342",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12307465",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12307261",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q12323287",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q11996095",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q241464",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3433309",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11981657",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q50368448",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3433002",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12342515",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q141527783",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q3351830",
+        "type": "Q46169",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q21065243",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3306889",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1014431",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q753714",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4585653",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3431547",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1783399",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5520241",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1426598",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q825076",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4994552",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4808744",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3430599",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12000832",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1724011",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12333000",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19393707",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12336411",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12322771",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19588537",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "dk-wd-q978464",
+      "dk-wd-q3432347",
+      "dk-wd-q6449744",
+      "dk-wd-q893988",
+      "dk-wd-q3275232",
+      "dk-wd-q12327020",
+      "dk-wd-q501657",
+      "dk-wd-q10466595",
+      "dk-wd-q4993427",
+      "dk-wd-q1164901",
+      "dk-wd-q12330222",
+      "dk-wd-q198606",
+      "dk-wd-q111696442",
+      "dk-wd-q17111098",
+      "dk-wd-q12342054",
+      "dk-wd-q18199407",
+      "dk-wd-q18199507",
+      "dk-wd-q12303893",
+      "dk-wd-q12341733",
+      "dk-wd-q11965363",
+      "dk-wd-q6206829",
+      "dk-wd-q12301022",
+      "dk-wd-q66794495",
+      "dk-wd-q12301345",
+      "dk-wd-q3676084"
+    ],
+    "editorialExcluded": []
+  },
+  "SE": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 32,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 25,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 14,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 99,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q631733",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4356728",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3329393",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q493050",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7366391",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10685159",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6112842",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q18608929",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q147009",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q835168",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q661121",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q661338",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q749534",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q846657",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q616102",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3431559",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1398979",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10697643",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "se-wd-q936884",
+      "se-wd-q378377",
+      "se-wd-q1518751",
+      "se-wd-q3132770",
+      "se-wd-q253430",
+      "se-wd-q1033037",
+      "se-wd-q1551675",
+      "se-wd-q18610057",
+      "se-wd-q18649267",
+      "se-wd-q85507020",
+      "se-wd-q5702508",
+      "se-wd-q10498762",
+      "se-wd-q10540701",
+      "se-wd-q115216744"
+    ],
+    "editorialExcluded": []
+  },
+  "SI": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 49,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 185,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 10,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 47,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 44,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 25,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23442",
+        "category": "isole",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q473972",
+        "category": "natura",
+        "count": 52,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q4010616",
+        "type": "Q839954",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q28969759",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q99884191",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q99884191",
+        "type": "Q23442",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4580",
+        "type": "Q473972",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q85787055",
+        "type": "Q473972",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q128657953",
+        "type": "Q473972",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q128658847",
+        "type": "Q473972",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q128659008",
+        "type": "Q473972",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q128658973",
+        "type": "Q473972",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "si-wd-q123052474",
+      "si-wd-q23090920",
+      "si-wd-q12060836",
+      "si-wd-q12789566",
+      "si-wd-q48769614",
+      "si-wd-q12797158",
+      "si-wd-q12798325",
+      "si-wd-q12797161",
+      "si-wd-q12797155",
+      "si-wd-q18552411",
+      "si-wd-q29219481",
+      "si-wd-q137512537",
+      "si-wd-q12796381",
+      "si-wd-q12797149",
+      "si-wd-q20521493",
+      "si-wd-q12786244",
+      "si-wd-q2046710",
+      "si-wd-q3402569",
+      "si-wd-q3408965",
+      "si-wd-q3402599",
+      "si-wd-q5590918",
+      "si-wd-q6165841",
+      "si-wd-q20189524",
+      "si-wd-q1098970",
+      "si-wd-q11122991",
+      "si-wd-q12798159",
+      "si-wd-q18562641",
+      "si-wd-q12786508",
+      "si-wd-q3110294",
+      "si-wd-q4809419",
+      "si-wd-q4127219",
+      "si-wd-q7201290",
+      "si-wd-q19937994",
+      "si-wd-q12787007",
+      "si-wd-q12787605",
+      "si-wd-q27452235",
+      "si-wd-q19851084",
+      "si-wd-q19932502",
+      "si-wd-q19937541",
+      "si-wd-q20521840",
+      "si-wd-q20523057",
+      "si-wd-q20523400",
+      "si-wd-q20523506",
+      "si-wd-q28530512",
+      "si-wd-q15889",
+      "si-wd-q1809670"
+    ],
+    "editorialExcluded": []
+  },
+  "AT": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 27,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q674996",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q378012",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2164265",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1555215",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1618999",
+        "type": "Q33506",
+        "reason": "Disambigua, categoria o lista"
+      },
+      {
+        "qid": "Q130603983",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1013237",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1013992",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1618999",
+        "type": "Q23413",
+        "reason": "Disambigua, categoria o lista"
+      },
+      {
+        "qid": "Q1012580",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1015522",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q432903",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1013570",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1015253",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1344703",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "at-wd-q700751",
+      "at-wd-q698689",
+      "at-wd-q875740",
+      "at-wd-q334274",
+      "at-wd-q874905",
+      "at-wd-q697030",
+      "at-wd-q875733",
+      "at-wd-q1575385",
+      "at-wd-q494695",
+      "at-wd-q1497537",
+      "at-wd-q18577780",
+      "at-wd-q17514617",
+      "at-wd-q24232843",
+      "at-wd-q2131737",
+      "at-wd-q220053",
+      "at-wd-q17521182",
+      "at-wd-q681783",
+      "at-wd-q874547",
+      "at-wd-q877313",
+      "at-wd-q1674603",
+      "at-wd-q1379421"
+    ],
+    "editorialExcluded": []
+  },
+  "ES": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 17,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 45,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q944404",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5047920",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4785394",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4890779",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6034310",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2742485",
+        "type": "Q33506",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q6940946",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q47486950",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3821701",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10723789",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6116787",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "es-wd-q1140249",
+      "es-wd-q1540732",
+      "es-wd-q1592523",
+      "es-wd-q1368571",
+      "es-wd-q1581475",
+      "es-wd-q876383",
+      "es-wd-q386570",
+      "es-wd-q3176377"
+    ],
+    "editorialExcluded": []
+  },
+  "PT": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 10,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 187,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 19,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 8,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q1872316",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q112071820",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q10333759",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q9629526",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19707192",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "pt-wd-q1140204",
+      "pt-wd-q6940623",
+      "pt-wd-q81792536",
+      "pt-wd-q106689700",
+      "pt-wd-q17167648",
+      "pt-wd-q2838227",
+      "pt-wd-q4774734",
+      "pt-wd-q10305540",
+      "pt-wd-q1048954",
+      "pt-wd-q2970726",
+      "pt-wd-q9701496",
+      "pt-wd-q17318660",
+      "pt-wd-q2669590",
+      "pt-wd-q9662840"
+    ],
+    "editorialExcluded": []
+  },
+  "HR": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 83,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 124,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 8,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 54,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q12639159",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q15260382",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q680644",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1013127",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1257228",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12643002",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q859811",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1014016",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12759022",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1014307",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7252924",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q14397181",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12628847",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1011500",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3500497",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5609828",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7601914",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q8079687",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12638657",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q25556354",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105946478",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1404670",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12060582",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q16113362",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q31199806",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q31199828",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q48106100",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q644641",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5307975",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7235127",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12631379",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12634574",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12642703",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q48785083",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97189890",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105945386",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6421226",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7021663",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12627742",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12627804",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12645995",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q16112277",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q17452078",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q29440107",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q61685632",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97215162",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97638174",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105926456",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q875096",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97215850",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12634152",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12634391",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12637387",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12642705",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12642709",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12644026",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12645862",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q31200736",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q31200770",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q61359150",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q65132880",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q65149651",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97192371",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97288963",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q97689019",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q99359127",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105925477",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105943482",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105944872",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105946087",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105952576",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105952923",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q105953416",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12638657",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "hr-wd-q725066",
+      "hr-wd-q854533",
+      "hr-wd-q1710909",
+      "hr-wd-q12640247",
+      "hr-wd-q20310275",
+      "hr-wd-q20926179",
+      "hr-wd-q5187116",
+      "hr-wd-q16116365",
+      "hr-wd-q4919420",
+      "hr-wd-q20526330",
+      "hr-wd-q12634380",
+      "hr-wd-q16114161",
+      "hr-wd-q5757390",
+      "hr-wd-q12630306",
+      "hr-wd-q38252168",
+      "hr-wd-q6590956",
+      "hr-wd-q97218203",
+      "hr-wd-q2989678",
+      "hr-wd-q4754310",
+      "hr-wd-q12627051",
+      "hr-wd-q123575375",
+      "hr-wd-q12749569",
+      "hr-wd-q97221786",
+      "hr-wd-q3502397",
+      "hr-wd-q1583825",
+      "hr-wd-q1735347"
+    ],
+    "editorialExcluded": []
+  },
+  "GR": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 28,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 120,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q471828",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q15263731",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1012861",
+        "type": "Q23413",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q15223652",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "gr-wd-q2383284",
+      "gr-wd-q1271635",
+      "gr-wd-q47764335",
+      "gr-wd-q637025",
+      "gr-wd-q1311748",
+      "gr-wd-q6936124",
+      "gr-wd-q802175",
+      "gr-wd-q12876746",
+      "gr-wd-q3364522",
+      "gr-wd-q112032100",
+      "gr-wd-q4782841",
+      "gr-wd-q12874443",
+      "gr-wd-q12874706",
+      "gr-wd-q1977923",
+      "gr-wd-q12018070"
+    ],
+    "editorialExcluded": []
+  },
+  "TR": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 52,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q190497",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7524921",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7669659",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q110538685",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6035320",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4809463",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q12808931",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6055483",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "tr-wd-q90801",
+      "tr-wd-q4533056",
+      "tr-wd-q4818221",
+      "tr-wd-q2064336",
+      "tr-wd-q4118534",
+      "tr-wd-q3701681",
+      "tr-wd-q15228897",
+      "tr-wd-q6051732",
+      "tr-wd-q6447963",
+      "tr-wd-q6088683",
+      "tr-wd-q6067842",
+      "tr-wd-q6079009",
+      "tr-wd-q6037673",
+      "tr-wd-q20476559",
+      "tr-wd-q42171362",
+      "tr-wd-q99647256",
+      "tr-wd-q20476308",
+      "tr-wd-q20471962",
+      "tr-wd-q56280876",
+      "tr-wd-q1616641",
+      "tr-wd-q6011467",
+      "tr-wd-q6045732",
+      "tr-wd-q527767"
+    ],
+    "editorialExcluded": []
+  },
+  "IS": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 39,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 3,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 111,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 3,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 19,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 12,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23442",
+        "category": "isole",
+        "count": 83,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q473972",
+        "category": "natura",
+        "count": 27,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q44539",
+        "category": "musei",
+        "count": 67,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q5964596",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1505991",
+        "type": "Q46169",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1971020",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27001428",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27002081",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27003516",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27007154",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27007744",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27008621",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27011988",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27015344",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27016726",
+        "type": "Q34038",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q5964596",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1505991",
+        "type": "Q46169",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1427332",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1639526",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2347299",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27003604",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27004952",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27006169",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27008132",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27010878",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27013124",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27013356",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27014587",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27015490",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1505991",
+        "type": "Q473972",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5642953",
+        "type": "Q44539",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q28669183",
+        "type": "Q44539",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "is-wd-q2312229",
+      "is-wd-q16420866",
+      "is-wd-q112762618",
+      "is-wd-q16976662",
+      "is-wd-q20573874",
+      "is-wd-q15961653",
+      "is-wd-q16429198",
+      "is-wd-q134462719",
+      "is-wd-q16508652",
+      "is-wd-q5625799",
+      "is-wd-q15715782",
+      "is-wd-q15109960",
+      "is-wd-q106531657",
+      "is-wd-q1645468",
+      "is-wd-q189",
+      "is-wd-q116492",
+      "is-wd-q5530205",
+      "is-wd-q16902561",
+      "is-wd-q97260333",
+      "is-wd-q18214817",
+      "is-wd-q7538169",
+      "is-wd-q6377678",
+      "is-wd-q335311",
+      "is-wd-q3480206",
+      "is-wd-q335321",
+      "is-wd-q3481721",
+      "is-wd-q23721723",
+      "is-wd-q97260341",
+      "is-wd-q16419338",
+      "is-wd-q4502717",
+      "is-wd-q16422107",
+      "is-wd-q16425161",
+      "is-wd-q16425424",
+      "is-wd-q16427172"
+    ],
+    "editorialExcluded": [
+      {
+        "qid": "Q189",
+        "name": "Islanda",
+        "reason": "Nazione o isola nazionale, non una tappa puntuale"
+      },
+      {
+        "qid": "Q3740828",
+        "name": "Islanda",
+        "reason": "Nazione o isola nazionale, non una tappa puntuale"
+      }
+    ]
+  },
+  "FI": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 43,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 18,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 20,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 17,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 70,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q549096",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7223852",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11881923",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11880625",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q11861108",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11901207",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q11007560",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5377919",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5404567",
+        "type": "Q23413",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3566486",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q8077160",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q130537028",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "fi-wd-q1418136",
+      "fi-wd-q681327",
+      "fi-wd-q918929",
+      "fi-wd-q6964116",
+      "fi-wd-q2606800",
+      "fi-wd-q110736317",
+      "fi-wd-q3303225",
+      "fi-wd-q5391328",
+      "fi-wd-q11895750",
+      "fi-wd-q11851493",
+      "fi-wd-q18661497",
+      "fi-wd-q1746596",
+      "fi-wd-q4411170",
+      "fi-wd-q4411588",
+      "fi-wd-q97189606"
+    ],
+    "editorialExcluded": []
+  },
+  "GB": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 15,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q544113",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q648932",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1469493",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q130775",
+        "type": "Q33506",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2104764",
+        "type": "Q33506",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q1410337",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2060301",
+        "type": "Q33506",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2170996",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1819331",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1247496",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1415097",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1421579",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1229936",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5211817",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1478728",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q6670230",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1459037",
+        "reason": "Nazione costitutiva britannica non attribuibile con certezza"
+      },
+      {
+        "qid": "Q14524921",
+        "type": "Q46169",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "gb-wd-q192988",
+      "gb-wd-q238587",
+      "gb-wd-q591086",
+      "gb-wd-q1417172"
+    ],
+    "editorialExcluded": []
+  },
+  "IE": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 90,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 3,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 260,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q2731230",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4146881",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2578245",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q4750210",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q30246642",
+        "type": "Q23413",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q339489",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q966426",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q813773",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q896003",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2435969",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q839896",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q818879",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1265328",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q805758",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1777349",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1944057",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q306448",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q18206923",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q15853790",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q51076236",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q2341259",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q18413236",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "ie-wd-q5757525",
+      "ie-wd-q106943272",
+      "ie-wd-q6394504",
+      "ie-wd-q13157859",
+      "ie-wd-q22032065",
+      "ie-wd-q4851705",
+      "ie-wd-q4215383",
+      "ie-wd-q6927623",
+      "ie-wd-q16956306",
+      "ie-wd-q260398",
+      "ie-wd-q1260144",
+      "ie-wd-q5160358",
+      "ie-wd-q1261245",
+      "ie-wd-q1047389",
+      "ie-wd-q3569851"
+    ],
+    "editorialExcluded": []
+  },
+  "TH": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 110,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 145,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 18,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 31,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 33,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [],
+    "rejected": [
+      {
+        "qid": "Q1479428",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q5642710",
+        "type": "Q33506",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1267646",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q39060593",
+        "type": "Q43501",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q3127208",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q372696",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "th-wd-q806441",
+      "th-wd-q2510561",
+      "th-wd-q5098070",
+      "th-wd-q131324879",
+      "th-wd-q4921882",
+      "th-wd-q4855200",
+      "th-wd-q7200579",
+      "th-wd-q29468121",
+      "th-wd-q11310084",
+      "th-wd-q6363380",
+      "th-wd-q1314425",
+      "th-wd-q7374139",
+      "th-wd-q15959888",
+      "th-wd-q7410108",
+      "th-wd-q5530566",
+      "th-wd-q6411976",
+      "th-wd-q7767502",
+      "th-wd-q134437679",
+      "th-wd-q129811661",
+      "th-wd-q130542459",
+      "th-wd-q6583116",
+      "th-wd-q3330693",
+      "th-wd-q31353785",
+      "th-wd-q840904",
+      "th-wd-q1322875",
+      "th-wd-q4036104",
+      "th-wd-q4923810",
+      "th-wd-q1132057",
+      "th-wd-q2530020",
+      "th-wd-q48797664",
+      "th-wd-q13014565",
+      "th-wd-q13022372",
+      "th-wd-q7403151",
+      "th-wd-q38205",
+      "th-wd-q37471",
+      "th-wd-q13016163",
+      "th-wd-q34676125",
+      "th-wd-q34676599",
+      "th-wd-q13016162",
+      "th-wd-q13016170",
+      "th-wd-q16307052",
+      "th-wd-q16307063",
+      "th-wd-q16307077",
+      "th-wd-q16307088",
+      "th-wd-q16307114",
+      "th-wd-q17063517",
+      "th-wd-q7530310",
+      "th-wd-q5087479",
+      "th-wd-q34845984",
+      "th-wd-q32068704",
+      "th-wd-q6583260",
+      "th-wd-q6669568"
+    ],
+    "editorialExcluded": []
+  },
+  "KH": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 10,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 9,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 3,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 68,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23442",
+        "category": "isole",
+        "count": 19,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q473972",
+        "category": "natura",
+        "count": 30,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q44539",
+        "category": "musei",
+        "count": 29,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q515",
+        "category": "citta",
+        "count": 27,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q55488",
+        "category": "treni",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q44613",
+        "category": "musei",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q177380",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q8072",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35666",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q22698",
+        "category": "parchi",
+        "count": 16,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q16560",
+        "category": "musei",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q8502",
+        "category": "natura",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 8
+      },
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 12,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 9,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 4,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q23442",
+        "category": "isole",
+        "count": 181,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q473972",
+        "category": "natura",
+        "count": 39,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q515",
+        "category": "citta",
+        "count": 28,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q44613",
+        "category": "musei",
+        "count": 17,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q177380",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q8072",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q35666",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q22698",
+        "category": "parchi",
+        "count": 18,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q16560",
+        "category": "musei",
+        "count": 3,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q8502",
+        "category": "natura",
+        "count": 8,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 4
+      },
+      {
+        "type": "Q23397",
+        "category": "natura",
+        "count": 102,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q40080",
+        "category": "natura",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q57821",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q39715",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q1107656",
+        "category": "parchi",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q6017969",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 76,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q44539",
+        "category": "musei",
+        "count": 33,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q55488",
+        "category": "treni",
+        "count": 6,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      },
+      {
+        "type": "Q532",
+        "category": "citta",
+        "count": 9,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 1
+      }
+    ],
+    "failures": [
+      {
+        "type": "Q532",
+        "reason": "HTTP 502"
+      },
+      {
+        "type": "Q839954",
+        "reason": "HTTP 502"
+      },
+      {
+        "type": "Q44539",
+        "reason": "The operation was aborted due to timeout"
+      },
+      {
+        "type": "Q55488",
+        "reason": "HTTP 502"
+      },
+      {
+        "type": "Q532",
+        "reason": "The operation was aborted due to timeout"
+      }
+    ],
+    "rejected": [
+      {
+        "qid": "Q14202163",
+        "type": "Q3957",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1737613",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q6425873",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q4080386",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q19060824",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q2942753",
+        "type": "Q44539",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19694003",
+        "type": "Q44539",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q60851924",
+        "type": "Q44539",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q19951182",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q58322404",
+        "type": "Q43501",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q19951182",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q58322404",
+        "type": "Q43501",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q14202163",
+        "type": "Q3957",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1737613",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q6425873",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q4080386",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q19060824",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q27213591",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213645",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213648",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213669",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213676",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213701",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213731",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q27213732",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213733",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213747",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213789",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q27214485",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214496",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214509",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214511",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214512",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214534",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214549",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214556",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214566",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214573",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214575",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214614",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214615",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214624",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214636",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214643",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214658",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214665",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214704",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27214842",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215733",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215740",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215742",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215747",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215750",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215764",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215771",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215787",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215790",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215812",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215823",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215824",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215826",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215832",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215850",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215858",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215874",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215886",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215898",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215907",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215909",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215910",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215925",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215936",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215941",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215974",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27215985",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217310",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217344",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217363",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217368",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217375",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217389",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217413",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217419",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217428",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217454",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217470",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217499",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217533",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27217542",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218137",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218159",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218169",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218176",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218554",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218574",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218575",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218583",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218596",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27218597",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219022",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219054",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219097",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219849",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219882",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219888",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27219909",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27220317",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27221154",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27221157",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q31866829",
+        "type": "Q23442",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q27213787",
+        "type": "Q23442",
+        "reason": "Fuori ambito geografico o nazione diversa"
+      },
+      {
+        "qid": "Q58322404",
+        "type": "Q22698",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q4077641",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49307317",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300141",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300142",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300143",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300144",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300146",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300147",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300150",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300152",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300154",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300155",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300160",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300163",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300168",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300169",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300170",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300171",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300173",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300174",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300179",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300180",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300181",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300183",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49300184",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49313525",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49313861",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49313862",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49313864",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49313868",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q49317253",
+        "type": "Q23397",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q19951182",
+        "type": "Q33506",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q58322404",
+        "type": "Q43501",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1805560",
+        "type": "Q839954",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q14202163",
+        "type": "Q3957",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q2942753",
+        "type": "Q44539",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19694003",
+        "type": "Q44539",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q60851924",
+        "type": "Q44539",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q58322404",
+        "type": "Q22698",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q14218230",
+        "type": "Q532",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q124540105",
+        "type": "Q532",
+        "reason": "Nome assente o già presente"
+      }
+    ],
+    "missingPhotos": [
+      "kh-wd-q107571076",
+      "kh-wd-q111170133",
+      "kh-wd-q107584119",
+      "kh-wd-q113317765",
+      "kh-wd-q137756657",
+      "kh-wd-q16253871",
+      "kh-wd-q17063809",
+      "kh-wd-q7186583",
+      "kh-wd-q16948780",
+      "kh-wd-q1015194",
+      "kh-wd-q1646149",
+      "kh-wd-q25679727",
+      "kh-wd-q7410304",
+      "kh-wd-q111950806",
+      "kh-wd-q4868461",
+      "kh-wd-q6919167",
+      "kh-wd-q6425865",
+      "kh-wd-q6425868",
+      "kh-wd-q18206752",
+      "kh-wd-q24952108",
+      "kh-wd-q27214537",
+      "kh-wd-q15238836",
+      "kh-wd-q6366053",
+      "kh-wd-q7186578",
+      "kh-wd-q6898832",
+      "kh-wd-q16858660",
+      "kh-wd-q4761884",
+      "kh-wd-q7186563",
+      "kh-wd-q6442924",
+      "kh-wd-q16898775",
+      "kh-wd-q7186580",
+      "kh-wd-q7409618",
+      "kh-wd-q15710719",
+      "kh-wd-q6669537",
+      "kh-wd-q96399976",
+      "kh-wd-q113245153",
+      "kh-wd-q113245154",
+      "kh-wd-q4887586",
+      "kh-wd-q4937170",
+      "kh-wd-q7186570",
+      "kh-wd-q7548114",
+      "kh-wd-q31708373",
+      "kh-wd-q7186565",
+      "kh-wd-q22159266",
+      "kh-wd-q25679553",
+      "kh-wd-q65427334",
+      "kh-wd-q2344811",
+      "kh-wd-q7403327",
+      "kh-wd-q3347804",
+      "kh-wd-q107427964",
+      "kh-wd-q126960054",
+      "kh-wd-q136746706",
+      "kh-wd-q27221153",
+      "kh-wd-q16956791",
+      "kh-wd-q27213624",
+      "kh-wd-q27213630",
+      "kh-wd-q27213649",
+      "kh-wd-q27214468",
+      "kh-wd-q27214490",
+      "kh-wd-q27214501",
+      "kh-wd-q27214538",
+      "kh-wd-q27214551",
+      "kh-wd-q27214557",
+      "kh-wd-q27214606",
+      "kh-wd-q27214611",
+      "kh-wd-q27214616",
+      "kh-wd-q27214632",
+      "kh-wd-q27214634",
+      "kh-wd-q85774097",
+      "kh-wd-q113012174",
+      "kh-wd-q113245124",
+      "kh-wd-q113245145",
+      "kh-wd-q18344279",
+      "kh-wd-q18358474",
+      "kh-wd-q96419169",
+      "kh-wd-q113144346",
+      "kh-wd-q137785584",
+      "kh-wd-q3666877",
+      "kh-wd-q1809454",
+      "kh-wd-q111728710",
+      "kh-wd-q113907608",
+      "kh-wd-q137654693",
+      "kh-wd-q27219786",
+      "kh-wd-q34799222",
+      "kh-wd-q34799747",
+      "kh-wd-q18397392",
+      "kh-wd-q49313660",
+      "kh-wd-q34801232",
+      "kh-wd-q34799214",
+      "kh-wd-q34799756",
+      "kh-wd-q34799765",
+      "kh-wd-q34799774",
+      "kh-wd-q34799783",
+      "kh-wd-q34799792",
+      "kh-wd-q34799801",
+      "kh-wd-q34799808",
+      "kh-wd-q34799818",
+      "kh-wd-q34799826",
+      "kh-wd-q34799834",
+      "kh-wd-q34799843",
+      "kh-wd-q34799850",
+      "kh-wd-q34799857",
+      "kh-wd-q34799865",
+      "kh-wd-q34799872",
+      "kh-wd-q34799880",
+      "kh-wd-q34799887",
+      "kh-wd-q34799895",
+      "kh-wd-q34799904",
+      "kh-wd-q34799911",
+      "kh-wd-q34799918",
+      "kh-wd-q34799926",
+      "kh-wd-q34799934",
+      "kh-wd-q34799940",
+      "kh-wd-q34799947",
+      "kh-wd-q34799953",
+      "kh-wd-q78717829",
+      "kh-wd-q78150582",
+      "kh-wd-q111953700",
+      "kh-wd-q18388389",
+      "kh-wd-q24951182",
+      "kh-wd-q1453641",
+      "kh-wd-q14221390",
+      "kh-wd-q6402767",
+      "kh-wd-q138711632",
+      "kh-wd-q14236273",
+      "kh-wd-q120107899",
+      "kh-wd-q7420848"
+    ],
+    "editorialExcluded": []
+  },
+  "VN": {
+    "checkedAt": "2026-11-20",
+    "queries": [
+      {
+        "type": "Q33506",
+        "category": "musei",
+        "count": 35,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q46169",
+        "category": "natura",
+        "count": 32,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q43501",
+        "category": "fauna",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q167346",
+        "category": "parchi",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q23413",
+        "category": "musei",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q34038",
+        "category": "natura",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q194195",
+        "category": "parchi",
+        "count": 7,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q839954",
+        "category": "musei",
+        "count": 16,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35509",
+        "category": "natura",
+        "count": 11,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q3957",
+        "category": "citta",
+        "count": 2,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q473972",
+        "category": "natura",
+        "count": 46,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q44539",
+        "category": "musei",
+        "count": 157,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q515",
+        "category": "citta",
+        "count": 39,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q55488",
+        "category": "treni",
+        "count": 144,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q44613",
+        "category": "musei",
+        "count": 5,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q177380",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q8072",
+        "category": "natura",
+        "count": 1,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q35666",
+        "category": "natura",
+        "count": 0,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      },
+      {
+        "type": "Q22698",
+        "category": "parchi",
+        "count": 61,
+        "checkedAt": "2026-11-20",
+        "minimumSitelinks": 2
+      }
+    ],
+    "failures": [
+      {
+        "type": "Q23442",
+        "reason": "The operation was aborted due to timeout"
+      }
+    ],
+    "rejected": [
+      {
+        "qid": "Q7400088",
+        "type": "Q194195",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7187240",
+        "type": "Q839954",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q36736",
+        "type": "Q3957",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q15212130",
+        "type": "Q473972",
+        "reason": "Nome assente o già presente"
+      },
+      {
+        "qid": "Q1877",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19491",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q21194",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q25262",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q25315",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q19316",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q36160",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q33428",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q33469",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q33682",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q35747",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q130324",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q373214",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q800154",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q33204",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q1031051",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2987563",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q2405555",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q32005019",
+        "type": "Q515",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      },
+      {
+        "qid": "Q7400088",
+        "type": "Q22698",
+        "reason": "Chiusura o cessazione dichiarata: escluso dalla scoperta"
+      }
+    ],
+    "missingPhotos": [
+      "vn-wd-q10743288",
+      "vn-wd-q6409093",
+      "vn-wd-q10743286",
+      "vn-wd-q10743290",
+      "vn-wd-q10787424",
+      "vn-wd-q109536619",
+      "vn-wd-q2610809",
+      "vn-wd-q11697940",
+      "vn-wd-q1934378",
+      "vn-wd-q1320437",
+      "vn-wd-q3895703",
+      "vn-wd-q1749839",
+      "vn-wd-q377998",
+      "vn-wd-q117835609",
+      "vn-wd-q32250999",
+      "vn-wd-q32250981",
+      "vn-wd-q123376181",
+      "vn-wd-q28449757",
+      "vn-wd-q3485391",
+      "vn-wd-q2234243",
+      "vn-wd-q18415661",
+      "vn-wd-q5157981",
+      "vn-wd-q108124283",
+      "vn-wd-q8079948",
+      "vn-wd-q32206985",
+      "vn-wd-q7709770",
+      "vn-wd-q7988111",
+      "vn-wd-q10779407",
+      "vn-wd-q10779439",
+      "vn-wd-q107479064",
+      "vn-wd-q1069757",
+      "vn-wd-q3360468",
+      "vn-wd-q10748440",
+      "vn-wd-q4356187",
+      "vn-wd-q7189921",
+      "vn-wd-q1928781",
+      "vn-wd-q6887454",
+      "vn-wd-q10769170",
+      "vn-wd-q42293656",
+      "vn-wd-q10825222",
+      "vn-wd-q809722"
+    ],
+    "editorialExcluded": []
+  }
+}

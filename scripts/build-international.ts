@@ -7,6 +7,9 @@ interface ResearchedPlace {
   key: string; name: string; title: string; category: string; region: string; description: string;
   qid: string; revision?: number; lat: number; lng: number; localName?: string; iata?: string;
   official?: string; wiki: { it?: string; en?: string }; photos: PlacePhoto[]; checkedAt: string;
+  classification?: { qid: string; label: string; links: number; method: string };
+  regionEvidence?: string;
+  planningBase?: boolean;
 }
 export interface ResearchedCountry {
   name: string; en: string; language: string; currency: string; timezone: string;
@@ -43,10 +46,10 @@ export function researchedCountrySeed(code: string, c: ResearchedCountry, versio
   const regionKey = (name: string) => `${code.toLowerCase()}-r${c.regions.indexOf(name) + 1}`;
   const places: PlaceSeed[] = c.places.map((p) => {
     const url = `https://www.wikidata.org/wiki/${p.qid}`;
-    const coordinateNote = [p.revision ? `Revisione ${p.revision}.` : '', p.category === 'porti' ? 'Punto riferito all’area portuale, non al molo o al terminal di imbarco.' : ''].filter(Boolean).join(' ');
+    const coordinateNote = [p.revision ? `Revisione ${p.revision}.` : '', p.category === 'porti' ? 'Punto riferito all’area portuale, non al molo o al terminal di imbarco.' : '', p.classification ? 'Punto geografico della scheda, non necessariamente ingresso, parcheggio o accesso visitabile.' : ''].filter(Boolean).join(' ');
     const coordinates = { label: `Wikidata ${p.qid} · P625`, url, checkedAt: p.checkedAt, license: 'CC0-1.0', method: 'API Wikidata: coordinate terrestri e controllo geografico della nazione', ...(coordinateNote ? { note: coordinateNote } : {}) };
-    const base = p.category === 'citta';
-    const source = { label: `Wikidata ${p.qid}`, url, checkedAt: p.checkedAt, license: 'CC0-1.0', note: 'Dati strutturati; orari, tariffe e disponibilità non verificati' };
+    const base = p.category === 'citta' && p.planningBase !== false;
+    const source = { label: `Wikidata ${p.qid}`, url, checkedAt: p.checkedAt, license: 'CC0-1.0', note: 'Dati strutturati; orari, tariffe e disponibilità non verificati' + (p.classification ? ` Categoria: ${p.classification.label}, classe ${p.classification.qid} tramite P31/P279. ${p.regionEvidence ?? ''}` : '') };
     return {
       key: p.key, category: p.category, regionKey: regionKey(p.region), lat: p.lat, lng: p.lng,
       coordsStatus: 'verificate', localName: p.localName, reliability: 'da_verificare',

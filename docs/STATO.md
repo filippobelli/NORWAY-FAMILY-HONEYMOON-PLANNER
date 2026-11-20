@@ -1,5 +1,11 @@
 # Stato del progetto — 27 ottobre 2026
 
+## Tutte le nazioni nel range 300–400 · 20 novembre 2026
+
+- Pubblicate venti release additive: 18 nazioni a 320 schede, Islanda a 318, Cambogia a 313. Norvegia (358) e India (302) già nel range. Totale ultime versioni: **22 nazioni e 7.051 schede**, con 2.725 aggiunte e 2.370 nuovi riferimenti fotografici con attribuzione.
+- Dati Wikidata e foto Commons con provenienza; informazioni operative mancanti da verificare. Le attribuzioni di zona incerte restano nazionali, senza dedurre confini dalla vicinanza. Nessuna nuova dipendenza o migrazione. Viaggi e cataloghi precedenti verificati invariati; database circa 46,6 MB, comprese le versioni conservate.
+- Superati typecheck, lint, build, 307 test e 547 controlli browser. Dettagli, conteggi per nazione, fonti e limiti: [cataloghi-range-300-400.md](cataloghi-range-300-400.md).
+
 ## Nord Europa e Asia · 19 novembre 2026
 
 - Pubblicate nel database otto nazioni: Islanda (127 schede), Finlandia (177), Regno Unito (273, incluse 122 in Scozia), Irlanda (147), Thailandia (156), Cambogia (101), Vietnam (134) e India (302: 150 Nord, 152 Sud). 1.417 nuove schede e 1.458 riferimenti fotografici con attribuzione.

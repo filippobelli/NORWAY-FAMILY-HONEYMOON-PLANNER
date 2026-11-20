@@ -15,10 +15,12 @@ const server = serve(4189);
 (async () => {
   const browser = await launch();
   try {
-    const latest = Object.keys(fixture.bundles).filter((k) => k.endsWith('-2') || !fixture.bundles[k.replace(/-1$/, '-2')]);
+    const allKeys = Object.keys(fixture.bundles);
+    const latest = allKeys.filter((key) => !allKeys.some((other) => fixture.bundles[other].country.code === fixture.bundles[key].country.code && fixture.bundles[other].release.version > fixture.bundles[key].release.version));
     const areasOnly = process.argv.includes('--areas');
-    const sets = areasOnly ? [['GB-1'], ['IN-1']] : Object.keys(fixture.bundles).map((key) => [key]);
-    if (!areasOnly) sets.push(latest);
+    const rangeOnly = process.argv.includes('--range');
+    const sets = areasOnly ? [[latest.find((k) => fixture.bundles[k].country.code === 'GB')], ['IN-1']] : (rangeOnly ? latest.filter((k) => fixture.bundles[k].country.code !== 'IN') : allKeys).map((key) => [key]);
+    if (!areasOnly) sets.push(rangeOnly ? latest.filter((k) => ['DE', 'JP', 'GB', 'KH'].includes(fixture.bundles[k].country.code)) : latest);
     for (const keys of sets) {
       const label = keys.join('+');
       const ctx = await context(browser, { viewport: { width: 1440, height: 1000 } });
@@ -84,8 +86,8 @@ const server = serve(4189);
         await page.locator('.catalog input[type="search"]').fill('');
         await page.getByLabel('Categoria', { exact: true }).selectOption('');
       }
-      if (keys.length === 1 && ['GB-1', 'IN-1'].includes(keys[0])) {
-        const areas = keys[0] === 'GB-1' ? [['gb-scotland', 'Scozia —'], ['gb-other', null]] : [['in-north', 'India del Nord —'], ['in-south', 'India del Sud —']];
+      if (keys.length === 1 && ['GB', 'IN'].includes(bundles[0].country.code)) {
+        const areas = bundles[0].country.code === 'GB' ? [['gb-scotland', 'Scozia —'], ['gb-other', null]] : [['in-north', 'India del Nord —'], ['in-south', 'India del Sud —']];
         const areaSelect = page.getByLabel('Area di viaggio', { exact: true });
         for (const [id, prefix] of areas) {
           const regions = new Set(bundles[0].regions.filter((r) => prefix ? r.name.startsWith(prefix) : !r.name.startsWith('Scozia —')).map((r) => r.region_key));
@@ -113,8 +115,8 @@ const server = serve(4189);
       const airportKeys = bundles.flatMap((b) => b.places.filter((p) => p.category === 'aeroporti').map((p) => p.place_key));
       check(airportKeys.some((key) => options.includes(key)) && !options.includes('bgo'), `${label}: aeroporti dei cataloghi caricati`);
       check((await page.locator('.region-list').innerText()).includes(bundles[0].regions[0].name), `${label}: regioni della nazione`);
-      if (keys.length === 1 && ['GB-1', 'IN-1'].includes(keys[0])) {
-        const area = keys[0] === 'GB-1' ? 'gb-scotland' : 'in-south';
+      if (keys.length === 1 && ['GB', 'IN'].includes(bundles[0].country.code)) {
+        const area = bundles[0].country.code === 'GB' ? 'gb-scotland' : 'in-south';
         const before = await page.evaluate(() => localStorage.getItem('nfhp.trip.v1'));
         await page.getByLabel('Area da pianificare', { exact: true }).selectOption(area);
         check(await page.getByLabel('Area da pianificare', { exact: true }).inputValue() === area, `${area}: configuratore riconosce la scelta`);
