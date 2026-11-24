@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Norway Family Honeymoon Planner \u2014 pianificatore del viaggio in Norvegia, agosto 2027",
+  "description": "Norway Family Honeymoon Planner — pianificatore del viaggio in Norvegia, agosto 2027",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
@@ -13,6 +13,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "flag-icons": "7.6.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

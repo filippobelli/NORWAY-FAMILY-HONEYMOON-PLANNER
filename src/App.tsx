@@ -13,7 +13,8 @@ import { useAppMode } from './state/mode';
 import { saveLastPlanning, useOnline } from './state/uiContext';
 import { exportTripFile } from './services/storage/local';
 import { fmtDateTime } from './ui/common';
-import { FlagMark, Icon, type IconName } from './ui/icons';
+import { Icon, type IconName } from './ui/icons';
+import { TripFlagMark } from './ui/Flags';
 import { ConflictDialog } from './ui/SyncDialogs';
 import { SyncBadge } from './ui/SyncStatus';
 import { BookingsView } from './ui/BookingsView';
@@ -297,7 +298,7 @@ function Shell() {
       <header className="topbar">
         <div className="brand">
           <span className="logo">
-            <FlagMark />
+            <TripFlagMark />
           </span>
           <div>
             <p className="eyebrow">{section ? `${section.label}${viewLabel && section.views.length > 1 ? ` / ${viewLabel}` : ''}` : 'Impostazioni'}</p>
@@ -322,7 +323,7 @@ function Shell() {
       </header>
       <nav className="tabs" aria-label="Sezioni" ref={navRef}>
         <span className="rail-logo">
-          <FlagMark />
+          <TripFlagMark />
         </span>
         {SECTIONS.map((s) => (
           <a key={s.id} href={`#/${s.home}`} data-section={s.id} className={section?.id === s.id ? 'active' : ''} aria-current={section?.id === s.id ? 'page' : undefined}>

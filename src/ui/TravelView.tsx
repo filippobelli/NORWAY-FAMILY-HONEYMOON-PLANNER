@@ -18,7 +18,8 @@ import { isTravelView, parseRoute, type ViewId } from '../state/route';
 import { useTrip } from '../state/store';
 import { loadLastPlanning, loadTravelContext, saveTravelContext } from '../state/uiContext';
 import { Badge, Empty, Field, fmtDateTime, ModeIcon } from './common';
-import { FlagMark, Icon, type IconName } from './icons';
+import { Icon, type IconName } from './icons';
+import { TripFlagMark } from './Flags';
 import { MapView } from './MapView';
 import { TransferSummary } from './TransferSummary';
 import { PlanBDialog } from './PlanBDialog';
@@ -51,7 +52,7 @@ export function TravelShell({ tab, status, online, children }: { tab: ViewId; st
       <header className="travel-top">
         <div className="travel-brand">
           <span className="logo">
-            <FlagMark />
+            <TripFlagMark />
           </span>
           <div>
             <span className="eyebrow">Viaggio / {BAR.find((b) => b.id === active)?.label}</span>

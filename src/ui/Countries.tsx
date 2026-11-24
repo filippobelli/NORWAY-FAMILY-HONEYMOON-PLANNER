@@ -12,6 +12,7 @@ import { useTripCatalog } from '../state/catalog';
 import { useTrip } from '../state/store';
 import { useOnline } from '../state/uiContext';
 import { Badge } from './common';
+import { TripFlag } from './Flags';
 import { Modal } from './PlacementDialog';
 
 // Nazioni del viaggio (design §1–§3): scelta all'inizio, aggiunta, rimozione con conferma, versione del catalogo.
@@ -59,6 +60,7 @@ export function CountriesLine() {
   const names = list.map((c) => countryInfo(c.code)?.name ?? c.code);
   return (
     <p className="ov-sub">
+      <TripFlag codes={list.map((c) => c.code)} className="flag-inline" />
       Nazioni: {list.length === 1 ? `${names[0]} (catalogo versione ${releaseVersion(list[0]!.releaseId) ?? countryInfo(list[0]!.code)?.version})` : names.join(', ')}
       {' · '}
       <button type="button" className="link-btn" onClick={() => setOpen(true)}>
@@ -87,6 +89,7 @@ export function CountriesPanel() {
           const newer = available?.find((a) => a.code === c.code && a.version > current);
           return (
             <li key={c.code}>
+              <TripFlag codes={[c.code]} className="flag-inline" />
               <strong>{info?.name ?? c.code}</strong> <Badge tone={STATE_TONE[st]}>{STATE_LABEL[st]}</Badge>
               <br />
               <span className="small">
@@ -157,6 +160,7 @@ export function CountriesDialog({ onClose }: { onClose: () => void }) {
           const st = loadState(c.code, states, fileMode);
           return (
             <li key={c.code}>
+              <TripFlag codes={[c.code]} className="flag-inline" />
               <strong>{info?.name ?? c.code}</strong> <Badge tone={STATE_TONE[st]}>{STATE_LABEL[st]}</Badge>
               <br />
               <span className="small">{describe(info, c.releaseId)}</span>
@@ -200,7 +204,8 @@ export function CountriesDialog({ onClose }: { onClose: () => void }) {
           <>
             {others.map((a) => (
               <label key={a.code} className="place-opt">
-                <input type="radio" name="nazione-nuova" checked={choice === a.code} onChange={() => setChoice(a.code)} /> {a.name} · catalogo versione {a.version} · valuta {a.currency}
+                <input type="radio" name="nazione-nuova" checked={choice === a.code} onChange={() => setChoice(a.code)} /> <TripFlag codes={[a.code]} className="flag-inline" />
+                {a.name} · catalogo versione {a.version} · valuta {a.currency}
                 {areaHint(a.code) && <span className="small"> {areaHint(a.code)}</span>}
               </label>
             ))}
@@ -293,7 +298,8 @@ export function CountryChooser() {
             <legend className="sr-only">Nazioni disponibili</legend>
             {available.map((a) => (
               <label key={a.code} className={`ov-start-card ${sel === a.code ? 'is-recommended' : ''}`}>
-                <input type="radio" name="prima-nazione" checked={sel === a.code} onChange={() => setChoice(a.code)} /> <strong>{a.name}</strong>
+                <input type="radio" name="prima-nazione" checked={sel === a.code} onChange={() => setChoice(a.code)} /> <TripFlag codes={[a.code]} className="flag-inline" />
+                <strong>{a.name}</strong>
                 {areaHint(a.code) && <span className="small">{areaHint(a.code)}</span>}
                 <span className="small">
                   {' '}
@@ -306,7 +312,7 @@ export function CountryChooser() {
               </label>
             ))}
           </fieldset>
-          <p className="small muted">Il catalogo resta quello di questa versione per tutto il viaggio, anche se in seguito ne esce una nuova.</p>
+          <p className="small muted">Quando esce una versione più recente del catalogo, il viaggio ci passa da solo.</p>
           <button className="btn btn-primary" disabled={!picked} onClick={() => picked && update((t) => ({ ...t, countries: [{ code: picked.code, releaseId: picked.releaseId }] }))}>
             {picked ? `Continua con ${picked.name}` : 'Scegli una nazione'}
           </button>
