@@ -33,13 +33,13 @@ export function ModeIcon({ mode }: { mode: TransportMode }) {
 
 // Stessi valori di --m-* in styles.css: Leaflet ha bisogno del colore esplicito
 export const MODE_COLOR: Record<TransportMode, string> = {
-  strada: '#BA0C2F',
-  traghetto: '#00205B',
-  costiera: '#00205B',
-  treno: '#9B0A27',
-  bus: '#9B0A27',
-  aereo: '#4A5468',
-  non_calcolato: '#7F8BA0',
+  strada: '#C2462F',
+  traghetto: '#2C5A68',
+  costiera: '#17233F',
+  treno: '#A33A26',
+  bus: '#A33A26',
+  aereo: '#565F6B',
+  non_calcolato: '#857F72',
 };
 
 /** Il colore da solo non basta a distinguere i mezzi: anche il tratto cambia, sulla mappa e in legenda */

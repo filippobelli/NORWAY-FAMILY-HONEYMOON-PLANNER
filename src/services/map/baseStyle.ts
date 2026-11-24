@@ -16,8 +16,8 @@ const ITALIAN_LABEL = ['coalesce', ['get', 'name:it'], ['get', 'name']];
 
 // Stessi valori di --terra e --mare: MapLibre ha bisogno del colore esplicito
 const PAINT: Record<string, Record<string, string>> = {
-  background: { 'background-color': '#f5f7fa' },
-  water: { 'fill-color': '#cdd9ea' },
+  background: { 'background-color': '#f7f3ea' },
+  water: { 'fill-color': '#cfe1e5' },
 };
 
 export function italianStyle(style: MapStyle): MapStyle {

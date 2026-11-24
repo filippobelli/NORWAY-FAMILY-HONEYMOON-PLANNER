@@ -118,7 +118,7 @@ test('Fondo mappa: nomi in italiano o locali, mai in inglese; sigle delle strade
   assert.deepEqual(out.layers[1]?.layout, { 'text-field': ['coalesce', ['get', 'name:it'], ['get', 'name']], 'text-size': 12 });
   assert.equal(out.layers[2], style.layers[2]);
   assert.equal(out.layers[3], style.layers[3]);
-  assert.equal(out.layers[0]?.paint?.['background-color'], '#f5f7fa');
+  assert.equal(out.layers[0]?.paint?.['background-color'], '#f7f3ea');
   assert.deepEqual(style.layers[1]?.layout?.['text-field'], nameField, 'lo stile scaricato non si tocca');
   assert.deepEqual(withoutLabels(style).layers.map((l) => l.id), ['background', 'road']);
 });

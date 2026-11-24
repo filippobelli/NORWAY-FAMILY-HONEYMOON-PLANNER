@@ -237,9 +237,9 @@ export function summaryToHtml(sum: TripSummary): string {
 <title>${h(sum.title)} · pacchetto offline</title>
 <style>
 :root{color-scheme:light dark}body{font:16px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;margin:0 auto;max-width:860px;padding:16px;color:#00205b;background:#fff}
-h1{font-size:1.5rem;margin:0}h2{font-size:1.15rem;border-bottom:2px solid #ba0c2f;padding-bottom:4px;margin-top:28px}h3{font-size:1rem;margin:14px 0 4px}
-ul{margin:0;padding-left:20px}.muted{color:#4a5468}.note{background:#e3eaf5;padding:10px 12px;border-radius:8px}a{color:#9b0a27;word-break:break-all}
-@media (prefers-color-scheme:dark){body{background:#0b1426;color:#e3eaf5}.muted{color:#b7c2d6}.note{background:#16233d}a{color:#ff8fa5}}
+h1{font-size:1.5rem;margin:0}h2{font-size:1.15rem;border-bottom:2px solid #c2462f;padding-bottom:4px;margin-top:28px}h3{font-size:1rem;margin:14px 0 4px}
+ul{margin:0;padding-left:20px}.muted{color:#565f6b}.note{background:#e1eef0;padding:10px 12px;border-radius:8px}a{color:#2c5a68;word-break:break-all}
+@media (prefers-color-scheme:dark){body{background:#14202e;color:#e1eef0}.muted{color:#b7c2d6}.note{background:#1f3340}a{color:#8cc3cf}}
 @media print{body{max-width:none}a{color:inherit}}
 </style></head><body>
 <h1>${h(sum.title)}</h1><p class="muted">${h(sum.subtitle)}</p>

@@ -94,9 +94,9 @@ export function MapView({ trip, onAddDestination, height, selectedStopId, onSele
         if (usedDest.has(d.id)) continue;
         const marker = L.circleMarker([d.lat, d.lng], {
           radius: 5,
-          color: '#4A5468',
+          color: '#565F6B',
           weight: 1,
-          fillColor: '#D5DCE7',
+          fillColor: '#E4DDCC',
           fillOpacity: 0.9,
         });
         const box = document.createElement('div');

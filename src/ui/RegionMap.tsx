@@ -8,8 +8,8 @@ import type { Region } from '../domain/types';
 import { addBaseMap, loadLeaflet, type LeafletApi, type LLayerGroup, type LMap, type LPath } from '../services/map/leaflet';
 
 // Blu per le regioni, rosso per quella evidenziata: Leaflet ha bisogno del colore esplicito
-const BLU = '#00205B';
-const ROSSO = '#BA0C2F';
+const BLU = '#2C5A68';
+const ROSSO = '#C2462F';
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
 
@@ -117,7 +117,7 @@ export function RegionPicker({ selected, airportRegions, airportIds, onToggle }:
         radius: active ? 5 : 3,
         color: '#ffffff',
         weight: 1.5,
-        fillColor: active ? BLU : '#4A5468',
+        fillColor: active ? BLU : '#565F6B',
         fillOpacity: 1,
       });
       mk.bindTooltip(esc(d.name), { permanent: active, direction: 'right', offset: [6, 0], className: 'region-label' });

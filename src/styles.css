@@ -1,53 +1,59 @@
-/* Palette: i colori della bandiera norvegese. Ogni colore dell'interfaccia passa da qui. */
+/* Palette «quaderno»: i colori dell'icona (petrolio, blu notte, avorio, corallo). Ogni colore dell'interfaccia passa da qui. */
 :root {
-  --blu: #00205b;
-  --blu-hover: #0a2f75;
-  --rosso: #ba0c2f;
+  /* Blu notte: testi e titoli */
+  --blu: #17233f;
+  /* Petrolio: menu, pulsanti, link, selezione */
+  --petrolio: #2c5a68;
+  --petrolio-hover: #234a56;
+  --petrolio-scuro: #1f4753;
+  /* Corallo: evidenza della selezione e avvisi */
+  --rosso: #c2462f;
   /* Avvisi: testo su fondo tenue, con il bordo dei badge */
-  --rosso-testo: #9b0a27;
-  --rosso-tenue: #fbeaee;
-  --rosso-bordo: #f1c3cd;
+  --rosso-testo: #a33a26;
+  --rosso-tenue: #fbeae4;
+  --rosso-bordo: #f0cbbf;
   --bianco: #ffffff;
-  --secondario: #4a5468;
-  --linea: #d5dce7;
-  --linea-timeline: #c8d2e2;
+  --secondario: #565f6b;
+  --linea: #e4ddcc;
+  --linea-timeline: #d8d0be;
   /* Bordo dei controlli: almeno 3:1 sul bianco, la Linea resta per i separatori */
-  --linea-forte: #7f8ba0;
-  --mare: #cdd9ea;
-  --terra: #f5f7fa;
-  --regione: #e3eaf5;
-  --vetro: rgb(255 255 255 / 87%);
+  --linea-forte: #857f72;
+  --mare: #cfe1e5;
+  /* Avorio: lo sfondo delle pagine, come la carta del quaderno */
+  --terra: #f7f3ea;
+  --regione: #e1eef0;
+  --vetro: rgb(255 253 248 / 87%);
   --vetro-blur: blur(16px);
 
   /* Ruoli usati dai componenti */
   --bg: var(--terra);
   --surface: var(--bianco);
-  --surface-2: #edf1f7;
+  --surface-2: #f0ebdf;
   --ink: var(--blu);
   --ink-2: var(--secondario);
   --line: var(--linea);
-  --fjord: var(--blu);
-  --accent: var(--blu);
+  --fjord: var(--petrolio);
+  --accent: var(--petrolio);
   --accent-ink: var(--bianco);
-  --ok: var(--blu);
+  --ok: var(--petrolio-scuro);
   --ok-bg: var(--regione);
   --warn: var(--rosso-testo);
   --warn-bg: var(--rosso-tenue);
-  --info: var(--blu);
+  --info: var(--petrolio);
   --info-bg: var(--regione);
   --danger: var(--rosso-testo);
 
   /* Mezzi di trasporto: stessi valori di MODE_COLOR in ui/common.tsx; il tratto li distingue sulla mappa */
-  --m-strada: #ba0c2f;
-  --m-traghetto: #00205b;
-  --m-costiera: #00205b;
-  --m-treno: #9b0a27;
-  --m-bus: #9b0a27;
-  --m-aereo: #4a5468;
+  --m-strada: #c2462f;
+  --m-traghetto: #2c5a68;
+  --m-costiera: #17233f;
+  --m-treno: #a33a26;
+  --m-bus: #a33a26;
+  --m-aereo: #565f6b;
 
   --radius: 10px;
-  --shadow: 0 1px 2px rgb(0 32 91 / 6%);
-  --shadow-float: 0 8px 28px rgb(0 32 91 / 18%);
+  --shadow: 0 1px 2px rgb(23 35 63 / 6%);
+  --shadow-float: 0 8px 28px rgb(23 35 63 / 18%);
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --ease: 120ms ease-out;
   /* Chiaro anche con il sistema in tema scuro: si usa soprattutto all'aperto e la palette è chiara */
@@ -69,7 +75,7 @@ body {
   scrollbar-color: var(--linea-forte) transparent;
 }
 ::selection {
-  background: var(--blu);
+  background: var(--petrolio);
   color: var(--bianco);
 }
 .icon {
@@ -138,7 +144,7 @@ code {
   box-shadow: var(--shadow-float);
 }
 .place-dialog::backdrop {
-  background: rgb(0 32 91 / 45%);
+  background: rgb(23 35 63 / 45%);
 }
 .place-dialog h2 {
   margin-top: 0;
@@ -295,7 +301,7 @@ code {
   background: var(--regione);
 }
 .ol-item.active {
-  background: var(--blu);
+  background: var(--petrolio);
   color: var(--bianco);
 }
 .ol-item.ol-stop.active {
@@ -304,6 +310,11 @@ code {
 .ol-item.active .muted,
 .ol-item.active .ol-num {
   color: var(--regione);
+}
+/* Sul corallo il petrolio tenue non arriva a 4,5:1: testi secondari in bianco */
+.ol-item.ol-stop.active .muted,
+.ol-item.ol-stop.active .ol-num {
+  color: var(--bianco);
 }
 .ol-stop .ol-name {
   font-weight: 600;
@@ -414,7 +425,7 @@ code {
   max-width: 220px;
   padding: 4px 10px;
   border-radius: 8px;
-  background: var(--blu);
+  background: var(--petrolio);
   color: var(--bianco);
   font-size: 0.85rem;
   font-weight: 600;
@@ -446,8 +457,8 @@ code {
 }
 .segmented > button.active {
   background: var(--regione);
-  border-color: var(--blu);
-  color: var(--blu);
+  border-color: var(--petrolio);
+  color: var(--petrolio);
   font-weight: 600;
 }
 .segmented .btn {
@@ -477,8 +488,8 @@ code {
   background: var(--regione);
 }
 .timeline li.active .tl-day {
-  border-color: var(--blu);
-  background: var(--blu);
+  border-color: var(--petrolio);
+  background: var(--petrolio);
   color: var(--bianco);
 }
 .timeline li.active .tl-day .muted {
@@ -863,9 +874,9 @@ code {
   z-index: 1500;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  background: var(--blu);
+  background: var(--petrolio);
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -4px 16px rgb(0 32 91 / 18%);
+  box-shadow: 0 -4px 16px rgb(23 35 63 / 18%);
 }
 .travel-bar a {
   display: grid;
@@ -883,7 +894,7 @@ code {
   height: 22px;
 }
 .travel-bar a.active {
-  color: var(--blu);
+  color: var(--petrolio);
   font-weight: 700;
   background: var(--bianco);
 }
@@ -1041,7 +1052,7 @@ code {
   border: 1px solid var(--linea-forte);
   border-radius: 8px;
   background: var(--bianco);
-  color: var(--blu);
+  color: var(--petrolio);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 500;
@@ -1346,7 +1357,7 @@ code {
   display: flex;
   gap: 2px;
   overflow-x: auto;
-  background: var(--blu);
+  background: var(--petrolio);
   padding: 0 12px;
   position: sticky;
   top: 0;
@@ -1364,7 +1375,7 @@ code {
 }
 .tabs a.active {
   background: var(--bianco);
-  color: var(--blu);
+  color: var(--petrolio);
   font-weight: 600;
 }
 
@@ -1525,7 +1536,7 @@ select:focus-visible,
 textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--blu);
+  outline: 2px solid var(--petrolio);
   outline-offset: 2px;
 }
 input:disabled,
@@ -1541,7 +1552,7 @@ textarea:disabled {
 }
 input[type='checkbox'],
 input[type='radio'] {
-  accent-color: var(--blu);
+  accent-color: var(--petrolio);
 }
 .field {
   display: flex;
@@ -1617,8 +1628,8 @@ input[type='radio'] {
   color: var(--accent-ink);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--blu-hover);
-  border-color: var(--blu-hover);
+  background: var(--petrolio-hover);
+  border-color: var(--petrolio-hover);
 }
 .btn-primary:disabled {
   background: var(--surface-2);
@@ -1702,7 +1713,7 @@ input[type='radio'] {
 }
 .badge-prenotato,
 .badge-pagato {
-  background: var(--blu);
+  background: var(--petrolio);
   color: var(--bianco);
   border-color: transparent;
 }
@@ -2007,11 +2018,11 @@ details summary {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--blu);
+  background: var(--petrolio);
   color: #fff;
   font: 700 13px/1 system-ui, sans-serif;
   border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgb(0 32 91 / 40%);
+  box-shadow: 0 1px 4px rgb(23 35 63 / 40%);
 }
 .stop-pin-ship {
   background: var(--bianco);
@@ -3001,7 +3012,7 @@ details summary {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgb(0 32 91 / 70%);
+  background: rgb(23 35 63 / 70%);
   color: #fff;
   border-radius: 50%;
 }
@@ -3123,7 +3134,7 @@ details summary {
     right: 0;
     padding: 0 4px env(safe-area-inset-bottom);
     border-bottom: 0;
-    box-shadow: 0 -4px 16px rgb(0 32 91 / 18%);
+    box-shadow: 0 -4px 16px rgb(23 35 63 / 18%);
     z-index: 1500;
   }
   .tabs a {
@@ -3509,7 +3520,7 @@ button.stop-num:hover {
 }
 .stop-selected {
   border-color: var(--rosso);
-  box-shadow: 0 0 0 2px rgb(186 12 47 / 18%);
+  box-shadow: 0 0 0 2px rgb(194 70 47 / 18%);
 }
 .stop-selected .stop-num {
   background: var(--rosso);
@@ -3530,7 +3541,7 @@ button.stop-num:hover {
 }
 .stop-pin-selected {
   background: var(--rosso);
-  box-shadow: 0 0 0 4px var(--bianco), 0 0 0 8px rgb(186 12 47 / 45%);
+  box-shadow: 0 0 0 4px var(--bianco), 0 0 0 8px rgb(194 70 47 / 45%);
   transform: scale(1.15);
 }
 /* Il filo tra le tappe dice lo stato del tratto: pieno = calcolato, tratteggiato = da calcolare */
@@ -3823,7 +3834,7 @@ h2[tabindex='-1']:focus-visible {
   padding: 10px 14px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--blu);
+  border-left: 4px solid var(--petrolio);
   border-radius: var(--radius);
 }
 .plan-status.is-activated {
@@ -4013,7 +4024,7 @@ h2[tabindex='-1']:focus-visible {
   border-radius: var(--radius);
 }
 .ov-start-card.is-recommended {
-  border: 2px solid var(--blu);
+  border: 2px solid var(--petrolio);
 }
 .ov-start-card h3,
 .ov-start-card p {
@@ -4152,8 +4163,8 @@ h2[tabindex='-1']:focus-visible {
   cursor: pointer;
 }
 .bk-filter.active {
-  background: var(--blu);
-  border-color: var(--blu);
+  background: var(--petrolio);
+  border-color: var(--petrolio);
   color: var(--bianco);
 }
 .bk-rows {
@@ -4271,7 +4282,7 @@ h2[tabindex='-1']:focus-visible {
   margin-bottom: 16px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--blu);
+  border-left: 4px solid var(--petrolio);
   border-radius: var(--radius);
 }
 .next-step > div {
@@ -4286,7 +4297,7 @@ h2[tabindex='-1']:focus-visible {
   border-left-color: var(--rosso);
 }
 .next-step.is-ok {
-  border-left-color: var(--blu);
+  border-left-color: var(--petrolio);
   background: var(--regione);
 }
 .next-step-kicker {
@@ -4392,7 +4403,7 @@ h2[tabindex='-1']:focus-visible {
   height: 14px;
   vertical-align: -2px;
   border: 2px solid var(--linea);
-  border-top-color: var(--blu);
+  border-top-color: var(--petrolio);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
